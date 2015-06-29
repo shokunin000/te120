@@ -76,6 +76,9 @@ public:
 	void InputDisableMotion( inputdata_t &inputdata );
 	void InputForceDrop( inputdata_t &inputdata );
 	void InputDisableFloating( inputdata_t &inputdata );
+	void InputConvertToDebris( inputdata_t &inputdata );//TE120----
+
+	CNetworkVar( float, m_fDisappearDist );//TE120----
 
 	DECLARE_DATADESC();
 	
@@ -106,10 +109,10 @@ protected:
 // CPhysExplosion -- physically simulated explosion
 //
 // ---------------------------------------------------------------------
-class CPhysExplosion : public CPointEntity
+class CPhysExplosion : public CServerOnlyPointEntity//TE120----
 {
 public:
-	DECLARE_CLASS( CPhysExplosion, CPointEntity );
+	DECLARE_CLASS( CPhysExplosion, CServerOnlyPointEntity );//TE120----
 
 	void	Spawn ( void );
 	void	Explode( CBaseEntity *pActivator, CBaseEntity *pCaller );

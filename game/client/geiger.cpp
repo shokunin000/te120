@@ -19,6 +19,7 @@
 #include <vgui_controls/Controls.h>
 #include <vgui_controls/Panel.h>
 #include <vgui/ISurface.h>
+#include <vgui_controls/AnimationController.h>//TE120
 
 using namespace vgui;
 
@@ -43,6 +44,7 @@ public:
 private:
 	int m_iGeigerRange;
 	float m_flLastSoundTestTime;
+	bool	bFlashingLocator;//TE120
 };
 
 DECLARE_HUDELEMENT( CHudGeiger );
@@ -57,6 +59,7 @@ CHudGeiger::CHudGeiger( const char *pElementName ) :
 	vgui::Panel *pParent = g_pClientMode->GetViewport();
 	SetParent( pParent );
 	m_flLastSoundTestTime = -9999;
+	bFlashingLocator = false;//TE120
 
 	SetHiddenBits( HIDEHUD_HEALTH );
 }
@@ -101,6 +104,24 @@ void CHudGeiger::MsgFunc_Geiger( bf_read &msg )
 //-----------------------------------------------------------------------------
 bool CHudGeiger::ShouldDraw( void )
 {
+//TE120------------------------------	
+	// Repeating this here since it's possible to skip this due to timing delays in the paint function
+	if ( (m_iGeigerRange > 450) )
+	{
+		if ( bFlashingLocator )
+		{
+			g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("RadiationBelowThreshold");
+			bFlashingLocator = false;
+		}
+	}
+	else if ( !bFlashingLocator )
+	{
+		g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("RadiationAboveThreshold");
+		g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("RadiationHigh");
+		bFlashingLocator = true;
+	}
+//TE120----------------------------
+
 	return ( ( m_iGeigerRange > 0 && m_iGeigerRange < 1000 ) && CHudElement::ShouldDraw() );
 }
 
@@ -119,61 +140,64 @@ void CHudGeiger::Paint()
 	}
 
 	m_flLastSoundTestTime = gpGlobals->curtime;
-
+//TE120-changed-----------------------------------------
 	// piecewise linear is better than continuous formula for this
-	if (m_iGeigerRange > 800)
+	int range = m_iGeigerRange + 50;
+
+	if (range > 800)
 	{
 		pct = 0;			//Msg ( "range > 800\n");
 	}
-	else if (m_iGeigerRange > 600)
+	else if (range > 600)
 	{
 		pct = 2;
 		flvol = 0.2;		//Msg ( "range > 600\n");
 	}
-	else if (m_iGeigerRange > 500)
+	else if (range > 500)
 	{
 		pct = 4;
 		flvol = 0.25;		//Msg ( "range > 500\n");
 	}
-	else if (m_iGeigerRange > 400)
+	else if (range > 400)
 	{
 		pct = 8;
 		flvol = 0.3;		//Msg ( "range > 400\n");
 		highsound = true;
 	}
-	else if (m_iGeigerRange > 300)
+	else if (range > 300)
 	{
 		pct = 8;
 		flvol = 0.35;		//Msg ( "range > 300\n");
 		highsound = true;
 	}
-	else if (m_iGeigerRange > 200)
+	else if (range > 200)
 	{
 		pct = 28;
 		flvol = 0.39;		//Msg ( "range > 200\n");
 		highsound = true;
 	}
-	else if (m_iGeigerRange > 150)
+	else if (range > 150)
 	{
 		pct = 40;
 		flvol = 0.40;		//Msg ( "range > 150\n");
 		highsound = true;
 	}
-	else if (m_iGeigerRange > 100)
+	else if (range > 100)
 	{
 		pct = 60;
 		flvol = 0.425;		//Msg ( "range > 100\n");
 		highsound = true;
 	}
-	else if (m_iGeigerRange > 75)
+	else if (range > 75)
 	{
 		pct = 80;
 		flvol = 0.45;		//Msg ( "range > 75\n");
 		//gflGeigerDelay = cl.time + GEIGERDELAY * 0.75;
 		highsound = true;
 	}
-	else if (m_iGeigerRange > 50)
+	else if (range > 50)
 	{
+//TE120-changed-----------------------------------------
 		pct = 90;
 		flvol = 0.475;		//Msg ( "range > 50\n");
 	}

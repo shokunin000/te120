@@ -16,9 +16,10 @@
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
-
-static ConVar mat_slopescaledepthbias_shadowmap( "mat_slopescaledepthbias_shadowmap", "16", FCVAR_CHEAT );
-static ConVar mat_depthbias_shadowmap(	"mat_depthbias_shadowmap", "0.0005", FCVAR_CHEAT  );
+//TE120--changed mat_slopescaledepthbias_shadowmap to mat_slopescaledepthbias_shadowmap_alt
+static ConVar mat_slopescaledepthbias_shadowmap_alt( "mat_slopescaledepthbias_shadowmap_alt", "16", FCVAR_CHEAT );
+static ConVar mat_depthbias_shadowmap_alt(	"mat_depthbias_shadowmap_alt", "0.0005", FCVAR_CHEAT  );
+//TE120---------------------------
 
 //-----------------------------------------------------------------------------
 // Purpose: 
@@ -33,6 +34,7 @@ public:
 	void	ShutDownLightHandle( void );
 
 	virtual void Simulate();
+	virtual void CreateShadow();//TE120
 
 	void	UpdateLight( bool bForceUpdate );
 
@@ -107,6 +109,16 @@ void C_EnvProjectedTexture::OnDataChanged( DataUpdateType_t updateType )
 	BaseClass::OnDataChanged( updateType );
 }
 
+//TE120-----------------------------------
+void C_EnvProjectedTexture::CreateShadow()
+{
+	if ( m_bState == true )
+	{
+		BaseClass::CreateShadow();
+	}
+}
+//TE120------------------------------------
+
 void C_EnvProjectedTexture::UpdateLight( bool bForceUpdate )
 {
 	if ( m_bState == false )
@@ -136,7 +148,7 @@ void C_EnvProjectedTexture::UpdateLight( bool bForceUpdate )
 				Vector vPlayerForward, vPlayerRight, vPlayerUp;
 				AngleVectors( playerAngles, &vPlayerForward, &vPlayerRight, &vPlayerUp );
 
-            	matrix3x4_t	mRotMatrix;
+            				matrix3x4_t	mRotMatrix;
 				AngleMatrix( angles, mRotMatrix );
 
 				VectorITransform( vPlayerForward, mRotMatrix, vForward );
@@ -153,21 +165,19 @@ void C_EnvProjectedTexture::UpdateLight( bool bForceUpdate )
 		}
 		else
 		{
-			vForward = m_hTargetEntity->GetAbsOrigin() - GetAbsOrigin();
-			VectorNormalize( vForward );
-
-			// JasonM - unimplemented
-			Assert (0);
-
-			//Quaternion q = DirectionToOrientation( dir );
-
-
-			//
-			// JasonM - set up vRight, vUp
-			//
-
-//			VectorNormalize( vRight );
-//			VectorNormalize( vUp );
+			// VXP: Fixing targeting
+			Vector vecToTarget;
+			QAngle vecAngles;
+			if ( m_hTargetEntity == NULL )
+			{
+				vecAngles = GetAbsAngles();
+			}
+			else
+			{
+				vecToTarget = m_hTargetEntity->GetAbsOrigin() - GetAbsOrigin();
+				VectorAngles( vecToTarget, vecAngles );
+			}
+			AngleVectors( vecAngles, &vForward, &vRight, &vUp );
 		}
 	}
 	else
@@ -190,8 +200,10 @@ void C_EnvProjectedTexture::UpdateLight( bool bForceUpdate )
 	state.m_Color[3] = 0.0f; // fixme: need to make ambient work m_flAmbient;
 	state.m_NearZ = m_flNearZ;
 	state.m_FarZ = m_flFarZ;
-	state.m_flShadowSlopeScaleDepthBias = mat_slopescaledepthbias_shadowmap.GetFloat();
-	state.m_flShadowDepthBias = mat_depthbias_shadowmap.GetFloat();
+	//TE120--changed
+	state.m_flShadowSlopeScaleDepthBias = mat_slopescaledepthbias_shadowmap_alt.GetFloat();
+	state.m_flShadowDepthBias = mat_depthbias_shadowmap_alt.GetFloat();
+	//TE120-----------changed
 	state.m_bEnableShadows = m_bEnableShadows;
 	state.m_pSpotlightTexture = materials->FindTexture( m_SpotlightTextureName, TEXTURE_GROUP_OTHER, false );
 	state.m_nSpotlightTextureFrame = m_nSpotlightTextureFrame;
@@ -221,15 +233,17 @@ void C_EnvProjectedTexture::UpdateLight( bool bForceUpdate )
 
 	g_pClientShadowMgr->SetFlashlightLightWorld( m_LightHandle, m_bLightWorld );
 
-	if ( bForceUpdate == false )
-	{
+//TE120 commented out
+	// if ( bForceUpdate == false )
+	// {
 		g_pClientShadowMgr->UpdateProjectedTexture( m_LightHandle, true );
-	}
+	// }
+//TE120
 }
 
 void C_EnvProjectedTexture::Simulate( void )
 {
-	UpdateLight( false );
+	UpdateLight( GetMoveParent() != NULL ); //TE120 changed
 
 	BaseClass::Simulate();
 }

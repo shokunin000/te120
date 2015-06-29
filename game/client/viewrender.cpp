@@ -76,6 +76,9 @@
 
 // Projective textures
 #include "C_Env_Projected_Texture.h"
+#ifdef _WIN32 //Disabled on Linux
+#include "shadereditor/shadereditorsystem.h"//TE120
+#endif
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -149,6 +152,7 @@ static ConVar r_debugcheapwater( "r_debugcheapwater", "0", FCVAR_CHEAT );
 static ConVar r_waterforceexpensive( "r_waterforceexpensive", "0", FCVAR_ARCHIVE );
 #endif
 static ConVar r_waterforcereflectentities( "r_waterforcereflectentities", "0" );
+static ConVar r_waterforcenoentities( "r_waterforcenoentities", "0" );//TE120
 static ConVar r_WaterDrawRefraction( "r_WaterDrawRefraction", "1", 0, "Enable water refraction" );
 static ConVar r_WaterDrawReflection( "r_WaterDrawReflection", "1", 0, "Enable water reflection" );
 static ConVar r_ForceWaterLeaf( "r_ForceWaterLeaf", "1", 0, "Enable for optimization to water - considers view in leaf under water for purposes of culling" );
@@ -1359,6 +1363,16 @@ void CViewRender::ViewDrawScene( bool bDrew3dSkybox, SkyboxVisibility_t nSkyboxV
 
 	DrawWorldAndEntities( drawSkybox, view, nClearFlags, pCustomVisibility );
 
+//TE120--------------------------
+#ifdef _WIN32 //Disabled on Linux
+	VisibleFogVolumeInfo_t fogVolumeInfo;
+	render->GetVisibleFogVolume( view.origin, &fogVolumeInfo );
+	WaterRenderInfo_t info;
+	DetermineWaterRenderInfo( fogVolumeInfo, info );
+	g_ShaderEditorSystem->CustomViewRender( &g_CurrentViewID, fogVolumeInfo, info );
+#endif
+//TE120-------------------
+
 	// Disable fog for the rest of the stuff
 	DisableFog();
 
@@ -1435,8 +1449,8 @@ static void GetFogColorTransition( fogparams_t *pFogParams, float *pColorPrimary
 	{
 		float flPercent = 1.0f - (( pFogParams->lerptime - gpGlobals->curtime ) / pFogParams->duration );
 
-		float flPrimaryColorLerp[3] = { pFogParams->colorPrimaryLerpTo.GetR(), pFogParams->colorPrimaryLerpTo.GetG(), pFogParams->colorPrimaryLerpTo.GetB() };
-		float flSecondaryColorLerp[3] = { pFogParams->colorSecondaryLerpTo.GetR(), pFogParams->colorSecondaryLerpTo.GetG(), pFogParams->colorSecondaryLerpTo.GetB() };
+		float flPrimaryColorLerp[3] = { (float) pFogParams->colorPrimaryLerpTo.GetR(), (float) pFogParams->colorPrimaryLerpTo.GetG(), (float) pFogParams->colorPrimaryLerpTo.GetB() };
+		float flSecondaryColorLerp[3] = { (float) pFogParams->colorSecondaryLerpTo.GetR(), (float) pFogParams->colorSecondaryLerpTo.GetG(), (float) pFogParams->colorSecondaryLerpTo.GetB() };
 
 		CheckAndTransitionColor( flPercent, pColorPrimary, flPrimaryColorLerp );
 		CheckAndTransitionColor( flPercent, pColorSecondary, flSecondaryColorLerp );
@@ -1459,8 +1473,8 @@ static void GetFogColor( fogparams_t *pFogParams, float *pColor )
 	}
 	else
 	{
-		float flPrimaryColor[3] = { pFogParams->colorPrimary.GetR(), pFogParams->colorPrimary.GetG(), pFogParams->colorPrimary.GetB() };
-		float flSecondaryColor[3] = { pFogParams->colorSecondary.GetR(), pFogParams->colorSecondary.GetG(), pFogParams->colorSecondary.GetB() };
+		float flPrimaryColor[3] = { (float) pFogParams->colorPrimary.GetR(), (float) pFogParams->colorPrimary.GetG(), (float) pFogParams->colorPrimary.GetB() };
+		float flSecondaryColor[3] = { (float) pFogParams->colorSecondary.GetR(), (float) pFogParams->colorSecondary.GetG(), (float) pFogParams->colorSecondary.GetB() };
 
 		GetFogColorTransition( pFogParams, flPrimaryColor, flSecondaryColor );
 
@@ -1985,6 +1999,9 @@ void CViewRender::RenderView( const CViewSetup &view, int nClearFlags, int whatT
 		if ( ( bDrew3dSkybox = pSkyView->Setup( view, &nClearFlags, &nSkyboxVisible ) ) != false )
 		{
 			AddViewToScene( pSkyView );
+#ifdef _WIN32 //Disabled on Linux
+			g_ShaderEditorSystem->UpdateSkymask();//TE120
+#endif
 		}
 		SafeRelease( pSkyView );
 
@@ -2041,6 +2058,9 @@ void CViewRender::RenderView( const CViewSetup &view, int nClearFlags, int whatT
 
 		// Now actually draw the viewmodel
 		DrawViewModels( view, whatToDraw & RENDERVIEW_DRAWVIEWMODEL );
+#ifdef _WIN32 //Disabled on Linux
+		g_ShaderEditorSystem->UpdateSkymask( bDrew3dSkybox );//TE120
+#endif
 
 		DrawUnderwaterOverlay();
 
@@ -2078,6 +2098,9 @@ void CViewRender::RenderView( const CViewSetup &view, int nClearFlags, int whatT
 			}
 			pRenderContext.SafeRelease();
 		}
+#ifdef _WIN32 //Disabled on Linux
+		g_ShaderEditorSystem->CustomPostRender();//TE120
+#endif
 
 		// And here are the screen-space effects
 
@@ -2442,7 +2465,7 @@ void CViewRender::DetermineWaterRenderInfo( const VisibleFogVolumeInfo_t &fogVol
 	}
 	if ( !bForceCheap && pForceExpensiveVar && pForceExpensiveVar->IsDefined() )
 	{
-		 bForceExpensive = bForceExpensive || ( pForceExpensiveVar->GetIntValueFast() != 0 );
+		bForceExpensive = false;//TE120 changed
 	}
 
 	bool bDebugCheapWater = r_debugcheapwater.GetBool();
@@ -2458,7 +2481,7 @@ void CViewRender::DetermineWaterRenderInfo( const VisibleFogVolumeInfo_t &fogVol
 #ifdef _X360
 	if( !r_WaterDrawReflection.GetBool() )
 #else
-	if( !bForceExpensive || !r_WaterDrawReflection.GetBool() )
+	if( !r_WaterDrawReflection.GetBool() )//TE120 changed
 #endif
 	{
 		bLocalReflection = false;
@@ -2486,7 +2509,7 @@ void CViewRender::DetermineWaterRenderInfo( const VisibleFogVolumeInfo_t &fogVol
 		return;
 	}
 #else
-	if ( ( (fogVolumeInfo.m_flDistanceToWater >= m_flCheapWaterEndDistance) && !bLocalReflection ) || bForceCheap )
+	if ( (fogVolumeInfo.m_flDistanceToWater >= m_flCheapWaterEndDistance) || bForceCheap ) //TE120 changed
  		return;
 #endif
 	// Get the material that is for the water surface that is visible and check to see
@@ -2519,6 +2542,10 @@ void CViewRender::DetermineWaterRenderInfo( const VisibleFogVolumeInfo_t &fogVol
 			IMaterialVar *pReflectEntitiesVar = pWaterMaterial->FindVar( "$reflectentities", NULL, false );
 			info.m_bReflectEntities = pReflectEntitiesVar && (pReflectEntitiesVar->GetIntValueFast() != 0);
 		}
+		//TE120------------------------
+		if ( info.m_bReflectEntities && r_waterforcenoentities.GetBool() )
+			info.m_bReflectEntities = false;
+//TE120--------------------
 	}
 
 	info.m_bCheapWater = !info.m_bReflect && !info.m_bRefract;
@@ -4799,7 +4826,7 @@ void CSkyboxView::DrawInternal( view_id_t iSkyBoxViewID, bool bInvokePreAndPostR
 
 	m_pMainView->DisableFog();
 
-	CGlowOverlay::UpdateSkyOverlays( zFar, m_bCacheFullSceneState );
+	CGlowOverlay::UpdateSkyOverlays( zFar * 0.25, m_bCacheFullSceneState );//TE120 changed
 
 	PixelVisibility_EndCurrentView();
 
@@ -4983,6 +5010,12 @@ void CShadowDepthView::Draw()
 		render->Push3DView( (*this), VIEW_CLEAR_DEPTH, m_pRenderTarget, GetFrustum() );
 	}
 
+//TE120---------------------------
+	pRenderContext.GetFrom( materials );
+	pRenderContext->PushRenderTargetAndViewport (m_pRenderTarget, m_pDepthTexture, 0, 0, m_pDepthTexture->GetMappingWidth(), m_pDepthTexture->GetMappingWidth() );
+	pRenderContext.SafeRelease();
+//TE120-------------------------
+
 	SetupCurrentView( origin, angles, VIEW_SHADOW_DEPTH_TEXTURE );
 
 	MDLCACHE_CRITICAL_SECTION();
@@ -5026,6 +5059,8 @@ void CShadowDepthView::Draw()
 		//Resolve() the depth texture here. Before the pop so the copy will recognize that the resolutions are the same
 		pRenderContext->CopyRenderTargetToTextureEx( m_pDepthTexture, -1, NULL, NULL );
 	}
+
+	pRenderContext->PopRenderTargetAndViewport();//TE120
 
 	render->PopView( GetFrustum() );
 

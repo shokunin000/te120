@@ -18,6 +18,7 @@
 #include "player.h"
 #include "engine/IEngineSound.h"
 #include "in_buttons.h"
+#include "ammodef.h"//TE120
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -28,6 +29,7 @@ static ConVar	sk_suitcharger_citadel_maxarmor( "sk_suitcharger_citadel_maxarmor"
 
 #define SF_CITADEL_RECHARGER	0x2000
 #define SF_KLEINER_RECHARGER	0x4000 // Gives only 25 health
+#define SF_PHYSCON_RECHARGER	0x8000//TE120
 
 class CRecharge : public CBaseToggle
 {
@@ -156,12 +158,12 @@ int CRecharge::DrawDebugTextOverlays(void)
 //-----------------------------------------------------------------------------
 float CRecharge::MaxJuice()	const
 {
-	if ( HasSpawnFlags( SF_CITADEL_RECHARGER ) )
-	{
+//TE120----------
+	//if ( HasSpawnFlags( SF_CITADEL_RECHARGER ) )
+	//{
 		return sk_suitcharger_citadel.GetFloat();
-	}
-	
-	return sk_suitcharger.GetFloat();
+	//}
+//TE120----------
 }
 
 
@@ -357,6 +359,7 @@ private:
 	DECLARE_DATADESC();
 
 	float	m_flNextCharge; 
+	bool	m_bHasWPC;//TE120
 	int		m_iReactivate ; // DeathMatch Delay until reactvated
 	int		m_iJuice;
 	int		m_iOn;			// 0 = off, 1 = startup, 2 = going
@@ -379,6 +382,7 @@ private:
 BEGIN_DATADESC( CNewRecharge )
 
 	DEFINE_FIELD( m_flNextCharge, FIELD_TIME ),
+	DEFINE_FIELD( m_bHasWPC, FIELD_BOOLEAN ),//TE120
 	DEFINE_FIELD( m_iReactivate, FIELD_INTEGER),
 	DEFINE_FIELD( m_iJuice, FIELD_INTEGER),
 	DEFINE_FIELD( m_iOn, FIELD_INTEGER),
@@ -441,7 +445,7 @@ void CNewRecharge::Precache( void )
 	PrecacheScriptSound( "SuitRecharge.Deny" );
 	PrecacheScriptSound( "SuitRecharge.Start" );
 	PrecacheScriptSound( "SuitRecharge.ChargingLoop" );
-
+	PrecacheScriptSound( "NPC_Advisor.Shieldup" );//TE120
 }
 
 void CNewRecharge::SetInitialCharge( void )
@@ -459,6 +463,13 @@ void CNewRecharge::SetInitialCharge( void )
 		return;
 	}
 
+//TE120----------------------------
+	if ( HasSpawnFlags( SF_PHYSCON_RECHARGER ) )
+	{
+		m_iMaxJuice = 40.0f;
+		return;
+	}
+//TE120----------------------
 	m_iMaxJuice =  sk_suitcharger.GetFloat();
 }
 
@@ -481,6 +492,12 @@ void CNewRecharge::Spawn()
 
 	m_nState = 0;		
 	m_iCaps	= FCAP_CONTINUOUS_USE;
+//TE120--------------------
+	m_bHasWPC = false;
+
+	if ( HasSpawnFlags( SF_PHYSCON_RECHARGER ) )
+		m_nSkin = 1;
+//TE120----------------------
 
 	CreateVPhysics();
 
@@ -666,9 +683,29 @@ void CNewRecharge::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE 
 			pActivator->TakeHealth( 5, DMG_GENERIC );
 		}
 	}
+//TE120----------------------------------
+	int numIndexGC = GetAmmoDef()->Index( "GC_Energy" );
+	if ( HasSpawnFlags( SF_PHYSCON_RECHARGER ) )
+	{
+		for ( int i = 0; ( i < MAX_WEAPONS ) && !m_bHasWPC; i++ )
+		{
+			CBaseCombatWeapon *pWeap = pPlayer->GetWeapon(i);
+			if ( pWeap ) 
+			{
+				// Msg( "pWeap: %s\n", pWeap->GetClassname() );
+				char *szWPCName = "weapon_physconcussion";
+				if ( !strcmp( pWeap->GetClassname(), szWPCName ) )
+				{
+					// Msg( "WPC found.\n" );
+					m_bHasWPC = true;
+				}
+			}
+		}
+	}
+//TE120---------------------------
 
 	// If we're over our limit, debounce our keys
-	if ( pPlayer->ArmorValue() >= nMaxArmor)
+	if ( pPlayer->ArmorValue() >= nMaxArmor && (!m_bHasWPC || pPlayer->GetAmmoCount(numIndexGC) >= GetAmmoDef()->MaxCarry(numIndexGC)) ) //TE120 changed value
 	{
 		// Citadel charger must also be at max health
 		if ( !HasSpawnFlags(SF_CITADEL_RECHARGER) || ( HasSpawnFlags( SF_CITADEL_RECHARGER ) && pActivator->GetHealth() >= pActivator->GetMaxHealth() ) )
@@ -708,12 +745,31 @@ void CNewRecharge::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE 
 		EmitSound( filter, entindex(), "SuitRecharge.ChargingLoop" );
 	}
 
-	// Give armor if we need it
+	// Give armor if we need it & give gc energy if needed
 	if ( pPlayer->ArmorValue() < nMaxArmor )
 	{
+		//TE120---------------------
+		if ( m_bHasWPC && pPlayer->GetAmmoCount(numIndexGC) < GetAmmoDef()->MaxCarry(numIndexGC) && ( m_iJuice % 2 == 0 ) )
+		{
+			pPlayer->GiveAmmo( 5, numIndexGC, true );
+			CPASAttenuationFilter filter( this, "NPC_Advisor.Shieldup" );
+			EmitSound( filter, entindex(), "NPC_Advisor.Shieldup" );
+		}
+		//TE120---------------------
 		UpdateJuice( m_iJuice - nIncrementArmor );
 		pPlayer->IncrementArmorValue( nIncrementArmor, nMaxArmor );
 	}
+	//TE120---------------------
+	else if ( m_bHasWPC && pPlayer->GetAmmoCount( numIndexGC ) < GetAmmoDef()->MaxCarry( numIndexGC ) && ( m_iJuice % 2 == 0 ) )
+	{
+		UpdateJuice( m_iJuice - nIncrementArmor );
+		pPlayer->GiveAmmo( 5, numIndexGC, true );
+		CPASAttenuationFilter filter( this, "NPC_Advisor.Shieldup" );
+		EmitSound( filter, entindex(), "NPC_Advisor.Shieldup" );
+	}
+	else if ( m_bHasWPC && pPlayer->GetAmmoCount( numIndexGC ) < GetAmmoDef()->MaxCarry( numIndexGC ) )
+		UpdateJuice( m_iJuice - nIncrementArmor );
+	//TE120---------------------
 
 	// Send the output.
 	float flRemaining = m_iJuice / MaxJuice();

@@ -658,6 +658,7 @@ public:
 	virtual void Release( void );
 	virtual void SetupWeights( const matrix3x4_t *pBoneToWorld, int nFlexWeightCount, float *pFlexWeights, float *pFlexDelayedWeights );
 	virtual void ImpactTrace( trace_t *pTrace, int iDamageType, const char *pCustomImpactName );
+	virtual void GCPush( Vector *start, float radius ); //TE120
 	void ClientThink( void );
 	void ReleaseRagdoll( void ) { m_bReleaseRagdoll = true;	}
 	bool ShouldSavePhysics( void ) { return true; }

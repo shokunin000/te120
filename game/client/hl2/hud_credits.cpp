@@ -48,6 +48,10 @@ enum
 #define CREDITS_INTRO 2
 #define CREDITS_OUTRO 3
 
+//TE120---------------------------------------------------
+#define CREDIT_MATERIAL_LOGO		"vgui/title_bk"
+//TE120---------------------------------------------------
+
 bool g_bRollingCredits = false;
 
 int g_iCreditsPixelHeight = 0;
@@ -115,6 +119,9 @@ private:
 
 	int   m_iCreditsType;
 	int	  m_iLogoState;
+//TE120---------------------------------------------------
+	int   m_textureID_Logo;
+//TE120---------------------------------------------------
 
 	float m_flFadeInTime;
 	float m_flFadeHoldTime;
@@ -175,6 +182,9 @@ CHudCredits::CHudCredits( const char *pElementName ) : CHudElement( pElementName
 {
 	vgui::Panel *pParent = g_pClientMode->GetViewport();
 	SetParent( pParent );
+//TE120---------------------------------------------------
+	m_textureID_Logo = -1;
+//TE120---------------------------------------------------
 }
 
 void CHudCredits::LevelShutdown()
@@ -231,14 +241,18 @@ void CHudCredits::ReadParams( KeyValues *pKeyValue )
 		return;
 	}
 
-	m_flScrollTime = pKeyValue->GetFloat( "scrolltime", 57 );
-	m_flSeparation = pKeyValue->GetFloat( "separation", 5 );
+//TE120---------------------------------------------------
+	m_flScrollTime = pKeyValue->GetFloat( "scrolltime", 120 );
+	m_flSeparation = pKeyValue->GetFloat( "separation", 4 );
+//TE120---------------------------------------------------
 
 	m_flFadeInTime = pKeyValue->GetFloat( "fadeintime", 1 );
-	m_flFadeHoldTime = pKeyValue->GetFloat( "fadeholdtime", 3 );
-	m_flFadeOutTime = pKeyValue->GetFloat( "fadeouttime", 2 );
-	m_flNextStartTime = pKeyValue->GetFloat( "nextfadetime", 2 );
-	m_flPauseBetweenWaves = pKeyValue->GetFloat( "pausebetweenwaves", 2 );
+//TE120---------------------------------------------------
+	m_flFadeHoldTime = pKeyValue->GetFloat( "fadeholdtime", 1 );
+	m_flFadeOutTime = pKeyValue->GetFloat( "fadeouttime", 1 );
+	m_flNextStartTime = pKeyValue->GetFloat( "nextfadetime", 1 );
+	m_flPauseBetweenWaves = pKeyValue->GetFloat( "pausebetweenwaves", 1 );
+//TE120---------------------------------------------------
 
 	m_flLogoTimeMod = pKeyValue->GetFloat( "logotime", 2 );
 
@@ -298,12 +312,15 @@ void CHudCredits::DrawOutroCreditsName( void )
 
 		//HACKHACK
 		//Last one stays on screen and fades out
-		if ( i == m_CreditsList.Count()-1 )
-		{
+//TE120---------------------------------------------------
+		// if ( i == m_CreditsList.Count()-1 )
+		// {
+//TE120---------------------------------------------------
 			if ( m_bLastOneInPlace == false )
 			{
-				pCredit->flYPos -= gpGlobals->frametime * ( (float)g_iCreditsPixelHeight / m_flScrollTime );
-		
+//TE120---------------------------------------------------
+				pCredit->flYPos -= gpGlobals->frametime * ( (float)g_iCreditsPixelHeight / (0.25 * m_flScrollTime) );
+//TE120---------------------------------------------------	
 				if ( (int)pCredit->flYPos + ( iFontTall / 2 ) <= iTall / 2 )
 				{
 					m_bLastOneInPlace = true;
@@ -318,8 +335,9 @@ void CHudCredits::DrawOutroCreditsName( void )
 				{
 					if ( m_Alpha > 0 )
 					{
-						m_Alpha -= gpGlobals->frametime * ( m_flScrollTime * 2 );
-
+//TE120---------------------------------------------------
+						m_Alpha -= gpGlobals->frametime * ( m_flScrollTime * 1 );
+//TE120---------------------------------------------------
 						if ( m_Alpha <= 0 )
 						{
 							pCredit->bActive = false;
@@ -330,11 +348,14 @@ void CHudCredits::DrawOutroCreditsName( void )
 
 				cColor[3] = MAX( 0, m_Alpha );
 			}
-		}
+//TE120---------------------------------------------------
+/*		}
 		else
 		{
-			pCredit->flYPos -= gpGlobals->frametime * ( (float)g_iCreditsPixelHeight / m_flScrollTime );
+			pCredit->flYPos -= gpGlobals->frametime * ( (float)g_iCreditsPixelHeight / (0.25 * m_flScrollTime) );
 		}
+*/
+//TE120---------------------------------------------------
 		
 		if ( pCredit->bActive == false )
 			 continue;
@@ -373,8 +394,10 @@ void CHudCredits::DrawLogo( void )
 		case LOGO_FADEIN:
 		{
 			float flDeltaTime = ( m_flFadeTime - gpGlobals->curtime );
-
-			m_Alpha = MAX( 0, RemapValClamped( flDeltaTime, 5.0f, 0, -128, 255 ) );
+//TE120---------------------------------------------------
+			m_Alpha = MAX( 0, RemapValClamped( flDeltaTime, 0.1f, 0, 0, 255 ) );
+			// Msg( "m_alpha: %d\n", m_Alpha );
+//TE120---------------------------------------------------
 
 			if ( flDeltaTime <= 0.0f )
 			{
@@ -390,7 +413,9 @@ void CHudCredits::DrawLogo( void )
 			if ( m_flFadeTime <= gpGlobals->curtime )
 			{
 				m_iLogoState = LOGO_FADEOUT;
-				m_flFadeTime = gpGlobals->curtime + 2.0f;
+//TE120---------------------------------------------------
+				m_flFadeTime = gpGlobals->curtime + 1.0f;
+//TE120---------------------------------------------------
 			}
 			break;
 		}
@@ -398,8 +423,10 @@ void CHudCredits::DrawLogo( void )
 		case LOGO_FADEOUT:
 		{
 			float flDeltaTime = ( m_flFadeTime - gpGlobals->curtime );
-
-			m_Alpha = RemapValClamped( flDeltaTime, 0.0f, 2.0f, 0, 255 );
+//TE120---------------------------------------------------
+			m_Alpha = RemapValClamped( flDeltaTime, 0.0f, 1.0f, 0, 255 );
+			// Msg( "m_alpha: %d\n", m_Alpha );
+//TE120---------------------------------------------------
 
 			if ( flDeltaTime <= 0.0f )
 			{
@@ -415,7 +442,24 @@ void CHudCredits::DrawLogo( void )
 	int iWidth, iTall;
 	GetHudSize(iWidth, iTall);
 	SetSize( iWidth, iTall );
+//TE120--------------------------------
+	// Draw Texture Logo
+	if ( Q_strcmp( m_szLogo, "T R A N S M I S S I O N S" ) == 0 )
+	{
+		int icon_wide, icon_tall;
+		vgui::surface()->DrawSetTexture( m_textureID_Logo );
+		vgui::surface()->DrawGetTextureSize( m_textureID_Logo, icon_wide, icon_tall );
+		vgui::surface()->DrawSetColor( 255, 255, 255, m_Alpha );
+		int xPos, yPos;
+		xPos = ( iWidth / 2 ) - ( icon_wide / 2 );
+		yPos = ( iTall / 2 ) - ( icon_tall / 2 );
+		vgui::surface()->DrawTexturedRect( xPos, yPos, xPos + icon_wide, yPos + icon_tall );
+	}
+	else
+	{
+		Msg("m_szLogo: %s\n", m_szLogo);
 
+		// Draw Logo
 	char szLogoFont[64];
 
 	if ( IsXbox() )
@@ -424,7 +468,7 @@ void CHudCredits::DrawLogo( void )
 	}
 	else if ( hl2_episodic.GetBool() )
 	{
-		Q_snprintf( szLogoFont, sizeof( szLogoFont ), "ClientTitleFont" );
+			Q_snprintf( szLogoFont, sizeof( szLogoFont ), "CreditsOutroLogos" );
 	}
 	else
 	{
@@ -459,6 +503,8 @@ void CHudCredits::DrawLogo( void )
 		surface()->DrawSetTextPos( ( iWidth / 2 ) - ( iStringWidth / 2 ), ( iTall / 2 ) + ( iFontTall / 2 ));
 		surface()->DrawUnicodeString( unicode );
 	}
+	}
+//TE120---------------------------------------------------
 }
 
 //-----------------------------------------------------------------------------
@@ -601,10 +647,18 @@ void CHudCredits::PrepareLogo( float flTime )
 
 	m_Alpha = 0;
 	m_flLogoDesiredLength = flTime;
-	m_flFadeTime = gpGlobals->curtime + 5.0f;
+//TE120---------------------------------------------------
+	m_flFadeTime = gpGlobals->curtime + 0.1f;
+//TE120---------------------------------------------------
 	m_iLogoState = LOGO_FADEIN;
 	SetActive( true );
-}
+//TE120-----
+	if ( m_textureID_Logo == -1 )
+	{
+		m_textureID_Logo = vgui::surface()->CreateNewTextureID();
+		vgui::surface()->DrawSetTextureFile( m_textureID_Logo, CREDIT_MATERIAL_LOGO, true, false );
+	}
+}//TE120-----
 
 void CHudCredits::PrepareLine( vgui::HFont hFont, char const *pchLine )
 {
@@ -710,7 +764,9 @@ void CHudCredits::MsgFunc_CreditsMsg( bf_read &msg )
 	{
 		case CREDITS_LOGO:
 		{
-			PrepareLogo( 5.0f );
+//TE120---------------------------------------------------
+			PrepareLogo( 6.0f );
+//TE120---------------------------------------------------
 			break;
 		}
 		case CREDITS_INTRO:

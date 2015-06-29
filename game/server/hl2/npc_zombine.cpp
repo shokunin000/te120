@@ -44,16 +44,16 @@ enum
 	SQUAD_SLOT_ZOMBINE_SPRINT2,
 };
 
-#define MIN_SPRINT_TIME 3.5f
-#define MAX_SPRINT_TIME 5.5f
+#define MIN_SPRINT_TIME 15.0f//TE120-----
+#define MAX_SPRINT_TIME 20.0f//TE120-----
 
 #define MIN_SPRINT_DISTANCE 64.0f
-#define MAX_SPRINT_DISTANCE 1024.0f
+#define MAX_SPRINT_DISTANCE 2048.0f//TE120-----
 
-#define SPRINT_CHANCE_VALUE 10
+#define SPRINT_CHANCE_VALUE 15//TE120-----
 #define SPRINT_CHANCE_VALUE_DARKNESS 50
 
-#define GRENADE_PULL_MAX_DISTANCE 256.0f
+#define GRENADE_PULL_MAX_DISTANCE 512.0f//TE120-----
 
 #define ZOMBINE_MAX_GRENADES 1
 
@@ -168,6 +168,7 @@ private:
 	float   m_flGrenadePullTime;
 	
 	int		m_iGrenadeCount;
+	int		m_nGrenades;//TE120-----
 
 	EHANDLE	m_hGrenade;
 
@@ -185,6 +186,7 @@ BEGIN_DATADESC( CNPC_Zombine )
 	DEFINE_FIELD( m_hGrenade, FIELD_EHANDLE ),
 	DEFINE_FIELD( m_flGrenadePullTime, FIELD_TIME ),
 	DEFINE_FIELD( m_iGrenadeCount, FIELD_INTEGER ),
+	DEFINE_KEYFIELD( m_nGrenades, FIELD_INTEGER, "grenadecount" ),//TE120-----
 	DEFINE_INPUTFUNC( FIELD_VOID,	"StartSprint", InputStartSprint ),
 	DEFINE_INPUTFUNC( FIELD_VOID,	"PullGrenade", InputPullGrenade ),
 END_DATADESC()
@@ -225,9 +227,13 @@ void CNPC_Zombine::Spawn( void )
 
 	g_flZombineGrenadeTimes = gpGlobals->curtime;
 	m_flGrenadePullTime = gpGlobals->curtime;
-
+//TE120-----
+	// Allow 0 or 1 grenade
+	if ( m_nGrenades > ZOMBINE_MAX_GRENADES || m_nGrenades < 0 )
 	m_iGrenadeCount = ZOMBINE_MAX_GRENADES;
-}
+	else
+		m_iGrenadeCount = m_nGrenades;
+}//TE120-----
 
 void CNPC_Zombine::Precache( void )
 {
@@ -398,10 +404,10 @@ void CNPC_Zombine::GatherGrenadeConditions( void )
 
 	if ( FVisible( GetEnemy() ) == false )
 		return;
-
-	if ( IsSprinting() )
-		return;
-
+//TE120-----
+	// if ( IsSprinting() )
+	//	return;
+//TE120-----
 	if ( IsOnFire() )
 		return;
 	
@@ -410,21 +416,16 @@ void CNPC_Zombine::GatherGrenadeConditions( void )
 
 	if ( m_ActBusyBehavior.IsActive() )
 		return;
+//TE120-----
+	//CBasePlayer *pPlayer = AI_GetSinglePlayer();
+	CBasePlayer *pPlayer = UTIL_PlayerByIndex(1);
+	float flLengthToEnemy = (GetEnemy()->GetAbsOrigin() - GetAbsOrigin()).Length();
 
-	CBasePlayer *pPlayer = AI_GetSinglePlayer();
-
-	if ( pPlayer && pPlayer->FVisible( this ) )
-	{
-		float flLengthToPlayer = (pPlayer->GetAbsOrigin() - GetAbsOrigin()).Length();
-		float flLengthToEnemy = flLengthToPlayer;
-
-		if ( pPlayer != GetEnemy() )
+	if ( pPlayer && pPlayer->FInViewCone(this) ) // || flLengthToEnemy < 48
 		{
-			flLengthToEnemy = ( GetEnemy()->GetAbsOrigin() - GetAbsOrigin()).Length();
-		}
-
-		if ( flLengthToPlayer <= GRENADE_PULL_MAX_DISTANCE && flLengthToEnemy <= GRENADE_PULL_MAX_DISTANCE )
+		if ( flLengthToEnemy <= GRENADE_PULL_MAX_DISTANCE )
 		{
+//TE120-----
 			float flPullChance = 1.0f - ( flLengthToEnemy / GRENADE_PULL_MAX_DISTANCE );
 			m_flGrenadePullTime = gpGlobals->curtime + 0.5f;
 
@@ -607,7 +608,13 @@ bool CNPC_Zombine::AllowedToSprint( void )
 	//If you're sprinting then there's no reason to sprint again.
 	if ( IsSprinting() )
 		return false;
+//TE120-----
+	//Don't sprint if 0 grenade zombie variant
+	if ( m_iGrenadeCount == 0 )
+		return false;
 
+	return true;
+	/*
 	int iChance = SPRINT_CHANCE_VALUE;
 
 	CHL2_Player *pPlayer = dynamic_cast <CHL2_Player*> ( AI_GetSinglePlayer() );
@@ -621,6 +628,16 @@ bool CNPC_Zombine::AllowedToSprint( void )
 
 		//Bigger chance of this happening if the player is not looking at the zombie
 		if ( pPlayer->FInViewCone( this ) == false )
+		{
+			iChance *= 2;
+		}
+	}
+
+	CBaseEntity *pEnemy = GetEnemy();
+	if (pEnemy)
+	{
+		//Bigger chance of this happening if the enemy is in zombies view cone
+		if ( FInViewCone( pEnemy ) == false )
 		{
 			iChance *= 2;
 		}
@@ -650,6 +667,7 @@ bool CNPC_Zombine::AllowedToSprint( void )
 		return false;
 
 	return true;
+	*/ //TE120-----
 }
 
 void CNPC_Zombine::StopSprint( void )
@@ -657,7 +675,7 @@ void CNPC_Zombine::StopSprint( void )
 	GetNavigator()->SetMovementActivity( ACT_WALK );
 
 	m_flSprintTime = gpGlobals->curtime;
-	m_flSprintRestTime = m_flSprintTime + random->RandomFloat( 2.5f, 5.0f );
+	m_flSprintRestTime = m_flSprintTime + random->RandomFloat( 1.5f, 3.0f );//TE120-----
 }
 
 void CNPC_Zombine::Sprint( bool bMadSprint )
@@ -679,7 +697,7 @@ void CNPC_Zombine::Sprint( bool bMadSprint )
 	m_flSprintTime = gpGlobals->curtime + flSprintTime;
 
 	//Don't sprint for this long after I'm done with this sprint run.
-	m_flSprintRestTime = m_flSprintTime + random->RandomFloat( 2.5f, 5.0f );
+	m_flSprintRestTime = m_flSprintTime + random->RandomFloat( 1.5f, 3.0f );//TE120-----
 
 	EmitSound( "Zombine.Charge" );
 }

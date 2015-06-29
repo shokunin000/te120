@@ -14,6 +14,7 @@
 #include "engine/ivdebugoverlay.h"
 #include "tier1/KeyValues.h"
 #include "toolframework_client.h"
+#include "physpropclientside.h"//TE120
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -27,7 +28,18 @@ CRagdollExplosionEnumerator::CRagdollExplosionEnumerator( Vector origin, float r
 	m_vecOrigin		= origin;
 	m_flMagnitude	= magnitude;
 	m_flRadius		= radius;
+	m_bDirectPush	= false;//TE120
 }
+//TE120-------------------------------------------------------------
+// Enumator class for ragdolls being affected by explosive forces
+CRagdollExplosionEnumerator::CRagdollExplosionEnumerator( Vector origin, float radius, float magnitude, bool direct )
+{
+	m_vecOrigin	= origin;
+	m_flMagnitude	= magnitude;
+	m_flRadius	= radius;
+	m_bDirectPush	= direct;
+}
+//TE120----------------------------------------------------------
 
 // Actual work code
 IterationRetval_t CRagdollExplosionEnumerator::EnumElement( IHandleEntity *pHandleEntity )
@@ -53,6 +65,26 @@ CRagdollExplosionEnumerator::~CRagdollExplosionEnumerator()
 	for (int i = 0; i < m_Entities.Count(); i++ )
 	{
 		C_BaseEntity *pEnt = m_Entities[i];
+
+		//TE120-------------------------------------------------------------
+		//removed C_BaseAnimating *pModel = static_cast< C_BaseAnimating * >( pEnt );
+		if ( m_bDirectPush == true )
+		{
+			//Msg( pEnt->GetClassname(), "\n" );
+			C_ClientRagdoll *pModel = dynamic_cast< C_ClientRagdoll * >( pEnt );
+			if (pModel)
+			{
+				pModel->GCPush( &m_vecOrigin, m_flRadius );
+			}
+
+			C_PhysPropClientside *pModel2 = dynamic_cast< C_PhysPropClientside * >( pEnt );
+			if (pModel2)
+			{
+				pModel2->GCPush( &m_vecOrigin, m_flRadius );
+			}
+		}
+		else
+		{
 		C_BaseAnimating *pModel = static_cast< C_BaseAnimating * >( pEnt );
 
 		Vector	position = pEnt->CollisionProp()->GetCollisionOrigin();
@@ -76,10 +108,14 @@ CRagdollExplosionEnumerator::~CRagdollExplosionEnumerator()
 
 		// tricky, adjust tr.start so end-start->= force
 		tr.startpos = tr.endpos - dir;
-		// move expolsion center a bit down, so things fly higher 
+			// move explosion center a bit down, so things fly higher
 		tr.startpos.z -= 32.0f;
 
+			// debugoverlay->AddLineOverlay( tr.startpos, position, 0,255,0, true, 18.0 );
+
 		pModel->ImpactTrace( &tr, DMG_BLAST, NULL );
+	}
+//TE120-------------------------------------------------------------
 	}
 }
 

@@ -46,6 +46,9 @@
 #include "gamestats.h"
 #include "filters.h"
 #include "tier0/icommandline.h"
+#include "ammodef.h"//TE120
+#include "npc_strider.h"//TE120
+#include "weapon_rpg.h"//TE120
 
 #ifdef HL2_EPISODIC
 #include "npc_alyx_episodic.h"
@@ -72,7 +75,7 @@ extern ConVar autoaim_max_dist;
 
 // This switches between the single primary weapon, and multiple weapons with buckets approach (jdw)
 #define	HL2_SINGLE_PRIMARY_WEAPON_MODE	0
-
+#define GC_DRAIN_TIME 14.0//TE120
 #define TIME_IGNORE_FALL_DAMAGE 10.0
 
 extern int gEvilImpulse101;
@@ -84,6 +87,12 @@ ConVar hl2_normspeed( "hl2_normspeed", "190" );
 ConVar hl2_sprintspeed( "hl2_sprintspeed", "320" );
 
 ConVar hl2_darkness_flashlight_factor ( "hl2_darkness_flashlight_factor", "1" );
+
+//TE120------------------
+ConVar hl2_blt( "hl2_blt", "0" );
+ConVar hl2_energyrecoveryrate( "hl2_energyrecoveryrate", "4" );
+ConVar hl2_mindelayrecoveryrate( "hl2_mindelayrecoveryrate", "0.1" );
+//TE120---------------------------
 
 #ifdef HL2MP
 	#define	HL2_WALK_SPEED 150
@@ -212,6 +221,7 @@ public:
 #ifdef PORTAL
 	void InputSuppressCrosshair( inputdata_t &inputdata );
 #endif // PORTAL2
+	void InputSetBlurry( inputdata_t &inputdata );//TE120
 
 	void Activate ( void );
 
@@ -353,6 +363,7 @@ BEGIN_DATADESC( CHL2_Player )
 	DEFINE_FIELD( m_flTargetFindTime, FIELD_TIME ),
 
 	DEFINE_FIELD( m_flAdmireGlovesAnimTime, FIELD_TIME ),
+	DEFINE_FIELD( m_flNextCheckUsableTime, FIELD_TIME ),//TE120
 	DEFINE_FIELD( m_flNextFlashlightCheckTime, FIELD_TIME ),
 	DEFINE_FIELD( m_flFlashlightPowerDrainScale, FIELD_FLOAT ),
 	DEFINE_FIELD( m_bFlashlightDisabled, FIELD_BOOLEAN ),
@@ -385,6 +396,8 @@ BEGIN_DATADESC( CHL2_Player )
 
 	//DEFINE_FIELD( m_hPlayerProxy, FIELD_EHANDLE ), //Shut up class check!
 
+	DEFINE_FIELD( m_flNextLocatorUpdateTime, FIELD_TIME ),//TE120
+
 END_DATADESC()
 
 CHL2_Player::CHL2_Player()
@@ -395,6 +408,14 @@ CHL2_Player::CHL2_Player()
 
 	m_flArmorReductionTime = 0.0f;
 	m_iArmorReductionFrom = 0;
+//TE120-----------
+	m_flOverHeatWait	= MIN_READY_DELAY;
+	m_flEnergyRequired	= MIN_ENERGY_REQUIRED;
+	m_flNextCoolDown	= 0.0f;
+	m_flLastRecoveryTime	= 1.0f;
+	m_flRecoveryRateScale	= 1.0f;
+	m_flRecoveryRate	= 1.04;
+//TE120-------------------
 }
 
 //
@@ -426,6 +447,7 @@ void CHL2_Player::Precache( void )
 {
 	BaseClass::Precache();
 
+	PrecacheScriptSound( "Geiger.BeepHigh" );//TE120
 	PrecacheScriptSound( "HL2Player.SprintNoPower" );
 	PrecacheScriptSound( "HL2Player.SprintStart" );
 	PrecacheScriptSound( "HL2Player.UseDeny" );
@@ -435,6 +457,7 @@ void CHL2_Player::Precache( void )
 	PrecacheScriptSound( "HL2Player.TrainUse" );
 	PrecacheScriptSound( "HL2Player.Use" );
 	PrecacheScriptSound( "HL2Player.BurnPain" );
+	PrecacheScriptSound( "JNK_Radar_Ping_Friendly" );//TE120
 }
 
 //-----------------------------------------------------------------------------
@@ -465,10 +488,14 @@ void CHL2_Player::EquipSuit( bool bPlayEffects )
 	
 	m_HL2Local.m_bDisplayReticle = true;
 
+//TE120--commented out
+/*
 	if ( bPlayEffects == true )
 	{
 		StartAdmireGlovesAnimation();
 	}
+*/
+//TE120
 }
 
 void CHL2_Player::RemoveSuit( void )
@@ -561,6 +588,18 @@ void CHL2_Player::HandleArmorReduction( void )
 //-----------------------------------------------------------------------------
 void CHL2_Player::PreThink(void)
 {
+//TE120----------------------
+	if ( hl2_blt.GetBool() )
+	{
+		const char *pszText = "Beta Build 1.13";
+		NDebugOverlay::ScreenText( 0.002, 0.0, pszText, 255, 255, 255, 255, 0.0 );
+	}
+
+	if ( g_iSkillLevel == SKILL_HARD )
+		m_flRecoveryRate = 1.02;
+	else
+		m_flRecoveryRate = 1.04;
+//TE120------------------------
 	if ( player_showpredictedposition.GetBool() )
 	{
 		Vector	predPos;
@@ -572,6 +611,8 @@ void CHL2_Player::PreThink(void)
 	}
 
 #ifdef HL2_EPISODIC
+	UpdateLocator();//TE120
+
 	if( m_hLocatorTargetEntity != NULL )
 	{
 		// Keep track of the entity here, the client will pick up the rest of the work
@@ -732,6 +773,7 @@ void CHL2_Player::PreThink(void)
 
 #ifdef HL2_EPISODIC
 	CheckFlashlight();
+	CheckUsable();//TE120
 #endif	// HL2_EPISODIC
 
 	// So the correct flags get sent to client asap.
@@ -891,6 +933,30 @@ void CHL2_Player::PreThink(void)
 	#endif
 			m_nButtons &= ~(IN_ATTACK|IN_ATTACK2);
 		}
+	}
+//TE120-------------------------
+	// Wind down weapon overheat time
+	if ( ( m_flEnergyRequired > MIN_ENERGY_REQUIRED || m_flOverHeatWait > MIN_READY_DELAY || m_flRecoveryRateScale < 1.0 )  && ( gpGlobals->curtime >= m_flNextCoolDown ) )
+	{
+		// Don't continue beeping at low wait times
+		if ( m_flEnergyRequired > 26.0f )
+		{
+			CPASAttenuationFilter filterB( this, "Geiger.BeepHigh" );
+			EmitSound( filterB, entindex(), "Geiger.BeepHigh" );
+		}
+
+		m_flEnergyRequired = clamp( m_flEnergyRequired - ( m_flRecoveryRateScale * m_flLastRecoveryTime * hl2_energyrecoveryrate.GetFloat() ), MIN_ENERGY_REQUIRED, MAX_ENERGY_REQUIRED );
+		m_flOverHeatWait = clamp( m_flOverHeatWait - ( m_flRecoveryRateScale * m_flLastRecoveryTime * hl2_mindelayrecoveryrate.GetFloat() ), MIN_READY_DELAY, MAX_READY_DELAY );
+
+		// This is for exponential recovery. Should recovery relatively slow with frequent use but quickly recovery when cooled down
+		m_flRecoveryRateScale = clamp( m_flRecoveryRateScale * m_flRecoveryRate, 0.1, 1.0 );
+		// Msg( "m_flRecoveryRateScale: %f\n", m_flRecoveryRateScale );
+		// Msg( "m_flEnergyRequired: %f\n", m_flEnergyRequired );
+		// Msg( "m_flOverHeatWait: %f\n\n", m_flOverHeatWait );
+
+		m_flLastRecoveryTime = random->RandomFloat( 0.1, 1.0 );
+		m_flNextCoolDown = gpGlobals->curtime + m_flLastRecoveryTime;
+//TE120------------------------------
 	}
 }
 
@@ -1142,6 +1208,7 @@ void CHL2_Player::Spawn(void)
 	GetPlayerProxy();
 
 	SetFlashlightPowerDrainScale( 1.0f );
+	m_flNextLocatorUpdateTime = gpGlobals->curtime - 1.0f;//TE120
 }
 
 //-----------------------------------------------------------------------------
@@ -1312,7 +1379,7 @@ void CHL2_Player::ToggleZoom(void)
 //-----------------------------------------------------------------------------
 void CHL2_Player::StartZooming( void )
 {
-	int iFOV = 25;
+	int iFOV = 35;//TE120 changed
 	if ( SetFOV( this, iFOV, 0.4f ) )
 	{
 		m_HL2Local.m_bZooming = true;
@@ -2122,7 +2189,36 @@ bool CHL2_Player::IsIlluminatedByFlashlight( CBaseEntity *pEntity, float *flRetu
 
 	return true;
 }
+//TE120-------------------------------------
+//-----------------------------------------------------------------------------
+// Purpose: Let player know when his crosshair is on a usable
+//-----------------------------------------------------------------------------
+void CHL2_Player::CheckUsable( void )
+{
+	if ( m_flNextCheckUsableTime > gpGlobals->curtime )
+		return;
+	m_flNextCheckUsableTime = gpGlobals->curtime + FLASHLIGHT_NPC_CHECK_INTERVAL;
 
+	// First do a cheap find to see if there are any usables
+	bool bFoundAnyUsable = FindAnyUsable();
+
+	if ( bFoundAnyUsable )
+	{
+		CBaseEntity *useEnt = FindUseEntity();
+
+		// More expensive search to verify item is usable with traces/collision checks/etc.
+		if ( useEnt )
+		{
+			// Msg( "%s : %s\n", useEnt->GetClassname(), useEnt->GetEntityName() );
+			SetOnUsable(true);
+		}
+		else
+			SetOnUsable( false );
+	}
+	else
+		SetOnUsable(false);
+}
+//TE120-------------------------------------------------
 //-----------------------------------------------------------------------------
 // Purpose: Let NPCs know when the flashlight is trained on them
 //-----------------------------------------------------------------------------
@@ -2250,6 +2346,126 @@ void CHL2_Player::OnSquadMemberKilled( inputdata_t &data )
 	UserMessageBegin( user, "SquadMemberDied" );
 	MessageEnd();
 }
+//TE120---------------------------
+//-----------------------------------------------------------------------------
+// Purpose: Search for things that the locator detects, and stick them in the
+// UTILVector that gets sent to the client for locator display.
+//-----------------------------------------------------------------------------
+ConVar locator_range_end_p( "locator_range_end_p", "1500" ); // 90 feet
+
+void CHL2_Player::UpdateLocator( bool forceUpdate )
+{
+	CBasePlayer *pPlayer = AI_GetSinglePlayer();
+
+	if ( !pPlayer || !pPlayer->IsSuitEquipped() )
+		return;
+
+	if( !forceUpdate && gpGlobals->curtime < m_flNextLocatorUpdateTime )
+		return;
+
+	// Count the targets on radar. If any more targets come on the radar, we beep.
+	// int m_iNumOldRadarContacts = m_HL2Local.m_iNumLocatorContacts;
+
+	m_flNextLocatorUpdateTime = gpGlobals->curtime + LOCATOR_UPDATE_FREQUENCY;
+	m_HL2Local.m_iNumLocatorContacts = 0;
+
+	CBaseEntity *pEnt = gEntList.FirstEnt();
+	string_t iszStriderName = FindPooledString( "npc_strider" );
+	string_t iszHealthName = FindPooledString( "item_healthkit" );
+
+	string_t iszAmmoTarget1 = FindPooledString( "item_rpg_round" );
+	string_t iszAmmoTarget2 = FindPooledString( "weapon_rpg" );
+
+	string_t iszGeneric = FindPooledString( "item_item_crate" );
+
+	string_t iszRadiation = FindPooledString( "prop_dynamic" ); // Hacky, using dynamic since I'm too lazy to create new server/client entity.
+
+	while( pEnt != NULL )
+	{
+		int type = LOCATOR_CONTACT_NONE;
+
+		// Msg( "className: %s\n", pEnt->m_iClassname );
+
+		if ( pEnt->m_iClassname == iszStriderName )
+		{
+			CNPC_Strider *pStrider = dynamic_cast<CNPC_Strider*>( pEnt );
+
+			if( !pStrider || !pStrider->CarriedByDropship() )
+			{
+				// Ignore striders which are carried by dropships.
+				type = LOCATOR_CONTACT_LARGE_ENEMY;
+			}
+		}
+		else if ( pEnt->m_iClassname == iszHealthName )
+		{
+			type = LOCATOR_CONTACT_HEALTH;
+		}
+		else if ( pEnt->m_iClassname == iszAmmoTarget1 )
+		{
+			type = LOCATOR_CONTACT_AMMO;
+		}
+		else if ( pEnt->m_iClassname == iszAmmoTarget2 )
+		{
+			CWeaponRPG *pRPG = dynamic_cast<CWeaponRPG*>( pEnt );
+			if ( !pRPG->GetOwner() )
+				type = LOCATOR_CONTACT_AMMO;
+		}
+		else if ( pEnt->m_iClassname == iszGeneric )
+		{
+			type = LOCATOR_CONTACT_GENERIC;
+		}
+		else if ( pEnt->m_iClassname == iszRadiation )
+		{
+			string_t iszRadiationName = FindPooledString( "radiation" );
+			if ( pEnt->GetEntityName() != NULL_STRING )
+			{
+				if ( pEnt->GetEntityName() == iszRadiationName )
+				{
+					// Msg( "pEnt->GetEntityName(): %s\n", pEnt->GetEntityName() );
+					type = LOCATOR_CONTACT_RADIATION;
+
+					// get range to player;
+					float flRange = (pEnt->GetAbsOrigin() - pPlayer->GetAbsOrigin()).Length();
+					flRange *= 3.0f;
+					pPlayer->NotifyNearbyRadiationSource( flRange );
+				}
+			}
+		}
+
+		if( type != RADAR_CONTACT_NONE )
+		{
+			Vector vecPos = pEnt->GetAbsOrigin();
+			float x_diff = vecPos.x - pPlayer->GetAbsOrigin().x;
+			float y_diff = vecPos.y - pPlayer->GetAbsOrigin().y;
+			float flDist = sqrt( ( ( x_diff )*( x_diff ) + ( y_diff )*( y_diff ) ) );
+
+			if ( flDist <= locator_range_end_p.GetFloat() )
+			{
+				// Msg( "Adding %s : %s to locator list.\n", pEnt->GetClassname(), pEnt->GetEntityName() );
+
+				m_HL2Local.m_locatorEnt.Set( m_HL2Local.m_iNumLocatorContacts, pEnt );
+				m_HL2Local.m_iLocatorContactType.Set( m_HL2Local.m_iNumLocatorContacts, type );
+				m_HL2Local.m_iNumLocatorContacts++;
+
+				if( m_HL2Local.m_iNumLocatorContacts == LOCATOR_MAX_CONTACTS )
+					break;
+			}
+		}
+
+		pEnt = gEntList.NextEnt( pEnt );
+	}
+
+	// if( m_HL2Local.m_iNumLocatorContacts > m_iNumOldRadarContacts )
+	// {
+	// 	EmitSound( "Geiger.BeepLow" );
+	// }
+
+	CSingleUserRecipientFilter filter( pPlayer );
+	UserMessageBegin( filter, "UpdatePlayerLocator" );
+	WRITE_BYTE( 0 ); // end marker
+	MessageEnd();	// send message
+}
+//TE120---------------------------
 
 //-----------------------------------------------------------------------------
 // Purpose: 
@@ -2465,6 +2681,13 @@ void CHL2_Player::Event_Killed( const CTakeDamageInfo &info )
 
 	FirePlayerProxyOutput( "PlayerDied", variant_t(), this, this );
 	NotifyScriptsOfDeath();
+
+//TE120----------------
+	// Reset drunk post process
+	CEffectData	data;
+	data.m_flScale = -1;
+	DispatchEffect( "CE_GravityBallFadeConcOn", data );
+//TE120----------------
 }
 
 //-----------------------------------------------------------------------------
@@ -3124,7 +3347,7 @@ void CHL2_Player::PickupObject( CBaseEntity *pObject, bool bLimitMassAndSize )
 	
 	if ( bLimitMassAndSize == true )
 	{
-		if ( CBasePlayer::CanPickupObject( pObject, 35, 128 ) == false )
+		if ( CBasePlayer::CanPickupObject( pObject, 35, 208 ) == false )//TE120 changed val
 			 return;
 	}
 
@@ -3786,6 +4009,7 @@ BEGIN_DATADESC( CLogicPlayerProxy )
 #ifdef PORTAL
 	DEFINE_INPUTFUNC( FIELD_VOID,	"SuppressCrosshair", InputSuppressCrosshair ),
 #endif // PORTAL
+	DEFINE_INPUTFUNC( FIELD_VOID,	"SetBlurry", InputSetBlurry ),//TE120
 	DEFINE_FIELD( m_hPlayer, FIELD_EHANDLE ),
 END_DATADESC()
 
@@ -3879,8 +4103,23 @@ void CLogicPlayerProxy::InputLowerWeapon( inputdata_t &inputdata )
 		return;
 
 	CHL2_Player *pPlayer = dynamic_cast<CHL2_Player*>(m_hPlayer.Get());
+//TE120------------------------------------
+	// if ( pPlayer->IsWeaponLowered() )
+	// 	pPlayer->Weapon_Ready();
+	// else
+	//  pPlayer->Weapon_Lower();
 
-	pPlayer->Weapon_Lower();
+	if ( pPlayer->GetActiveWeapon() )
+	{
+		if ( pPlayer->GetActiveWeapon()->CanHolster() )
+		{
+			if ( pPlayer->GetActiveWeapon()->IsWeaponVisible() )
+				pPlayer->GetActiveWeapon()->Holster();
+			else
+				pPlayer->GetActiveWeapon()->Deploy();
+		}
+	}
+//TE120------------------------
 }
 
 void CLogicPlayerProxy::InputEnableCappedPhysicsDamage( inputdata_t &inputdata )
@@ -3900,6 +4139,16 @@ void CLogicPlayerProxy::InputDisableCappedPhysicsDamage( inputdata_t &inputdata 
 	CHL2_Player *pPlayer = dynamic_cast<CHL2_Player*>(m_hPlayer.Get());
 	pPlayer->DisableCappedPhysicsDamage();
 }
+//TE120------------------------
+void CLogicPlayerProxy::InputSetBlurry( inputdata_t &inputdata )
+{
+	// Send the concussed post effect on
+	CEffectData	data;
+
+	data.m_flScale = 1.0;
+	DispatchEffect( "CE_GravityBallFadeConcOn", data );
+}
+//TE120------------------------
 
 void CLogicPlayerProxy::InputSetLocatorTargetEntity( inputdata_t &inputdata )
 {

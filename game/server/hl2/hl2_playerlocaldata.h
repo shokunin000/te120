@@ -12,7 +12,7 @@
 #endif
 
 #include "networkvar.h"
-
+#include "hl2_vehicle_radar.h"//TE120
 #include "hl_movedata.h"
 
 //-----------------------------------------------------------------------------
@@ -43,6 +43,12 @@ public:
 #ifdef HL2_EPISODIC
 	CNetworkVar( float, m_flFlashBattery );
 	CNetworkVar( Vector, m_vecLocatorOrigin );
+//TE120--------------------
+	CNetworkVar( int, m_iNumLocatorContacts );
+	// CNetworkArray( Vector, m_vecLocatorContactPos, LOCATOR_MAX_CONTACTS );
+	CNetworkArray( int, m_iLocatorContactType, LOCATOR_MAX_CONTACTS );
+	CNetworkArray( EHANDLE, m_locatorEnt, LOCATOR_MAX_CONTACTS );
+//TE120--------------
 #endif
 
 	// Ladder related data

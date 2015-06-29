@@ -264,7 +264,7 @@ void C_BaseCombatWeapon::DrawCrosshair()
 
 	// Find out if this weapon's auto-aimed onto a target
 	bool bOnTarget = ( m_iState == WEAPON_IS_ONTARGET );
-	
+	bool bOnUsable = ( m_iState == WEAPON_ON_USABLE ); //TE120
 	if ( player->GetFOV() >= 90 )
 	{ 
 		// normal crosshairs
@@ -274,6 +274,13 @@ void C_BaseCombatWeapon::DrawCrosshair()
 
 			crosshair->SetCrosshair( GetWpnData().iconAutoaim, clr );
 		}
+		//TE120------------------------------
+		else if ( bOnUsable && GetWpnData().iconCrosshairUse )
+		{
+			clr[3] = 255;
+			crosshair->SetCrosshair( GetWpnData().iconCrosshairUse, clr );
+		}
+		//TE120-------------------------------
 		else if ( GetWpnData().iconCrosshair )
 		{
 			clr[3] = 255;
@@ -290,7 +297,11 @@ void C_BaseCombatWeapon::DrawCrosshair()
 
 		// zoomed crosshairs
 		if (bOnTarget && GetWpnData().iconZoomedAutoaim)
-			crosshair->SetCrosshair(GetWpnData().iconZoomedAutoaim, white);
+		//TE120-------------------------------
+			crosshair->SetCrosshair( GetWpnData().iconZoomedAutoaim, white );
+		else if ( bOnUsable && GetWpnData().iconCrosshairUse )
+			crosshair->SetCrosshair( GetWpnData().iconCrosshairUse, white );
+		//TE120-------------------------------
 		else if ( GetWpnData().iconZoomedCrosshair )
 			crosshair->SetCrosshair( GetWpnData().iconZoomedCrosshair, white );
 		else

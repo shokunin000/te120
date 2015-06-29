@@ -17,12 +17,12 @@
 //
 // Will your mod be team based?
 // define SDK_USE_TEAMS
-#define SDK_USE_TEAMS
+//#define SDK_USE_TEAMS//TE120
 
 //
 // Do you use player classes?
 // define SDK_USE_PLAYERCLASSES
-#define SDK_USE_PLAYERCLASSES
+//#define SDK_USE_PLAYERCLASSES//TE120
 
 //================================
 // PLAYER MOVEMENT RELATED OPTIONS
@@ -31,12 +31,12 @@
 //
 // Do your players have stamina? - this is a pre-requisite for sprinting, if you define sprinting, and don't uncomment this, it will be included anyway.
 // define SDK_USE_STAMINA
-#define SDK_USE_STAMINA
+//#define SDK_USE_STAMINA//TE120
 
 //
 // Are your players able to sprint?
 // define SDK_USE_SPRINTING
-#define SDK_USE_SPRINTING
+//#define SDK_USE_SPRINTING//TE120
 
 //Tony; stamina is a pre-requisite to sprinting, if you don't declare stamina but you do declare sprinting
 //stamina needs to be included.
@@ -46,7 +46,7 @@
 //
 // Can your players go prone?
 // define SDK_USE_PRONE
-#define SDK_USE_PRONE
+//#define SDK_USE_PRONE//TE120
 
 //=====================
 // EXTRA WEAPON OPTIONS
@@ -55,17 +55,17 @@
 //
 // If you're allowing sprinting, do you want to be able to shoot while sprinting?
 // define SDK_SHOOT_WHILE_SPRINTING
-#define SDK_SHOOT_WHILE_SPRINTING
+//#define SDK_SHOOT_WHILE_SPRINTING//TE120
 
 //
 // Do you want your players to be able to shoot while climing ladders?
 // define SDK_SHOOT_ON_LADDERS
-#define SDK_SHOOT_ON_LADDERS
+//#define SDK_SHOOT_ON_LADDERS//TE120
 
 //
 // Do you want your players to be able to shoot while jumping?
 // define SDK_SHOOT_WHILE_JUMPING
-#define SDK_SHOOT_WHILE_JUMPING
+//#define SDK_SHOOT_WHILE_JUMPING//TE120
 
 
 

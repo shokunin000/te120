@@ -539,7 +539,10 @@ void CViewRender::OnRenderStart()
 			if ( localFOV == iDefaultFOV )
 			{
 #ifndef _XBOX
-				// reset to saved sensitivity
+				//TE120-------------------------------------------
+				if ( player->m_Local.m_iHideHUD & HIDEHUD_ALL )
+					gHUD.m_flMouseSensitivity = 0.15f;
+				else // reset to saved sensitivity//TE120
 				gHUD.m_flMouseSensitivity = 0;
 #endif
 			}
@@ -556,6 +559,10 @@ void CViewRender::OnRenderStart()
 					((float)localFOV / (float)iDefaultFOV) * // linear fov downscale
 					zoom_sensitivity_ratio.GetFloat(); // sensitivity scale factor
 #ifndef _XBOX
+				//TE120
+				if ( player->m_Local.m_iHideHUD & HIDEHUD_ALL )
+					gHUD.m_flMouseSensitivity = 0.15f;
+				else//TE120-----
 				gHUD.m_flMouseSensitivity = gHUD.m_flFOVSensitivityAdjust * sensitivity.GetFloat(); // regular sensitivity
 #endif
 			}

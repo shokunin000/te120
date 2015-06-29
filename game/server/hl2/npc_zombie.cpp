@@ -319,7 +319,7 @@ void CZombie::PrescheduleThink( void )
 //-----------------------------------------------------------------------------
 int CZombie::SelectSchedule ( void )
 {
-	if( HasCondition( COND_PHYSICS_DAMAGE ) && !m_ActBusyBehavior.IsActive() )
+	if( HasCondition( COND_PHYSICS_DAMAGE ) && !m_ActBusyBehavior.IsActive() && !IsInAScript() )//TE120----- changed
 	{
 		return SCHED_FLINCH_PHYSICS;
 	}

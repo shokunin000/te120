@@ -54,6 +54,7 @@ public:
 	void	GetBottomPosition( Vector& org );
 	void	ComputeLadderDir( Vector& bottomToTopVec );
 
+	void	OffsetTop( inputdata_t &inputdata );//TE120
 	void	SetEndPoints( const Vector& p1, const Vector& p2 );
 
 	void	InputEnable( inputdata_t &inputdata );

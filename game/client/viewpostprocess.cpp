@@ -18,7 +18,10 @@
 #include "bitmap/tgawriter.h"
 #include "filesystem.h"
 #include "tier0/vprof.h"
-
+#include "c_te_effect_dispatch.h"//TE120
+#ifdef _WIN32 //Disabled on Linux
+#include "shadereditor/ivshadereditor.h"//TE120
+#endif
 #include "proxyentity.h"
 
 //-----------------------------------------------------------------------------
@@ -2213,6 +2216,10 @@ static ConVar r_queued_post_processing( "r_queued_post_processing", "0" );
 static ConVar mat_postprocess_x( "mat_postprocess_x", "4" );
 static ConVar mat_postprocess_y( "mat_postprocess_y", "1" );
 
+float g_DesiredDrunkValue = -1.0f;//TE120
+float g_ActualDrunkValue = 0.0f;//TE120
+float g_NextDrunkUpdateTime = 0.0f;//TE120
+
 void DoEnginePostProcessing( int x, int y, int w, int h, bool bFlashlightIsOn, bool bPostVGui )
 {
 	tmZone( TELEMETRY_LEVEL0, TMZF_NONE, "%s", __FUNCTION__ );
@@ -2631,7 +2638,89 @@ void DoEnginePostProcessing( int x, int y, int w, int h, bool bFlashlightIsOn, b
 #if defined( _X360 )
 	pRenderContext->PopVertexShaderGPRAllocation();
 #endif
+//TE120-----------------------------------
+	static IMaterial *pMat = materials->FindMaterial( "drunk", TEXTURE_GROUP_OTHER );
+	if ( pMat )
+	{
+		bool bFound = false;
+		IMaterialVar *pMutableVar = pMat->FindVar( "$MUTABLE_01", &bFound );
+
+		if ( bFound )
+		{
+			g_ActualDrunkValue = 1 - pMutableVar->GetFloatValue();
+
+			if ( g_ActualDrunkValue != g_DesiredDrunkValue )
+			{
+				// If the map is just starting make sure this is reset back to 0
+				if ( g_DesiredDrunkValue == -1 )
+				{
+					g_NextDrunkUpdateTime = gpGlobals->curtime + 0.05f;
+					g_ActualDrunkValue = 0;
+					g_DesiredDrunkValue = 0;
+				}
+
+				if ( gpGlobals->curtime >= g_NextDrunkUpdateTime )
+				{
+					// Fade in or out the drunk effect
+					if ( g_DesiredDrunkValue < g_ActualDrunkValue )
+					{
+						g_ActualDrunkValue -= 0.015;
+
+						if ( g_ActualDrunkValue <= 0.0 )
+							g_ActualDrunkValue = 0.0;
+						
+						g_NextDrunkUpdateTime = gpGlobals->curtime + 0.05f;
+					}
+					else
+					{
+						g_ActualDrunkValue += 0.2;
+
+						if ( g_ActualDrunkValue > 0.34 )
+							g_ActualDrunkValue = 0.34;
+
+						// When fully concussed begin cool down in 1 second
+						if ( g_ActualDrunkValue >= 0.34 )
+						{
+							g_DesiredDrunkValue = 0.0;
+							g_NextDrunkUpdateTime = gpGlobals->curtime + 2.0f;
+						}
+						else
+							g_NextDrunkUpdateTime = gpGlobals->curtime + 0.05f;
+					}
+				}
+
+				pMutableVar->SetFloatValue( 1 - g_ActualDrunkValue );
+
+				// Run Drunk Post
+				UpdateScreenEffectTexture();
+				pRenderContext->DrawScreenSpaceRectangle( pMat, 0, 0, w, h, 0, 0, w - 1, h - 1, w, h );
+			}
+		}
+	}
 }
+
+void GravityBallFadeConcCallback( const CEffectData &data )
+{
+	g_DesiredDrunkValue = data.m_flScale;
+	g_NextDrunkUpdateTime = gpGlobals->curtime + 0.05f;
+}
+
+DECLARE_CLIENT_EFFECT( "CE_GravityBallFadeConcOn", GravityBallFadeConcCallback );
+
+#ifdef _WIN32 //Disabled on Linux
+void DisableDirtyLens( const CEffectData &data )
+{
+	int numPPEI = shaderEdit->GetPPEIndex( "ppe_dirty_lens" );
+
+	if (numPPEI != -1)
+	{
+		shaderEdit->SetPPEEnabled( numPPEI, false );
+	}
+}
+
+DECLARE_CLIENT_EFFECT( "CE_DisableDirtyLens", DisableDirtyLens );
+#endif
+//TE120---------------------------------
 
 // Motion Blur Material Proxy =========================================================================================
 static float g_vMotionBlurValues[4] = { 0.0f, 0.0f, 0.0f, 0.0f };

@@ -43,22 +43,24 @@ extern CUtlMemoryPool g_EntityListPool;
 
 #define SF_DECAL_NOTINDEATHMATCH		2048
 
-class CDecal : public CPointEntity
+class CDecal : public CServerOnlyPointEntity //TE120
 {
 public:
-	DECLARE_CLASS( CDecal, CPointEntity );
+	DECLARE_CLASS( CDecal, CServerOnlyPointEntity );//TE120
 
 	void	Spawn( void );
 	bool	KeyValue( const char *szKeyName, const char *szValue );
 
 	// Need to apply static decals here to get them into the signon buffer for the server appropriately
 	virtual void Activate();
-
+//TE120----
+/*
 	void	TriggerDecal( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value );
 
 	// Input handlers.
 	void	InputActivate( inputdata_t &inputdata );
-
+*/
+//TE120----
 	DECLARE_DATADESC();
 
 public:
@@ -77,9 +79,13 @@ BEGIN_DATADESC( CDecal )
 
 	// Function pointers
 	DEFINE_FUNCTION( StaticDecal ),
+//TE120----
+/*
 	DEFINE_FUNCTION( TriggerDecal ),
 
 	DEFINE_INPUTFUNC( FIELD_VOID, "Activate", InputActivate ),
+*/
+//TE120----
 
 END_DATADESC()
 
@@ -99,19 +105,26 @@ void CDecal::Spawn( void )
 void CDecal::Activate()
 {
 	BaseClass::Activate();
-
-	if ( !GetEntityName() )
-	{
+//TE120----
+	// Note from Dorian: I removed ability to trigger decals since I changed decals to be
+	// server only entities to reduce edicts.
+	// if ( !GetEntityName() )
+	// {
 		StaticDecal();
-	}
+	// }
+/*
 	else
 	{
 		// if there IS a targetname, the decal sprays itself on when it is triggered.
 		SetThink ( &CDecal::SUB_DoNothing );
 		SetUse(&CDecal::TriggerDecal);
 	}
+*/
+//TE120----
 }
 
+//TE120----
+/*
 void CDecal::TriggerDecal ( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value )
 {
 	// this is set up as a USE function for info_decals that have targetnames, so that the
@@ -137,8 +150,8 @@ void CDecal::InputActivate( inputdata_t &inputdata )
 {
 	TriggerDecal( inputdata.pActivator, inputdata.pCaller, USE_ON, 0 );
 }
-
-
+*/
+//TE120----
 void CDecal::StaticDecal( void )
 {
 	class CTraceFilterValidForDecal : public CTraceFilterSimple
@@ -210,6 +223,12 @@ void CDecal::StaticDecal( void )
 
 	if ( canDraw )
 	{
+//TE120----
+		// if (m_bLowPriority) {
+		// 	Warning( "This is the problem child. m_nTexture: %d\n", m_nTexture );
+		// }
+//TE120----
+
 		engine->StaticDecal( position, m_nTexture, entityIndex, modelIndex, m_bLowPriority );
 	}
 
@@ -223,7 +242,10 @@ bool CDecal::KeyValue( const char *szKeyName, const char *szValue )
 	{
 		// FIXME:  should decals all be preloaded?
 		m_nTexture = UTIL_PrecacheDecal( szValue, true );
-		
+//TE120----		
+		// if (FStrEq(szValue, "decals/ao_blured_round_2x"))
+		//	Warning( "Here's are culprit. m_nTexture: %d szValue: %s\n", m_nTexture, szValue );
+//TE120----
 		// Found
 		if (m_nTexture >= 0 )
 			return true;
@@ -231,6 +253,10 @@ bool CDecal::KeyValue( const char *szKeyName, const char *szValue )
 	}
 	else
 	{
+//TE120----
+		// if (FStrEq(szValue, "decals/ao_blured_round_2x"))
+		// 	Warning( "Here's are culprit, not finding texture. m_nTexture: %d szValue: %s\n", m_nTexture, szValue );
+//TE120----
 		return BaseClass::KeyValue( szKeyName, szValue );
 	}
 
@@ -240,10 +266,10 @@ bool CDecal::KeyValue( const char *szKeyName, const char *szValue )
 //-----------------------------------------------------------------------------
 // Purpose: Projects a decal against a prop
 //-----------------------------------------------------------------------------
-class CProjectedDecal : public CPointEntity
+class CProjectedDecal : public CServerOnlyPointEntity//TE120
 {
 public:
-	DECLARE_CLASS( CProjectedDecal, CPointEntity );
+	DECLARE_CLASS( CProjectedDecal, CServerOnlyPointEntity );//TE120
 
 	void	Spawn( void );
 	bool	KeyValue( const char *szKeyName, const char *szValue );

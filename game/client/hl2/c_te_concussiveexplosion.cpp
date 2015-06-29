@@ -10,6 +10,9 @@
 #include "ragdollexplosionenumerator.h"
 #include "tier1/KeyValues.h"
 #include "toolframework_client.h"
+//TE120---------------------------------------------------
+#include "c_te_effect_dispatch.h"
+//TE120---------------------------------------------------
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -57,6 +60,33 @@ void C_TEConcussiveExplosion::AffectRagdolls( void )
 	partition->EnumerateElementsInSphere( PARTITION_CLIENT_RESPONSIVE_EDICTS, m_vecOrigin, m_nRadius, false, &ragdollEnum );
 }
 
+//TE120---------------------------------------------------
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+bool FX_AffectConcussionRagdolls( Vector vecOrigin, float radius, float magnitude )
+{
+	// don't do this when lots of ragdolls are simulating
+	if ( s_RagdollLRU.CountRagdolls(true) > 1 )
+		return false;
+
+	CRagdollExplosionEnumerator	ragdollEnum( vecOrigin, radius, magnitude, true );
+	partition->EnumerateElementsInSphere( PARTITION_CLIENT_RESPONSIVE_EDICTS, vecOrigin, radius, false, &ragdollEnum );
+
+	return true;
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+// Input  : &data - 
+//-----------------------------------------------------------------------------
+void RagdollConcussionCallback( const CEffectData &data )
+{
+	FX_AffectConcussionRagdolls( data.m_vOrigin, data.m_flRadius, data.m_flMagnitude );
+}
+
+DECLARE_CLIENT_EFFECT( "RagdollConcussion", RagdollConcussionCallback );
+//TE120---------------------------------------------------
 
 //-----------------------------------------------------------------------------
 // Recording 

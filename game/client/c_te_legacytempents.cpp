@@ -1539,7 +1539,7 @@ void CTempEnts::BloodSprite( const Vector &org, int r, int g, int b, int a, int 
 	{
 		C_LocalTempEntity		*pTemp;
 		int						frameCount = modelinfo->GetModelFrameCount( model );
-		color32					impactcolor = { r, g, b, a };
+		color32					impactcolor = { (unsigned char) r, (unsigned char) g, (unsigned char) b, (unsigned char) a };
 
 		//Large, single blood sprite is a high-priority tent
 		if ( ( pTemp = TempEntAllocHigh( org, model ) ) != NULL )

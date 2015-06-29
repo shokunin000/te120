@@ -54,6 +54,9 @@ public:
 	float		m_flStartPosition;		// Position of brush when spawned
 	float		m_flMoveDistance;		// Total distance the brush can move
 
+	EHANDLE		m_hPosition1;			// Used to mark end position //TE120
+	EHANDLE		m_hPosition2;			// Used to mark start position //TE120
+
 	IPhysicsFluidController *m_pFluidController;
 
 	// Outputs

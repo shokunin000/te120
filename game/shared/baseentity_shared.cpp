@@ -1180,6 +1180,35 @@ void CBaseEntity::VPhysicsUpdate( IPhysicsObject *pPhysics )
 			}
 
 #ifndef CLIENT_DLL 
+//TE120----
+			// Trace ahead a bit to scare enemies if the object is massive
+			if ( pPhysics->GetMass() > 250) {
+				if ( gpGlobals->curtime > m_flNextScareTime )
+				{
+					trace_t	tr;
+					Vector	vecStart = origin;
+					Vector	vecSpot;
+					Vector  vecDir;
+					AngularImpulse angTemp;
+					pPhysics->GetVelocity( &vecDir, &angTemp );
+					int		iLength;
+					int		i;
+					UTIL_TraceLine( vecStart, vecStart + vecDir, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
+					// DebugDrawLine( tr.startpos, tr.endpos, 255, 0, 0, true, 2.0 );
+					iLength = ( tr.startpos - tr.endpos ).Length();
+					vecSpot = vecStart + vecDir;
+					// Every 128 units spawn a warning sound
+					for( i = 0 ; i < iLength ; i += 128 )
+					{
+						// DebugDrawLine( vecSpot, vecSpot + vecDir * 0.5, 0, 255, 0, true, 2.0 );
+						CSoundEnt::InsertSound( SOUND_PHYSICS_DANGER, vecSpot, 192, 0.5, this );
+						vecSpot = vecSpot + ( vecDir * 128 );
+					}
+
+					m_flNextScareTime = gpGlobals->curtime + 1.5;
+				}
+			}
+//TE120----
 			PhysicsTouchTriggers( &prevOrigin );
 			PhysicsRelinkChildren(gpGlobals->frametime);
 #endif

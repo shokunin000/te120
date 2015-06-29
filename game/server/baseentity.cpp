@@ -1857,6 +1857,7 @@ BEGIN_DATADESC_NO_BASE( CBaseEntity )
 	DEFINE_KEYFIELD( m_flLocalTime, FIELD_FLOAT, "ltime" ),
 	DEFINE_FIELD( m_flVPhysicsUpdateLocalTime, FIELD_FLOAT ),
 	DEFINE_FIELD( m_flMoveDoneTime, FIELD_FLOAT ),
+	DEFINE_FIELD( m_flNextScareTime, FIELD_FLOAT ),//TE120----
 
 //	DEFINE_FIELD( m_nPushEnumCount, FIELD_INTEGER ),
 
@@ -1902,6 +1903,7 @@ BEGIN_DATADESC_NO_BASE( CBaseEntity )
 	DEFINE_INPUTFUNC( FIELD_INTEGER, "Alpha", InputAlpha ),
 	DEFINE_INPUTFUNC( FIELD_BOOLEAN, "AlternativeSorting", InputAlternativeSorting ),
 	DEFINE_INPUTFUNC( FIELD_COLOR32, "Color", InputColor ),
+	DEFINE_INPUTFUNC( FIELD_COLOR32, "ColorFade", InputColorFade ),//TE120----
 	DEFINE_INPUTFUNC( FIELD_STRING, "SetParent", InputSetParent ),
 	DEFINE_INPUTFUNC( FIELD_STRING, "SetParentAttachment", InputSetParentAttachment ),
 	DEFINE_INPUTFUNC( FIELD_STRING, "SetParentAttachmentMaintainOffset", InputSetParentAttachmentMaintainOffset ),
@@ -1940,6 +1942,7 @@ BEGIN_DATADESC_NO_BASE( CBaseEntity )
 	DEFINE_FUNCTION( SUB_StartFadeOut ),
 	DEFINE_FUNCTION( SUB_StartFadeOutInstant ),
 	DEFINE_FUNCTION( SUB_FadeOut ),
+	DEFINE_FUNCTION( SUB_ColorFade ),//TE120----
 	DEFINE_FUNCTION( SUB_Vanish ),
 	DEFINE_FUNCTION( SUB_CallUseToggle ),
 	DEFINE_THINKFUNC( ShadowCastDistThink ),
@@ -3998,6 +4001,31 @@ void CBaseEntity::InputColor( inputdata_t &inputdata )
 	SetRenderColor( clr.r, clr.g, clr.b );
 }
 
+//TE120----
+//-----------------------------------------------------------------------------
+// Purpose: Input handler for the entity color fade over 0.5s
+// Input  : Color32 new value for color
+//-----------------------------------------------------------------------------
+void CBaseEntity::InputColorFade( inputdata_t &inputdata )
+{
+	color32 clr = inputdata.value.Color32();
+
+	if ( clr != m_clrRender )
+	{
+		// Dont start thinking if it is already thinking
+		// if (m_clrRender->r != m_clrRenderDesired->r)
+		// {
+			m_clrRenderDesired = clr;
+
+			SetThink( &CBaseEntity::SUB_ColorFade );
+			SetNextThink( gpGlobals->curtime );
+		// }
+		// else
+		//	m_clrRenderDesired = clr;
+	}
+}
+//TE120----
+
 
 //-----------------------------------------------------------------------------
 // Purpose: Called whenever the entity is 'Used'.  This can be when a player hits
@@ -5341,7 +5369,7 @@ public:
 		{
 			const char *target = "", *action = "Use";
 			variant_t value;
-			int delay = 0;
+			float delay = 0.0f;
 
 			target = STRING( AllocPooledString(command.Arg( 1 ) ) );
 
@@ -7230,6 +7258,33 @@ void CBaseEntity::SUB_FadeOut( void  )
 	{
 		SetNextThink( gpGlobals->curtime );
 	}
+}
+//TE120----
+//-----------------------------------------------------------------------------
+// Purpose: Fade color slowly
+//-----------------------------------------------------------------------------
+void CBaseEntity::SUB_ColorFade( void  )
+{
+	float dt = gpGlobals->frametime;
+	if ( dt > 0.1f )
+	{
+		dt = 0.1f;
+	}
+
+	float speed = max(2.5,640*dt); // fade out over 0.5 seconds
+	SetRenderColorR( UTIL_Approach( m_clrRenderDesired->r, m_clrRender->r, speed ) );
+	SetRenderColorG( UTIL_Approach( m_clrRenderDesired->g, m_clrRender->g, speed ) );
+	SetRenderColorB( UTIL_Approach( m_clrRenderDesired->b, m_clrRender->b, speed ) );
+
+	// Done?
+	if ( (m_clrRender->r > m_clrRenderDesired->r + 0.05) || (m_clrRender->r < m_clrRenderDesired->r - 0.05) )
+	{
+		SetNextThink( gpGlobals->curtime );
+	}
+	else
+	{
+		m_clrRender = m_clrRenderDesired;
+	}//TE120----
 }
 
 

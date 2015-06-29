@@ -41,9 +41,9 @@ public:
 	void	Operator_ForceNPCFire( CBaseCombatCharacter  *pOperator, bool bSecondary );
 	void	Operator_HandleAnimEvent( animevent_t *pEvent, CBaseCombatCharacter *pOperator );
 
-	int		GetMinBurst( void ) { return 2; }
-	int		GetMaxBurst( void ) { return 5; }
-	float	GetFireRate( void ) { return 0.1f; }
+	int		GetMinBurst( void );//TE120----
+	int		GetMaxBurst( void );//TE120----
+	float	GetFireRate( void );//TE120----
 
 	bool	CanHolster( void );
 	bool	Reload( void );
@@ -57,9 +57,12 @@ public:
 	virtual const Vector& GetBulletSpread( void )
 	{
 		static Vector cone;
-		
+		//TE120----
+		if ( GetOwner()->IsPlayer() )
 		cone = VECTOR_CONE_3DEGREES;
-
+		else
+			cone = VECTOR_CONE_5DEGREES;
+//TE120----
 		return cone;
 	}
 

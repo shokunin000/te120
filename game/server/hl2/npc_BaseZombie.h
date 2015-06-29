@@ -239,15 +239,24 @@ public:
 public:
 	CAI_ActBusyBehavior		m_ActBusyBehavior;
 
+	//TE120-------------
+	bool	m_bDisallowHeadcrab;	// is this zombie allowed to spawn headcrab in death?
 
-
+	//---------------------------------
+	//	Outputs
+	//---------------------------------
+	COutputEvent		m_OnIlluminated;
+	COutputEvent		m_OnNotIlluminated;
+	//TE120-------------
 protected:
 
 	CSoundPatch	*m_pMoanSound;
 
 	bool	m_fIsTorso;			// is this is a half-zombie?
 	bool	m_fIsHeadless;		// is this zombie headless
-
+	//TE120-------------
+	bool	m_fIsIlluminated;	// is this zombie illuminated by the players flashlight?
+	//TE120-------------
 	float	m_flNextFlinch;
 
 	bool m_bHeadShot;			// Used to determine the survival of our crab beyond our death.

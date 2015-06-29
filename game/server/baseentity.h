@@ -643,6 +643,7 @@ public:
 	void InputAlternativeSorting( inputdata_t &inputdata );
 	void InputAlpha( inputdata_t &inputdata );
 	void InputColor( inputdata_t &inputdata );
+	void InputColorFade( inputdata_t &inputdata );//TE120----
 	void InputSetParent( inputdata_t &inputdata );
 	void SetParentAttachment( const char *szInputName, const char *szAttachment, bool bMaintainOffset );
 	void InputSetParentAttachment( inputdata_t &inputdata );
@@ -797,6 +798,7 @@ public:
 
 	// was pev->rendercolor
 	CNetworkColor32( m_clrRender );
+	CNetworkColor32( m_clrRenderDesired );//TE120----
 	const color32 GetRenderColor() const;
 	void SetRenderColor( byte r, byte g, byte b );
 	void SetRenderColor( byte r, byte g, byte b, byte a );
@@ -1045,6 +1047,7 @@ public:
 	void					SUB_StartFadeOut( float delay = 10.0f, bool bNotSolid = true );
 	void					SUB_StartFadeOutInstant();
 	void					SUB_FadeOut ( void );
+	void					SUB_ColorFade ( void );//TE120----
 	void					SUB_Vanish( void );
 	void					SUB_CallUseToggle( void ) { this->Use( this, this, USE_TOGGLE, 0 ); }
 	void					SUB_PerformFadeOut( void );
@@ -1671,6 +1674,7 @@ private:
 	float			m_flVPhysicsUpdateLocalTime;
 	// local time the movement has ended
 	float			m_flMoveDoneTime;
+	float			m_flNextScareTime;//TE120----
 
 	// A counter to help quickly build a list of potentially pushed objects for physics
 	int				m_nPushEnumCount;

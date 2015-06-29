@@ -151,7 +151,7 @@ CFlare::~CFlare()
 //-----------------------------------------------------------------------------
 void CFlare::Precache( void )
 {
-	PrecacheModel("models/weapons/flare.mdl" );
+	PrecacheModel("models/weapons/shell.mdl" );//TE120----
 
 	PrecacheScriptSound( "Weapon_FlareGun.Burn" );
 
@@ -188,7 +188,7 @@ void CFlare::Spawn( void )
 {
 	Precache();
 
-	SetModel( "models/weapons/flare.mdl" );
+	SetModel( "models/weapons/shell.mdl" );//TE120----
 
 	UTIL_SetSize( this, Vector( -2, -2, -2 ), Vector( 2, 2, 2 ) );
 

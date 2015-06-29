@@ -761,7 +761,7 @@ void CNetGraphPanel::DrawTextFields( int graphvalue, int x, int y, int w, netban
 
 	Q_snprintf( sz, sizeof( sz ), "lerp: %5.1f ms", GetClientInterpAmount() * 1000.0f );
 
-	int interpcolor[ 3 ] = { GRAPH_RED, GRAPH_GREEN, GRAPH_BLUE }; 
+	int interpcolor[ 3 ] = { (int) GRAPH_RED, (int) GRAPH_GREEN, (int) GRAPH_BLUE }; 
 	float flInterp = GetClientInterpAmount();
 	if ( flInterp > 0.001f )
 	{
@@ -817,7 +817,7 @@ void CNetGraphPanel::DrawTextFields( int graphvalue, int x, int y, int w, netban
 		{
 			Q_snprintf( sz, sizeof( sz ), "sv  : %5.1f   var: %4.2f msec", m_flServerFramerate, m_flServerFramerateStdDeviation * 1000.0f );
 
-			int servercolor[ 3 ] = { GRAPH_RED, GRAPH_GREEN, GRAPH_BLUE };
+			int servercolor[ 3 ] = { (int) GRAPH_RED, (int) GRAPH_GREEN, (int) GRAPH_BLUE };
 
 			if ( m_flServerFramerate < 10.0f )
 			{

@@ -666,8 +666,14 @@ CNPCSpawnDestination *CTemplateNPCMaker::FindSpawnDestination()
 				Vector vecTopOfHull = NAI_Hull::Maxs( HULL_HUMAN );
 				vecTopOfHull.x = 0;
 				vecTopOfHull.y = 0;
-				bool fVisible = (pPlayer->FVisible( vecTest ) || pPlayer->FVisible( vecTest + vecTopOfHull ) );
+//TE120----
+				bool fVisible = (pPlayer->FInViewCone( vecTest ) || pPlayer->FInViewCone( vecTest + vecTopOfHull ) );
 
+				if (fVisible)
+					fVisible = (pPlayer->FVisible( vecTest, MASK_VISIBLE ) || pPlayer->FVisible( vecTest + vecTopOfHull, MASK_VISIBLE ) );
+				else
+					DevMsg( 1, "(%s) Spawner not visible.\n", STRING( GetEntityName() ) );
+//TE120----
 				if( m_CriterionVisibility == TS_YN_YES )
 				{
 					if( !fVisible )
@@ -677,10 +683,15 @@ CNPCSpawnDestination *CTemplateNPCMaker::FindSpawnDestination()
 				{
 					if( fVisible )
 					{
+//TE120----
 						if ( !(pPlayer->GetFlags() & FL_NOTARGET) )
+						{
 							fValid = false;
+							DevMsg( 1, "(%s) Not counting current spawner since visible\n", STRING( GetEntityName() ) );
+						}
 						else
-							DevMsg( 2, "Spawner %s spawning even though seen due to notarget\n", STRING( GetEntityName() ) );
+							DevMsg( 1, "Spawner %s spawning even though seen due to notarget\n", STRING( GetEntityName() ) );
+//TE120----
 					}
 				}
 			}
@@ -691,12 +702,19 @@ CNPCSpawnDestination *CTemplateNPCMaker::FindSpawnDestination()
 				count++;
 			}
 		}
-
+//TE120----
+		else
+			DevMsg( 1, "(%s) Not counting spawner due to reuse delay\n", STRING( GetEntityName() ) );
+//TE120----
 		pEnt = gEntList.FindEntityByName( pEnt, m_iszDestinationGroup );
 	}
-
+//TE120----
 	if( count < 1 )
+	{
+		DevMsg( 1, "(%s) No valid spawner found\n", STRING( GetEntityName() ) );
 		return NULL;
+	}
+//TE120----
 
 	// Now find the nearest/farthest based on distance criterion
 	if( m_CriterionDistance == TS_DIST_DONT_CARE )
@@ -713,7 +731,9 @@ CNPCSpawnDestination *CTemplateNPCMaker::FindSpawnDestination()
 				return pRandomDest;
 			}
 		}
-
+//TE120----
+		DevMsg( 2, "Couldn't find any valid spawns where AI will fit.\n", STRING( GetEntityName() ) );
+//TE120----
 		return NULL;
 	}
 	else

@@ -18,6 +18,7 @@
 #include "cbase.h"
 #include "npc_BaseZombie.h"
 #include "player.h"
+#include "hl2_player.h"//TE120
 #include "game.h"
 #include "ai_network.h"
 #include "ai_navigator.h"
@@ -206,6 +207,10 @@ BEGIN_DATADESC( CNPC_BaseZombie )
 	DEFINE_SOUNDPATCH( m_pMoanSound ),
 	DEFINE_FIELD( m_fIsTorso, FIELD_BOOLEAN ),
 	DEFINE_FIELD( m_fIsHeadless, FIELD_BOOLEAN ),
+//TE120-------------
+	DEFINE_FIELD( m_fIsIlluminated, FIELD_BOOLEAN ),
+	DEFINE_KEYFIELD( m_bDisallowHeadcrab, FIELD_BOOLEAN, "PreventHeadcrab" ),
+//TE120-------------
 	DEFINE_FIELD( m_flNextFlinch, FIELD_TIME ),
 	DEFINE_FIELD( m_bHeadShot, FIELD_BOOLEAN ),
 	DEFINE_FIELD( m_flBurnDamage, FIELD_FLOAT ),
@@ -219,6 +224,11 @@ BEGIN_DATADESC( CNPC_BaseZombie )
 	DEFINE_FIELD( m_iMoanSound, FIELD_INTEGER ),
 	DEFINE_FIELD( m_hObstructor, FIELD_EHANDLE ),
 	DEFINE_FIELD( m_bIsSlumped, FIELD_BOOLEAN ),
+//TE120-------------
+	// Outputs
+	DEFINE_OUTPUT( m_OnIlluminated, "OnIlluminated" ),
+	DEFINE_OUTPUT( m_OnNotIlluminated, "OnNotIlluminated" ),
+//TE120-------------
 
 END_DATADESC()
 
@@ -772,9 +782,9 @@ HeadcrabRelease_t CNPC_BaseZombie::ShouldReleaseHeadcrab( const CTakeDamageInfo 
 		// If I was killed by a bullet...
 		if ( info.GetDamageType() & DMG_BULLET )
 		{
-			if( m_bHeadShot ) 
+			if( m_bHeadShot || m_bDisallowHeadcrab ) //TE120-------------
 			{
-				if( flDamageThreshold > 0.25 )
+				if( flDamageThreshold > 0.25 || m_bDisallowHeadcrab ) //TE120-------------
 				{
 					// Enough force to kill the crab.
 					return RELEASE_RAGDOLL;
@@ -1272,6 +1282,10 @@ CBaseEntity *CNPC_BaseZombie::ClawAttack( float flDist, int iDamage, QAngle &qaV
 	if ( GetEnemy() )
 	{
 		trace_t	tr;
+//TE120-------------
+		if ( GetEnemy()->GetSolidFlags() & FSOLID_NOT_SOLID )
+			return NULL;
+//TE120-------------
 		AI_TraceHull( WorldSpaceCenter(), GetEnemy()->WorldSpaceCenter(), -Vector(8,8,8), Vector(8,8,8), MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr );
 
 		if ( tr.fraction < 1.0f )
@@ -2070,8 +2084,33 @@ void CNPC_BaseZombie::PrescheduleThink( void )
 	{
 		m_flBurnDamage = 0;
 	}
-}
+//TE120----
+	// If we're being illuminated by the flashlight send output
+	CHL2_Player *pPlayer = dynamic_cast<CHL2_Player*>( UTIL_GetLocalPlayer() );
+ 	if ( pPlayer )
+	{
+		if ( pPlayer->IsIlluminatedByFlashlight( this, NULL ) )
+		{
+			if ( !m_fIsIlluminated )
+			{
+				m_fIsIlluminated = true;
 
+				// Send output that I am illuminated
+				m_OnIlluminated.FireOutput( this, this );
+				//Msg( "I am illuminated!\n" ); //Debug
+			}
+		}
+		else if ( m_fIsIlluminated )
+		{
+			m_fIsIlluminated = false;
+
+			// Send out that I am no longer illuminated
+			m_OnNotIlluminated.FireOutput(this, this);
+			//Msg( "I am no longer illuminated!\n" ); //Debug
+		}
+	}
+}
+//TE120-----------------
 
 //---------------------------------------------------------
 //---------------------------------------------------------
@@ -2498,6 +2537,22 @@ void CNPC_BaseZombie::ReleaseHeadcrab( const Vector &vecOrigin, const Vector &ve
 		{
 			pCrab->Ignite( 30 );
 		}
+//TE120-------------
+		// Duplicate relationship to player
+		//CBasePlayer *pPlayer = UTIL_PlayerByIndex(1);
+		CBasePlayer *pPlayer = UTIL_GetLocalPlayer();
+		//CBasePlayer *pPlayer = AI_GetSinglePlayer();
+ 		if ( pPlayer )
+		{
+			int iDisposition = this->IRelationType( pPlayer );
+			int iRank = this->IRelationPriority( pPlayer );
+			pCrab->AddEntityRelationship( pPlayer, ( Disposition_t )iDisposition, iRank );
+
+			// Setting the crab name to the same one used by the zombie will keep
+			// custom relationships in sync in chapter_1
+			pCrab->SetName( this->GetEntityName() );
+		}
+//TE120-------------
 
 		CopyRenderColorTo( pCrab );
 

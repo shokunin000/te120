@@ -7,6 +7,7 @@
 
 #include "cbase.h"
 #include "shake.h"
+#include "te_effect_dispatch.h"//TE120-------------
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -81,6 +82,12 @@ void CEnvFade::InputFade( inputdata_t &inputdata )
 	else
 	{
 		fadeFlags |= FFADE_OUT;
+		//TE120-------------
+#ifdef _WIN32 //Disabled on Linux
+		CEffectData	data;
+		DispatchEffect( "CE_DisableDirtyLens", data );
+		//TE120-------------
+#endif
 	}
 
 	if ( m_spawnflags & SF_FADE_MODULATE )

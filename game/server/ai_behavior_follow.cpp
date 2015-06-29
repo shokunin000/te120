@@ -833,7 +833,11 @@ bool CAI_FollowBehavior::ShouldFollow()
 	}
 		
 	m_bFollowNavFailed = false;
-
+//TE120----
+	// Let AI reload or they might get stuck in endless loop trying to reload & move
+	if ( HasCondition ( COND_NO_PRIMARY_AMMO ) )
+		return false;
+//TE120----
 	return true;	
 }
 
@@ -1941,7 +1945,7 @@ void CAI_FollowBehavior::BuildScheduleTestBits()
 		   IsCurSchedule(SCHED_ALERT_FACE_BESTSOUND ) )
 	{
 #ifdef HL2_EPISODIC
-		if( IsCurSchedule(SCHED_RELOAD, false) && GetOuter()->Classify() == CLASS_PLAYER_ALLY_VITAL )
+		if( IsCurSchedule(SCHED_RELOAD, false) ) // && GetOuter()->Classify() == CLASS_PLAYER_ALLY_VITAL )//TE120----
 		{
 			// Alyx and Barney do not stop reloading because the player has moved. 
 			// Citizens and other regular allies do.
@@ -2462,10 +2466,12 @@ static AI_FollowFormation_t g_SidekickFollowFormation =
 //-------------------------------------
 static AI_FollowSlot_t g_HunterFollowFormationSlots[] = 
 {
-	{ 3, { 480, -240, -400 }, 0, 48, 64, 1000, 60 },
-	{ 3, { 480, 240, -400 }, 0, 48, 64, 1000, 60 },
-	{ 2, { 480, 0, -400 }, 0, 48, 64, 1000, 60 },
-	{ 1, { -240, 0, -400 }, 0, 48, 64, 1000, 60 },
+//TE120----
+	{ 3, { 480, -240, -400 }, 192, 0, 192, 1000, 192 },
+	{ 3, { 480, 240, -400 }, 192, 0, 192, 1000, 192 },
+	{ 2, { 480, 0, -400 }, 192, 0, 192, 1000, 192 },
+	{ 1, { -240, 0, -400 }, 192, 0, 192, 1000, 192 },
+//TE120----
 };
 
 static AI_FollowFormation_t g_HunterFollowFormation = 
@@ -2473,10 +2479,12 @@ static AI_FollowFormation_t g_HunterFollowFormation =
 	"Hunter",
 	AIFF_DEFAULT | AIFF_USE_FOLLOW_POINTS,
 	ARRAYSIZE(g_HunterFollowFormationSlots),
-	48,							// followPointTolerance
-	48,							// targetMoveTolerance
-	60,//180,						// repathOnRouteTolerance
-	0,							// walkTolerance
+//TE120----
+	192,						// followPointTolerance
+	192,						// targetMoveTolerance
+	192,						// repathOnRouteTolerance
+	48,							// walkTolerance
+//TE120----
 	960,						// coverTolerance
 	960,						// enemyLOSTolerance
 	1920,						// chaseEnemyTolerance

@@ -963,15 +963,15 @@ void CC_Player_PhysSwap( void )
 			engine->ClientCommand( UTIL_GetCommandClient()->edict(), "cancelselect" );
 
 			const char *strWeaponName = pWeapon->GetName();
-
-			if ( !Q_stricmp( strWeaponName, "weapon_physcannon" ) )
+//TE120----
+			if ( !Q_stricmp( strWeaponName, "weapon_physconcussion" ) )
 			{
-				PhysCannonForceDrop( pWeapon, NULL );
+				// PhysCannonForceDrop( pWeapon, NULL );
 				pPlayer->SelectLastItem();
 			}
 			else
 			{
-				pPlayer->SelectItem( "weapon_physcannon" );
+				pPlayer->SelectItem( "weapon_physconcussion" );//TE120----
 			}
 		}
 	}

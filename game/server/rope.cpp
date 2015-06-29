@@ -85,6 +85,7 @@ BEGIN_DATADESC( CRopeKeyframe )
 	DEFINE_INPUTFUNC( FIELD_FLOAT,	"SetScrollSpeed",	InputSetScrollSpeed ),
 	DEFINE_INPUTFUNC( FIELD_VECTOR,	"SetForce",			InputSetForce ),
 	DEFINE_INPUTFUNC( FIELD_VOID,	"Break",			InputBreak ),
+	DEFINE_INPUTFUNC( FIELD_VOID,	"UpdateRope",		InputUpdateRope ),//TE120
 
 END_DATADESC()
 
@@ -554,7 +555,98 @@ void CRopeKeyframe::InputBreak( inputdata_t &inputdata )
 	//Route through the damage code
 	Break();
 }
+//TE120----
+//-----------------------------------------------------------------------------
+// Purpose: Updates rope for lighting
+// Input  : &inputdata - 
+//-----------------------------------------------------------------------------
+void CRopeKeyframe::InputUpdateRope( inputdata_t &inputdata )
+{
+	/*
+	SetStartPoint( this );
+	CBaseEntity *pEnt = gEntList.FindEntityByName( NULL, m_iNextLinkName );
+	if( pEnt && pEnt->edict() )
+	{
+		SetEndPoint( pEnt );
+	}
 
+	m_iRopeMaterialModelIndex = PrecacheModel( STRING( m_strRopeMaterialModel ) );
+	EndpointsChanged();
+	Init();
+	*/
+
+	CRopeKeyframe *pRet = (CRopeKeyframe*)CreateEntityByName( "keyframe_rope" );
+	if( pRet )
+	{
+		pRet->SetAbsOrigin( GetAbsOrigin() );
+
+		pRet->SetStartPoint( pRet );
+		if ( GetParent() )
+		{
+			Msg( "Parent for Start Point: %s", STRING( GetParent()->GetEntityName() ) );
+			pRet->SetParent( GetParent(), GetParentAttachment() );
+		}
+
+		pRet->m_iNextLinkName = m_iNextLinkName;
+		CBaseEntity *pEnt = gEntList.FindEntityByName( NULL, m_iNextLinkName );
+		if( pEnt && pEnt->edict() )
+		{
+			Msg( "End Point Ent: %s\n", STRING( pEnt->GetEntityName() ) );
+			pRet->SetEndPoint( pEnt );
+
+			if( m_spawnflags & SF_ROPE_RESIZE )
+				pRet->m_RopeFlags |= ROPE_RESIZE;
+		}
+		else
+		{
+			// If we're from the map file, and we don't have a target ent, and 
+			// "Start Dangling" wasn't set, then this rope keyframe doesn't have
+			// any rope coming out of it.
+			if ( m_fLockedPoints & (int)ROPE_LOCK_END_POINT )
+			{
+				pRet->m_RopeFlags &= ~ROPE_SIMULATE;
+			}
+		}
+
+		pRet->m_bCreatedFromMapFile = false;
+
+		pRet->m_strRopeMaterialModel = m_strRopeMaterialModel;
+		pRet->m_iRopeMaterialModelIndex = pRet->PrecacheModel( STRING( m_strRopeMaterialModel ) );
+
+		pRet->EndpointsChanged();
+		pRet->Init();
+
+		pRet->m_Width = m_Width;
+		pRet->m_nSegments = m_nSegments;
+		pRet->m_Slack = m_Slack;
+		pRet->m_TextureScale = m_TextureScale;
+		pRet->m_RopeLength = m_RopeLength;
+		pRet->m_flScrollSpeed = m_flScrollSpeed;
+		pRet->m_Subdiv = m_Subdiv;
+
+		if (pRet->GetParent() == this)
+			pRet->SetParent( NULL, -1 );
+
+		// We have to set the name a frame later otherwise the name is still occupied
+		pRet->m_strNameThink = GetEntityName();
+		pRet->CallNameThink();
+
+		inputdata_t id_temp;
+		InputKill( id_temp );
+	}
+}
+
+void CRopeKeyframe::CallNameThink()
+{
+	SetThink( &CRopeKeyframe::SetNameThink );
+	SetNextThink( gpGlobals->curtime + 0.1f );
+}
+
+void CRopeKeyframe::SetNameThink()
+{
+	SetName(m_strNameThink);
+}
+//TE120----
 //-----------------------------------------------------------------------------
 // Purpose: Breaks the rope
 // Output : Returns true on success, false on failure.

@@ -28,7 +28,7 @@ public:
 	virtual void Spawn( void );
 	bool CreateVPhysics( void );
 
-	virtual int	ObjectCaps( void ) { return HasSpawnFlags(SF_IGNORE_PLAYERUSE) ? BaseClass::ObjectCaps() : BaseClass::ObjectCaps() | FCAP_IMPULSE_USE; }
+	virtual int	ObjectCaps( void ) { return HasSpawnFlags(SF_IGNORE_PLAYERUSE) ? BaseClass::ObjectCaps() & ~FCAP_ACROSS_TRANSITION : (BaseClass::ObjectCaps() | FCAP_IMPULSE_USE) & ~FCAP_ACROSS_TRANSITION; } //TE120
 
 	virtual int DrawDebugTextOverlays( void );
 

@@ -358,7 +358,8 @@ void CRagdollProp::OnPhysGunPickup( CBasePlayer *pPhysGunUser, PhysGunPickup_t r
 		m_strSourceClassName = NULL_STRING;
 	}
 	m_bHasBeenPhysgunned = true;
-
+//TE120----
+	/*
 	if( HasPhysgunInteraction( "onpickup", "boogie" ) )
 	{
 		if ( reason == PUNTED_BY_CANNON )
@@ -370,6 +371,8 @@ void CRagdollProp::OnPhysGunPickup( CBasePlayer *pPhysGunUser, PhysGunPickup_t r
 			CRagdollBoogie::Create( this, 150, gpGlobals->curtime, 2.0f, 0.0f );
 		}
 	}
+	*/
+//TE120----
 
 	if ( HasSpawnFlags( SF_RAGDOLLPROP_USE_LRU_RETIREMENT ) )
 	{
@@ -397,10 +400,14 @@ void CRagdollProp::OnPhysGunDrop( CBasePlayer *pPhysGunUser, PhysGunDrop_t Reaso
 	m_hPhysicsAttacker = pPhysGunUser;
 	m_flLastPhysicsInfluenceTime = gpGlobals->curtime;
 
+//TE120----------------
+/*
 	if( HasPhysgunInteraction( "onpickup", "boogie" ) )
 	{
 		CRagdollBoogie::Create( this, 150, gpGlobals->curtime, 3.0f, SF_RAGDOLL_BOOGIE_ELECTRICAL );
 	}
+*/
+//TE120----------------
 
 	if ( HasSpawnFlags( SF_RAGDOLLPROP_USE_LRU_RETIREMENT ) )
 	{
@@ -416,7 +423,7 @@ void CRagdollProp::OnPhysGunDrop( CBasePlayer *pPhysGunUser, PhysGunDrop_t Reaso
 	if ( Reason != LAUNCHED_BY_CANNON )
 		return;
 
-	if( HasPhysgunInteraction( "onlaunch", "spin_zaxis" ) )
+	if( HasPhysgunInteraction( "onlaunch", "spin_zaxis" ) && !HasPhysgunInteraction( "onpickup", "boogie" ) )//TE120
 	{
 		Vector vecAverageCenter( 0, 0, 0 );
 

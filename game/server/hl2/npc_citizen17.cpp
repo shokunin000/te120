@@ -37,7 +37,7 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
-#define INSIGNIA_MODEL "models/chefhat.mdl"
+// #define INSIGNIA_MODEL "models/chefhat.mdl" //TE120 commented out
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
@@ -393,7 +393,7 @@ void CNPC_Citizen::Precache()
 	if ( NameMatches( "matt" ) )
 		PrecacheModel( "models/props_canal/mattpipe.mdl" );
 
-	PrecacheModel( INSIGNIA_MODEL );
+	// PrecacheModel( INSIGNIA_MODEL ); //commented out
 
 	PrecacheScriptSound( "NPC_Citizen.FootstepLeft" );
 	PrecacheScriptSound( "NPC_Citizen.FootstepRight" );
@@ -4240,7 +4240,7 @@ void CSquadInsignia::Spawn()
 		}
 	}
 
-	SetModel( INSIGNIA_MODEL );
+	// SetModel( INSIGNIA_MODEL ); //TE120 commented out 
 	SetSolid( SOLID_NONE );	
 }
 

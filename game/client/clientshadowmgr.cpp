@@ -99,7 +99,7 @@ ConVar r_flashlightdepthres( "r_flashlightdepthres", "512" );
 ConVar r_flashlightdepthres( "r_flashlightdepthres", "1024" );
 #endif
 
-ConVar r_threaded_client_shadow_manager( "r_threaded_client_shadow_manager", "0" );
+ConVar r_threaded_client_shadow_manager( "r_threaded_client_shadow_manager", "1" ); //TE120 changed to 1
 
 #ifdef _WIN32
 #pragma warning( disable: 4701 )
@@ -1290,8 +1290,7 @@ bool CClientShadowMgr::Init()
 
 	SetShadowBlobbyCutoffArea( 0.005 );
 
-	bool bTools = CommandLine()->CheckParm( "-tools" ) != NULL;
-	m_nMaxDepthTextureShadows = bTools ? 4 : 1;	// Just one shadow depth texture in games, more in tools
+	m_nMaxDepthTextureShadows = 8; //TE120
 
 	bool bLowEnd = ( g_pMaterialSystemHardwareConfig->GetDXSupportLevel() < 80 );
 
@@ -1336,6 +1335,15 @@ void CClientShadowMgr::InitDepthTextureShadows()
 {
 	VPROF_BUDGET( "CClientShadowMgr::InitDepthTextureShadows", VPROF_BUDGETGROUP_SHADOW_DEPTH_TEXTURING );
 
+//TE120--------
+	// SAUL: start benchmark timer
+	CFastTimer timer;
+	timer.Start();
+ 
+	// SAUL: set m_nDepthTextureResolution to the depth resolution we want
+	m_nDepthTextureResolution = r_flashlightdepthres.GetInt();
+//TE120-----------
+
 	if( !m_bDepthTextureActive )
 	{
 		m_bDepthTextureActive = true;
@@ -1352,7 +1360,10 @@ void CClientShadowMgr::InitDepthTextureShadows()
 		m_DummyColorTexture.InitRenderTargetTexture( r_flashlightdepthres.GetInt(), r_flashlightdepthres.GetInt(), RT_SIZE_OFFSCREEN, IMAGE_FORMAT_BGR565, MATERIAL_RT_DEPTH_SHARED, false, "_rt_ShadowDummy" );
 		m_DummyColorTexture.InitRenderTargetSurface( r_flashlightdepthres.GetInt(), r_flashlightdepthres.GetInt(), IMAGE_FORMAT_BGR565, true );
 #else
-		m_DummyColorTexture.InitRenderTarget( r_flashlightdepthres.GetInt(), r_flashlightdepthres.GetInt(), RT_SIZE_OFFSCREEN, nullFormat, MATERIAL_RT_DEPTH_NONE, false, "_rt_ShadowDummy" );
+//TE120------------------
+		// SAUL: we want to create a render target of specific size, so use RT_SIZE_NO_CHANGE
+		m_DummyColorTexture.InitRenderTarget( m_nDepthTextureResolution, m_nDepthTextureResolution, RT_SIZE_NO_CHANGE, nullFormat, MATERIAL_RT_DEPTH_NONE, false, "_rt_ShadowDummy" );
+//TE120-----------------------
 #endif
 
 		// Create some number of depth-stencil textures
@@ -1372,15 +1383,16 @@ void CClientShadowMgr::InitDepthTextureShadows()
 			depthTex.InitRenderTargetTexture( m_nDepthTextureResolution, m_nDepthTextureResolution, RT_SIZE_OFFSCREEN, dstFormat, MATERIAL_RT_DEPTH_NONE, false, strRTName );
 			depthTex.InitRenderTargetSurface( 1, 1, dstFormat, false );
 #else
-			depthTex.InitRenderTarget( m_nDepthTextureResolution, m_nDepthTextureResolution, RT_SIZE_OFFSCREEN, dstFormat, MATERIAL_RT_DEPTH_NONE, false, strRTName );
+			//TE120------------------
+			// SAUL: we want to create a *DEPTH TEXTURE* of specific size, so use RT_SIZE_NO_CHANGE and MATERIAL_RT_DEPTH_ONLY
+			depthTex.InitRenderTarget( m_nDepthTextureResolution, m_nDepthTextureResolution, RT_SIZE_NO_CHANGE, dstFormat, MATERIAL_RT_DEPTH_ONLY, false, strRTName );
+			//TE120------------------
 #endif
 
-			if ( i == 0 )
-			{
-				// Shadow may be resized during allocation (due to resolution constraints etc)
-				m_nDepthTextureResolution = depthTex->GetActualWidth();
-				r_flashlightdepthres.SetValue( m_nDepthTextureResolution );
-			}
+			//TE120------------------
+			// SAUL: ensure the depth texture size wasn't changed
+			Assert(depthTex->GetActualWidth() == m_nDepthTextureResolution);
+			//TE120------------------
 
 			m_DepthTextureCache.AddToTail( depthTex );
 			m_DepthTextureCacheLocks.AddToTail( bFalse );
@@ -1388,6 +1400,11 @@ void CClientShadowMgr::InitDepthTextureShadows()
 
 		materials->EndRenderTargetAllocation();
 	}
+	
+//TE120------------------
+	timer.End();
+	DevMsg("InitDepthTextureShadows took %.2f msec\n", timer.GetDuration().GetMillisecondsF());
+//TE120------------------
 }
 
 void CClientShadowMgr::ShutdownDepthTextureShadows() 
@@ -1558,6 +1575,8 @@ void CClientShadowMgr::LevelShutdownPostEntity()
 	}
 
 	r_shadows_gamecontrol.SetValue( -1 );
+
+	ShutdownDepthTextureShadows(); //TE120
 }
 
 
@@ -2622,6 +2641,15 @@ void CClientShadowMgr::BuildFlashlight( ClientShadowHandle_t handle )
 	}
 
 	VPROF_BUDGET( "CClientShadowMgr::BuildFlashlight", VPROF_BUDGETGROUP_SHADOW_DEPTH_TEXTURING );
+
+	//TE120------------------	
+	// Don't project the flashlight if the frustum AABB is not in our view
+	Vector mins, maxs;
+	CalculateAABBFromProjectionMatrix(shadow.m_WorldToShadow, &mins, &maxs);
+ 
+	if(engine->CullBox(mins, maxs))
+		return;
+	//TE120------------------
 
 	bool bLightModels = r_flashlightmodels.GetBool();
 	bool bLightSpecificEntity = shadow.m_hTargetEntity.Get() != NULL;
@@ -3848,6 +3876,8 @@ int CClientShadowMgr::BuildActiveShadowDepthList( const CViewSetup &viewSetup, i
 		if ( !flashlightState.m_bEnableShadows )
 			continue;
 
+//TE120------------------ commented out
+/*
 		// Calculate an AABB around the shadow frustum
 		Vector vecAbsMins, vecAbsMaxs;
 		CalculateAABBFromProjectionMatrix( shadow.m_WorldToShadow, &vecAbsMins, &vecAbsMaxs );
@@ -3862,6 +3892,8 @@ int CClientShadowMgr::BuildActiveShadowDepthList( const CViewSetup &viewSetup, i
 			shadowmgr->SetFlashlightDepthTexture( shadow.m_ShadowHandle, NULL, 0 );
 			continue;
 		}
+*/
+//TE120------------------
 
 		if ( nActiveDepthShadowCount >= nMaxDepthShadows )
 		{
@@ -3997,7 +4029,9 @@ void CClientShadowMgr::ComputeShadowTextures( const CViewSetup &view, int leafCo
 	if ( !m_RenderToTextureActive || (r_shadows.GetInt() == 0) || r_shadows_gamecontrol.GetInt() == 0 )
 		return;
 
-	m_bThreaded = false;//( r_threaded_client_shadow_manager.GetBool() && g_pThreadPool->NumIdleThreads() );
+	//m_bThreaded = false;//( r_threaded_client_shadow_manager.GetBool() && g_pThreadPool->NumIdleThreads() );
+
+	m_bThreaded = ( r_threaded_client_shadow_manager.GetBool() && g_pThreadPool->NumIdleThreads() ); //Changed
 
 	MDLCACHE_CRITICAL_SECTION();
 	// First grab all shadow textures we may want to render

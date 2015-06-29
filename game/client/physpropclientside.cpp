@@ -600,6 +600,63 @@ void C_PhysPropClientside::ImpactTrace( trace_t *pTrace, int iDamageType, const 
 	OnTakeDamage( iDamage );
 }
 
+//TE120-------------------------------------
+void C_PhysPropClientside::GCPush( Vector *start, float radius )
+{
+	IPhysicsObject *pPhysicsObject = VPhysicsGetObject();
+
+	if( !pPhysicsObject )
+		return;
+
+	Vector end = this->GetAbsOrigin();
+	Vector forward;
+
+	forward.x = end.x - start->x;
+	if ( forward.x != 0 )
+		forward.x /= 128.0f;
+
+	forward.y = end.y - start->y;
+	if ( forward.y != 0 )
+		forward.y /= 128.0f;
+
+
+	forward.z = end.z - start->z;
+	// Skew the z direction upward
+	forward.z += 44.0f;
+	if ( forward.z != 0 )
+		forward.z /= 128.0f;
+
+	if( forward.z < 0 )
+	{
+		//reflect, but flatten the trajectory out a bit so it's easier to hit standing targets
+		forward.z *= -0.65f;
+	}
+	else
+	{
+		// Increase height
+		forward.z *= 1.68f;
+	}
+
+	forward = forward * 300;
+
+	Vector *vVel = &forward;
+	AngularImpulse	aVel;
+	aVel.x = 3200.0f + random->RandomFloat( 0.0f, 3200.0f );
+	aVel.y = 3200.0f + random->RandomFloat( 0.0f, 3200.0f );
+	aVel.z = 3200.0f + random->RandomFloat( 0.0f, 3200.0f );
+
+	if ( random->RandomInt( 0, 1 ) )
+		aVel.x *= -1;
+
+	if ( random->RandomInt( 0, 1 ) )
+		aVel.y *= -1;
+
+	if ( random->RandomInt (0, 1 ) )
+		aVel.z *= -1;
+
+	pPhysicsObject->AddVelocity( vVel, &aVel );
+}
+//TE120-------------------------------------------------------
 const char *C_PhysPropClientside::ParseEntity( const char *pEntData )
 {
 	CEntityMapData entData( (char*)pEntData );

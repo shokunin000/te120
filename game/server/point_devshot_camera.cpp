@@ -245,6 +245,8 @@ public:
 				}
 			}
 
+			pkvMapCameras->deleteThis(); //TE120
+
 			if ( !g_iDevShotCameraCount )
 			{
 				Warning( "Devshots: No point_devshot_camera in %s. Moving to next map.\n", STRING( gpGlobals->mapname ) );

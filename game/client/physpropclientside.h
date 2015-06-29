@@ -33,6 +33,7 @@ public:
 	virtual void			StartTouch( C_BaseEntity *pOther );
 	virtual	void			HitSurface( C_BaseEntity *pOther );
 	virtual	void			ImpactTrace( trace_t *pTrace, int iDamageType, const char *pCustomImpactName );
+	virtual void			GCPush( Vector *start, float radius );//TE120	
 	virtual	bool			IsClientCreated( void ) const { return true; }
 	virtual int				GetMultiplayerPhysicsMode() { return m_iPhysicsMode; }
 	virtual float			GetMass();

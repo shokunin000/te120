@@ -310,7 +310,7 @@ void CNPC_Combine::Spawn( void )
 	AddSolidFlags( FSOLID_NOT_STANDABLE );
 	SetMoveType( MOVETYPE_STEP );
 	SetBloodColor( BLOOD_COLOR_RED );
-	m_flFieldOfView			= -0.2;// indicates the width of this NPC's forward view cone ( as a dotproduct result )
+	m_flFieldOfView			= VIEW_FIELD_NARROW; // -0.2 indicates the width of this NPC's forward view cone ( as a dotproduct result ) //TE120 changed
 	m_NPCState				= NPC_STATE_NONE;
 	m_flNextGrenadeCheck	= gpGlobals->curtime + 1;
 	m_flNextPainSoundTime	= 0;
@@ -350,6 +350,8 @@ void CNPC_Combine::Spawn( void )
 	m_flNextAltFireTime = gpGlobals->curtime;
 
 	NPCInit();
+
+	SetDistLook(4096.0); //TE120
 }
 
 //-----------------------------------------------------------------------------
@@ -547,7 +549,7 @@ bool CNPC_Combine::ShouldMoveAndShoot()
 	m_flStopMoveShootTime = FLT_MAX;
 
 	if( IsCurSchedule( SCHED_COMBINE_HIDE_AND_RELOAD, false ) )
-		m_flStopMoveShootTime = gpGlobals->curtime + random->RandomFloat( 0.4f, 0.6f );
+		m_flStopMoveShootTime = gpGlobals->curtime + random->RandomFloat( 0.5f, 1.0f ); //TE120 changed
 
 	if( IsCurSchedule( SCHED_TAKE_COVER_FROM_BEST_SOUND, false ) )
 		return false;
@@ -559,10 +561,10 @@ bool CNPC_Combine::ShouldMoveAndShoot()
 		return false;
 
 	if( HasCondition( COND_NO_PRIMARY_AMMO, false ) )
-		m_flStopMoveShootTime = gpGlobals->curtime + random->RandomFloat( 0.4f, 0.6f );
+		m_flStopMoveShootTime = gpGlobals->curtime + random->RandomFloat( 0.5f, 1.0f );//TE120 changed
 
 	if( m_pSquad && IsCurSchedule( SCHED_COMBINE_TAKE_COVER1, false ) )
-		m_flStopMoveShootTime = gpGlobals->curtime + random->RandomFloat( 0.4f, 0.6f );
+		m_flStopMoveShootTime = gpGlobals->curtime + random->RandomFloat( 0.5f, 1.0f );//TE120 changed
 
 	return BaseClass::ShouldMoveAndShoot();
 }
@@ -1393,14 +1395,15 @@ void CNPC_Combine::AnnounceAssault(void)
 		return;
 
 	// Make sure we are in view cone of player
-	if (!pBCC->FInViewCone ( this ))
-		return;
+	//TE120 commented out----
+	// if (!pBCC->FInViewCone ( this ))
+	//	return;
 
 	// Make sure player can see me
-	if ( FVisible( pBCC ) )
-	{
+	// if ( FVisible( pBCC ) )
+	// {
 		m_Sentences.Speak( "COMBINE_ASSAULT" );
-	}
+	// }//TE120 commented out----
 }
 
 

@@ -309,13 +309,18 @@ void CNPC_PoisonZombie::Spawn( void )
 	m_pSlowBreathSound = ENVELOPE_CONTROLLER.SoundCreate( filter2, entindex(), CHAN_ITEM, "NPC_PoisonZombie.Moan1", ATTN_NORM );
 	ENVELOPE_CONTROLLER.Play( m_pSlowBreathSound, BREATH_VOL_MAX, 100 );
 
+//TE120-------------
 	int nCrabs = m_nCrabCount;
+	m_nCrabCount = 0;
 	if ( !nCrabs )
 	{
-		nCrabs = MAX_CRABS;
+		for ( int i = 0; i < MAX_CRABS; i++ )
+		{
+			EnableCrab( i, false );
 	}
-	m_nCrabCount = 0;
-
+	}
+	else
+	{
 	//
 	// Generate a random set of crabs based on the crab count
 	// specified by the level designer.
@@ -346,6 +351,8 @@ void CNPC_PoisonZombie::Spawn( void )
 	for ( int i = 0; i < MAX_CRABS; i++ )
 	{
 		EnableCrab( i, ( nBitMask & ( 1 << i ) ) != 0 );
+	}
+//TE120-------------
 	}
 }
 
@@ -706,7 +713,20 @@ void CNPC_PoisonZombie::HandleAnimEvent( animevent_t *pEvent )
 			Vector vecEnemyEyePos = pEnemy->EyePosition();
 			pCrab->ThrowAt( vecEnemyEyePos );
 		}
+//TE120-------------
+		// Duplicate relationship to player
+		CBasePlayer *pPlayer = UTIL_GetLocalPlayer();
+		if ( pPlayer )
+		{
+			int iDisposition = this->IRelationType( pPlayer );
+			int iRank = this->IRelationPriority( pPlayer );
+			pCrab->AddEntityRelationship( pPlayer, (Disposition_t)iDisposition, iRank );
 
+			// Setting the crab name to the same one used by the zombie will keep
+			// custom relationships in sync in chapter_1
+			pCrab->SetName( this->GetEntityName() );
+		}
+//TE120-------------
 		if (m_nCrabCount == 0)
 		{
 			CapabilitiesRemove( bits_CAP_INNATE_RANGE_ATTACK1 | bits_CAP_INNATE_RANGE_ATTACK2 );

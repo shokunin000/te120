@@ -361,9 +361,14 @@ void CPhysicsCannister::Explode( CBaseEntity *pAttacker )
 	Vector velocity;
 	AngularImpulse angVelocity;
 	IPhysicsObject *pPhysics = VPhysicsGetObject();
-
+//TE120----
+	if (pPhysics)
+	{
 	pPhysics->GetVelocity( &velocity, &angVelocity );
 	PropBreakableCreateAll( GetModelIndex(), pPhysics, GetAbsOrigin(), GetAbsAngles(), velocity, angVelocity, 1.0, 20, COLLISION_GROUP_DEBRIS );
+	}
+//TE120----
+
 	ExplosionCreate( GetAbsOrigin(), GetAbsAngles(), pAttacker, m_damage, 0, true );
 	UTIL_Remove( this );
 }
@@ -407,12 +412,29 @@ void CPhysicsCannister::VPhysicsCollision( int index, gamevcollisionevent_t *pEv
 //-----------------------------------------------------------------------------
 void CPhysicsCannister::ShutdownJet( void )
 {
+//TE120----
+	if (m_pJet)
+	{
 	g_EventQueue.AddEvent( m_pJet, "kill", 5, NULL, NULL );
 
 	m_pJet->m_bEmit = false;
 	m_pJet->m_Rate = 0;
 	m_pJet = NULL;
+	}
+//TE120----
+
 	SetNextThink( TICK_NEVER_THINK );
+//TE120----
+	// Explode when done
+	if (m_hLauncher)
+		Explode(m_hLauncher);
+	else
+	{
+		CBasePlayer *cbp_temp = CBaseEntity::GetPredictionPlayer();
+		if (cbp_temp)
+			Explode(cbp_temp);
+	}
+//TE120----
 }
 
 //-----------------------------------------------------------------------------

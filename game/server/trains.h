@@ -122,9 +122,10 @@ public:
 #endif
 
 	DECLARE_DATADESC();
-
-	virtual int	ObjectCaps( void ) { return BaseClass::ObjectCaps() | FCAP_DIRECTIONAL_USE | FCAP_USE_ONGROUND; }
-
+//TE120----
+	// { return Hints() ? Hints()->HintMessage( hint, bForce ) : false; }
+	virtual int	ObjectCaps( void ) { return HasSpawnFlags( SF_TRACKTRAIN_NOCONTROL ) ? BaseClass::ObjectCaps() : BaseClass::ObjectCaps() | FCAP_DIRECTIONAL_USE | FCAP_USE_ONGROUND; }
+//TE120----
 	virtual void	OnRestore( void );
 
 	float GetMaxSpeed() const { return m_maxSpeed; }

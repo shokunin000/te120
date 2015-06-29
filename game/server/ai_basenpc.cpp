@@ -4618,7 +4618,7 @@ void CAI_BaseNPC::CheckFlinches( void )
 
 		// Otherwise, do nothing. The heavy damage will interrupt our schedule and we'll flinch.
 	}
-	else if ( HasCondition( COND_LIGHT_DAMAGE ) )
+	else if ( HasCondition( COND_LIGHT_DAMAGE ) && !m_hCine )//TE120----
 	{
 		// If we have taken light damage play gesture flinches
 		PlayFlinchGesture();

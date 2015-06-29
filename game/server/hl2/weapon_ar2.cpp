@@ -109,7 +109,7 @@ IMPLEMENT_ACTTABLE(CWeaponAR2);
 CWeaponAR2::CWeaponAR2( )
 {
 	m_fMinRange1	= 65;
-	m_fMaxRange1	= 2048;
+	m_fMaxRange1	= 4096;//TE120----
 
 	m_fMinRange2	= 256;
 	m_fMaxRange2	= 1024;
@@ -279,20 +279,46 @@ void CWeaponAR2::SecondaryAttack( void )
 	}
 
 	m_bShotDelayed = true;
-	m_flNextPrimaryAttack = m_flNextSecondaryAttack = m_flDelayedFire = gpGlobals->curtime + 0.5f;
-
+//TE120---- removed m_flNextPrimaryAttack
 	CBasePlayer *pPlayer = ToBasePlayer( GetOwner() );
 	if( pPlayer )
 	{
 		pPlayer->RumbleEffect(RUMBLE_AR2_ALT_FIRE, 0, RUMBLE_FLAG_RESTART );
+		m_flNextPrimaryAttack = m_flNextSecondaryAttack = m_flDelayedFire = gpGlobals->curtime + 0.5f;//TE120----
 	}
+	else//TE120----
+		m_flNextPrimaryAttack = m_flNextSecondaryAttack = m_flDelayedFire = gpGlobals->curtime + 1.0f;//TE120----
 
 	SendWeaponAnim( ACT_VM_FIDGET );
 	WeaponSound( SPECIAL1 );
 
 	m_iSecondaryAttacks++;
 	gamestats->Event_WeaponFired( pPlayer, false, GetClassname() );
+//TE120----
 }
+
+int	CWeaponAR2::GetMinBurst( void )
+{
+	if ( GetOwner()->IsPlayer() )
+		return 2;
+	else
+		return 1;
+}
+
+int	CWeaponAR2::GetMaxBurst( void )
+{
+	if ( GetOwner()->IsPlayer() )
+		return 5;
+	else
+		return 4;
+}
+float CWeaponAR2::GetFireRate( void )
+{
+	if ( GetOwner()->IsPlayer() )
+		return 0.1f;
+	else
+		return 0.2f;
+}//TE120----
 
 //-----------------------------------------------------------------------------
 // Purpose: Override if we're waiting to release a shot

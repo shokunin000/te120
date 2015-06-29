@@ -416,6 +416,8 @@ void CBaseViewModel::CalcViewModelView( CBasePlayer *owner, const Vector& eyePos
 #if defined( CLIENT_DLL )
 	if ( !prediction->InPrediction() )
 	{
+		// Add lag
+		CalcViewModelLag( vmorigin, vmangles, vmangoriginal );
 		// Let the viewmodel shake at about 10% of the amplitude of the player's view
 		vieweffects->ApplyShake( vmorigin, vmangles, 0.1 );	
 	}

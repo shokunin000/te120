@@ -1297,6 +1297,11 @@ void CMultiSource::Register(void)
 class CMathCounter : public CLogicalEntity
 {
 	DECLARE_CLASS( CMathCounter, CLogicalEntity );
+//TE120----
+public:
+	// Outputs
+	COutputFloat m_OutValue;
+//TE120----
 private:
 	float m_flMin;		// Minimum clamp value. If min and max are BOTH zero, no clamping is done.
 	float m_flMax;		// Maximum clamp value.
@@ -1326,10 +1331,10 @@ private:
 	void InputDisable( inputdata_t &inputdata );
 
 	// Outputs
-	COutputFloat m_OutValue;
 	COutputFloat m_OnGetValue;	// Used for polling the counter value.
 	COutputEvent m_OnHitMin;
 	COutputEvent m_OnHitMax;
+	COutputEvent m_OnMaxChanged; //TE120
 
 	DECLARE_DATADESC();
 };
@@ -1366,6 +1371,7 @@ BEGIN_DATADESC( CMathCounter )
 	DEFINE_OUTPUT(m_OnHitMin, "OnHitMin"),
 	DEFINE_OUTPUT(m_OnHitMax, "OnHitMax"),
 	DEFINE_OUTPUT(m_OnGetValue, "OnGetValue"),
+	DEFINE_OUTPUT(m_OnMaxChanged, "OnMaxChanged"),//TE120----
 
 END_DATADESC()
 
@@ -1490,7 +1496,12 @@ void CMathCounter::InputAdd( inputdata_t &inputdata )
 		DevMsg("Math Counter %s ignoring ADD because it is disabled\n", GetDebugName() );
 		return;
 	}
-
+//TE120----
+	// if (inputdata.pCaller)
+	// 	DevMsg( "Added %f to MC to get %f from %s\n", inputdata.value.Float(), m_OutValue.Get() + inputdata.value.Float(), inputdata.pCaller->GetEntityName() );
+	// else
+	//	DevMsg( "Added %f to MC to get %f", inputdata.value.Float(), m_OutValue.Get() + inputdata.value.Float() );
+	//TE120----
 	float fNewValue = m_OutValue.Get() + inputdata.value.Float();
 	UpdateOutValue( inputdata.pActivator, fNewValue );
 }
@@ -1623,6 +1634,12 @@ void CMathCounter::UpdateOutValue(CBaseEntity *pActivator, float fNewValue)
 {
 	if ((m_flMin != 0) || (m_flMax != 0))
 	{
+//TE120----
+		// Fire an output any time the max value is changed
+		if ( m_bHitMax && ( fNewValue < m_flMax ) ) {
+			m_OnMaxChanged.FireOutput( pActivator, this );
+		}
+//TE120----
 		//
 		// Fire an output any time we reach or exceed our maximum value.
 		//
@@ -1655,7 +1672,7 @@ void CMathCounter::UpdateOutValue(CBaseEntity *pActivator, float fNewValue)
 			m_bHitMin = false;
 		}
 
-		fNewValue = clamp(fNewValue, m_flMin, m_flMax);
+		// fNewValue = clamp(fNewValue, m_flMin, m_flMax);//TE120----
 	}
 
 	m_OutValue.Set(fNewValue, pActivator, this);
@@ -1903,7 +1920,92 @@ void CLogicCase::InputPickRandomShuffle( inputdata_t &inputdata )
 		DevMsg( 1, "Firing PickRandom input on logic_case %s with no cases set up\n", GetDebugName() );
 	}
 }
+//TE120----
+//-----------------------------------------------------------------------------
+// Purpose: Compares a floating point input to a value in a math_counter entity
+//-----------------------------------------------------------------------------
+class CLogicMath : public CLogicalEntity
+{
+	DECLARE_CLASS ( CLogicMath, CLogicalEntity );
 
+private:
+	EHANDLE	m_MathEntity;
+
+	// Inputs
+	void InputCompare( inputdata_t &inputdata );
+
+	float m_flCompareValue;
+
+	// Outputs
+	COutputFloat m_OnLessThan; // Fired when the input value is less than the compare value.
+	COutputFloat m_OnEqualTo; // Fired when the input value is equal to the compare value.
+	COutputFloat m_OnNotEqualTo; // Fired when the input value is not equal to the compare value.
+	COutputFloat m_OnGreaterThan; // Fired when the input value is greater than the compare value.
+
+	DECLARE_DATADESC();
+};
+
+LINK_ENTITY_TO_CLASS( logic_math, CLogicMath );
+
+
+BEGIN_DATADESC( CLogicMath )
+
+
+	// Keys
+	DEFINE_KEYFIELD( m_flCompareValue, FIELD_FLOAT, "CompareValue" ),
+
+	DEFINE_FIELD( m_MathEntity, FIELD_EHANDLE ),
+
+	// Inputs
+	DEFINE_INPUTFUNC( FIELD_VOID, "Compare", InputCompare ),
+
+	// Outputs
+	DEFINE_OUTPUT( m_OnEqualTo, "OnEqualTo" ),
+	DEFINE_OUTPUT( m_OnNotEqualTo, "OnNotEqualTo" ),
+	DEFINE_OUTPUT( m_OnGreaterThan, "OnGreaterThan" ),
+	DEFINE_OUTPUT( m_OnLessThan, "OnLessThan" ),
+
+END_DATADESC()
+
+//-----------------------------------------------------------------------------
+// Purpose: Input handler for forcing a recompare of the last input value.
+//-----------------------------------------------------------------------------
+void CLogicMath::InputCompare( inputdata_t &inputdata )
+{
+	if ( m_target != NULL_STRING )
+	{
+		CBaseEntity *pEntity = NULL;
+		pEntity = gEntList.FindEntityGeneric( pEntity, STRING( m_target ), this );
+
+		if ( FClassnameIs( pEntity, "math_counter" ) )
+		{
+			CMathCounter *pMath = ( CMathCounter * )pEntity;
+			if (pMath->m_OutValue.Get() == m_flCompareValue )
+			{
+				m_OnEqualTo.Set( pMath->m_OutValue.Get(), inputdata.pActivator, this );
+			}
+			else
+			{
+				m_OnNotEqualTo.Set( pMath->m_OutValue.Get(), inputdata.pActivator, this );
+
+				if (pMath->m_OutValue.Get() > m_flCompareValue)
+				{
+					m_OnGreaterThan.Set( pMath->m_OutValue.Get(), inputdata.pActivator, this );
+				}
+				else
+				{
+					// Msg( "OutValue Comparing to:  %d \n", pMath->m_OutValue.Get() );
+					m_OnLessThan.Set( pMath->m_OutValue.Get(), inputdata.pActivator, this );
+				}
+			}
+		}
+		else
+		{
+			DevWarning( "logic_math %s refers to entity %s, which is not a math_counter\n", GetDebugName(), pEntity->GetDebugName() );
+		}
+	}
+}
+//TE120----
 
 //-----------------------------------------------------------------------------
 // Purpose: Compares a floating point input to a predefined value, firing an

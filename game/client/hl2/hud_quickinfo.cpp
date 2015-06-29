@@ -299,11 +299,20 @@ void CHUDQuickInfo::Paint()
 		{
 			if ( m_warnAmmo == false )
 			{
-				m_ammoFade = 255;
+				//m_ammoFade = 255;
 				m_warnAmmo = true;
-
+//TE120---------------------
+				if ( !Q_strcmp("weapon_physconcussion", pWeapon->GetName()) )
+				{
+					m_ammoFade = 0;
+				}
+				else
+				{
+					m_ammoFade = 255;
 				CLocalPlayerFilter filter;
 				C_BaseEntity::EmitSound( filter, SOUND_FROM_LOCAL_PLAYER, "HUDQuickInfo.LowAmmo" );
+			}
+//TE120------------------------
 			}
 		}
 		else
@@ -340,6 +349,11 @@ void CHUDQuickInfo::Paint()
 
 		Color healthColor = m_warnHealth ? gHUD.m_clrCaution : gHUD.m_clrNormal;
 		
+		//TE120-----------------------------
+		if (player->m_fOnUsable)
+			healthColor = Color(255, 255, 255);
+		//TE120-------------------------
+
 		if ( m_warnHealth )
 		{
 			healthColor[3] = 255 * sinScale;
@@ -372,6 +386,10 @@ void CHUDQuickInfo::Paint()
 		}
 
 		Color ammoColor = m_warnAmmo ? gHUD.m_clrCaution : gHUD.m_clrNormal;
+		//TE120
+		if (player->m_fOnUsable)
+			ammoColor = Color(255, 255, 255);
+		//TE120
 		
 		if ( m_warnAmmo )
 		{
@@ -382,6 +400,7 @@ void CHUDQuickInfo::Paint()
 			ammoColor[3] = 255 * scalar;
 		}
 		
+		// Msg( "ammoPerc: %f\n", ammoPerc ); //TE120
 		gHUD.DrawIconProgressBar( xCenter + m_icon_rb->Width(), yCenter, m_icon_rb, m_icon_rbe, ammoPerc, ammoColor, CHud::HUDPB_VERTICAL );
 	}
 }

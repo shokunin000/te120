@@ -6,6 +6,7 @@
 
 #include "cbase.h"
 #include "player.h"
+#include "hl2_player.h"//TE120
 #include "gamerules.h"
 #include "items.h"
 #include "ammodef.h"
@@ -589,6 +590,53 @@ public:
 
 LINK_ENTITY_TO_CLASS( item_ammo_ar2_altfire, CItem_AR2AltFireRound );
 
+//TE120------------------------------------------------
+// ========================================================================
+//	>> CItem_GC_Energy
+// ========================================================================
+class CItem_GC_Energy : public CItem
+{
+public:
+	DECLARE_CLASS( CItem_GC_Energy, CItem );
+
+	void Precache( void )
+	{
+		PrecacheModel ("models/items/battery.mdl");
+		PrecacheScriptSound( "NPC_Advisor.Shieldup" );
+		PrecacheScriptSound( "ItemBattery.Touch" );
+	}
+	void Spawn( void )
+	{ 
+		Precache( );
+		SetModel( "models/items/battery.mdl");
+		m_nSkin = 1;
+		BaseClass::Spawn( );
+	}
+
+	bool MyTouch( CBasePlayer *pPlayer )
+	{
+		CHL2_Player *pHL2Player = dynamic_cast<CHL2_Player *>( pPlayer );
+		if( pHL2Player )
+		{
+			pHL2Player->ApplyBattery();
+		}
+
+		if (ITEM_GiveAmmo( pPlayer, SIZE_AMMO_GC_ENERGY, "GC_Energy", true))
+		{
+			CPASAttenuationFilter filterB( this, "NPC_Advisor.Shieldup" );
+			EmitSound( filterB, entindex(), "NPC_Advisor.Shieldup" );
+
+			if ( g_pGameRules->ItemShouldRespawn( this ) == GR_ITEM_RESPAWN_NO )
+			{
+				UTIL_Remove(this);	
+			}	
+			return true;
+		}
+		return false;
+	}
+};
+LINK_ENTITY_TO_CLASS(item_gc_energy, CItem_GC_Energy);
+//TE120---------------------------------
 // ==================================================================
 // Ammo crate which will supply infinite ammo of the specified type
 // ==================================================================
@@ -606,6 +654,7 @@ enum
 	AMMOCRATE_CROSSBOW,
 	AMMOCRATE_AR2_ALTFIRE,
 	AMMOCRATE_SMG_ALTFIRE,
+	AMMOCRATE_GC_ENERGY,//TE120
 	NUM_AMMO_CRATE_TYPES,
 };
 
@@ -693,6 +742,7 @@ const char *CItem_AmmoCrate::m_lpzModelNames[NUM_AMMO_CRATE_TYPES] =
 	//FIXME: This model is incorrect!
 	"models/items/ammocrate_ar2.mdl",		// Combine Ball 
 	"models/items/ammocrate_smg2.mdl",	    // smg grenade
+	"models/items/357ammo.mdl",				// Gravity Concussion //TE120
 };
 
 // Ammo type names
@@ -708,6 +758,7 @@ const char *CItem_AmmoCrate::m_lpzAmmoNames[NUM_AMMO_CRATE_TYPES] =
 	"XBowBolt",
 	"AR2AltFire",
 	"SMG1_Grenade",
+	"GC_Energy",//TE120
 };
 
 // Ammo amount given per +use
@@ -722,7 +773,8 @@ int CItem_AmmoCrate::m_nAmmoAmounts[NUM_AMMO_CRATE_TYPES] =
 	50,		// 357
 	50,		// Crossbow
 	3,		// AR2 alt-fire
-	5,
+	5,		// SMG Grenade //TE120
+	50,		// GC Energy //TE120
 };
 
 const char *CItem_AmmoCrate::m_pGiveWeapon[NUM_AMMO_CRATE_TYPES] =
@@ -737,6 +789,7 @@ const char *CItem_AmmoCrate::m_pGiveWeapon[NUM_AMMO_CRATE_TYPES] =
 	NULL,		// Crossbow
 	NULL,		// AR2 alt-fire
 	NULL,		// SMG alt-fire
+	NULL,		// GC Energy //TE120
 };
 
 #define	AMMO_CRATE_CLOSE_DELAY	1.5f

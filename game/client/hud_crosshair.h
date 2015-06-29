@@ -38,12 +38,15 @@ public:
 
 	// any UI element that wants to be at the aim point can use this to figure out where to draw
 	static void	GetDrawPosition ( float *pX, float *pY, bool *pbBehindCamera, QAngle angleCrosshairOffset = vec3_angle );
+	CHudTexture	*GetCrosshairUse() { return m_pCrosshairUse; }//TE120
+	
 protected:
 	virtual void	ApplySchemeSettings( vgui::IScheme *scheme );
 	virtual void	Paint();
 	
 	// Crosshair sprite and colors
 	CHudTexture		*m_pCrosshair;
+	CHudTexture		*m_pCrosshairUse;//TE120
 	CHudTexture		*m_pDefaultCrosshair;
 	Color			m_clrCrosshair;
 	QAngle			m_vecCrossHairOffsetAngle;

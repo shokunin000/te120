@@ -1064,7 +1064,44 @@ float IntervalDistance( float x, float x0, float x1 )
 		return x - x1;
 	return 0;
 }
+//TE120----
+//-----------------------------------------------------------------------------
+// Purpose: Find any usable within the default use radius within a forward cone
+//-----------------------------------------------------------------------------
+bool CBasePlayer::FindAnyUsable()
+{
+	Vector forward, up;
+	EyeVectors( &forward, NULL, &up );
 
+	Vector searchCenter = EyePosition();
+	CBaseEntity *pObject = NULL;
+
+	for ( CEntitySphereQuery sphere( searchCenter, PLAYER_USE_RADIUS ); ( pObject = sphere.GetCurrentEntity() ) != NULL; sphere.NextEntity() )
+	{
+		if ( !pObject )
+			continue;
+
+		if ( !IsUseableEntity( pObject, FCAP_USE_IN_RADIUS ) )
+			continue;
+
+		// see if it's more roughly in front of the player than previous guess
+		Vector point;
+		pObject->CollisionProp()->CalcNearestPoint( searchCenter, &point );
+
+		Vector dir = point - searchCenter;
+		VectorNormalize( dir );
+		float dot = DotProduct( dir, forward );
+
+		// Need to be looking at the object more or less
+		if ( dot < 0.1 )
+			continue;
+
+		return true;
+	}
+
+	return false;
+}
+//TE120----
 CBaseEntity *CBasePlayer::FindUseEntity()
 {
 	Vector forward, up;
@@ -1216,8 +1253,13 @@ CBaseEntity *CBasePlayer::FindUseEntity()
 
 			if ( trCheckOccluded.fraction == 1.0 || trCheckOccluded.m_pEnt == pObject )
 			{
+//TE120----
+				if (IsUseableEntity(pObject,0))
+				{
 				pNearest = pObject;
 				nearestDist = dist;
+			}
+//TE120----
 			}
 		}
 	}

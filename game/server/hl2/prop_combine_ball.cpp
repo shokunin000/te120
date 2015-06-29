@@ -29,18 +29,7 @@
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
-
-#define PROP_COMBINE_BALL_MODEL	"models/effects/combineball.mdl"
-#define PROP_COMBINE_BALL_SPRITE_TRAIL "sprites/combineball_trail_black_1.vmt" 
-
-#define PROP_COMBINE_BALL_LIFETIME	4.0f	// Seconds
-
-#define PROP_COMBINE_BALL_HOLD_DISSOLVE_TIME	8.0f
-
-#define SF_COMBINE_BALL_BOUNCING_IN_SPAWNER		0x10000
-
-#define	MAX_COMBINEBALL_RADIUS	12
-
+//TE120-----renoved
 ConVar	sk_npc_dmg_combineball( "sk_npc_dmg_combineball","15", FCVAR_REPLICATED);
 ConVar	sk_combineball_guidefactor( "sk_combineball_guidefactor","0.5", FCVAR_REPLICATED);
 ConVar	sk_combine_ball_search_radius( "sk_combine_ball_search_radius", "512", FCVAR_REPLICATED);
@@ -48,17 +37,7 @@ ConVar	sk_combineball_seek_angle( "sk_combineball_seek_angle","15.0", FCVAR_REPL
 ConVar	sk_combineball_seek_kill( "sk_combineball_seek_kill","0", FCVAR_REPLICATED);
 
 // For our ring explosion
-int s_nExplosionTexture = -1;
-
-//-----------------------------------------------------------------------------
-// Context think
-//-----------------------------------------------------------------------------
-static const char *s_pWhizThinkContext = "WhizThinkContext";
-static const char *s_pHoldDissolveContext = "HoldDissolveContext";
-static const char *s_pExplodeTimerContext = "ExplodeTimerContext";
-static const char *s_pAnimThinkContext = "AnimThinkContext";
-static const char *s_pCaptureContext = "CaptureContext";
-static const char *s_pRemoveContext = "RemoveContext";
+int s_nExplosionCBTexture = -1;//TE120-----
 
 //-----------------------------------------------------------------------------
 // Purpose: 
@@ -171,16 +150,7 @@ bool UTIL_IsCombineBallDefinite( CBaseEntity *pEntity )
 	return pBall != NULL;
 }
 
-//-----------------------------------------------------------------------------
-//
-// Spawns combine balls
-//
-//-----------------------------------------------------------------------------
-#define SF_SPAWNER_START_DISABLED 0x1000
-#define SF_SPAWNER_POWER_SUPPLY 0x2000
-
-
-
+//TE120-----removed stuff
 //-----------------------------------------------------------------------------
 // Implementation of CPropCombineBall
 //-----------------------------------------------------------------------------
@@ -256,7 +226,7 @@ void CPropCombineBall::Precache( void )
 	PrecacheModel( PROP_COMBINE_BALL_MODEL );
 	PrecacheModel( PROP_COMBINE_BALL_SPRITE_TRAIL );
 
-	s_nExplosionTexture = PrecacheModel( "sprites/lgtning.vmt" );
+	s_nExplosionCBTexture = PrecacheModel( "sprites/lgtning.vmt" );//TE120-----
 
 	PrecacheScriptSound( "NPC_CombineBall.Launch" );
 	PrecacheScriptSound( "NPC_CombineBall.KillImpact" );
@@ -1042,7 +1012,7 @@ void CPropCombineBall::DoExplosion( )
 		te->BeamRingPoint( filter2, 0, GetAbsOrigin(),	//origin
 			m_flRadius,	//start radius
 			1024,		//end radius
-			s_nExplosionTexture, //texture
+			s_nExplosionCBTexture, //texture//TE120-----
 			0,			//halo index
 			0,			//start frame
 			2,			//framerate
@@ -1062,7 +1032,7 @@ void CPropCombineBall::DoExplosion( )
 		te->BeamRingPoint( filter2, 0, GetAbsOrigin(),	//origin
 			m_flRadius,	//start radius
 			1024,		//end radius
-			s_nExplosionTexture, //texture
+			s_nExplosionCBTexture, //texture//TE120-----
 			0,			//halo index
 			0,			//start frame
 			2,			//framerate
@@ -1084,7 +1054,7 @@ void CPropCombineBall::DoExplosion( )
 		te->BeamRingPoint( filter2, 0, GetAbsOrigin(),	//origin
 			128,	//start radius
 			384,		//end radius
-			s_nExplosionTexture, //texture
+			s_nExplosionCBTexture, //texture//TE120-----
 			0,			//halo index
 			0,			//start frame
 			2,			//framerate

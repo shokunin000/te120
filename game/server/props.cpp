@@ -899,7 +899,7 @@ void CBreakableProp::Spawn()
 		m_impactEnergyScale = 0.1f;
 	}
 
- 	m_preferredCarryAngles = QAngle( -5, 0, 0 );
+ 	m_preferredCarryAngles = QAngle( 0, 0, 0 );//TE120----
 
 	// The presence of this activity causes us to have to detach it before it can be grabbed.
 	if ( SelectWeightedSequence( ACT_PHYSCANNON_ANIMATE ) != ACTIVITY_NOT_AVAILABLE )
@@ -1260,7 +1260,21 @@ bool CBreakableProp::UpdateHealth( int iNewHealth, CBaseEntity *pActivator )
 bool CBreakableProp::OnAttemptPhysGunPickup( CBasePlayer *pPhysGunUser, PhysGunPickup_t reason )
 {
 	if ( m_nPhysgunState == PHYSGUN_CAN_BE_GRABBED )
+//TE120----
+	{
+		if ( HasSpawnFlags( SF_PHYSPROP_DONT_TAKE_PHYSICS_DAMAGE ) )
+			return false;
+
 		return true;
+	}
+
+	if ( HasSpawnFlags( SF_PHYSPROP_ENABLE_ON_PHYSCANNON ) )
+	{
+		IPhysicsObject *pPhysicsObject = VPhysicsGetObject();
+		pPhysicsObject->EnableMotion( false );
+		return true;
+	}
+//TE120----
 	if ( m_nPhysgunState == PHYSGUN_ANIMATE_FINISHED )
 		return false;
 
@@ -1836,6 +1850,7 @@ BEGIN_DATADESC( CDynamicProp )
 	DEFINE_INPUTFUNC( FIELD_VOID,		"EnableCollision",	InputEnableCollision ),
 	DEFINE_INPUTFUNC( FIELD_VOID,		"DisableCollision",	InputDisableCollision ),
 	DEFINE_INPUTFUNC( FIELD_FLOAT,		"SetPlaybackRate",	InputSetPlaybackRate ),
+	DEFINE_INPUTFUNC( FIELD_FLOAT, "SetCraneArmPosition", InputSetCraneArmPosition ),//TE120
 
 	// Outputs
 	DEFINE_OUTPUT( m_pOutputAnimBegun, "OnAnimationBegun" ),
@@ -2260,7 +2275,18 @@ void CDynamicProp::InputSetPlaybackRate( inputdata_t &inputdata )
 {
 	SetPlaybackRate( inputdata.value.Float() );
 }
-
+//TE120----
+//-----------------------------------------------------------------------------
+// Purpose:
+// Input  : &inputdata -
+//-----------------------------------------------------------------------------
+void CDynamicProp::InputSetCraneArmPosition( inputdata_t &inputdata )
+{
+	float fPos = inputdata.value.Float();
+	SetPoseParameter( "armextensionpose", fPos );
+	StudioFrameAdvance();
+}
+//TE120----
 //-----------------------------------------------------------------------------
 // Purpose: Helper in case we have to async load the sequence
 // Input  : nSequence - 
@@ -2416,8 +2442,11 @@ BEGIN_DATADESC( CPhysicsProp )
 	DEFINE_INPUTFUNC( FIELD_VOID, "Wake", InputWake ),
 	DEFINE_INPUTFUNC( FIELD_VOID, "Sleep", InputSleep ),
 	DEFINE_INPUTFUNC( FIELD_VOID, "DisableFloating", InputDisableFloating ),
+	DEFINE_INPUTFUNC( FIELD_VOID, "ConvertToDebris", InputConvertToDebris ),//TE120
+	DEFINE_INPUTFUNC( FIELD_VOID, "ToggleGlow", InputToggleGlow ),//TE120
 
 	DEFINE_FIELD( m_bAwake, FIELD_BOOLEAN ),
+	DEFINE_FIELD( m_bEnableGlow, FIELD_BOOLEAN ),//TE120
 
 	DEFINE_KEYFIELD( m_massScale, FIELD_FLOAT, "massscale" ),
 	DEFINE_KEYFIELD( m_inertiaScale, FIELD_FLOAT, "inertiascale" ),
@@ -2427,6 +2456,7 @@ BEGIN_DATADESC( CPhysicsProp )
 	DEFINE_KEYFIELD( m_damageToEnableMotion, FIELD_INTEGER, "damagetoenablemotion" ), 
 	DEFINE_KEYFIELD( m_flForceToEnableMotion, FIELD_FLOAT, "forcetoenablemotion" ), 
 	DEFINE_OUTPUT( m_OnAwakened, "OnAwakened" ),
+	DEFINE_OUTPUT( m_OnSleep, "OnSleep" ),//TE120
 	DEFINE_OUTPUT( m_MotionEnabled, "OnMotionEnabled" ),
 	DEFINE_OUTPUT( m_OnPhysGunPickup, "OnPhysGunPickup" ),
 	DEFINE_OUTPUT( m_OnPhysGunOnlyPickup, "OnPhysGunOnlyPickup" ),
@@ -2435,6 +2465,7 @@ BEGIN_DATADESC( CPhysicsProp )
 	DEFINE_OUTPUT( m_OnPlayerUse, "OnPlayerUse" ),
 	DEFINE_OUTPUT( m_OnPlayerPickup, "OnPlayerPickup" ),
 	DEFINE_OUTPUT( m_OnOutOfWorld, "OnOutOfWorld" ),
+	DEFINE_OUTPUT( m_OnPlayerThrow, "OnPlayerThrow" ),//TE120
 
 	DEFINE_FIELD( m_bThrownByPlayer, FIELD_BOOLEAN ),
 	DEFINE_FIELD( m_bFirstCollisionAfterLaunch, FIELD_BOOLEAN ),
@@ -2445,6 +2476,7 @@ END_DATADESC()
 
 IMPLEMENT_SERVERCLASS_ST( CPhysicsProp, DT_PhysicsProp )
 	SendPropBool( SENDINFO( m_bAwake ) ),
+	SendPropBool( SENDINFO(m_bEnableGlow) ),//TE120
 END_SEND_TABLE()
 
 // external function to tell if this entity is a gib physics prop
@@ -2464,6 +2496,8 @@ CPhysicsProp::~CPhysicsProp()
 	{
 		g_ActiveGibCount--;
 	}
+
+	m_bEnableGlow = false;//TE120
 }
 
 bool CPhysicsProp::IsGib()
@@ -2496,12 +2530,13 @@ void CPhysicsProp::Spawn( )
 	{
 		SetClassname( "prop_physics" );
 	}
-
+//TE120----
 	if ( HasSpawnFlags( SF_PHYSPROP_DEBRIS ) || HasInteraction( PROPINTER_PHYSGUN_CREATE_FLARE ) )
 	{
-		SetCollisionGroup( HasSpawnFlags( SF_PHYSPROP_FORCE_TOUCH_TRIGGERS ) ? COLLISION_GROUP_DEBRIS_TRIGGER : COLLISION_GROUP_DEBRIS );
+		// SetCollisionGroup( HasSpawnFlags( SF_PHYSPROP_FORCE_TOUCH_TRIGGERS ) ? COLLISION_GROUP_DEBRIS_TRIGGER : COLLISION_GROUP_DEBRIS );
+		SetCollisionGroup( HasSpawnFlags( SF_PHYSPROP_FORCE_TOUCH_TRIGGERS ) ? COLLISION_GROUP_PASSABLE_DOOR : COLLISION_GROUP_DEBRIS );
 	}
-
+//TE120----
 	if ( HasSpawnFlags( SF_PHYSPROP_NO_ROTORWASH_PUSH ) )
 	{
 		AddEFlags( EFL_NO_ROTORWASH_PUSH );
@@ -2723,6 +2758,25 @@ void CPhysicsProp::EnableMotion( void )
 	}
 	CheckRemoveRagdolls();
 }
+//TE120----
+//-----------------------------------------------------------------------------
+// Purpose:
+//-----------------------------------------------------------------------------
+void CPhysicsProp::InputConvertToDebris( inputdata_t &inputdata )
+{
+	AddSpawnFlags(SF_PHYSPROP_DEBRIS);
+	// Hack to make debris interact with each other but not the player
+	// SetCollisionGroup( HasSpawnFlags( SF_PHYSPROP_FORCE_TOUCH_TRIGGERS ) ? COLLISION_GROUP_DEBRIS_TRIGGER : COLLISION_GROUP_DEBRIS );
+	SetCollisionGroup( HasSpawnFlags( SF_PHYSPROP_FORCE_TOUCH_TRIGGERS ) ? COLLISION_GROUP_PASSABLE_DOOR : COLLISION_GROUP_DEBRIS );
+}
+
+//-----------------------------------------------------------------------------
+// Purpose:
+//-----------------------------------------------------------------------------
+void CPhysicsProp::InputToggleGlow( inputdata_t &inputdata )
+{
+	m_bEnableGlow = !m_bEnableGlow;
+}//TE120----
 
 //-----------------------------------------------------------------------------
 // Purpose: 
@@ -2734,7 +2788,7 @@ void CPhysicsProp::OnPhysGunPickup( CBasePlayer *pPhysGunUser, PhysGunPickup_t r
 	IPhysicsObject *pPhysicsObject = VPhysicsGetObject();
 	if ( pPhysicsObject && !pPhysicsObject->IsMoveable() )
 	{
-		if ( !HasSpawnFlags( SF_PHYSPROP_ENABLE_ON_PHYSCANNON ) )
+		if ( !HasSpawnFlags( SF_PHYSPROP_ENABLE_ON_PHYSCANNON ) || m_explodeRadius == 1337 )//TE120----
 			return;
 
 		EnableMotion();
@@ -2783,14 +2837,17 @@ void CPhysicsProp::OnPhysGunDrop( CBasePlayer *pPhysGunUser, PhysGunDrop_t Reaso
 			float angDrag = 0.0f;
 			VPhysicsGetObject()->SetDragCoefficient( NULL, &angDrag );
 		}
-
+//TE120----
+		if (VPhysicsGetObject())
 		PhysSetGameFlags( VPhysicsGetObject(), FVPHYSICS_WAS_THROWN );
+//TE120----
 		m_bFirstCollisionAfterLaunch = true;
 	}
 	else if ( Reason == THROWN_BY_PLAYER )
 	{
 		// Remember the player threw us for NPC response purposes
 		m_bThrownByPlayer = true;
+		m_OnPlayerThrow.FireOutput( pPhysGunUser, this );//TE120
 	}
 
 	m_OnPhysGunDrop.FireOutput( pPhysGunUser, this );
@@ -2865,11 +2922,7 @@ int CPhysicsProp::ObjectCaps()
 { 
 	int caps = BaseClass::ObjectCaps() | FCAP_WCEDIT_POSITION;
 
-	if ( HasSpawnFlags( SF_PHYSPROP_ENABLE_PICKUP_OUTPUT ) )
-	{
-		caps |= FCAP_IMPULSE_USE;
-	}
-	else if ( CBasePlayer::CanPickupObject( this, 35, 128 ) )
+	if ( HasSpawnFlags( SF_PHYSPROP_ENABLE_PICKUP_OUTPUT ) && CBasePlayer::CanPickupObject( this, 35, 208 ) )//TE120
 	{
 		caps |= FCAP_IMPULSE_USE;
 
@@ -2924,6 +2977,48 @@ void CPhysicsProp::VPhysicsUpdate( IPhysicsObject *pPhysics )
 			m_OnAwakened.FireOutput(this, this);
 			RemoveSpawnFlags( SF_PHYSPROP_START_ASLEEP );
 		}
+	}
+//TE120----
+	else
+	{
+		Vector vecVelocity;
+		AngularImpulse vecAngVelocity;
+		pPhysics->GetVelocity( &vecVelocity, &vecAngVelocity );
+		vecVelocity += vecAngVelocity;
+
+
+		// Output asleep output if at rest, not player helpd, and not on player
+		// check if the edict is already in the list
+		/*
+		bool bGroundIsPlayer = false;
+		touchlink_t *root = ( touchlink_t * )GetDataObject( TOUCHLINK );
+		touchlink_t *link;
+		if ( root )
+		{
+			if ( root->entityTouched && root->entityTouched->IsPlayer() )
+			{
+				bGroundIsPlayer = true;
+			}
+			else
+			{
+				for ( link = root->nextLink; link != root; link = link->nextLink )
+				{
+					if ( link->entityTouched && link->entityTouched->IsPlayer() )
+					{
+						// no more to do
+						bGroundIsPlayer = true;
+					}
+				}
+			}
+		}
+		*/
+
+		if ( !m_bAwake || ( (vecVelocity == Vector(0,0,0)) && !(pPhysics->GetGameFlags() & FVPHYSICS_PLAYER_HELD) ) )
+		{
+			m_OnSleep.FireOutput(this, this);
+			AddSpawnFlags( SF_PHYSPROP_START_ASLEEP );
+		}
+//TE120----
 	}
 
 	// If we're asleep, clear the player thrown flag
@@ -3459,7 +3554,7 @@ int PropBreakablePrecacheAll( string_t modelName )
 bool PropBreakableCapEdictsOnCreateAll(int modelindex, IPhysicsObject *pPhysics, const breakablepropparams_t &params, CBaseEntity *pEntity, int iPrecomputedBreakableCount = -1 )
 {
 	// @Note (toml 10-07-03): this is stop-gap to prevent this function from crashing the engine
-	const int BREATHING_ROOM = 64;
+	const int BREATHING_ROOM = 16;//TE120
 
 	CUtlVector<breakmodel_t> list;
 	BreakModelList( list, modelindex, params.defBurstScale, params.defCollisionGroup );
@@ -3492,7 +3587,10 @@ bool PropBreakableCapEdictsOnCreateAll(int modelindex, IPhysicsObject *pPhysics,
 			}
 		}
 	}
-
+//TE120----
+	// Msg( "Total Entities: %i\n", engine->GetEntityCount() );
+	// Msg( "Total + Total to Create + Breathing: %i\n", engine->GetEntityCount() + numToCreate + BREATHING_ROOM );
+//TE120----
 	return ( !numToCreate || ( engine->GetEntityCount() + numToCreate + BREATHING_ROOM < MAX_EDICTS ) );
 }
 

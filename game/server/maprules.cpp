@@ -647,7 +647,25 @@ void CGamePlayerEquip::Touch( CBaseEntity *pOther )
 
 void CGamePlayerEquip::EquipPlayer( CBaseEntity *pEntity )
 {
-	CBasePlayer *pPlayer = ToBasePlayer(pEntity);
+//TE120----
+	//CBasePlayer *pPlayer = ToBasePlayer(pEntity);
+	CBasePlayer *pPlayer = NULL;
+
+	if (pEntity && !pEntity->IsPlayer() )
+	{
+		pEntity = NULL;
+	}
+
+	if ( pEntity == NULL )
+		pEntity = UTIL_GetLocalPlayer();
+
+	if (pEntity && pEntity->IsPlayer() )
+	{
+		pPlayer = (CBasePlayer *)pEntity;
+		//Msg("pPlayer is: %s\n", pPlayer->GetEntityName() ); //Debug
+
+	}
+//TE120----
 
 	if ( !pPlayer )
 		return;

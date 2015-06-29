@@ -211,6 +211,10 @@ $Project "Server (HL2)"
 			$File	"hl2\point_apc_controller.cpp"
 			$File	"hl2\prop_combine_ball.cpp"
 			$File	"hl2\prop_combine_ball.h"
+			//TE120---------------------------------------------------
+			$File	"hl2\prop_gravity_ball.cpp"
+			$File	"hl2\prop_gravity_ball.h"
+			//-------------------------------------------------------------
 			$File	"hl2\prop_thumper.cpp"
 			$File	"hl2\proto_sniper.cpp"
 			$File	"hl2\rotorwash.cpp"
@@ -249,6 +253,10 @@ $Project "Server (HL2)"
 			$File	"hl2\weapon_smg1.cpp"
 			$File	"hl2\weapon_stunstick.cpp"
 			$File	"hl2\weapon_stunstick.h"
+			//TE120---------------------------------------------------
+			$File	"hl2\weapon_physconcussion.cpp"
+			$File	"hl2\weapon_physconcussion.h"
+			//-------------------------------------------------------------
 
 			$Folder	"Unused"
 			{

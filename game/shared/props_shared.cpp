@@ -657,7 +657,7 @@ int GetAutoMultiplayerPhysicsMode( Vector size, float mass )
 {
 	float volume = size.x * size.y * size.z;
 
-	float minsize = sv_pushaway_clientside_size.GetFloat();
+	float minsize = 128; //sv_pushaway_clientside_size.GetFloat();//TE120
 
 	// if it's too small, client side only
 	if ( volume < (minsize*minsize*minsize) )

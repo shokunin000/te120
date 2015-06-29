@@ -997,13 +997,24 @@ public:
 	float m_flLookTimeLast;		// When did I last look
 	float m_flTimeoutDuration;	// Number of seconds after start touch to fire anyway
 	bool m_bTimeoutFired;		// True if the OnTimeout output fired since the last StartTouch.
+//TE120----	
+	bool m_bRequireZoom;		// If true, require player to be zooming
+	bool m_bRequireFlashlight;	// If true, require player flashlight to be on
+	bool m_bLooked;		// True when just looked, false when unlooked
+//TE120----
 	EHANDLE m_hActivator;		// The entity that triggered us.
 
 	void Spawn( void );
 	void Touch( CBaseEntity *pOther );
 	void StartTouch(CBaseEntity *pOther);
 	void EndTouch( CBaseEntity *pOther );
+	void Disable( void );//TE120
 	int	 DrawDebugTextOverlays(void);
+
+//TE120----
+	// Outputs
+	COutputEvent m_OnUnLook;
+//TE120----
 
 	DECLARE_DATADESC();
 
@@ -1023,10 +1034,12 @@ BEGIN_DATADESC( CTriggerLook )
 	DEFINE_FIELD( m_flLookTimeLast, FIELD_TIME ),
 	DEFINE_KEYFIELD( m_flTimeoutDuration, FIELD_FLOAT, "timeout" ),
 	DEFINE_FIELD( m_bTimeoutFired, FIELD_BOOLEAN ),
+	DEFINE_KEYFIELD( m_bRequireZoom, FIELD_BOOLEAN, "ZoomRequired" ),//TE120
+	DEFINE_KEYFIELD( m_bRequireFlashlight, FIELD_BOOLEAN, "FlashlightRequired" ),//TE120
 	DEFINE_FIELD( m_hActivator, FIELD_EHANDLE ),
 
 	DEFINE_OUTPUT( m_OnTimeout, "OnTimeout" ),
-
+	DEFINE_OUTPUT( m_OnUnLook, "OnUnLook" ),//TE120
 	DEFINE_FUNCTION( TimeoutThink ),
 
 	// Inputs
@@ -1044,6 +1057,7 @@ void CTriggerLook::Spawn( void )
 	m_hLookTarget = NULL;
 	m_flLookTimeTotal = -1;
 	m_bTimeoutFired = false;
+	m_bLooked = false;//TE120
 
 	BaseClass::Spawn();
 }
@@ -1087,12 +1101,20 @@ void CTriggerLook::EndTouch(CBaseEntity *pOther)
 	{
 		SetThink(NULL);
 		SetNextThink( TICK_NEVER_THINK );
-
+//TE120----
+		m_OnUnLook.FireOutput(pOther, this);
+		m_bLooked = false;
+//TE120----
 		m_flLookTimeTotal = -1;
 	}
 }
-
-
+//TE120----
+void CTriggerLook::Disable()
+{
+	m_flLookTimeTotal = -1;
+	BaseClass::Disable();
+}
+//TE120----
 //------------------------------------------------------------------------------
 // Purpose:
 //------------------------------------------------------------------------------
@@ -1101,6 +1123,10 @@ void CTriggerLook::Touch(CBaseEntity *pOther)
 	// Don't fire the OnTrigger if we've already fired the OnTimeout. This will be
 	// reset in OnEndTouch.
 	if (m_bTimeoutFired)
+//TE120----
+		return;
+	if (m_bDisabled)
+//TE120----
 		return;
 
 	// --------------------------------
@@ -1119,6 +1145,22 @@ void CTriggerLook::Touch(CBaseEntity *pOther)
 	// so we'll always have the same player
 	if (pOther->IsPlayer())
 	{
+//TE120----
+		CHL2_Player *pPlayerRef = (CHL2_Player *)pOther;
+
+		if (m_bRequireZoom)
+		{
+			if (!pPlayerRef->IsZooming())
+				return;
+		}
+
+		if (m_bRequireFlashlight)
+		{
+			if (!pPlayerRef->FlashlightIsOn())
+				return;
+		}
+//TE120----
+
 		// ----------------------------------------
 		// Check that toucher is facing the target
 		// ----------------------------------------
@@ -1167,6 +1209,13 @@ void CTriggerLook::Touch(CBaseEntity *pOther)
 		}
 		else
 		{
+//TE120----
+			if (m_bLooked)
+			{
+				m_OnUnLook.FireOutput(pOther, this);
+				m_bLooked = false;
+			}
+//TE120----
 			m_flLookTimeTotal	= -1;
 		}
 	}
@@ -1191,6 +1240,7 @@ void CTriggerLook::Trigger(CBaseEntity *pActivator, bool bTimeout)
 		// Fire because the player looked at the target.
 		m_OnTrigger.FireOutput(pActivator, this);
 		m_flLookTimeTotal = -1;
+		m_bLooked = true;//TE120
 
 		// Cancel the timeout think.
 		SetThink(NULL);
@@ -2799,6 +2849,7 @@ private:
 	string_t m_sPath;
 	float m_flWait;
 	float m_flReturnTime;
+	float m_flLerpTime;//TE120
 	float m_flStopTime;
 	float m_moveDistance;
 	float m_targetSpeed;
@@ -2818,6 +2869,8 @@ private:
 
 	// these are interpolation vars used for interpolating the camera over time
 	Vector m_vStartPos, m_vEndPos;
+	QAngle m_qStartAng, m_qEndAng;//TE120
+
 	float m_flInterpStartTime;
 
 	const static float kflPosInterpTime; // seconds
@@ -2831,7 +2884,7 @@ private:
 };
 
 #if HL2_EPISODIC
-const float CTriggerCamera::kflPosInterpTime = 2.0f;
+const float CTriggerCamera::kflPosInterpTime = 0.35f;//TE120
 #endif
 
 LINK_ENTITY_TO_CLASS( point_viewcontrol, CTriggerCamera );
@@ -2853,6 +2906,7 @@ BEGIN_DATADESC( CTriggerCamera )
 	DEFINE_FIELD( m_state, FIELD_INTEGER ),
 	DEFINE_FIELD( m_vecMoveDir, FIELD_VECTOR ),
 	DEFINE_KEYFIELD( m_iszTargetAttachment, FIELD_STRING, "targetattachment" ),
+	DEFINE_KEYFIELD( m_flLerpTime, FIELD_FLOAT, "lerptime" ),//TE120
 	DEFINE_FIELD( m_iAttachmentIndex, FIELD_INTEGER ),
 	DEFINE_FIELD( m_bSnapToGoal, FIELD_BOOLEAN ),
 #if HL2_EPISODIC
@@ -2988,9 +3042,8 @@ void CTriggerCamera::Enable( void )
 		Warning("CTriggerCamera could not find a player!\n");
 		return;
 	}
-
+//TE120----
 	// if the player was already under control of a similar trigger, disable the previous trigger.
-	{
 		CBaseEntity *pPrevViewControl = pPlayer->GetViewEntity();
 		if (pPrevViewControl && pPrevViewControl != pPlayer)
 		{
@@ -3009,8 +3062,7 @@ void CTriggerCamera::Enable( void )
 				}
 			}
 		}
-	}
-
+//TE120----
 
 	m_nPlayerButtons = pPlayer->m_nButtons;
 
@@ -3094,13 +3146,59 @@ void CTriggerCamera::Enable( void )
 	if (m_bInterpolatePosition)
 	{
 		// initialize the values we'll spline between
+//TE120----
+		if (pPrevViewControl && pPrevViewControl != pPlayer)
+		{
+			m_vStartPos = pPrevViewControl->GetAbsOrigin();
+			// Msg( "Previous camera found: %s.\n", pPrevViewControl->GetEntityName() );
+		}
+		else
 		m_vStartPos = m_hPlayer->EyePosition();
+//TE120----
+
 		m_vEndPos = GetAbsOrigin();
 		m_flInterpStartTime = gpGlobals->curtime;
-		UTIL_SetOrigin( this, m_hPlayer->EyePosition() );
-		SetLocalAngles( QAngle( m_hPlayer->GetLocalAngles().x, m_hPlayer->GetLocalAngles().y, 0 ) );
+		UTIL_SetOrigin( this, m_vStartPos );//TE120
+//TE120----
+		// Msg("AbsAngle.z: %f \n", this->GetAbsAngles().z );
+		// Msg("LocalAngle.z: %f \n", this->GetLocalAngles().z );
+		// Msg("AngleVel.z: %f \n\n", this->GetLocalAngularVelocity().z );
 
-		SetAbsVelocity( vec3_origin );
+		// ------- Added these these lines for angle lerp -------
+		if (pPrevViewControl && pPrevViewControl != pPlayer)
+		{
+			if ( pPrevViewControl->GetLocalAngles().z == 0 )
+				m_qStartAng = QAngle( pPrevViewControl->GetLocalAngles().x, pPrevViewControl->GetLocalAngles().y, pPrevViewControl->m_flSpeed );
+			else
+				m_qStartAng = QAngle( pPrevViewControl->GetLocalAngles().x, pPrevViewControl->GetLocalAngles().y, pPrevViewControl->GetLocalAngles().z );
+
+			Msg( "Previous Camera Roll: %f\n", m_qStartAng.z );
+		}
+		else
+			m_qStartAng = QAngle( m_hPlayer->GetLocalAngles().x, m_hPlayer->GetLocalAngles().y, 0 );
+
+		m_qEndAng = GetLocalAngles();
+		m_qEndAng.x = UTIL_AngleDiff( m_qEndAng.x, m_qStartAng.x );
+		m_qEndAng.y = UTIL_AngleDiff( m_qEndAng.y, m_qStartAng.y );
+
+		if ( m_qEndAng.z == 0 )
+			m_qEndAng.z = UTIL_AngleDiff( m_flSpeed, m_qStartAng.z ); // This is hacky solution, can't figure out why z values are being removed
+		else
+			m_qEndAng.z = UTIL_AngleDiff( m_qEndAng.z, m_qStartAng.z );
+
+		// Msg( "Current Camera Roll: %f\n", m_flSpeed );
+
+		// ------------------------------------------------------
+
+		SetAbsAngles( m_qStartAng );
+		if (pPrevViewControl && pPrevViewControl != pPlayer)
+		{
+			SetAbsVelocity( pPrevViewControl->GetAbsVelocity() );
+		}
+		else
+			SetAbsVelocity( m_hPlayer->GetAbsVelocity() );
+		// SetAbsVelocity( vec3_origin );
+//TE120----
 	}
 	else
 #endif
@@ -3117,13 +3215,13 @@ void CTriggerCamera::Enable( void )
 
 
 	pPlayer->SetViewEntity( this );
-
+//TE120----
 	// Hide the player's viewmodel
-	if ( pPlayer->GetActiveWeapon() )
-	{
-		pPlayer->GetActiveWeapon()->AddEffects( EF_NODRAW );
-	}
-
+	// if ( pPlayer->GetActiveWeapon() )
+	// {
+	// 	pPlayer->GetActiveWeapon()->AddEffects( EF_NODRAW );
+	// }
+//TE120----
 	// Only track if we have a target
 	if ( m_hTarget )
 	{
@@ -3152,12 +3250,13 @@ void CTriggerCamera::Disable( void )
 
 		((CBasePlayer*)m_hPlayer.Get())->SetViewEntity( m_hPlayer );
 		((CBasePlayer*)m_hPlayer.Get())->EnableControl(TRUE);
-
+//TE120----
 		// Restore the player's viewmodel
-		if ( ((CBasePlayer*)m_hPlayer.Get())->GetActiveWeapon() )
-		{
-			((CBasePlayer*)m_hPlayer.Get())->GetActiveWeapon()->RemoveEffects( EF_NODRAW );
-		}
+		// if ( ((CBasePlayer*)m_hPlayer.Get())->GetActiveWeapon() )
+		// {
+		// 	((CBasePlayer*)m_hPlayer.Get())->GetActiveWeapon()->RemoveEffects( EF_NODRAW );
+		// }
+//TE120----
 		//return the player to previous takedamage state
 		m_hPlayer->m_takedamage = m_nOldTakeDamage;
 	}
@@ -3238,7 +3337,7 @@ void CTriggerCamera::FollowTarget( )
 		SetAbsAngles( vecGoal );
 		m_bSnapToGoal = false;
 	}
-	else
+	else if ( !m_bInterpolatePosition )//TE120
 	{
 		// UNDONE: Can't we just use UTIL_AngleDiff here?
 		QAngle angles = GetLocalAngles();
@@ -3265,7 +3364,7 @@ void CTriggerCamera::FollowTarget( )
 			dy = dy - 360;
 
 		QAngle vecAngVel;
-		vecAngVel.Init( dx * 40 * gpGlobals->frametime, dy * 40 * gpGlobals->frametime, GetLocalAngularVelocity().z );
+		vecAngVel.Init( dx * 400 * gpGlobals->frametime, dy * 400 * gpGlobals->frametime, GetLocalAngularVelocity().z );//TE120
 		SetLocalAngularVelocity(vecAngVel);
 	}
 
@@ -3355,7 +3454,12 @@ void CTriggerCamera::Move()
 	else if (m_bInterpolatePosition)
 	{
 		// get the interpolation parameter [0..1]
-		float tt = (gpGlobals->curtime - m_flInterpStartTime) / kflPosInterpTime;
+//TE120----
+		if (m_flLerpTime == 0)
+			m_flLerpTime = 0.35;
+//TE120----
+
+		float tt = (gpGlobals->curtime - m_flInterpStartTime) / m_flLerpTime;//TE120
 		if (tt >= 1.0f)
 		{
 			// we're there, we're done
@@ -3372,6 +3476,10 @@ void CTriggerCamera::Move()
 			// rather than stomping origin, set the velocity so that we get there in the proper time
 			Vector desiredVel = (nextPos - GetAbsOrigin()) * (1.0f / gpGlobals->frametime);
 			SetAbsVelocity( desiredVel );
+//TE120----
+			QAngle nextAng = ( m_qEndAng * tt ) + m_qStartAng;
+			SetAbsAngles( nextAng );
+//TE120----
 		}
 	}
 #endif

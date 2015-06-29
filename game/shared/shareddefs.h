@@ -255,6 +255,7 @@ enum CastVote
 #define WEAPON_NOT_CARRIED				0	// Weapon is on the ground
 #define WEAPON_IS_CARRIED_BY_PLAYER		1	// This client is carrying this weapon.
 #define WEAPON_IS_ACTIVE				2	// This client is carrying this weapon and it's the currently held weapon
+#define WEAPON_ON_USABLE				3	// This client is looking at a usable item.//TE120
 
 // -----------------------------------------
 // Skill Level
@@ -365,8 +366,8 @@ enum PLAYER_ANIM
 // HL2 has 600 gravity by default
 // NOTE: The discrete ticks can have quantization error, so these numbers are biased a little to
 // make the heights more exact
-#define PLAYER_FATAL_FALL_SPEED		922.5f // approx 60 feet sqrt( 2 * gravity * 60 * 12 )
-#define PLAYER_MAX_SAFE_FALL_SPEED	526.5f // approx 20 feet sqrt( 2 * gravity * 20 * 12 )
+#define PLAYER_FATAL_FALL_SPEED		1122.5f // approx 60 feet sqrt( 2 * gravity * 60 * 12 )//TE120
+#define PLAYER_MAX_SAFE_FALL_SPEED	726.5f // approx 20 feet sqrt( 2 * gravity * 20 * 12 )//TE120
 #define PLAYER_LAND_ON_FLOATING_OBJECT	173 // Can fall another 173 in/sec without getting hurt
 #define PLAYER_MIN_BOUNCE_SPEED		173
 #define PLAYER_FALL_PUNCH_THRESHOLD 303.0f // won't punch player's screen/make scrape noise unless player falling at least this fast - at least a 76" fall (sqrt( 2 * g * 76))

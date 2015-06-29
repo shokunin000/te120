@@ -20,6 +20,7 @@ class CRagdollExplosionEnumerator : public IPartitionEnumerator
 public:
 	//Forced constructor
 	CRagdollExplosionEnumerator( Vector origin, float radius, float magnitude );
+	CRagdollExplosionEnumerator( Vector origin, float radius, float magnitude, bool direct );//TE120
 	~CRagdollExplosionEnumerator();
 
 	//Actual work code
@@ -27,6 +28,7 @@ public:
 
 public:
 	//Data members
+	bool	m_bDirectPush;//TE120
 	CUtlVector<C_BaseEntity*> m_Entities;
 	Vector	m_vecOrigin;
 	float	m_flMagnitude;

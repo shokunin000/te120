@@ -80,7 +80,7 @@ public:
 protected:	
 	void GetConstraintObjects( hl_constraint_info_t &info );
 	void SetupTeleportationHandling( hl_constraint_info_t &info );
-	bool ActivateConstraint( void );
+	virtual bool ActivateConstraint( void );//TE120
 	virtual IPhysicsConstraint *CreateConstraint( IPhysicsConstraintGroup *pGroup, const hl_constraint_info_t &info ) = 0;
 
 	IPhysicsConstraint	*m_pConstraint;

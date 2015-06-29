@@ -204,7 +204,16 @@ void CFuncLadder::SearchForDismountPoints()
 	}
 #endif
 }
-
+//TE120----
+void CFuncLadder::OffsetTop( inputdata_t &inputdata )
+{
+#if !defined( CLIENT_DLL )
+	float fOffset = inputdata.value.Float();
+	m_vecPlayerMountPositionBottom.SetZ( m_vecPlayerMountPositionBottom.GetZ() + fOffset );
+	SetEndPoints( m_vecPlayerMountPositionTop, m_vecPlayerMountPositionBottom );
+#endif
+}
+//TE120----
 void CFuncLadder::SetEndPoints( const Vector& p1, const Vector& p2 )
 {
 	m_vecPlayerMountPositionTop = p1;
@@ -462,6 +471,7 @@ BEGIN_DATADESC( CFuncLadder )
 	DEFINE_KEYFIELD( m_surfacePropName,FIELD_STRING,	"ladderSurfaceProperties" ),
 	DEFINE_INPUTFUNC( FIELD_VOID, "Enable", InputEnable ),
 	DEFINE_INPUTFUNC( FIELD_VOID, "Disable", InputDisable ),
+	DEFINE_INPUTFUNC( FIELD_FLOAT, "OffsetTop", OffsetTop ),//TE120
 
 	DEFINE_OUTPUT(	m_OnPlayerGotOnLadder,	"OnPlayerGotOnLadder" ),
 	DEFINE_OUTPUT(	m_OnPlayerGotOffLadder,	"OnPlayerGotOffLadder" ),

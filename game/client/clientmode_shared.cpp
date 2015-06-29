@@ -33,6 +33,7 @@
 #include "achievementmgr.h"
 #include "c_playerresource.h"
 #include "cam_thirdperson.h"
+#include "ge_screeneffects.h" //TE120
 #include <vgui/ILocalize.h>
 #include "hud_vote.h"
 #include "ienginevgui.h"
@@ -830,6 +831,8 @@ void ClientModeShared::LevelInit( const char *newmap )
 	// Reset any player explosion/shock effects
 	CLocalPlayerFilter filter;
 	enginesound->SetPlayerDSP( filter, 0, true );
+
+	g_pScreenSpaceEffects->EnableScreenSpaceEffect( "ge_entglow" );//TE120
 }
 
 //-----------------------------------------------------------------------------
@@ -853,6 +856,8 @@ void ClientModeShared::LevelShutdown( void )
 	// Reset any player explosion/shock effects
 	CLocalPlayerFilter filter;
 	enginesound->SetPlayerDSP( filter, 0, true );
+
+	g_pScreenSpaceEffects->DisableScreenSpaceEffect( "ge_entglow" );//TE120
 }
 
 

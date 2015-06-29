@@ -14,7 +14,9 @@
 
 
 #include "dt_recv.h"
-
+//TE120---------------------------------------------------
+#include "hl2_vehicle_radar.h"
+//TE120---------------------------------------------------
 #include "hl2/hl_movedata.h"
 
 EXTERN_RECV_TABLE( DT_HL2Local );
@@ -44,6 +46,13 @@ public:
 #ifdef HL2_EPISODIC
 	float	m_flFlashBattery;
 	Vector	m_vecLocatorOrigin;
+//TE120---------------------------------------------------
+	int		m_iNumLocatorContacts;
+
+	CHandle< EHANDLE >	m_locatorEnt[ LOCATOR_MAX_CONTACTS ];	
+	float	m_flTapePos[ LOCATOR_MAX_CONTACTS ];
+	int		m_iLocatorContactType[ LOCATOR_MAX_CONTACTS ];
+//TE120---------------------------------------------------
 #endif
 
 	// Ladder related data

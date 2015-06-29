@@ -39,6 +39,9 @@ BEGIN_DATADESC( CFuncMoveLinear )
 	DEFINE_KEYFIELD( m_flBlockDamage,	 FIELD_FLOAT,	"BlockDamage"),
 	DEFINE_KEYFIELD( m_flStartPosition, FIELD_FLOAT,	"StartPosition"),
 	DEFINE_KEYFIELD( m_flMoveDistance,  FIELD_FLOAT,	"MoveDistance"),
+	DEFINE_KEYFIELD( m_hPosition1, FIELD_EHANDLE, "fmlPos1"),//TE120----
+	DEFINE_KEYFIELD( m_hPosition2, FIELD_EHANDLE, "fmlPos2"),//TE120----
+
 //	DEFINE_PHYSPTR( m_pFluidController ),
 
 	// Inputs
@@ -84,10 +87,29 @@ void CFuncMoveLinear::Spawn( void )
 		m_flMoveDistance = DotProductAbs( m_vecMoveDir, vecOBB ) - m_flLip;
 	}
 
+	m_hPosition1 = CreateEntityByName( "info_target" ); //TE120
+	m_hPosition2 = CreateEntityByName( "info_target" );//TE120
+
 	m_vecPosition1 = GetAbsOrigin() - (m_vecMoveDir * m_flMoveDistance * m_flStartPosition);
 	m_vecPosition2 = m_vecPosition1 + (m_vecMoveDir * m_flMoveDistance);
-	m_vecFinalDest = GetAbsOrigin();
+//TE120----
+	// Update position reference entities
+	if ( m_hPosition1 != NULL )
+	{
+		m_hPosition1->SetAbsOrigin( m_vecPosition1 );
+		if ( GetParent() )
+			m_hPosition1->SetParent( GetParent() );
+	}
 
+	if ( m_hPosition2 != NULL )
+	{
+		m_hPosition2->SetAbsOrigin( m_vecPosition2 );
+		if ( GetParent() )
+			m_hPosition2->SetParent( GetParent() );
+	}
+
+	m_vecFinalDest = GetLocalOrigin();
+//TE120----
 	SetTouch( NULL );
 
 	Precache();
@@ -255,14 +277,18 @@ void CFuncMoveLinear::MoveDone( void )
 	SetThink(&CFuncMoveLinear::StopMoveSound);
 	SetNextThink( gpGlobals->curtime + 0.1f );
 	BaseClass::MoveDone();
-
-	if ( GetAbsOrigin() == m_vecPosition2 )
+//TE120----
+	if ( m_hPosition2 != NULL && m_hPosition1 != NULL)
+	{
+		if ( GetLocalOrigin() == m_hPosition2->GetLocalOrigin() )
 	{
 		m_OnFullyOpen.FireOutput( this, this );
 	}
-	else if ( GetAbsOrigin() == m_vecPosition1 )
+		else if ( GetLocalOrigin() == m_hPosition1->GetLocalOrigin() )
 	{
 		m_OnFullyClosed.FireOutput( this, this );
+	}
+//TE120----
 	}
 }
 
@@ -274,11 +300,15 @@ void CFuncMoveLinear::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TY
 {
 	if ( useType != USE_SET )		// Momentary buttons will pass down a float in here
 		return;
-
+//TE120----
+	if ( m_hPosition2 == NULL || m_hPosition1 == NULL)
+		return;
+//TE120----
 	if ( value > 1.0 )
 		value = 1.0;
-	Vector move = m_vecPosition1 + (value * (m_vecPosition2 - m_vecPosition1));
-	
+//TE120----
+	Vector move = m_hPosition1->GetLocalOrigin() + (value * (m_hPosition2->GetLocalOrigin() - m_hPosition1->GetLocalOrigin()));
+//TE120----
 	Vector delta = move - GetLocalOrigin();
 	float speed = delta.Length() * 10;
 
@@ -290,9 +320,13 @@ void CFuncMoveLinear::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TY
 // Purpose: Sets the position as a value from [0..1].
 //-----------------------------------------------------------------------------
 void CFuncMoveLinear::SetPosition( float flPosition )
-{
-	Vector vTargetPos = m_vecPosition1 + ( flPosition * (m_vecPosition2 - m_vecPosition1));
+{//TE120----
+	if ( m_hPosition2 == NULL || m_hPosition1 == NULL)
+		return;
+
+	Vector vTargetPos = m_hPosition1->GetLocalOrigin() + ( flPosition * (m_hPosition2->GetLocalOrigin() - m_hPosition1->GetLocalOrigin()));
 	if ((vTargetPos - GetLocalOrigin()).Length() > 0.001)
+//TE120----
 	{
 		MoveTo(vTargetPos, m_flSpeed);
 	}
@@ -304,10 +338,15 @@ void CFuncMoveLinear::SetPosition( float flPosition )
 //------------------------------------------------------------------------------
 void CFuncMoveLinear::InputOpen( inputdata_t &inputdata )
 {
-	if (GetLocalOrigin() != m_vecPosition2)
+//TE120----
+	if ( m_hPosition2 == NULL )
+		return;
+
+	if (GetLocalOrigin() != m_hPosition2->GetLocalOrigin())
 	{
-		MoveTo(m_vecPosition2, m_flSpeed);
+		MoveTo(m_hPosition2->GetLocalOrigin(), m_flSpeed);
 	}
+//TE120----
 }
 
 
@@ -316,10 +355,15 @@ void CFuncMoveLinear::InputOpen( inputdata_t &inputdata )
 //------------------------------------------------------------------------------
 void CFuncMoveLinear::InputClose( inputdata_t &inputdata )
 {
-	if (GetLocalOrigin() != m_vecPosition1)
+//TE120----
+	if ( m_hPosition1 == NULL )
+		return;
+
+	if (GetLocalOrigin() != m_hPosition1->GetLocalOrigin())
 	{
-		MoveTo(m_vecPosition1, m_flSpeed);
+		MoveTo(m_hPosition1->GetLocalOrigin(), m_flSpeed);
 	}
+//TE120----
 }
 
 

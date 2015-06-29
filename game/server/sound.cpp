@@ -407,7 +407,8 @@ void CAmbientGeneric::InputFadeOut( inputdata_t &inputdata )
 {
 	// cancel any fade in that might be happening
 	m_dpv.fadein = 0;
-
+//TE120----
+	if (m_dpv.vol > 0) {
 	m_dpv.fadeout = inputdata.value.Float();
 
 	if (m_dpv.fadeout > 100) m_dpv.fadeout = 100;
@@ -415,6 +416,7 @@ void CAmbientGeneric::InputFadeOut( inputdata_t &inputdata )
 
 	if (m_dpv.fadeout > 0)
 		m_dpv.fadeout = ( 100 << 8 ) / ( m_dpv.fadeout * AMBIENT_GENERIC_UPDATE_RATE );
+	}//TE120----
 
 	SetNextThink( gpGlobals->curtime + 0.1f );
 }

@@ -11,6 +11,8 @@
 #endif
 
 #include "c_breakableprop.h"
+#include "ge_screeneffects.h"//TE120
+
 //-----------------------------------------------------------------------------
 // Purpose: 
 //-----------------------------------------------------------------------------
@@ -29,6 +31,13 @@ protected:
 	// Networked vars.
 	bool m_bAwake;
 	bool m_bAwakeLastTime;
+//TE120-----------------------------------
+	bool m_bEnableGlow;
+
+private:
+	CEntGlowEffect *m_pEntGlowEffect;
+	bool m_bClientGlow;
+//TE120------------------------------------
 };
 
 #endif // C_PHYSICSPROP_H 

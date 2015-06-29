@@ -16,6 +16,38 @@
 //-----------------------------------------------------------------------------
 #include "player_pickup.h"	// for combine ball inheritance
 
+//TE120-----
+#define PROP_COMBINE_BALL_MODEL	"models/effects/combineball.mdl"
+#define PROP_COMBINE_BALL_SPRITE_TRAIL "sprites/combineball_trail_black_1.vmt" 
+
+#define PROP_COMBINE_BALL_LIFETIME	4.0f	// Seconds
+
+#define PROP_COMBINE_BALL_HOLD_DISSOLVE_TIME	8.0f
+
+#define SF_COMBINE_BALL_BOUNCING_IN_SPAWNER		0x10000
+
+#define	MAX_COMBINEBALL_RADIUS	12
+
+
+//-----------------------------------------------------------------------------
+//
+// Spawns combine balls
+//
+//-----------------------------------------------------------------------------
+#define SF_SPAWNER_START_DISABLED 0x1000
+#define SF_SPAWNER_POWER_SUPPLY 0x2000
+
+//-----------------------------------------------------------------------------
+// Context think
+//-----------------------------------------------------------------------------
+static const char *s_pWhizThinkContext = "WhizThinkContext";
+static const char *s_pHoldDissolveContext = "HoldDissolveContext";
+static const char *s_pExplodeTimerContext = "ExplodeTimerContext";
+static const char *s_pAnimThinkContext = "AnimThinkContext";
+static const char *s_pCaptureContext = "CaptureContext";
+static const char *s_pRemoveContext = "RemoveContext";
+//TE120-----
+
 //-----------------------------------------------------------------------------
 // Forward declarations
 //-----------------------------------------------------------------------------
@@ -111,8 +143,66 @@ public:
 	{
 		m_bEmit = bEmit;
 	}
+//TE120-----
+	void SetFiredGrabbedOutput( bool bFiredGrabbedOutput )
+	{
+		m_bFiredGrabbedOutput = bFiredGrabbedOutput;
+	}
 
+	void SetForward( bool bForward )
+	{
+		m_bForward = bForward;
+	}
+
+	void SetCaptureInProgress( bool bCaptureInProgress )
+	{
+		m_bCaptureInProgress = bCaptureInProgress;
+	}
+
+	void SetEmit( bool bEmit )
+	{
+		m_bEmit = bEmit;
+	}
+
+	void SetHeld( bool bHeld )
+	{
+		m_bHeld = bHeld;
+	}
+
+	void SetLaunched( bool bLaunched )
+	{
+		m_bLaunched = bLaunched;
+	}
+
+	void SetStruckEntity( bool bStruckEntity )
+	{
+		m_bStruckEntity = bStruckEntity;
+	}
+
+	void SetNextDamageTime( float flNextDamageTime )
+	{
+		m_flNextDamageTime = flNextDamageTime;
+	}
+
+	void SetGlowTrail( CSpriteTrail *pGlowTrail )
+	{
+		m_pGlowTrail = pGlowTrail;
+	}
+
+	CSpriteTrail *GetGlowTrail() { return m_pGlowTrail; }
+//TE120-----
 	void SetOriginalOwner( CBaseEntity *pEntity ) { m_hOriginalOwner = pEntity; }
+//TE120-----	
+	void SetNState( char nState )
+	{
+		m_nState = nState;
+	}
+	
+	void SetLastBounceTime( float flLastBounceTime )
+	{
+		m_flLastBounceTime = flLastBounceTime;
+	}
+//TE120-----
 	CBaseEntity *GetOriginalOwner() { return m_hOriginalOwner; }
 
 private:
@@ -121,19 +211,15 @@ private:
 
 	float GetBallHoldDissolveTime();
 	float GetBallHoldSoundRampTime();
-
-	// Pow!
-	void DoExplosion( );
-
+	//TE120----- removed void DoExplosion( );
 	void StartAnimating( void );
 	void StopAnimating( void );
 
 	void SetBallAsLaunched( void );
-
-	void CollisionEventToTrace( int index, gamevcollisionevent_t *pEvent, trace_t &tr );
+	//TE120----- removed void CollisionEventToTrace
 	bool DissolveEntity( CBaseEntity *pEntity );
-	void OnHitEntity( CBaseEntity *pHitEntity, float flSpeed, int index, gamevcollisionevent_t *pEvent );
-	void DoImpactEffect( const Vector &preVelocity, int index, gamevcollisionevent_t *pEvent );
+	virtual void OnHitEntity( CBaseEntity *pHitEntity, float flSpeed, int index, gamevcollisionevent_t *pEvent );//TE120-----
+	virtual void DoImpactEffect( const Vector &preVelocity, int index, gamevcollisionevent_t *pEvent );//TE120-----
 
 	// Bounce inside the spawner: 
 	void BounceInSpawner( float flSpeed, int index, gamevcollisionevent_t *pEvent );
@@ -141,10 +227,10 @@ private:
 	bool IsAttractiveTarget( CBaseEntity *pEntity );
 
 	// Deflects the ball toward enemies in case of a collision 
-	void DeflectTowardEnemy( float flSpeed, int index, gamevcollisionevent_t *pEvent );
+	virtual void DeflectTowardEnemy( float flSpeed, int index, gamevcollisionevent_t *pEvent );//TE120-----
 
 	// Is this something we can potentially dissolve? 
-	bool IsHittableEntity( CBaseEntity *pHitEntity );
+	virtual bool IsHittableEntity( CBaseEntity *pHitEntity );//TE120-----
 
 	// Sucky. 
 	void WhizSoundThink();
@@ -154,13 +240,7 @@ private:
 	void AnimThink( void );
 
 	void FadeOut( float flDuration );
-
-
-	bool OutOfBounces( void ) const
-	{
-		return ( m_nState == STATE_LAUNCHED && m_nMaxBounces != 0 && m_nBounceCount >= m_nMaxBounces );
-	}
-
+//TE120----- removed
 private:
 
 	int		m_nBounceCount;
@@ -170,7 +250,7 @@ private:
 	float	m_flLastBounceTime;
 
 	bool	m_bFiredGrabbedOutput;
-	bool	m_bStruckEntity;		// Has hit an entity already (control accuracy)
+	//TE120----- removed m_bStruckEntity;
 	bool	m_bWeaponLaunched;		// Means this was fired from the AR2
 	bool	m_bForward;				// Movement direction in ball spawner
 
@@ -192,6 +272,20 @@ private:
 	CNetworkVar( bool, m_bEmit );
 	CNetworkVar( bool, m_bHeld );
 	CNetworkVar( bool, m_bLaunched );
+//TE120-----	
+protected:
+
+	// Pow!
+	virtual void DoExplosion( );
+	void CollisionEventToTrace( int index, gamevcollisionevent_t *pEvent, trace_t &tr );
+
+	bool OutOfBounces( void ) const
+	{
+		return ( m_nState == STATE_LAUNCHED && m_nMaxBounces != 0 && m_nBounceCount >= m_nMaxBounces );
+	}
+
+	bool	m_bStruckEntity;		// Has hit an entity already (control accuracy)
+//TE120-----
 	CNetworkVar( float, m_flRadius );
 };
 

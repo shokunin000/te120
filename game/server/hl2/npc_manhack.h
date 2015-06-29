@@ -67,6 +67,7 @@ public:
 	void			Event_Killed( const CTakeDamageInfo &info );
 	int				OnTakeDamage_Alive( const CTakeDamageInfo &info );
 	int				OnTakeDamage_Dying( const CTakeDamageInfo &info );
+	virtual bool	ShouldPuntUseLaunchForces( PhysGunForce_t reason ) { return ( reason == PHYSGUN_FORCE_LAUNCHED ); } //TE120
 	void			TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
 	void			TranslateNavGoal( CBaseEntity *pEnemy, Vector &chasePosition );
 	float			GetDefaultNavGoalTolerance();

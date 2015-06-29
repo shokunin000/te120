@@ -15,53 +15,45 @@
 #include <vgui_controls/AnimationController.h>
 #include <vgui/ISurface.h>
 #include "c_basehlplayer.h"
+#include "hl2_vehicle_radar.h" //TE120
+#include "hud_locator.h" //TE120
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
-#define LOCATOR_MATERIAL_JALOPY			"vgui/icons/icon_jalopy"
+#define LOCATOR_MATERIAL_GENERIC		"vgui/icons/icon_lambda" //TE120
+#define LOCATOR_MATERIAL_AMMO			"vgui/icons/icon_ammo" //TE120
+#define LOCATOR_MATERIAL_HEALTH			"vgui/icons/icon_health" //TE120
+#define LOCATOR_MATERIAL_LARGE_ENEMY	"vgui/icons/icon_strider" //TE120
 #define LOCATOR_MATERIAL_BIG_TICK		"vgui/icons/tick_long"
 #define LOCATOR_MATERIAL_SMALL_TICK		"vgui/icons/tick_short"
+#define LOCATOR_MATERIAL_BIG_TICK_N		"vgui/icons/tick_long_n" //TE120
+#define LOCATOR_MATERIAL_RADIATION		"vgui/icons/icon_radiation" //TE120
 
 ConVar hud_locator_alpha( "hud_locator_alpha", "230" );
 ConVar hud_locator_fov("hud_locator_fov", "350" );
 
-//-----------------------------------------------------------------------------
-// Purpose: Shows positions of objects relative to the player.
-//-----------------------------------------------------------------------------
-class CHudLocator : public CHudElement, public vgui::Panel
-{
-	DECLARE_CLASS_SIMPLE( CHudLocator, vgui::Panel );
-
-public:
-	CHudLocator( const char *pElementName );
-	virtual ~CHudLocator( void );
-
-	virtual void ApplySchemeSettings( vgui::IScheme *pScheme );
-	void VidInit( void );
-	bool ShouldDraw();
-
-protected:
-	void FillRect( int x, int y, int w, int h );
-	float LocatorXPositionForYawDiff( float yawDiff );
-	void DrawGraduations( float flYawPlayerFacing );
-	virtual void Paint();
-
-private:
-	void Reset( void );
-
-	int m_textureID_IconJalopy;
-	int m_textureID_IconBigTick;
-	int m_textureID_IconSmallTick;
-
-	Vector			m_vecLocation;
-};	
-
 using namespace vgui;
 
 #ifdef HL2_EPISODIC
+//TE120------------------
+static CHudLocator *s_Locator = NULL;
+
+CHudLocator *GetHudLocator()
+{
+	return s_Locator;
+}
+//TE120----------------
+
 DECLARE_HUDELEMENT( CHudLocator );
 #endif 
+//TE120----------------
+CLocatorContact::CLocatorContact()
+{
+	m_iType = 0;
+	m_pEnt = NULL;
+}
+//TE120--------------------------------
 
 //-----------------------------------------------------------------------------
 // Purpose: Constructor
@@ -73,33 +65,18 @@ CHudLocator::CHudLocator( const char *pElementName ) : CHudElement( pElementName
 
 	SetHiddenBits( HIDEHUD_HEALTH | HIDEHUD_PLAYERDEAD | HIDEHUD_NEEDSUIT );
 
-	m_textureID_IconJalopy = -1;
+	m_textureID_IconGeneric = -1;//TE120
+	m_textureID_IconAmmo = -1;//TE120
+	m_textureID_IconHealth = -1;//TE120
+	m_textureID_IconBigEnemy = -1;//TE120
 	m_textureID_IconSmallTick = -1;
 	m_textureID_IconBigTick = -1;
-}
+	m_textureID_IconBigTickN = -1;//TE120
+	m_textureID_IconRadiation = -1;//TE120
 
-CHudLocator::~CHudLocator( void )
-{
-	if ( vgui::surface() )
-	{
-		if ( m_textureID_IconJalopy != -1 )
-		{
-			vgui::surface()->DestroyTextureID( m_textureID_IconJalopy );
-			m_textureID_IconJalopy = -1;
-		}
+	m_iNumlocatorContacts = 0;//TE120
 
-		if ( m_textureID_IconSmallTick != -1 )
-		{
-			vgui::surface()->DestroyTextureID( m_textureID_IconSmallTick );
-			m_textureID_IconSmallTick = -1;
-		}
-
-		if ( m_textureID_IconBigTick != -1 )
-		{
-			vgui::surface()->DestroyTextureID( m_textureID_IconBigTick );
-			m_textureID_IconBigTick = -1;
-		}
-	}
+	s_Locator = this;//TE120
 }
 
 //-----------------------------------------------------------------------------
@@ -124,15 +101,17 @@ bool CHudLocator::ShouldDraw( void )
 	C_BaseHLPlayer *pPlayer = (C_BaseHLPlayer *)C_BasePlayer::GetLocalPlayer();
 	if ( !pPlayer )
 		return false;
-
-	if( pPlayer->GetVehicle() )
+//TE120-------------------------------------------------------------
+	// Need the HEV suit ( HL2 ) 
+	if ( !pPlayer->IsSuitEquipped() )
 		return false;
 
-	if( pPlayer->m_HL2Local.m_vecLocatorOrigin == vec3_invalid )
-		return false;
+	// if ( pPlayer->m_HL2Local.m_iNumLocatorContacts == 0 )
+	//	return false;
 	
 	return true;
 }
+//TE120-------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
 // Purpose: Start with our background off
@@ -140,6 +119,7 @@ bool CHudLocator::ShouldDraw( void )
 void CHudLocator::Reset( void )
 {
 	m_vecLocation = Vector( 0, 0, 0 );
+	m_iNumlocatorContacts = 0;//TE120
 }
 
 //-----------------------------------------------------------------------------
@@ -180,12 +160,14 @@ void CHudLocator::DrawGraduations( float flYawPlayerFacing )
 	{
 		m_textureID_IconBigTick = vgui::surface()->CreateNewTextureID();
 		vgui::surface()->DrawSetTextureFile( m_textureID_IconBigTick, LOCATOR_MATERIAL_BIG_TICK, true, false );
-	}
 
-	if( m_textureID_IconSmallTick == -1 )
-	{
 		m_textureID_IconSmallTick = vgui::surface()->CreateNewTextureID();
 		vgui::surface()->DrawSetTextureFile( m_textureID_IconSmallTick, LOCATOR_MATERIAL_SMALL_TICK, true, false );
+		
+		//TE120----------------------------------------------------------------
+		m_textureID_IconBigTickN = vgui::surface()->CreateNewTextureID();
+		vgui::surface()->DrawSetTextureFile( m_textureID_IconBigTickN, LOCATOR_MATERIAL_BIG_TICK_N, true, false );
+		//TE120---------------------------------------
 	}
 
 	int element_tall = GetTall();		// Height of the VGUI element
@@ -203,8 +185,19 @@ void CHudLocator::DrawGraduations( float flYawPlayerFacing )
 
 		if( tallLine )
 		{
+			//TE120-------------------------------------
+			if (angle == -180 || angle == 180)
+			{
+				vgui::surface()->DrawSetTexture( m_textureID_IconBigTickN );
+				vgui::surface()->DrawGetTextureSize( m_textureID_IconBigTickN, icon_wide, icon_tall );
+			}
+			else
+			{
 			vgui::surface()->DrawSetTexture( m_textureID_IconBigTick );
 			vgui::surface()->DrawGetTextureSize( m_textureID_IconBigTick, icon_wide, icon_tall );
+			}
+			//TE120-----------------------------------------
+
 			tallLine = false;
 		}
 		else
@@ -228,18 +221,41 @@ void CHudLocator::DrawGraduations( float flYawPlayerFacing )
 	}
 }
 
+//TE120------------------------------
+ConVar locator_range_start("locator_range_start", "150" ); // 60 feet
+ConVar locator_range_end("locator_range_end", "1200" ); // 90 feet
+//TE120--------------------------------------------------
+
 //-----------------------------------------------------------------------------
 // Purpose: draws the locator icons on the VGUI element.
 //-----------------------------------------------------------------------------
 void CHudLocator::Paint()
 {
 #ifdef HL2_EPISODIC
+	//TE120-------------------------------------------------------
+	// if( gpGlobals->curtime < flNextPaintTime )
+	// 	return;
+	// else
+	// 	flNextPaintTime = gpGlobals->curtime + 0.2f;
 
-	if( m_textureID_IconJalopy == -1 )
+	if( m_textureID_IconGeneric == -1 )
 	{
-		m_textureID_IconJalopy = vgui::surface()->CreateNewTextureID();
-		vgui::surface()->DrawSetTextureFile( m_textureID_IconJalopy, LOCATOR_MATERIAL_JALOPY, true, false );
+		m_textureID_IconGeneric = vgui::surface()->CreateNewTextureID();
+		vgui::surface()->DrawSetTextureFile( m_textureID_IconGeneric, LOCATOR_MATERIAL_GENERIC, true, false );
+
+		m_textureID_IconAmmo = vgui::surface()->CreateNewTextureID();
+		vgui::surface()->DrawSetTextureFile( m_textureID_IconAmmo, LOCATOR_MATERIAL_AMMO, true, false );
+	
+		m_textureID_IconHealth = vgui::surface()->CreateNewTextureID();
+		vgui::surface()->DrawSetTextureFile( m_textureID_IconHealth, LOCATOR_MATERIAL_HEALTH, true, false );
+	
+		m_textureID_IconBigEnemy = vgui::surface()->CreateNewTextureID();
+		vgui::surface()->DrawSetTextureFile( m_textureID_IconBigEnemy, LOCATOR_MATERIAL_LARGE_ENEMY, true, false );
+
+		m_textureID_IconRadiation = vgui::surface()->CreateNewTextureID();
+		vgui::surface()->DrawSetTextureFile( m_textureID_IconRadiation, LOCATOR_MATERIAL_RADIATION, true, false );
 	}
+	//TE120-------------------------------------------------------------
 
 	int alpha = hud_locator_alpha.GetInt();
 
@@ -247,9 +263,6 @@ void CHudLocator::Paint()
 
 	C_BaseHLPlayer *pPlayer = (C_BaseHLPlayer *)C_BasePlayer::GetLocalPlayer();
 	if ( !pPlayer )
-		return;
-
-	if( pPlayer->m_HL2Local.m_vecLocatorOrigin == vec3_origin )
 		return;
 
 	int element_tall = GetTall();		// Height of the VGUI element
@@ -260,9 +273,21 @@ void CHudLocator::Paint()
 	// We'll need the player's yaw for comparison.
 	float flYawPlayerForward = pPlayer->EyeAngles().y;
 
+	//TE120------------------------------------------
+	// Draw compass
+	DrawGraduations( flYawPlayerForward );
+	surface()->DrawSetColor( 255, 255, 255, 255 );
+
+	// Draw icons, if any
+	for ( int i = 0; i < pPlayer->m_HL2Local.m_iNumLocatorContacts; i++ )
+	{
 	// Copy this value out of the member variable in case we decide to expand this
 	// feature later and want to iterate some kind of list. 
-	Vector vecLocation = pPlayer->m_HL2Local.m_vecLocatorOrigin;
+		EHANDLE ent = pPlayer->m_HL2Local.m_locatorEnt[i];
+
+		if ( ent )
+		{
+			Vector vecLocation = ent->GetAbsOrigin();
 
 	Vector vecToLocation = vecLocation - pPlayer->GetAbsOrigin();
 	QAngle locationAngles;
@@ -274,34 +299,74 @@ void CHudLocator::Paint()
 	// Draw the icons!
 	int icon_wide, icon_tall;
 	int xPos, yPos;
-	surface()->DrawSetColor( 255, 255, 255, 255 );
-
-	DrawGraduations( flYawPlayerForward );
 	
 	if( bObjectInFOV )
 	{
+				Vector vecPos = ent->GetAbsOrigin();
+				float x_diff = vecPos.x - pPlayer->GetAbsOrigin().x;
+				float y_diff = vecPos.y - pPlayer->GetAbsOrigin().y;
+				float flDist = sqrt( ((x_diff)*(x_diff) + (y_diff)*(y_diff)) );
+
+				if ( flDist <= locator_range_end.GetFloat() )
+				{
 		// The object's location maps to a valid position along the tape, so draw an icon.
 		float tapePosition = LocatorXPositionForYawDiff(yawDiff);
+					// Msg("tapePosition: %f\n", tapePosition);
+					pPlayer->m_HL2Local.m_flTapePos[i] = tapePosition;
 
 		// derive a scale for the locator icon
 		yawDiff = fabs(yawDiff);
-		float scale = 1.0f;
-		scale = RemapValClamped( yawDiff, (fov/4), fov, 1.0f, 0.25f );
+					float scale = 0.55f;
+					float xscale = RemapValClamped( yawDiff, (fov/4), fov, 1.0f, 0.25f );
 	
-		vgui::surface()->DrawSetTexture( m_textureID_IconJalopy );
-		vgui::surface()->DrawGetTextureSize( m_textureID_IconJalopy, icon_wide, icon_tall );
+					switch (pPlayer->m_HL2Local.m_iLocatorContactType[i])
+					{
+					case LOCATOR_CONTACT_GENERIC:
+						vgui::surface()->DrawSetTexture( m_textureID_IconGeneric );
+						vgui::surface()->DrawGetTextureSize( m_textureID_IconGeneric, icon_wide, icon_tall );
+						break;
+					case LOCATOR_CONTACT_AMMO:
+						vgui::surface()->DrawSetTexture( m_textureID_IconAmmo );
+						vgui::surface()->DrawGetTextureSize( m_textureID_IconAmmo, icon_wide, icon_tall );
+						break;
+					case LOCATOR_CONTACT_HEALTH:
+						vgui::surface()->DrawSetTexture( m_textureID_IconHealth );
+						vgui::surface()->DrawGetTextureSize( m_textureID_IconHealth, icon_wide, icon_tall );
+						break;
+					case LOCATOR_CONTACT_LARGE_ENEMY:
+						vgui::surface()->DrawSetTexture( m_textureID_IconBigEnemy );
+						vgui::surface()->DrawGetTextureSize( m_textureID_IconBigEnemy, icon_wide, icon_tall );
+						break;
+					case LOCATOR_CONTACT_RADIATION:
+						vgui::surface()->DrawSetTexture( m_textureID_IconRadiation );
+						vgui::surface()->DrawGetTextureSize( m_textureID_IconRadiation, icon_wide, icon_tall );
+						break;
+					}
 
 		float flIconWide = ((float)element_tall * 1.25f);
 		float flIconTall = ((float)element_tall * 1.25f);
 
-		// Scale the icon as desired...
+					// Scale the icon based on distance
+					float flDistScale = 1.0f;
+					if( flDist > locator_range_start.GetFloat() )
+					{
+						flDistScale = RemapValClamped( flDist, locator_range_start.GetFloat(), locator_range_end.GetFloat(), 1.0f, 0.5f );
+					}
 
 		// Put back into ints
 		icon_wide = (int)flIconWide;
 		icon_tall = (int)flIconTall;
 
-		icon_wide *= scale;
+					// Positon Scale
+					icon_wide *= xscale;
 
+					// Distance Scale Icons
+					icon_wide *= flDistScale;
+					icon_tall *= flDistScale;
+
+					// Global Scale Icons
+					icon_wide *= scale;
+					icon_tall *= scale;
 		//Msg("yawDiff:%f  xPos:%d  scale:%f\n", yawDiff, xPos, scale );
 
 		// Center the icon around its position.
@@ -309,11 +374,132 @@ void CHudLocator::Paint()
 		xPos -= (icon_wide >> 1);
 		yPos = (element_tall>>1) - (icon_tall >> 1);
 
+					// If this overlaps the last drawn items reduce opacity
+					float fMostOverlapDist = 14.0f;
+					if (pPlayer->m_HL2Local.m_iLocatorContactType[i] != LOCATOR_CONTACT_LARGE_ENEMY)
+					{
+						for ( int j = i - 1; j >= 0; j-- )
+						{
+							EHANDLE lastEnt = pPlayer->m_HL2Local.m_locatorEnt[j];
+							if ( lastEnt.IsValid() )
+							{
+								if ( pPlayer->m_HL2Local.m_flTapePos[j] > 0 )
+								{
+									float fDiff = abs(pPlayer->m_HL2Local.m_flTapePos[j] - tapePosition);
+									if (fMostOverlapDist > fDiff)
+										fMostOverlapDist = fDiff;
+								}
+							}
+						}
+					}
+
+					// Msg("fMostOverlapDist: %f\n", fMostOverlapDist );
+					if ( fMostOverlapDist < 14.0f )
+					{
+						int numOpacity = (int)(32.0f + fMostOverlapDist * 9.6f);
+						// Msg("numOpacity: %d\n", numOpacity );
+
+						surface()->DrawSetColor( 255, 255, 255, numOpacity );
+					}
+					else
+					{
+						surface()->DrawSetColor( 255, 255, 255, 255 );
+					}
+
 		//Msg("Drawing at %f %f\n", x, y );
-		vgui::surface()->DrawTexturedRect(xPos, yPos, xPos+icon_wide, yPos+icon_tall);
+					vgui::surface()->DrawTexturedRect(xPos, yPos-7, xPos+icon_wide, yPos+icon_tall-7);
+				}
+			}
+			else
+			{
+				pPlayer->m_HL2Local.m_flTapePos[i] = -1.0f;
+			}
+		}
 	}
 
+	MaintainLocatorContacts();
+//TE120------------------------------------------------------------
 #endif // HL2_EPISODIC
 }
+//TE120------------------------------------------------------
+//---------------------------------------------------------
+// Purpose: Register a radar contact in the list of contacts
+//---------------------------------------------------------
+void CHudLocator::AddLocatorContact( EHANDLE hEnt, int iType )
+{
+	if( m_iNumlocatorContacts == LOCATOR_MAX_CONTACTS )
+	{
+		return;
+	}
 
+	if (!hEnt)
+	{
+		return;
+	}
 
+	int iExistingContact = FindLocatorContact( hEnt );
+	if( iExistingContact == -1 )
+	{
+		m_locatorContacts[m_iNumlocatorContacts].m_pEnt = hEnt;
+		m_locatorContacts[m_iNumlocatorContacts].m_iType = iType;
+		m_iNumlocatorContacts++;
+	}
+}
+
+//---------------------------------------------------------
+// Purpose: Search the contact list for a specific contact
+//---------------------------------------------------------
+int CHudLocator::FindLocatorContact( EHANDLE hEnt )
+{
+	for( int i = 0 ; i < m_iNumlocatorContacts ; i++ )
+	{
+		if( m_locatorContacts[ i ].m_pEnt == hEnt )
+			return i;
+	}
+
+	return -1;
+}
+
+//---------------------------------------------------------
+// Purpose: Go through all radar targets and see if any
+//			have expired. If yes, remove them from the
+//			list.
+//---------------------------------------------------------
+void CHudLocator::MaintainLocatorContacts()
+{
+	C_BaseHLPlayer *pPlayer = (C_BaseHLPlayer *)C_BasePlayer::GetLocalPlayer();
+	if ( !pPlayer )
+		return;
+
+	for( int i = 0 ; i < m_iNumlocatorContacts ; i++ )
+	{
+		// If I don't exist... remove me
+		if ( m_locatorContacts[ i ].m_pEnt )
+		{
+			// If I'm too far, remove me
+			Vector vecPos = m_locatorContacts[ i ].m_pEnt->GetAbsOrigin();
+
+			float x_diff = vecPos.x - pPlayer->GetAbsOrigin().x;
+			float y_diff = vecPos.y - pPlayer->GetAbsOrigin().y;
+			float flDist = sqrt( ((x_diff)*(x_diff) + (y_diff)*(y_diff)) );
+
+			if( flDist > locator_range_end.GetFloat() )
+			{
+				// Time for this guy to go. Easiest thing is just to copy the last element 
+				// into this element's spot and then decrement the count of entities.
+				m_locatorContacts[ i ] = m_locatorContacts[ m_iNumlocatorContacts - 1 ];
+				m_iNumlocatorContacts--;
+				break;
+			}
+		}
+		else
+		{
+			// Time for this guy to go. Easiest thing is just to copy the last element 
+			// into this element's spot and then decrement the count of entities.
+			m_locatorContacts[ i ] = m_locatorContacts[ m_iNumlocatorContacts - 1 ];
+			m_iNumlocatorContacts--;
+			break;
+		}
+	}
+}
+//TE120

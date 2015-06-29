@@ -28,8 +28,11 @@ public:
 	virtual			~C_PhysBox();
 	virtual ShadowType_t ShadowCastType();
 	
+	unsigned char	GetClientSideFade();//TE120
+
 public:
 	float			m_mass;	// TEST..
+	float			m_fDisappearDist;//TE120
 };
 
 

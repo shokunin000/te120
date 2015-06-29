@@ -25,9 +25,11 @@ BEGIN_DATADESC( CLight )
 
 	// Fuctions
 	DEFINE_FUNCTION( FadeThink ),
+	DEFINE_FUNCTION( ToggleBugThink ),//TE120
 
 	// Inputs
 	DEFINE_INPUTFUNC( FIELD_STRING, "SetPattern", InputSetPattern ),
+	DEFINE_INPUTFUNC( FIELD_FLOAT,	"SetLightValue", InputSetLightValue ),//TE120
 	DEFINE_INPUTFUNC( FIELD_STRING, "FadeToPattern", InputFadeToPattern ),
 	DEFINE_INPUTFUNC( FIELD_VOID,	"Toggle", InputToggle ),
 	DEFINE_INPUTFUNC( FIELD_VOID,	"TurnOn", InputTurnOn ),
@@ -81,7 +83,62 @@ void CLight::Spawn( void )
 			engine->LightStyle(m_iStyle, "m");
 	}
 }
+//TE120----
+void CLight::Activate( void )
+{
+	if (!GetEntityName())
+	{
+		BaseClass::Activate();
+	}
+	else
+	{
+		m_bRequestedToggleOff = false;
 
+		// Find switch lights that are on & toggle them off & on to fix perf bug. This is hacky & bad
+		// but I'm not sure what else to do without access to the engine to debug.
+		if ( !FBitSet( m_spawnflags, SF_LIGHT_START_OFF ) )
+		{
+			m_bRequestedToggleOff = true;
+			SetThink(&CLight::ToggleBugThink);
+			SetNextThink( gpGlobals->curtime + 0.4 );
+		}
+	}
+
+	BaseClass::Activate();
+}
+
+void CLight::ToggleBugThink( void )
+{
+	// Light is on and we requested it off, turn it off
+	if ( !FBitSet( m_spawnflags, SF_LIGHT_START_OFF ) && m_bRequestedToggleOff )
+	{
+		m_bRequestedToggleOff = false;
+		TurnOff();
+		m_bRequestedToggleOn = true;
+		SetThink(&CLight::ToggleBugThink);
+		SetNextThink( gpGlobals->curtime + 0.1 );
+		return;
+	}
+	else if (m_bRequestedToggleOff) // Light was requested off but the player already did it 
+	{
+		m_bRequestedToggleOff = false;
+		return;
+	}
+
+	// We turned the light off and want to turn it back on here to fix perf bug
+	if ( FBitSet( m_spawnflags, SF_LIGHT_START_OFF ) && m_bRequestedToggleOn )
+	{
+		m_bRequestedToggleOn = false;
+		TurnOn();
+	}
+	else if (m_bRequestedToggleOn)
+	{
+		// Here the player managed to turn the light back on before we did, but it was probably intended to be turned off.
+		m_bRequestedToggleOn = false;
+		TurnOff();
+	}
+
+}//TE120----
 
 void CLight::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value )
 {
@@ -174,7 +231,101 @@ void CLight::InputSetPattern( inputdata_t &inputdata )
 	// Light is on if pattern is set
 	CLEARBITS(m_spawnflags, SF_LIGHT_START_OFF);
 }
+//TE120----
+//-----------------------------------------------------------------------------
+// Purpose: Input handler for fading a light
+//-----------------------------------------------------------------------------
+void CLight::InputSetLightValue( inputdata_t &inputdata )
+{
+	float fTemp = clamp( inputdata.value.Float(), 0, 1 );
+	fTemp *= 26;
 
+	switch ( Ceil2Int(fTemp) )
+	{
+	case 26:
+		engine->LightStyle( m_iStyle, "z" );
+		CLEARBITS( m_spawnflags, SF_LIGHT_START_OFF );
+		break;
+	case 25:
+		engine->LightStyle( m_iStyle, "y" );
+		break;
+	case 24:
+		engine->LightStyle( m_iStyle, "x" );
+		break;
+	case 23:
+		engine->LightStyle( m_iStyle, "w" );
+		break;
+	case 22:
+		engine->LightStyle( m_iStyle, "v" );
+		break;
+	case 21:
+		engine->LightStyle( m_iStyle, "u" );
+		break;
+	case 20:
+		engine->LightStyle( m_iStyle, "t" );
+		break;
+	case 19:
+		engine->LightStyle( m_iStyle, "s" );
+		break;
+	case 18:
+		engine->LightStyle( m_iStyle, "r" );
+		break;
+	case 17:
+		engine->LightStyle( m_iStyle, "q" );
+		break;
+	case 16:
+		engine->LightStyle( m_iStyle, "p" );
+		break;
+	case 15:
+		engine->LightStyle( m_iStyle, "o" );
+		break;
+	case 14:
+		engine->LightStyle( m_iStyle, "n" );
+		break;
+	case 13:
+		engine->LightStyle( m_iStyle, "m" );
+		break;
+	case 12:
+		engine->LightStyle( m_iStyle, "l" );
+		break;
+	case 11:
+		engine->LightStyle( m_iStyle, "k" );
+		break;
+	case 10:
+		engine->LightStyle( m_iStyle, "j" );
+		break;
+	case 9:
+		engine->LightStyle( m_iStyle, "i" );
+		break;
+	case 8:
+		engine->LightStyle( m_iStyle, "h" );
+		break;
+	case 7:
+		engine->LightStyle( m_iStyle, "g" );
+		break;
+	case 6:
+		engine->LightStyle( m_iStyle, "f" );
+		break;
+	case 5:
+		engine->LightStyle( m_iStyle, "e" );
+		break;
+	case 4:
+		engine->LightStyle( m_iStyle, "d" );
+		break;
+	case 3:
+		engine->LightStyle( m_iStyle, "c" );
+		break;
+	case 2:
+		engine->LightStyle( m_iStyle, "b" );
+		break;
+	case 1:
+	default:
+		engine->LightStyle( m_iStyle, "a" );
+		SETBITS( m_spawnflags, SF_LIGHT_START_OFF );
+		break;
+	}
+}
+//TE120----
 
 //-----------------------------------------------------------------------------
 // Purpose: Input handler for fading from first value in old pattern to 

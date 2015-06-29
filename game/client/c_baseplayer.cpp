@@ -221,6 +221,7 @@ END_RECV_TABLE()
 		RecvPropArray3		( RECVINFO_ARRAY(m_iAmmo), RecvPropInt( RECVINFO(m_iAmmo[0])) ),
 		
 		RecvPropInt			( RECVINFO(m_fOnTarget) ),
+		RecvPropInt			( RECVINFO(m_fOnUsable) ),//TE120
 
 		RecvPropInt			( RECVINFO( m_nTickBase ) ),
 		RecvPropInt			( RECVINFO( m_nNextThinkTick ) ),
@@ -359,6 +360,7 @@ BEGIN_PREDICTION_DATA( C_BasePlayer )
 	DEFINE_PRED_FIELD( m_iBonusProgress, FIELD_INTEGER, FTYPEDESC_INSENDTABLE ),
 	DEFINE_PRED_FIELD( m_iBonusChallenge, FIELD_INTEGER, FTYPEDESC_INSENDTABLE ),
 	DEFINE_PRED_FIELD( m_fOnTarget, FIELD_BOOLEAN, FTYPEDESC_INSENDTABLE ),
+	DEFINE_PRED_FIELD( m_fOnUsable, FIELD_BOOLEAN, FTYPEDESC_INSENDTABLE ), //TE120
 	DEFINE_PRED_FIELD( m_nNextThinkTick, FIELD_INTEGER, FTYPEDESC_INSENDTABLE ),
 	DEFINE_PRED_FIELD( m_lifeState, FIELD_CHARACTER, FTYPEDESC_INSENDTABLE ),
 	DEFINE_PRED_FIELD( m_nWaterLevel, FIELD_CHARACTER, FTYPEDESC_INSENDTABLE ),
@@ -2358,6 +2360,22 @@ bool C_BasePlayer::IsUseableEntity( CBaseEntity *pEntity, unsigned int requiredC
 	return false;
 }
 
+//TE120-------------------------------
+//-----------------------------------------------------------------------------
+// Purpose: Let player know when his crosshair is on a usable
+//-----------------------------------------------------------------------------
+void C_BasePlayer::CheckUsable( void )
+{
+	// First do a cheap find to see if there are any usables
+	bool bFoundAnyUsable = FindAnyUsable();
+
+	// More expensive search to verify item is usable with traces/collision checks/etc.
+	if ( bFoundAnyUsable && FindUseEntity() )
+		SetOnUsable(true);
+	else
+		SetOnUsable(false);
+}
+//TE120-------------------------------
 
 //-----------------------------------------------------------------------------
 // Purpose: 
