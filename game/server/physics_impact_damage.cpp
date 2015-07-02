@@ -478,7 +478,6 @@ float CalculatePhysicsImpactDamage( int index, gamevcollisionevent_t *pEvent, co
 		damage = clamp( damage, 0.f, table.smallMassCap );
 	}
 //TE120----
-	CBasePlayer *pPlayer = UTIL_GetLocalPlayer();
 	if ( pEvent->pEntities[index]->IsPlayer() || pEvent->pEntities[otherIndex]->IsPlayer() )
 	{
 		if ( damage < 10 && otherMass > 250 )

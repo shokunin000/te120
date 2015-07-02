@@ -3337,6 +3337,7 @@ void CTriggerCamera::FollowTarget( )
 		SetAbsAngles( vecGoal );
 		m_bSnapToGoal = false;
 	}
+#ifdef HL2_EPISODIC
 	else if ( !m_bInterpolatePosition )//TE120
 	{
 		// UNDONE: Can't we just use UTIL_AngleDiff here?
@@ -3367,6 +3368,7 @@ void CTriggerCamera::FollowTarget( )
 		vecAngVel.Init( dx * 400 * gpGlobals->frametime, dy * 400 * gpGlobals->frametime, GetLocalAngularVelocity().z );//TE120
 		SetLocalAngularVelocity(vecAngVel);
 	}
+#endif
 
 	if (!HasSpawnFlags(SF_CAMERA_PLAYER_TAKECONTROL))	
 	{

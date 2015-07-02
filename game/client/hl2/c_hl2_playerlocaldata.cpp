@@ -54,6 +54,7 @@ END_PREDICTION_DATA()
 //-----------------------------------------------------------------------------
 void __MsgFunc_UpdatePlayerLocator(bf_read &msg) 
 {
+#ifdef HL2_EPISODIC
 	// Radar code here!
 	if( !GetHudLocator() )
 		return;
@@ -62,6 +63,9 @@ void __MsgFunc_UpdatePlayerLocator(bf_read &msg)
 	{
 		GetHudLocator()->AddLocatorContact( g_pPlayerLocalData->m_locatorEnt[i], g_pPlayerLocalData->m_iLocatorContactType[i] );	
 	}
+#endif
+
+	return;
 }
 //TE120---------------------------------------------------
 

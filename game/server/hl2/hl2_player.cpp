@@ -2367,7 +2367,9 @@ void CHL2_Player::UpdateLocator( bool forceUpdate )
 	// int m_iNumOldRadarContacts = m_HL2Local.m_iNumLocatorContacts;
 
 	m_flNextLocatorUpdateTime = gpGlobals->curtime + LOCATOR_UPDATE_FREQUENCY;
+#ifdef HL2_EPISODIC
 	m_HL2Local.m_iNumLocatorContacts = 0;
+#endif
 
 	CBaseEntity *pEnt = gEntList.FirstEnt();
 	string_t iszStriderName = FindPooledString( "npc_strider" );
@@ -2432,6 +2434,7 @@ void CHL2_Player::UpdateLocator( bool forceUpdate )
 			}
 		}
 
+#ifdef HL2_EPISODIC
 		if( type != RADAR_CONTACT_NONE )
 		{
 			Vector vecPos = pEnt->GetAbsOrigin();
@@ -2451,6 +2454,7 @@ void CHL2_Player::UpdateLocator( bool forceUpdate )
 					break;
 			}
 		}
+#endif
 
 		pEnt = gEntList.NextEnt( pEnt );
 	}
