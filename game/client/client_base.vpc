@@ -173,6 +173,25 @@ $Project
 		
 	$Folder	"Source Files"
 	{
+	$Folder "Shader Editor" [$WIN32]
+		{
+			$Folder	"Header Files"
+			{
+				$File	"$SRCDIR\game\client\ShaderEditor\ISEdit_ModelRender.h"
+				$File	"$SRCDIR\game\client\ShaderEditor\IVShaderEditor.h"
+				$File	"$SRCDIR\game\client\ShaderEditor\ShaderEditorSystem.h"
+				$File	"$SRCDIR\game\client\ShaderEditor\SEdit_ModelRender.h"
+				//$File	"$SRCDIR\game\client\ShaderEditor\Grass\CGrassCluster.h"
+			}
+ 
+			$Folder	"Implementation Files"
+			{
+				$File	"$SRCDIR\game\client\ShaderEditor\ShaderEditorSystem.cpp"
+				$File	"$SRCDIR\game\client\ShaderEditor\SEdit_ModelRender.cpp"
+				//$File	"$SRCDIR\game\client\ShaderEditor\Grass\CGrassCluster.cpp"
+			}
+		}
+		
 		$File	"hl2\C_Func_Monitor.cpp"
 		$File	"geiger.cpp"
 		$File	"history_resource.cpp"
