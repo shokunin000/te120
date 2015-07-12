@@ -25,7 +25,7 @@
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
     <TargetName>client</TargetName>
-    <PlatformToolset>v100</PlatformToolset>
+    <PlatformToolset>v120_xp</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -73,7 +73,7 @@ if ERRORLEVEL 1 exit /b 1
       <AdditionalOptions>/Zm200 /Gw</AdditionalOptions>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>.\hl2;.\hl2\elements;..\..\game\shared\hl2;..\..\game\shared\episodic;..\..\public;.\;..\..\common;..\..\public;..\..\public\tier0;..\..\public\tier1;..\..\game\client\generated_proto_mod_episodic;..\..\thirdparty\protobuf-2.3.0\src;..\..\vgui2\include;..\..\vgui2\controls;..\..\game\shared;.\game_controls;..\..\thirdparty\sixensesdk\include</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>VPC;RAD_TELEMETRY_DISABLED;_HAS_ITERATOR_DEBUGGING=0;WIN32;_WIN32;_DEBUG;DEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;_ALLOW_RUNTIME_LIBRARY_MISMATCH;_ALLOW_ITERATOR_DEBUG_LEVEL_MISMATCH;_ALLOW_MSC_VER_MISMATCH;%(PreprocessorDefinitions);COMPILER_MSVC32;COMPILER_MSVC32;COMPILER_MSVC;_DLL_EXT=.dll;DLLNAME=client;BINK_VIDEO;AVI_VIDEO;WMV_VIDEO;DEV_BUILD;FRAME_POINTER_OMISSION_DISABLED;NO_STRING_T;CLIENT_DLL;VECTOR;VERSION_SAFE_STEAM_API_INTERFACES;PROTECTED_THINGS_ENABLE;strncpy=use_Q_strncpy_instead;_snprintf=use_Q_snprintf_instead;ENABLE_CHROMEHTMLWINDOW;fopen=dont_use_fopen;HL2_CLIENT_DLL;HL2_EPISODIC;_EXTERNAL_DLL_EXT=.dll;VPCGAMECAPS=VALVE;PROJECTDIR=C:\ShokuninSrc\2013\source-sdk-2013\sp\src\game\client;_DLL_EXT=.dll;SOURCE1=1;VPCGAME=valve</PreprocessorDefinitions>
+      <PreprocessorDefinitions>VPC;RAD_TELEMETRY_DISABLED;_HAS_ITERATOR_DEBUGGING=0;WIN32;_WIN32;_DEBUG;DEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;_ALLOW_RUNTIME_LIBRARY_MISMATCH;_ALLOW_ITERATOR_DEBUG_LEVEL_MISMATCH;_ALLOW_MSC_VER_MISMATCH;%(PreprocessorDefinitions);COMPILER_MSVC32;COMPILER_MSVC32;COMPILER_MSVC;_DLL_EXT=.dll;DLLNAME=client;BINK_VIDEO;AVI_VIDEO;WMV_VIDEO;DEV_BUILD;FRAME_POINTER_OMISSION_DISABLED;NO_STRING_T;CLIENT_DLL;VECTOR;VERSION_SAFE_STEAM_API_INTERFACES;PROTECTED_THINGS_ENABLE;strncpy=use_Q_strncpy_instead;_snprintf=use_Q_snprintf_instead;ENABLE_CHROMEHTMLWINDOW;fopen=dont_use_fopen;HL2_CLIENT_DLL;HL2_EPISODIC;SOURCE_2013;_EXTERNAL_DLL_EXT=.dll;VPCGAMECAPS=VALVE;PROJECTDIR=C:\ShokuninSrc\2013\source-sdk-2013\sp\te120\game\client;_DLL_EXT=.dll;SOURCE1=1;VPCGAME=valve</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <ExceptionHandling>false</ExceptionHandling>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
@@ -170,7 +170,7 @@ if ERRORLEVEL 1 exit /b 1
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <AdditionalIncludeDirectories>.\hl2;.\hl2\elements;..\..\game\shared\hl2;..\..\game\shared\episodic;..\..\public;.\;..\..\common;..\..\public;..\..\public\tier0;..\..\public\tier1;..\..\game\client\generated_proto_mod_episodic;..\..\thirdparty\protobuf-2.3.0\src;..\..\vgui2\include;..\..\vgui2\controls;..\..\game\shared;.\game_controls;..\..\thirdparty\sixensesdk\include</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>VPC;RAD_TELEMETRY_DISABLED;WIN32;_WIN32;NDEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;_ALLOW_RUNTIME_LIBRARY_MISMATCH;_ALLOW_ITERATOR_DEBUG_LEVEL_MISMATCH;_ALLOW_MSC_VER_MISMATCH;%(PreprocessorDefinitions);COMPILER_MSVC32;COMPILER_MSVC32;COMPILER_MSVC;_DLL_EXT=.dll;DLLNAME=client;BINK_VIDEO;AVI_VIDEO;WMV_VIDEO;DEV_BUILD;FRAME_POINTER_OMISSION_DISABLED;NO_STRING_T;CLIENT_DLL;VECTOR;VERSION_SAFE_STEAM_API_INTERFACES;PROTECTED_THINGS_ENABLE;strncpy=use_Q_strncpy_instead;_snprintf=use_Q_snprintf_instead;ENABLE_CHROMEHTMLWINDOW;fopen=dont_use_fopen;HL2_CLIENT_DLL;HL2_EPISODIC;_EXTERNAL_DLL_EXT=.dll;VPCGAMECAPS=VALVE;PROJECTDIR=C:\ShokuninSrc\2013\source-sdk-2013\sp\src\game\client;_DLL_EXT=.dll;SOURCE1=1;VPCGAME=valve</PreprocessorDefinitions>
+      <PreprocessorDefinitions>VPC;RAD_TELEMETRY_DISABLED;WIN32;_WIN32;NDEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;_ALLOW_RUNTIME_LIBRARY_MISMATCH;_ALLOW_ITERATOR_DEBUG_LEVEL_MISMATCH;_ALLOW_MSC_VER_MISMATCH;%(PreprocessorDefinitions);COMPILER_MSVC32;COMPILER_MSVC32;COMPILER_MSVC;_DLL_EXT=.dll;DLLNAME=client;BINK_VIDEO;AVI_VIDEO;WMV_VIDEO;DEV_BUILD;FRAME_POINTER_OMISSION_DISABLED;NO_STRING_T;CLIENT_DLL;VECTOR;VERSION_SAFE_STEAM_API_INTERFACES;PROTECTED_THINGS_ENABLE;strncpy=use_Q_strncpy_instead;_snprintf=use_Q_snprintf_instead;ENABLE_CHROMEHTMLWINDOW;fopen=dont_use_fopen;HL2_CLIENT_DLL;HL2_EPISODIC;SOURCE_2013;_EXTERNAL_DLL_EXT=.dll;VPCGAMECAPS=VALVE;PROJECTDIR=C:\ShokuninSrc\2013\source-sdk-2013\sp\te120\game\client;_DLL_EXT=.dll;SOURCE1=1;VPCGAME=valve</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <ExceptionHandling>false</ExceptionHandling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -838,6 +838,7 @@ exit 1
     <ClInclude Include="client_virtualreality.h" />
     <ClInclude Include="clientsteamcontext.h" />
     <ClInclude Include="commentary_modelviewer.h" />
+    <ClInclude Include="ge_screeneffects.h" />
     <ClInclude Include="..\..\game\shared\particle_parse.h" />
     <ClInclude Include="..\..\game\shared\particle_property.h" />
     <ClInclude Include="..\..\game\shared\point_bonusmaps_accessor.h" />
@@ -853,6 +854,7 @@ exit 1
     <ClInclude Include="hl2\c_corpse.h" />
     <ClInclude Include="hl2\c_hl2_playerlocaldata.h" />
     <ClInclude Include="hl2\c_prop_combine_ball.h" />
+    <ClInclude Include="hl2\c_prop_gravity_ball.h" />
     <ClInclude Include="hl2\c_vehicle_crane.h" />
     <ClInclude Include="..\..\game\shared\hl2\citadel_effects_shared.h" />
     <ClInclude Include="hl2\clientmode_hlnormal.h" />
@@ -861,9 +863,14 @@ exit 1
     <ClInclude Include="..\..\game\shared\hl2\hl2_gamerules.h" />
     <ClInclude Include="..\..\game\shared\hl2\hl2_shareddefs.h" />
     <ClInclude Include="..\..\game\shared\hl2\hl_gamemovement.h" />
+    <ClInclude Include="hl2\hud_locator.h" />
     <ClInclude Include="hl2\hud_radar.h" />
     <ClInclude Include="hl2\hud_suitpower.h" />
     <ClInclude Include="..\..\game\shared\episodic\npc_advisor_shared.h" />
+    <ClInclude Include="..\..\game\client\ShaderEditor\ISEdit_ModelRender.h" />
+    <ClInclude Include="..\..\game\client\ShaderEditor\IVShaderEditor.h" />
+    <ClInclude Include="..\..\game\client\ShaderEditor\SEdit_ModelRender.h" />
+    <ClInclude Include="..\..\game\client\ShaderEditor\ShaderEditorSystem.h" />
     <ClInclude Include="sixense\in_sixense.h" />
     <ClInclude Include="sixense\in_sixense_gesture_bindings.h" />
     <ClInclude Include="..\..\game\shared\sixense\sixense_convars_extern.h" />
@@ -979,6 +986,7 @@ exit 1
     <ClCompile Include="..\..\game\client\c_vote_controller.cpp" />
     <ClCompile Include="hl2\c_waterbullet.cpp" />
     <ClCompile Include="C_WaterLODControl.cpp" />
+    <ClCompile Include="c_weapon_physconcussion.cpp" />
     <ClCompile Include="c_world.cpp" />
     <ClCompile Include="..\..\game\shared\cam_thirdperson.cpp" />
     <ClCompile Include="camomaterialproxy.cpp" />
@@ -1069,6 +1077,7 @@ exit 1
     <ClCompile Include="..\..\game\shared\gamestringpool.cpp" />
     <ClCompile Include="gametrace_client.cpp" />
     <ClCompile Include="..\..\game\shared\gamevars_shared.cpp" />
+    <ClCompile Include="ge_screeneffects.cpp" />
     <ClCompile Include="geiger.cpp" />
     <ClCompile Include="glow_outline_effect.cpp" />
     <ClCompile Include="glow_overlay.cpp" />
@@ -1351,6 +1360,7 @@ exit 1
     <ClCompile Include="hl2\c_npc_rollermine.cpp" />
     <ClCompile Include="hl2\c_plasma_beam_node.cpp" />
     <ClCompile Include="hl2\c_prop_combine_ball.cpp" />
+    <ClCompile Include="hl2\c_prop_gravity_ball.cpp" />
     <ClCompile Include="episodic\c_prop_scalable.cpp" />
     <ClCompile Include="hl2\c_rotorwash.cpp" />
     <ClCompile Include="hl2\c_script_intro.cpp" />
@@ -1408,6 +1418,8 @@ exit 1
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="..\..\game\client\ShaderEditor\SEdit_ModelRender.cpp" />
+    <ClCompile Include="..\..\game\client\ShaderEditor\ShaderEditorSystem.cpp" />
     <ClCompile Include="sixense\in_sixense.cpp" />
     <ClCompile Include="sixense\in_sixense_gesture_bindings.cpp" />
     <ClCompile Include="..\..\game\shared\sixense\sixense_convars.cpp" />
@@ -1493,13 +1505,13 @@ exit 1
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Running VPC CRC Check - client_episodic.vpc</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">if exist "..\..\devtools\bin\vpc.exe" "..\..\devtools\bin\vpc.exe" -crc2 "client_episodic.vcxproj"
 if ERRORLEVEL 1 exit /b 1
-echo crc_complete &gt; C:\ShokuninSrc\2013\source-sdk-2013\sp\src\game\client\client_episodic.vpc.sentinel</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\ShokuninSrc\2013\source-sdk-2013\sp\src\game\client\client_episodic.vpc.sentinel</Outputs>
+echo crc_complete &gt; C:\ShokuninSrc\2013\source-sdk-2013\sp\te120\game\client\client_episodic.vpc.sentinel</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\ShokuninSrc\2013\source-sdk-2013\sp\te120\game\client\client_episodic.vpc.sentinel</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Running VPC CRC Check - client_episodic.vpc</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">if exist "..\..\devtools\bin\vpc.exe" "..\..\devtools\bin\vpc.exe" -crc2 "client_episodic.vcxproj"
 if ERRORLEVEL 1 exit /b 1
-echo crc_complete &gt; C:\ShokuninSrc\2013\source-sdk-2013\sp\src\game\client\client_episodic.vpc.sentinel</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\ShokuninSrc\2013\source-sdk-2013\sp\src\game\client\client_episodic.vpc.sentinel</Outputs>
+echo crc_complete &gt; C:\ShokuninSrc\2013\source-sdk-2013\sp\te120\game\client\client_episodic.vpc.sentinel</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\ShokuninSrc\2013\source-sdk-2013\sp\te120\game\client\client_episodic.vpc.sentinel</Outputs>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>

@@ -1,8 +1,8 @@
 [vpc crc file version 2]
-8209bbc3 C:\ShokuninSrc\2013\source-sdk-2013\sp\src\devtools\bin\vpc.exe
+8209bbc3 C:\ShokuninSrc\2013\source-sdk-2013\sp\te120\devtools\bin\vpc.exe
 _Nc_VS2013/vpcgame:valve_
-8819857d client_episodic.vpc
-c7ae28fd ..\..\game\client\client_base.vpc
+e84c98c5 client_episodic.vpc
+e5c228a9 ..\..\game\client\client_base.vpc
 4832e67a ..\..\vpc_scripts\source_dll_base.vpc
 d752cf80 ..\..\vpc_scripts\platform_dirs.vpc
 6c4a5ff1 ..\..\vpc_scripts\source_base.vpc

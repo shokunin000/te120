@@ -1697,6 +1697,9 @@
     <ClInclude Include="hl2\prop_combine_ball.h">
       <Filter>Source Files\HL2 DLL</Filter>
     </ClInclude>
+    <ClInclude Include="hl2\prop_gravity_ball.h">
+      <Filter>Source Files\HL2 DLL</Filter>
+    </ClInclude>
     <ClInclude Include="hl2\rotorwash.h">
       <Filter>Source Files\HL2 DLL</Filter>
     </ClInclude>
@@ -1722,6 +1725,9 @@
       <Filter>Source Files\HL2 DLL</Filter>
     </ClInclude>
     <ClInclude Include="hl2\weapon_physcannon.h">
+      <Filter>Source Files\HL2 DLL</Filter>
+    </ClInclude>
+    <ClInclude Include="hl2\weapon_physconcussion.h">
       <Filter>Source Files\HL2 DLL</Filter>
     </ClInclude>
     <ClInclude Include="hl2\weapon_rpg.h">
@@ -3163,6 +3169,9 @@
     <ClCompile Include="hl2\prop_combine_ball.cpp">
       <Filter>Source Files\HL2 DLL</Filter>
     </ClCompile>
+    <ClCompile Include="hl2\prop_gravity_ball.cpp">
+      <Filter>Source Files\HL2 DLL</Filter>
+    </ClCompile>
     <ClCompile Include="hl2\prop_thumper.cpp">
       <Filter>Source Files\HL2 DLL</Filter>
     </ClCompile>
@@ -3227,6 +3236,9 @@
       <Filter>Source Files\HL2 DLL</Filter>
     </ClCompile>
     <ClCompile Include="hl2\weapon_physcannon.cpp">
+      <Filter>Source Files\HL2 DLL</Filter>
+    </ClCompile>
+    <ClCompile Include="hl2\weapon_physconcussion.cpp">
       <Filter>Source Files\HL2 DLL</Filter>
     </ClCompile>
     <ClCompile Include="hl2\weapon_pistol.cpp">

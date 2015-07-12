@@ -1,7 +1,7 @@
 [vpc crc file version 2]
-8209bbc3 C:\ShokuninSrc\2013\source-sdk-2013\sp\src\devtools\bin\vpc.exe
+8209bbc3 C:\ShokuninSrc\2013\source-sdk-2013\sp\te120\devtools\bin\vpc.exe
 _Nc_VS2013/vpcgame:valve_
-967a1a19 server_episodic.vpc
+1497ac96 server_episodic.vpc
 cd2921c2 ..\..\game\server\server_base.vpc
 4832e67a ..\..\vpc_scripts\source_dll_base.vpc
 d752cf80 ..\..\vpc_scripts\platform_dirs.vpc

@@ -34,6 +34,15 @@
     <Filter Include="Source Files\Precompiled Header">
       <UniqueIdentifier>{A7D26A13-21F4-C6B5-5922-8A4FB05AF07D}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Shader Editor">
+      <UniqueIdentifier>{EDD5B08E-C21A-8D29-AB03-C0A368D5A4DA}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Shader Editor\Header Files">
+      <UniqueIdentifier>{7C6777E8-0E77-5282-048F-BB675EBD7C2E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Shader Editor\Implementation Files">
+      <UniqueIdentifier>{429F6B8F-2AE9-806D-8D3C-EABC9174354B}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source Files\Sixense">
       <UniqueIdentifier>{5595354B-BE1B-8C7C-B3CB-72257228B6D3}</UniqueIdentifier>
     </Filter>
@@ -1796,6 +1805,9 @@
     <ClInclude Include="commentary_modelviewer.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="ge_screeneffects.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\game\shared\particle_parse.h">
       <Filter>Source Files</Filter>
     </ClInclude>
@@ -1841,6 +1853,9 @@
     <ClInclude Include="hl2\c_prop_combine_ball.h">
       <Filter>Source Files\HL2 DLL</Filter>
     </ClInclude>
+    <ClInclude Include="hl2\c_prop_gravity_ball.h">
+      <Filter>Source Files\HL2 DLL</Filter>
+    </ClInclude>
     <ClInclude Include="hl2\c_vehicle_crane.h">
       <Filter>Source Files\HL2 DLL</Filter>
     </ClInclude>
@@ -1864,6 +1879,18 @@
     </ClInclude>
     <ClInclude Include="hl2\hud_suitpower.h">
       <Filter>Source Files\HL2 DLL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\client\ShaderEditor\ISEdit_ModelRender.h">
+      <Filter>Source Files\Shader Editor\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\client\ShaderEditor\IVShaderEditor.h">
+      <Filter>Source Files\Shader Editor\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\client\ShaderEditor\SEdit_ModelRender.h">
+      <Filter>Source Files\Shader Editor\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\client\ShaderEditor\ShaderEditorSystem.h">
+      <Filter>Source Files\Shader Editor\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="sixense\in_sixense.h">
       <Filter>Source Files\Sixense</Filter>
@@ -2197,6 +2224,9 @@
     <ClCompile Include="C_WaterLODControl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="c_weapon_physconcussion.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="c_world.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -2393,6 +2423,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\game\shared\gamevars_shared.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ge_screeneffects.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="geiger.cpp">
@@ -3022,6 +3055,9 @@
     <ClCompile Include="hl2\c_prop_combine_ball.cpp">
       <Filter>Source Files\HL2 DLL</Filter>
     </ClCompile>
+    <ClCompile Include="hl2\c_prop_gravity_ball.cpp">
+      <Filter>Source Files\HL2 DLL</Filter>
+    </ClCompile>
     <ClCompile Include="hl2\c_rotorwash.cpp">
       <Filter>Source Files\HL2 DLL</Filter>
     </ClCompile>
@@ -3159,6 +3195,12 @@
     </ClCompile>
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files\Precompiled Header</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\client\ShaderEditor\SEdit_ModelRender.cpp">
+      <Filter>Source Files\Shader Editor\Implementation Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\client\ShaderEditor\ShaderEditorSystem.cpp">
+      <Filter>Source Files\Shader Editor\Implementation Files</Filter>
     </ClCompile>
     <ClCompile Include="sixense\in_sixense.cpp">
       <Filter>Source Files\Sixense</Filter>
