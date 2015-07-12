@@ -50,3 +50,6 @@ gcsdk/bin/linux/protoc
 /vpc_scripts
 vstdlib/vstdlib_exclude.vpc
 tier0/tier0_exclude.vpc
+createallprojects
+creategameprojects
+games.opensdf
