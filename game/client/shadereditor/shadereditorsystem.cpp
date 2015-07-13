@@ -527,8 +527,8 @@ protected:
 		//if( !r_drawopaquerenderables.GetBool() )
 		//	return;
 
-		/*if( !m_pMainView->ShouldDrawEntities() ) //ERROR: UNDEFINED REFERENCE
-			return;*/
+		if( !m_pMainView->ShouldDrawEntities() )
+			return;
 
 		render->SetBlend( 1 );
 
