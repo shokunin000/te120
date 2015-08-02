@@ -2710,11 +2710,13 @@ DECLARE_CLIENT_EFFECT( "CE_GravityBallFadeConcOn", GravityBallFadeConcCallback )
 #ifdef _WIN32 //Disabled on Linux
 void DisableDirtyLens( const CEffectData &data )
 {
-	int numPPEI = shaderEdit->GetPPEIndex( "ppe_dirty_lens" );
+	if (shaderEdit) {
+		int numPPEI = shaderEdit->GetPPEIndex( "ppe_dirty_lens" );
 
-	if (numPPEI != -1)
-	{
-		shaderEdit->SetPPEEnabled( numPPEI, false );
+		if (numPPEI != -1)
+		{
+			shaderEdit->SetPPEEnabled( numPPEI, false );
+		}
 	}
 }
 
