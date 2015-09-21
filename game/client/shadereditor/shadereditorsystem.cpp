@@ -206,10 +206,10 @@ void ShaderEditorHandler::CustomViewRender( int *viewId, const VisibleFogVolumeI
 	if ( IsReady() )
 		shaderEdit->OnSceneRender();
 }
-void ShaderEditorHandler::UpdateSkymask( bool bCombineMode )
+void ShaderEditorHandler::UpdateSkymask( bool bCombineMode, int x, int y, int w, int h )
 {
 	if ( IsReady() )
-		shaderEdit->OnUpdateSkymask( bCombineMode );
+		shaderEdit->OnUpdateSkymask( bCombineMode, x, y, w, h );
 }
 void ShaderEditorHandler::CustomPostRender()
 {

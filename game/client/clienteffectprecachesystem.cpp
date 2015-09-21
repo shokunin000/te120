@@ -13,6 +13,10 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
+CLIENTEFFECT_REGISTER_BEGIN( PrecacheMyPostProcessingEffects )
+	CLIENTEFFECT_MATERIAL( "drunk" )
+CLIENTEFFECT_REGISTER_END()
+
 //Global singelton accessor
 CClientEffectPrecacheSystem	*ClientEffectPrecacheSystem( void )
 {

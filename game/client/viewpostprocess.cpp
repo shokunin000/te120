@@ -2642,10 +2642,10 @@ void DoEnginePostProcessing( int x, int y, int w, int h, bool bFlashlightIsOn, b
 	static IMaterial *pMat = materials->FindMaterial( "drunk", TEXTURE_GROUP_OTHER );
 	if ( pMat )
 	{
-		bool bFound = false;
-		IMaterialVar *pMutableVar = pMat->FindVar( "$MUTABLE_01", &bFound );
+		unsigned int ivar_tmp;
+		IMaterialVar *pMutableVar = pMat->FindVarFast( "$MUTABLE_01", &ivar_tmp );
 
-		if ( bFound )
+		if ( pMutableVar )
 		{
 			g_ActualDrunkValue = 1 - pMutableVar->GetFloatValue();
 
@@ -2689,11 +2689,13 @@ void DoEnginePostProcessing( int x, int y, int w, int h, bool bFlashlightIsOn, b
 					}
 				}
 
-				pMutableVar->SetFloatValue( 1 - g_ActualDrunkValue );
+				pMutableVar->SetFloatValue( 1.0f - g_ActualDrunkValue );
 
 				// Run Drunk Post
 				UpdateScreenEffectTexture();
+				pMat->IncrementReferenceCount();
 				pRenderContext->DrawScreenSpaceRectangle( pMat, 0, 0, w, h, 0, 0, w - 1, h - 1, w, h );
+				pMat->DecrementReferenceCount();
 			}
 		}
 	}

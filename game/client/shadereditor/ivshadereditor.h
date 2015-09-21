@@ -96,7 +96,7 @@ public:
 	virtual void OnFrame( float frametime ) = 0;
 	virtual void OnPreRender( void *viewsetup ) = 0;
 	virtual void OnSceneRender() = 0;
-	virtual void OnUpdateSkymask( bool bCombineMode ) = 0;
+	virtual void OnUpdateSkymask( bool bCombineMode, int x, int y, int w, int h ) = 0;
 	virtual void OnPostRender( bool bUpdateFB ) = 0;
 
 	// data callbacks for hlsl constants

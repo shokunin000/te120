@@ -2000,7 +2000,7 @@ void CViewRender::RenderView( const CViewSetup &view, int nClearFlags, int whatT
 		{
 			AddViewToScene( pSkyView );
 #ifdef _WIN32 //Disabled on Linux
-			g_ShaderEditorSystem->UpdateSkymask();//TE120
+			g_ShaderEditorSystem->UpdateSkymask( false, view.x, view.y, view.width, view.height );
 #endif
 		}
 		SafeRelease( pSkyView );
@@ -2059,7 +2059,7 @@ void CViewRender::RenderView( const CViewSetup &view, int nClearFlags, int whatT
 		// Now actually draw the viewmodel
 		DrawViewModels( view, whatToDraw & RENDERVIEW_DRAWVIEWMODEL );
 #ifdef _WIN32 //Disabled on Linux
-		g_ShaderEditorSystem->UpdateSkymask( bDrew3dSkybox );//TE120
+		g_ShaderEditorSystem->UpdateSkymask( bDrew3dSkybox, view.x, view.y, view.width, view.height );
 #endif
 
 		DrawUnderwaterOverlay();
