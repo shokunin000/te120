@@ -4,7 +4,7 @@
 //		-	Connects the shader editor
 //		-	Sends data from the main viewsetup
 //		-	exposes client callbacks to shaders
-// 
+//
 // ******************************************************
 
 #include "cbase.h"
@@ -80,26 +80,14 @@ bool ShaderEditorHandler::Init()
 #endif
 
 	char modulePath[MAX_PATH*4];
-#ifdef _WIN32
-	#ifdef SWARM_DLL
-		Q_snprintf( modulePath, sizeof( modulePath ), "%s/bin/shadereditor_swarm.dll", engine->GetGameDirectory() );
-	#elif SOURCE_2006
-		Q_snprintf( modulePath, sizeof( modulePath ), "%s/bin/shadereditor_2006.dll", engine->GetGameDirectory() );
-	#elif SOURCE_2013
-		Q_snprintf( modulePath, sizeof( modulePath ), "%s/bin/shadereditor_2013.dll", engine->GetGameDirectory() );
-	#else
-		Q_snprintf( modulePath, sizeof( modulePath ), "%s/bin/shadereditor_2007.dll", engine->GetGameDirectory() );
-	#endif
+#ifdef SWARM_DLL
+	Q_snprintf( modulePath, sizeof( modulePath ), "%s/bin/shadereditor_swarm.dll\n", engine->GetGameDirectory() );
+#elif SOURCE_2006
+	Q_snprintf( modulePath, sizeof( modulePath ), "%s/bin/shadereditor_2006.dll\n", engine->GetGameDirectory() );
+#elif SOURCE_2013
+	Q_snprintf( modulePath, sizeof( modulePath ), "%s/bin/shadereditor_2013.dll\n", engine->GetGameDirectory() );
 #else
-	#ifdef SWARM_DLL
-		Q_snprintf( modulePath, sizeof( modulePath ), "%s/bin/shadereditor_swarm.so", engine->GetGameDirectory() );
-	#elif SOURCE_2006
-		Q_snprintf( modulePath, sizeof( modulePath ), "%s/bin/shadereditor_2006.so", engine->GetGameDirectory() );
-	#elif SOURCE_2013
-		Q_snprintf( modulePath, sizeof( modulePath ), "%s/bin/shadereditor_2013.so", engine->GetGameDirectory() );
-	#else
-		Q_snprintf( modulePath, sizeof( modulePath ), "%s/bin/shadereditor_2007.so", engine->GetGameDirectory() );
-	#endif
+	Q_snprintf( modulePath, sizeof( modulePath ), "%s/bin/shadereditor_2007.dll\n", engine->GetGameDirectory() );
 #endif
 	shaderEditorModule = Sys_LoadModule( modulePath );
 	if ( shaderEditorModule )
@@ -120,11 +108,7 @@ bool ShaderEditorHandler::Init()
 	}
 	else
 	{
-#ifdef _WIN32
 		Warning( "Cannot load shadereditor.dll from %s!\n", modulePath );
-#else
-		Warning( "Cannot load shadereditor.so from %s!\n", modulePath );
-#endif
 	}
 
 	m_bReady = shaderEdit != NULL;
@@ -364,6 +348,11 @@ protected:
 		return true;
 	};
 
+	virtual bool ShouldDrawEntities()
+	{
+		return true;
+	};
+
 	virtual bool ShouldDrawRopes()
 	{
 		return true;
@@ -387,7 +376,7 @@ protected:
 	void DrawSetup( float waterHeight, int nSetupFlags, float waterZAdjust, int iForceViewLeaf = -1 )
 	{
 		int savedViewID = g_ShaderEditorSystem->GetViewIdForModify();
-		
+
 		g_ShaderEditorSystem->GetViewIdForModify() = VIEW_ILLEGAL;
 
 		render->BeginUpdateLightmaps();
@@ -536,7 +525,7 @@ protected:
 		const bool bParticles = ShouldDrawParticles();
 
 		//
-		// Prepare to iterate over all leaves that were visible, and draw opaque things in them.	
+		// Prepare to iterate over all leaves that were visible, and draw opaque things in them.
 		//
 		if ( bRopes )
 			RopeManager()->ResetRenderCache();
@@ -558,9 +547,9 @@ protected:
 		{
 			switch( pOpaqueList[i].m_nModelType )
 			{
-			case RENDERABLE_MODEL_BRUSH:		brushModels.AddToTail( &pOpaqueList[i] ); break; 
-			case RENDERABLE_MODEL_STATIC_PROP:	staticProps.AddToTail( &pOpaqueList[i] ); break; 
-			default:							otherRenderables.AddToTail( &pOpaqueList[i] ); break; 
+			case RENDERABLE_MODEL_BRUSH:		brushModels.AddToTail( &pOpaqueList[i] ); break;
+			case RENDERABLE_MODEL_STATIC_PROP:	staticProps.AddToTail( &pOpaqueList[i] ); break;
+			default:							otherRenderables.AddToTail( &pOpaqueList[i] ); break;
 			}
 		}
 
@@ -645,7 +634,7 @@ protected:
 
 		//
 		// Draw model renderables now (ie. models that use the fast path)
-		//					 
+		//
 		DrawOpaqueRenderables_ModelRenderables( arrModelRenderables.Count(), arrModelRenderables.Base(), bShadowDepth );
 
 		// Turn off z pass here. Don't want non-fastpath models with potentially large dynamic VB requirements overwrite
@@ -667,7 +656,7 @@ protected:
 
 		bool const bDrawopaquestaticpropslast = false; //r_drawopaquestaticpropslast.GetBool();
 
-	
+
 		//
 		// First do the brush models
 		//
@@ -705,10 +694,10 @@ protected:
 						C_BaseAnimating *pba = assert_cast<C_BaseAnimating *>( pEntity );
 						arrRenderEntsNpcsFirst[ numNpcs ++ ] = *itEntity;
 						arrBoneSetupNpcsLast[ numOpaqueEnts - numNpcs ] = pba;
-					
+
 						itEntity->m_pRenderable = NULL;		// We will render NPCs separately
 						itEntity->m_RenderHandle = NULL;
-					
+
 						continue;
 					}
 					else if ( pEntity->GetBaseAnimating() )
@@ -732,7 +721,7 @@ protected:
 			{
 				pEnts[bucket][0] = m_pRenderablesList->m_RenderGroups[ RENDER_GROUP_OPAQUE_ENTITY_HUGE + 2 * bucket ];
 				pEnts[bucket][1] = pEnts[bucket][0] + m_pRenderablesList->m_RenderGroupCounts[ RENDER_GROUP_OPAQUE_ENTITY_HUGE + 2 * bucket ];
-			
+
 				pProps[bucket][0] = m_pRenderablesList->m_RenderGroups[ RENDER_GROUP_OPAQUE_STATIC_HUGE + 2 * bucket ];
 				pProps[bucket][1] = pProps[bucket][0] + m_pRenderablesList->m_RenderGroupCounts[ RENDER_GROUP_OPAQUE_STATIC_HUGE + 2 * bucket ];
 			}
@@ -782,7 +771,7 @@ protected:
 		if( r_entityclips.GetBool() )
 			pRenderClipPlane = pEnt->GetRenderClipPlane();
 
-		if( pRenderClipPlane )	
+		if( pRenderClipPlane )
 		{
 			CMatRenderContextPtr pRenderContext( materials );
 			if( !materials->UsingFastClipping() ) //do NOT change the fast clip plane mid-scene, depth problems result. Regular user clip planes are fine though
@@ -800,7 +789,7 @@ protected:
 			//BlurTest( pEnt, flags, false, instance );
 			view->SetCurrentlyDrawingEntity( NULL );
 
-			if( !materials->UsingFastClipping() )	
+			if( !materials->UsingFastClipping() )
 				pRenderContext->PopCustomClipPlane();
 		}
 		else
@@ -862,7 +851,7 @@ protected:
 		if( true ) //r_entityclips.GetBool() )
 			pRenderClipPlane = pEnt->GetRenderClipPlane();
 
-		if( pRenderClipPlane )	
+		if( pRenderClipPlane )
 		{
 			CMatRenderContextPtr pRenderContext( materials );
 			if( !materials->UsingFastClipping() ) //do NOT change the fast clip plane mid-scene, depth problems result. Regular user clip planes are fine though
@@ -912,11 +901,11 @@ protected:
 		float one[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
 		render->SetColorModulation(	one );
 		render->SetBlend( 1.0f );
-	
+
 		const int MAX_STATICS_PER_BATCH = 512;
 		IClientRenderable *pStatics[ MAX_STATICS_PER_BATCH ];
 		RenderableInstance_t pInstances[ MAX_STATICS_PER_BATCH ];
-	
+
 		int numScheduled = 0, numAvailable = MAX_STATICS_PER_BATCH;
 
 		for( int i = 0; i < nCount; ++i )
@@ -931,12 +920,12 @@ protected:
 			pStatics[ numScheduled ++ ] = itEntity->m_pRenderable;
 			if ( -- numAvailable > 0 )
 				continue; // place a hint for compiler to predict more common case in the loop
-		
+
 			staticpropmgr->DrawStaticProps( pStatics, pInstances, numScheduled, bShadowDepth, vcollide_wireframe.GetBool() );
 			numScheduled = 0;
 			numAvailable = MAX_STATICS_PER_BATCH;
 		}
-	
+
 		if ( numScheduled )
 			staticpropmgr->DrawStaticProps( pStatics, pInstances, numScheduled, bShadowDepth, vcollide_wireframe.GetBool() );
 	}
@@ -949,10 +938,10 @@ protected:
 		float one[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
 		render->SetColorModulation(	one );
 		render->SetBlend( 1.0f );
-	
+
 		const int MAX_STATICS_PER_BATCH = 512;
 		IClientRenderable *pStatics[ MAX_STATICS_PER_BATCH ];
-	
+
 		int numScheduled = 0, numAvailable = MAX_STATICS_PER_BATCH;
 
 		for( CClientRenderablesList::CEntry *itEntity = pEntitiesBegin; itEntity < pEntitiesEnd; ++ itEntity )
@@ -965,12 +954,12 @@ protected:
 			pStatics[ numScheduled ++ ] = itEntity->m_pRenderable;
 			if ( -- numAvailable > 0 )
 				continue; // place a hint for compiler to predict more common case in the loop
-		
+
 			staticpropmgr->DrawStaticProps( pStatics, numScheduled, bShadowDepth, vcollide_wireframe.GetBool() );
 			numScheduled = 0;
 			numAvailable = MAX_STATICS_PER_BATCH;
 		}
-	
+
 		if ( numScheduled )
 			staticpropmgr->DrawStaticProps( pStatics, numScheduled, bShadowDepth, vcollide_wireframe.GetBool() );
 	};
@@ -981,7 +970,7 @@ protected:
 	{
 		for ( int i = 0; i < nCount; ++i )
 		{
-			CClientRenderablesList::CEntry *itEntity = ppEntities[i]; 
+			CClientRenderablesList::CEntry *itEntity = ppEntities[i];
 			if ( itEntity->m_pRenderable )
 				DrawOpaqueRenderable( itEntity->m_pRenderable, ( itEntity->m_TwoPass != 0 ), bShadowDepth );
 		}
@@ -1023,6 +1012,7 @@ public:
 		bool bClearObeyStencil;
 		bool bFogOverride;
 		bool bFogEnabled;
+		bool bDrawEntities;
 
 		int iClearColorR;
 		int iClearColorG;
@@ -1256,6 +1246,12 @@ public:
 		return settings.bDrawParticles;
 	};
 
+
+	virtual bool ShouldDrawEntities()
+	{
+		return settings.bDrawEntities;
+	};
+
 	virtual bool ShouldDrawRopes()
 	{
 		return settings.bDrawRopes;
@@ -1411,6 +1407,7 @@ pFnVrCallback_Declare( VrCallback_General )
 	settings.bClearObeyStencil = pbOptions[14];
 	settings.bFogOverride = pbOptions[15];
 	settings.bFogEnabled = pbOptions[16];
+	settings.bDrawEntities = pbOptions[17];
 
 	settings.iClearColorR = piOptions[0];
 	settings.iClearColorG = piOptions[1];
@@ -1506,7 +1503,7 @@ pFnVrCallback_Declare( VrCallback_ViewModel )
 	// Force clipped down range
 	if( bUseDepthHack )
 		pRenderContext->DepthRange( 0.0f, 0.1f );
-	
+
 #ifdef SWARM_DLL
 	CViewModelRenderablesList list;
 	ClientLeafSystem()->CollateViewModelRenderables( &list );

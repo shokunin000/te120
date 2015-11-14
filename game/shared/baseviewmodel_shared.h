@@ -145,8 +145,7 @@ public:
 	// Should this object receive shadows?
 	virtual bool			ShouldReceiveProjectedTextures( int flags )
 	{
-		return false;
-		//return true; //Cast dynamic shadows
+		return true; //Cast dynamic shadows
 	}
 
 	// Add entity to visible view models list?

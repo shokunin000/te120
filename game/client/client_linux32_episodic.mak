@@ -18,9 +18,9 @@ DLL_EXT=.so
 SYM_EXT=.dbg
 FORCEINCLUDES= 
 ifeq "$(CFG)" "debug"
-DEFINES += -DVPC -DRAD_TELEMETRY_DISABLED -DDEBUG -D_DEBUG -DGNUC -DPOSIX -DCOMPILER_GCC -D_DLL_EXT=.so -D_LINUX -DLINUX -DPOSIX -D_POSIX -DDLLNAME=client -DBINK_VIDEO -DGL_GLEXT_PROTOTYPES -DDX_TO_GL_ABSTRACTION -DUSE_SDL -DDEV_BUILD -DFRAME_POINTER_OMISSION_DISABLED -DNO_STRING_T -DCLIENT_DLL -DVECTOR -DVERSION_SAFE_STEAM_API_INTERFACES -DPROTECTED_THINGS_ENABLE -Dstrncpy=use_Q_strncpy_instead -D_snprintf=use_Q_snprintf_instead -DENABLE_CHROMEHTMLWINDOW -DUSE_WEBM_FOR_REPLAY -DHL2_CLIENT_DLL -DHL2_EPISODIC -D_EXTERNAL_DLL_EXT=.so -DVPCGAMECAPS=EPISODIC -DPROJECTDIR=/run/media/vincent/8b27c2f6-fec9-4648-9355-fd426d7b45f3/sourceengine/Transmissions_Element_120_Source/game_2013_te120/game/client -D_DLL_EXT=.so -DSOURCE1=1 -DVPCGAME=episodic -D_LINUX=1 -D_POSIX=1 -DLINUX=1 -DPOSIX=1 
+DEFINES += -DVPC -DRAD_TELEMETRY_DISABLED -DDEBUG -D_DEBUG -DGNUC -DPOSIX -DCOMPILER_GCC -D_DLL_EXT=.so -D_LINUX -DLINUX -DPOSIX -D_POSIX -DDLLNAME=client -DBINK_VIDEO -DGL_GLEXT_PROTOTYPES -DDX_TO_GL_ABSTRACTION -DUSE_SDL -DDEV_BUILD -DFRAME_POINTER_OMISSION_DISABLED -DNO_STRING_T -DCLIENT_DLL -DVECTOR -DVERSION_SAFE_STEAM_API_INTERFACES -DPROTECTED_THINGS_ENABLE -Dstrncpy=use_Q_strncpy_instead -D_snprintf=use_Q_snprintf_instead -DENABLE_CHROMEHTMLWINDOW -DUSE_WEBM_FOR_REPLAY -DHL2_CLIENT_DLL -DHL2_EPISODIC -D_EXTERNAL_DLL_EXT=.so -DVPCGAMECAPS=EPISODIC -DPROJECTDIR=/media/vincent/dbcbf69d-8162-4768-976c-c7c5b5ace72b/sourceengine/Transmissions_Element_120_Source/src/game/client -D_DLL_EXT=.so -DSOURCE1=1 -DVPCGAME=episodic -D_LINUX=1 -D_POSIX=1 -DLINUX=1 -DPOSIX=1 
 else
-DEFINES += -DVPC -DRAD_TELEMETRY_DISABLED -DNDEBUG -DGNUC -DPOSIX -DCOMPILER_GCC -D_DLL_EXT=.so -D_LINUX -DLINUX -DPOSIX -D_POSIX -DDLLNAME=client -DBINK_VIDEO -DGL_GLEXT_PROTOTYPES -DDX_TO_GL_ABSTRACTION -DUSE_SDL -DDEV_BUILD -DFRAME_POINTER_OMISSION_DISABLED -DNO_STRING_T -DCLIENT_DLL -DVECTOR -DVERSION_SAFE_STEAM_API_INTERFACES -DPROTECTED_THINGS_ENABLE -Dstrncpy=use_Q_strncpy_instead -D_snprintf=use_Q_snprintf_instead -DENABLE_CHROMEHTMLWINDOW -DUSE_WEBM_FOR_REPLAY -DHL2_CLIENT_DLL -DHL2_EPISODIC -D_EXTERNAL_DLL_EXT=.so -DVPCGAMECAPS=EPISODIC -DPROJECTDIR=/run/media/vincent/8b27c2f6-fec9-4648-9355-fd426d7b45f3/sourceengine/Transmissions_Element_120_Source/game_2013_te120/game/client -D_DLL_EXT=.so -DSOURCE1=1 -DVPCGAME=episodic -D_LINUX=1 -D_POSIX=1 -DLINUX=1 -DPOSIX=1 
+DEFINES += -DVPC -DRAD_TELEMETRY_DISABLED -DNDEBUG -DGNUC -DPOSIX -DCOMPILER_GCC -D_DLL_EXT=.so -D_LINUX -DLINUX -DPOSIX -D_POSIX -DDLLNAME=client -DBINK_VIDEO -DGL_GLEXT_PROTOTYPES -DDX_TO_GL_ABSTRACTION -DUSE_SDL -DDEV_BUILD -DFRAME_POINTER_OMISSION_DISABLED -DNO_STRING_T -DCLIENT_DLL -DVECTOR -DVERSION_SAFE_STEAM_API_INTERFACES -DPROTECTED_THINGS_ENABLE -Dstrncpy=use_Q_strncpy_instead -D_snprintf=use_Q_snprintf_instead -DENABLE_CHROMEHTMLWINDOW -DUSE_WEBM_FOR_REPLAY -DHL2_CLIENT_DLL -DHL2_EPISODIC -D_EXTERNAL_DLL_EXT=.so -DVPCGAMECAPS=EPISODIC -DPROJECTDIR=/media/vincent/dbcbf69d-8162-4768-976c-c7c5b5ace72b/sourceengine/Transmissions_Element_120_Source/src/game/client -D_DLL_EXT=.so -DSOURCE1=1 -DVPCGAME=episodic -D_LINUX=1 -D_POSIX=1 -DLINUX=1 -DPOSIX=1 
 endif
 INCLUDEDIRS += ./hl2 ./hl2/elements ../../game/shared/hl2 ../../game/shared/episodic ../../public ./ ../../common ../../public ../../public/tier0 ../../public/tier1 ../../thirdparty/SDL2 ../../game/client/generated_proto_mod_episodic ../../thirdparty/protobuf-2.3.0/src ../../vgui2/include ../../vgui2/controls ../../game/shared ./game_controls ../../thirdparty/sixensesdk/include 
 CONFTYPE=dll
@@ -543,6 +543,7 @@ CPPFILES= \
     weapons_resource.cpp \
     weapon_selection.cpp \
     WorldDimsProxy.cpp \
+    worldlight.cpp \
 
 
 LIBFILES = \
@@ -4677,5 +4678,13 @@ ifneq (clean, $(findstring clean, $(MAKECMDGOALS)))
 endif
 
 $(OBJ_DIR)/WorldDimsProxy.o : $(PWD)/WorldDimsProxy.cpp $(PWD)/client_linux32_episodic.mak $(SRCROOT)/devtools/makefile_base_posix.mak
+	$(PRE_COMPILE_FILE)
+	$(COMPILE_FILE) $(POST_COMPILE_FILE)
+
+ifneq (clean, $(findstring clean, $(MAKECMDGOALS)))
+-include $(OBJ_DIR)/worldlight.P
+endif
+
+$(OBJ_DIR)/worldlight.o : $(PWD)/worldlight.cpp $(PWD)/client_linux32_episodic.mak $(SRCROOT)/devtools/makefile_base_posix.mak
 	$(PRE_COMPILE_FILE)
 	$(COMPILE_FILE) $(POST_COMPILE_FILE)

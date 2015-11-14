@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 //=============================================================================//
 
@@ -49,7 +49,7 @@ class SmokeTrail;
 class CSoundPatch;
 
 //-----------------------------------------------------------------------------
-// Manhack 
+// Manhack
 //-----------------------------------------------------------------------------
 class CNPC_Manhack : public CNPCBaseInteractive<CAI_BasePhysicsFlyingBot>, public CDefaultPlayerPickupVPhysics
 {
@@ -67,7 +67,7 @@ public:
 	void			Event_Killed( const CTakeDamageInfo &info );
 	int				OnTakeDamage_Alive( const CTakeDamageInfo &info );
 	int				OnTakeDamage_Dying( const CTakeDamageInfo &info );
-	virtual bool	ShouldPuntUseLaunchForces( PhysGunForce_t reason ) { return ( reason == PHYSGUN_FORCE_LAUNCHED ); } //TE120
+	virtual bool	ShouldPuntUseLaunchForces( PhysGunForce_t reason ) { return ( reason == PHYSGUN_FORCE_LAUNCHED ); }//TE120
 	void			TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
 	void			TranslateNavGoal( CBaseEntity *pEnemy, Vector &chasePosition );
 	float			GetDefaultNavGoalTolerance();
@@ -117,7 +117,7 @@ public:
 	void			BladesInit();
 	void			SoundInit( void );
 	void			StartEye( void );
-	
+
 	bool			HandleInteraction(int interactionType, void* data, CBaseCombatCharacter* sourceEnt);
 
 	void			PostNPCInit( void );
@@ -141,7 +141,7 @@ public:
 	// Create smoke trail!
 	void CreateSmokeTrail();
 	void DestroySmokeTrail();
-		
+
 	void Ignite( float flFlameLifetime, bool bNPCOnly, float flSize, bool bCalledByLevelDesigner ) { return; }
 
 	void			InputDisableSwarm( inputdata_t &inputdata );
@@ -162,7 +162,7 @@ public:
 	{
 		// Turn the sprites off and on again so their colors will change.
 		KillSprites(0.0f);
-		m_bHackedByAlyx = true; 
+		m_bHackedByAlyx = true;
 		StartEye();
 	}
 
@@ -194,10 +194,10 @@ private:
 	// Computes the slice bounce velocity
 	void ComputeSliceBounceVelocity( CBaseEntity *pHitEntity, trace_t &tr );
 
-	// Take damage from being thrown by a physcannon 
+	// Take damage from being thrown by a physcannon
 	void TakeDamageFromPhyscannon( CBasePlayer *pPlayer );
 
-	// Take damage from a vehicle: 
+	// Take damage from a vehicle:
 	void TakeDamageFromVehicle( int index, gamevcollisionevent_t *pEvent );
 
 	// Take damage from physics impacts
@@ -253,7 +253,7 @@ private:
 
 	CSprite			*m_pEyeGlow;
 	CSprite			*m_pLightGlow;
-	
+
 	CHandle<SmokeTrail>	m_hSmokeTrail;
 
 	int				m_iPanel1;

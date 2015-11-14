@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 //===========================================================================//
 
@@ -48,8 +48,8 @@ static ConVar r_flashlightvisualizetrace( "r_flashlightvisualizetrace", "0", FCV
 static ConVar r_flashlightambient( "r_flashlightambient", "0.0", FCVAR_CHEAT );
 static ConVar r_flashlightshadowatten( "r_flashlightshadowatten", "0.35", FCVAR_CHEAT );
 static ConVar r_flashlightladderdist( "r_flashlightladderdist", "40.0", FCVAR_CHEAT );
-static ConVar mat_slopescaledepthbias_shadowmap( "mat_slopescaledepthbias_shadowmap", "3", FCVAR_CHEAT );//TE120 changed value
-static ConVar mat_depthbias_shadowmap(	"mat_depthbias_shadowmap", "0.00001", FCVAR_CHEAT  );//TE120 changed value
+static ConVar mat_slopescaledepthbias_shadowmap( "mat_slopescaledepthbias_shadowmap", "3", FCVAR_CHEAT );//TE120
+static ConVar mat_depthbias_shadowmap( "mat_depthbias_shadowmap", "0.00001", FCVAR_CHEAT );//TE120
 
 
 void r_newflashlightCallback_f( IConVar *pConVar, const char *pOldString, float flOldValue )
@@ -57,11 +57,11 @@ void r_newflashlightCallback_f( IConVar *pConVar, const char *pOldString, float 
 	if( engine->GetDXSupportLevel() < 70 )
 	{
 		r_newflashlight.SetValue( 0 );
-	}	
+	}
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 // Input  : nEntIndex - The m_nEntIndex of the client entity that is creating us.
 //			vecPos - The position of the light emitter.
 //			vecDir - The direction of the light emission.
@@ -76,7 +76,7 @@ CFlashlightEffect::CFlashlightEffect(int nEntIndex)
 	if( engine->GetDXSupportLevel() < 70 )
 	{
 		r_newflashlight.SetValue( 0 );
-	}	
+	}
 
 	if ( g_pMaterialSystemHardwareConfig->SupportsBorderColor() )
 	{
@@ -90,7 +90,7 @@ CFlashlightEffect::CFlashlightEffect(int nEntIndex)
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 CFlashlightEffect::~CFlashlightEffect()
 {
@@ -99,7 +99,7 @@ CFlashlightEffect::~CFlashlightEffect()
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CFlashlightEffect::TurnOn()
 {
@@ -109,7 +109,7 @@ void CFlashlightEffect::TurnOn()
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CFlashlightEffect::TurnOff()
 {
@@ -179,7 +179,7 @@ void CFlashlightEffect::UpdateLightNew(const Vector &vecPos, const Vector &vecFo
 	Vector vOrigin = vecPos + flOffsetY * vecUp;
 
 	// Not on ladder...trace a hull
-	if ( !bPlayerOnLadder ) 
+	if ( !bPlayerOnLadder )
 	{
 		trace_t pmOriginTrace;
 		UTIL_TraceHull( vecPos, vOrigin, Vector(-4, -4, -4), Vector(4, 4, 4), MASK_SOLID & ~(CONTENTS_HITBOX), &traceFilter, &pmOriginTrace );
@@ -237,7 +237,7 @@ void CFlashlightEffect::UpdateLightNew(const Vector &vecPos, const Vector &vecFo
 		// Determine how far to pull back, then trace to see if we are clear
 		float flPullBackDist = bPlayerOnLadder ? r_flashlightladderdist.GetFloat() : flDistCutoff - flDist;	// Fixed pull-back distance if on ladder
 		m_flDistMod = Lerp( flDistDrag, m_flDistMod, flPullBackDist );
-		
+
 		if ( !bPlayerOnLadder )
 		{
 			trace_t pmBackTrace;
@@ -274,20 +274,20 @@ void CFlashlightEffect::UpdateLightNew(const Vector &vecPos, const Vector &vecFo
 		{
 			float flScale;
 			if ( flBatteryPower >= 0.0f )
-			{	
+			{
 				flScale = ( flBatteryPower <= 4.5f ) ? SimpleSplineRemapVal( flBatteryPower, 4.5f, 0.0f, 1.0f, 0.0f ) : 1.0f;
 			}
 			else
 			{
 				flScale = SimpleSplineRemapVal( flBatteryPower, 10.0f, 4.8f, 1.0f, 0.0f );
 			}
-			
+
 			flScale = clamp( flScale, 0.0f, 1.0f );
 
 			if ( flScale < 0.35f )
 			{
 				float flFlicker = cosf( gpGlobals->curtime * 6.0f ) * sinf( gpGlobals->curtime * 15.0f );
-				
+
 				if ( flFlicker > 0.25f && flFlicker < 0.75f )
 				{
 					// On
@@ -307,7 +307,7 @@ void CFlashlightEffect::UpdateLightNew(const Vector &vecPos, const Vector &vecFo
 
 			state.m_fHorizontalFOVDegrees = r_flashlightfov.GetFloat() - ( 16.0f * (1.0f-flScale) );
 			state.m_fVerticalFOVDegrees = r_flashlightfov.GetFloat() - ( 16.0f * (1.0f-flScale) );
-			
+
 			bFlicker = true;
 		}
 	}
@@ -325,7 +325,7 @@ void CFlashlightEffect::UpdateLightNew(const Vector &vecPos, const Vector &vecFo
 	state.m_Color[1] = 1.0f;
 	state.m_Color[2] = 1.0f;
 	state.m_Color[3] = r_flashlightambient.GetFloat();
-	state.m_NearZ = r_flashlightnear.GetFloat() + m_flDistMod;	// Push near plane out so that we don't clip the world when the flashlight pulls back 
+	state.m_NearZ = r_flashlightnear.GetFloat() + m_flDistMod;	// Push near plane out so that we don't clip the world when the flashlight pulls back
 	state.m_FarZ = r_flashlightfar.GetFloat();
 	state.m_bEnableShadows = r_flashlightdepthtexture.GetBool();
 	state.m_flShadowMapResolution = r_flashlightdepthres.GetInt();
@@ -348,9 +348,9 @@ void CFlashlightEffect::UpdateLightNew(const Vector &vecPos, const Vector &vecFo
 			g_pClientShadowMgr->UpdateFlashlightState( m_FlashlightHandle, state );
 		}
 	}
-	
+
 	g_pClientShadowMgr->UpdateProjectedTexture( m_FlashlightHandle, true );
-	
+
 	// Kill the old flashlight method if we have one.
 	LightOffOld();
 
@@ -380,38 +380,38 @@ void CFlashlightEffect::UpdateLightOld(const Vector &vecPos, const Vector &vecDi
 		m_pPointLight->flags = 0.0f;
 		m_pPointLight->radius = 80;
 	}
-	
+
 	// For bumped lighting
 	VectorCopy(vecDir, m_pPointLight->m_Direction);
-	
+
 	Vector end;
 	end = vecPos + nDistance * vecDir;
-	
+
 	// Trace a line outward, skipping the player model and the view model.
 	trace_t pm;
 	CTraceFilterSkipPlayerAndViewModel traceFilter;
 	UTIL_TraceLine( vecPos, end, MASK_ALL, &traceFilter, &pm );
 	VectorCopy( pm.endpos, m_pPointLight->origin );
-	
+
 	float falloff = pm.fraction * nDistance;
-	
+
 	if ( falloff < 500 )
 		falloff = 1.0;
 	else
 		falloff = 500.0 / falloff;
-	
+
 	falloff *= falloff;
-	
+
 	m_pPointLight->radius = 80;
 	m_pPointLight->color.r = m_pPointLight->color.g = m_pPointLight->color.b = 255 * falloff;
 	m_pPointLight->color.exponent = 0;
-	
+
 	// Make it live for a bit
 	m_pPointLight->die = gpGlobals->curtime + 0.2f;
-	
+
 	// Update list of surfaces we influence
 	render->TouchLight( m_pPointLight );
-	
+
 	// kill the new flashlight if we have one
 	LightOffNew();
 }
@@ -437,7 +437,7 @@ void CFlashlightEffect::UpdateLight(const Vector &vecPos, const Vector &vecDir, 
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CFlashlightEffect::LightOffNew()
 {
@@ -463,10 +463,10 @@ void CFlashlightEffect::LightOffNew()
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CFlashlightEffect::LightOffOld()
-{	
+{
 	if ( m_pPointLight && ( m_pPointLight->key == m_nEntIndex ) )
 	{
 		m_pPointLight->die = gpGlobals->curtime;
@@ -475,22 +475,22 @@ void CFlashlightEffect::LightOffOld()
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CFlashlightEffect::LightOff()
-{	
+{
 	LightOffOld();
 	LightOffNew();
 }
 
-CHeadlightEffect::CHeadlightEffect() 
+CHeadlightEffect::CHeadlightEffect()
 {
 
 }
 
 CHeadlightEffect::~CHeadlightEffect()
 {
-	
+
 }
 
 void CHeadlightEffect::UpdateLight( const Vector &vecPos, const Vector &vecDir, const Vector &vecRight, const Vector &vecUp, int nDistance )
@@ -508,7 +508,7 @@ void CHeadlightEffect::UpdateLight( const Vector &vecPos, const Vector &vecDir, 
 	VectorNormalize(basisZ);
 
 	BasisToQuaternion( basisX, basisY, basisZ, state.m_quatOrientation );
-		
+
 	state.m_vecLightOrigin = vecPos;
 
 	state.m_fHorizontalFOVDegrees = 45.0f;
@@ -525,7 +525,7 @@ void CHeadlightEffect::UpdateLight( const Vector &vecPos, const Vector &vecDir, 
 	state.m_bEnableShadows = true;
 	state.m_pSpotlightTexture = m_FlashlightTexture;
 	state.m_nSpotlightTextureFrame = 0;
-	
+
 	if( GetFlashlightHandle() == CLIENTSHADOW_INVALID_HANDLE )
 	{
 		SetFlashlightHandle( g_pClientShadowMgr->CreateFlashlight( state ) );
@@ -534,7 +534,6 @@ void CHeadlightEffect::UpdateLight( const Vector &vecPos, const Vector &vecDir, 
 	{
 		g_pClientShadowMgr->UpdateFlashlightState( GetFlashlightHandle(), state );
 	}
-	
+
 	g_pClientShadowMgr->UpdateProjectedTexture( GetFlashlightHandle(), true );
 }
-

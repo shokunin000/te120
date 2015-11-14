@@ -26,6 +26,10 @@ $Project "Server (HL2)"
 		$File	"ai_eventresponse.cpp"
 		$File	"ai_eventresponse.h"
 		$File	"ai_relationship.cpp"
+//TE120--
+		$File	"ai_striderfinale.cpp"
+		$File	"ai_striderfinale.h"
+//TE120--
 		$File	"base_gameinterface.cpp"
 		$File	"basegrenade_concussion.cpp"
 		$File	"basegrenade_contact.cpp"
@@ -211,10 +215,10 @@ $Project "Server (HL2)"
 			$File	"hl2\point_apc_controller.cpp"
 			$File	"hl2\prop_combine_ball.cpp"
 			$File	"hl2\prop_combine_ball.h"
-			//TE120---------------------------------------------------
+//TE120--
 			$File	"hl2\prop_gravity_ball.cpp"
 			$File	"hl2\prop_gravity_ball.h"
-			//-------------------------------------------------------------
+//TE120--
 			$File	"hl2\prop_thumper.cpp"
 			$File	"hl2\proto_sniper.cpp"
 			$File	"hl2\rotorwash.cpp"
@@ -253,10 +257,10 @@ $Project "Server (HL2)"
 			$File	"hl2\weapon_smg1.cpp"
 			$File	"hl2\weapon_stunstick.cpp"
 			$File	"hl2\weapon_stunstick.h"
-			//TE120---------------------------------------------------
+//TE120--
 			$File	"hl2\weapon_physconcussion.cpp"
 			$File	"hl2\weapon_physconcussion.h"
-			//-------------------------------------------------------------
+//TE120--
 
 			$Folder	"Unused"
 			{

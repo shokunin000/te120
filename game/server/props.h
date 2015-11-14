@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //=============================================================================//
@@ -20,7 +20,7 @@
 // PROP TYPES
 //=============================================================================================================
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 class CBaseProp : public CBaseAnimating
 {
@@ -33,7 +33,7 @@ public:
 	bool KeyValue( const char *szKeyName, const char *szValue );
 	void CalculateBlockLOS( void );
 	int  ParsePropData( void );
-	
+
 	void DrawDebugGeometryOverlays( void );
 
 	// Don't treat as a live target
@@ -43,7 +43,7 @@ public:
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 class CBreakableProp : public CBaseProp, public IBreakableWithPropData, public CDefaultPlayerPickupVPhysics
 {
@@ -83,10 +83,10 @@ public:
 
 	virtual bool   HasPreferredCarryAnglesForPlayer( CBasePlayer *pPlayer )
 	{
-		if ( HasInteraction( PROPINTER_PHYSGUN_LAUNCH_SPIN_Z ) || m_explodeDamage == 1 )//TE120----
+		if ( HasInteraction( PROPINTER_PHYSGUN_LAUNCH_SPIN_Z ) || m_explodeDamage == 1 )//TE120
 			return true;
 
-		return false; 
+		return false;
 	}
 
 	virtual QAngle PreferredCarryAngles( void ) { return m_preferredCarryAngles; }
@@ -97,7 +97,7 @@ public:
 	void	HandleFirstCollisionInteractions( int index, gamevcollisionevent_t *pEvent );
 	void	HandleInteractionStick( int index, gamevcollisionevent_t *pEvent );
 	void	StickAtPosition( const Vector &stickPosition, const Vector &savePosition, const QAngle &saveAngles );
-	
+
 	// Disable auto fading under dx7 or when level fades are specified
 	void	DisableAutoFade();
 
@@ -173,7 +173,7 @@ protected:
 	int				m_iBreakableSkin;
 	int				m_iBreakableCount;
 	int				m_iMaxBreakableSize;
-	string_t		m_iszBasePropData;	
+	string_t		m_iszBasePropData;
 	int				m_iInteractions;
 	float			m_explodeDamage;
 	float			m_explodeRadius;
@@ -202,7 +202,7 @@ public:
 protected:
 	void SetPhysicsAttacker( CBasePlayer *pEntity, float flTime );
 	void CheckRemoveRagdolls();
-	
+
 private:
 	void InputEnablePhyscannonPickup( inputdata_t &inputdata );
 	void InputDisablePhyscannonPickup( inputdata_t &inputdata );
@@ -219,7 +219,7 @@ private:
 	{
 		PHYSGUN_MUST_BE_DETACHED = 0,
 		PHYSGUN_IS_DETACHING,
-		PHYSGUN_CAN_BE_GRABBED,					
+		PHYSGUN_CAN_BE_GRABBED,
 		PHYSGUN_ANIMATE_ON_PULL,
 		PHYSGUN_ANIMATE_IS_ANIMATING,
 		PHYSGUN_ANIMATE_FINISHED,
@@ -254,7 +254,7 @@ private:
 #define SF_DYNAMICPROP_DISABLE_COLLISION			256
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 class CDynamicProp : public CBreakableProp, public IPositionWatcher
 {
@@ -294,7 +294,7 @@ public:
 	void InputDisableCollision( inputdata_t &inputdata );
 	void InputEnableCollision( inputdata_t &inputdata );
 	void InputSetPlaybackRate( inputdata_t &inputdata );
-	void InputSetCraneArmPosition( inputdata_t &inputdata );//TE120----
+	void InputSetCraneArmPosition( inputdata_t &inputdata );//TE120
 
 	COutputEvent		m_pOutputAnimBegun;
 	COutputEvent		m_pOutputAnimOver;
@@ -326,7 +326,7 @@ protected:
 };
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 class CPhysicsProp : public CBreakableProp
 {
@@ -335,7 +335,7 @@ class CPhysicsProp : public CBreakableProp
 
 public:
 	~CPhysicsProp();
-	CPhysicsProp( void ) 
+	CPhysicsProp( void )
 	{
 	}
 
@@ -352,8 +352,10 @@ public:
 	void InputEnableMotion( inputdata_t &inputdata );
 	void InputDisableMotion( inputdata_t &inputdata );
 	void InputDisableFloating( inputdata_t &inputdata );
-	void InputConvertToDebris( inputdata_t &inputdata );//TE120----
-	void InputToggleGlow( inputdata_t &inputdata );//TE120----
+//TE120--
+	void InputConvertToDebris( inputdata_t &inputdata );
+	void InputToggleGlow( inputdata_t &inputdata );
+//TE120--
 
 	void EnableMotion( void );
 	bool CanBePickedUpByPhyscannon( void );
@@ -388,7 +390,7 @@ private:
 
 	COutputEvent m_MotionEnabled;
 	COutputEvent m_OnAwakened;
-	COutputEvent m_OnSleep;//TE120----
+	COutputEvent m_OnSleep;//TE120
 	COutputEvent m_OnPhysGunPickup;
 	COutputEvent m_OnPhysGunPunt;
 	COutputEvent m_OnPhysGunOnlyPickup;
@@ -396,7 +398,7 @@ private:
 	COutputEvent m_OnPlayerUse;
 	COutputEvent m_OnPlayerPickup;
 	COutputEvent m_OnOutOfWorld;
-	COutputEvent m_OnPlayerThrow;//TE120----
+	COutputEvent m_OnPlayerThrow;//TE120
 
 	float		m_massScale;
 	float		m_inertiaScale;
@@ -410,7 +412,7 @@ private:
 
 protected:
 	CNetworkVar( bool, m_bAwake );
-	CNetworkVar( bool, m_bEnableGlow );//TE120----
+	//CNetworkVar( bool, m_bEnableGlow );//TE120
 };
 
 

@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //=============================================================================//
@@ -52,7 +52,7 @@ public:
 	void	Move( const Vector &force );
 	virtual int ObjectCaps();
 	virtual void Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value );
-	
+
 	virtual int DrawDebugTextOverlays(void);
 
 	virtual void VPhysicsUpdate( IPhysicsObject *pPhysics );
@@ -76,12 +76,14 @@ public:
 	void InputDisableMotion( inputdata_t &inputdata );
 	void InputForceDrop( inputdata_t &inputdata );
 	void InputDisableFloating( inputdata_t &inputdata );
-	void InputConvertToDebris( inputdata_t &inputdata );//TE120----
+//TE120--
+	void InputConvertToDebris( inputdata_t &inputdata );
 
-	CNetworkVar( float, m_fDisappearDist );//TE120----
+	CNetworkVar( float, m_fDisappearDist );
+//TE120--
 
 	DECLARE_DATADESC();
-	
+
 protected:
 	int				m_damageType;
 	float			m_massScale;
@@ -109,10 +111,10 @@ protected:
 // CPhysExplosion -- physically simulated explosion
 //
 // ---------------------------------------------------------------------
-class CPhysExplosion : public CServerOnlyPointEntity//TE120----
+class CPhysExplosion : public CServerOnlyPointEntity//TE120
 {
 public:
-	DECLARE_CLASS( CPhysExplosion, CServerOnlyPointEntity );//TE120----
+	DECLARE_CLASS( CPhysExplosion, CServerOnlyPointEntity );//TE120
 
 	void	Spawn ( void );
 	void	Explode( CBaseEntity *pActivator, CBaseEntity *pCaller );
@@ -126,15 +128,15 @@ public:
 
 	DECLARE_DATADESC();
 private:
-	
+
 	float		GetRadius( void );
 
 	float		m_damage;
 	float		m_radius;
 	string_t	m_targetEntityName;
 	float		m_flInnerRadius;
-	
-	COutputEvent	m_OnPushedPlayer;	
+
+	COutputEvent	m_OnPushedPlayer;
 };
 
 
@@ -165,7 +167,7 @@ private:
 };
 
 //-----------------------------------------------------------------------------
-// Purpose: A magnet that creates constraints between itself and anything it touches 
+// Purpose: A magnet that creates constraints between itself and anything it touches
 //-----------------------------------------------------------------------------
 
 struct magnetted_objects_t
@@ -214,7 +216,7 @@ public:
 // IPhysicsConstraintEvent
 public:
 	void	ConstraintBroken( IPhysicsConstraint *pConstraint );
-	
+
 protected:
 	// Outputs
 	COutputEvent	m_OnMagnetAttach;

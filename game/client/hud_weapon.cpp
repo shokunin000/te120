@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //=============================================================================//
@@ -19,7 +19,7 @@
 using namespace vgui;
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 class CHudWeapon : public CHudElement, public vgui::Panel
 {
@@ -49,8 +49,8 @@ CHudWeapon::CHudWeapon( const char *pElementName ) :
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : *scheme - 
+// Purpose:
+// Input  : *scheme -
 //-----------------------------------------------------------------------------
 void CHudWeapon::ApplySchemeSettings( IScheme *scheme )
 {
@@ -80,7 +80,7 @@ void CHudWeapon::PerformLayout()
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CHudWeapon::Paint( void )
 {
@@ -92,7 +92,7 @@ void CHudWeapon::Paint( void )
 	MDLCACHE_CRITICAL_SECTION();
 
 	C_BaseCombatWeapon *pWeapon = player->GetActiveWeapon();
-	
+
 	if ( pWeapon )
 	{
 		pWeapon->Redraw();
@@ -101,14 +101,16 @@ void CHudWeapon::Paint( void )
 	{
 		if ( m_pCrosshair )
 		{
-//TE120----------------------
+//TE120--
 			if ( player->m_fOnUsable && m_pCrosshair->GetCrosshairUse() )
 			{
 				m_pCrosshair->SetCrosshair( m_pCrosshair->GetCrosshairUse(), Color(255, 255, 255) );
 			}
 			else
-//TE120------------------
-			m_pCrosshair->ResetCrosshair();
+			{
+				m_pCrosshair->ResetCrosshair();
+			}
+//TE120--
 		}
 	}
 }

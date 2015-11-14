@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 //=============================================================================//
 
@@ -14,7 +14,7 @@
 #include "ge_screeneffects.h"//TE120
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 class C_PhysicsProp : public C_BreakableProp
 {
@@ -31,13 +31,13 @@ protected:
 	// Networked vars.
 	bool m_bAwake;
 	bool m_bAwakeLastTime;
-//TE120-----------------------------------
+//TE120--
 	bool m_bEnableGlow;
 
 private:
 	CEntGlowEffect *m_pEntGlowEffect;
 	bool m_bClientGlow;
-//TE120------------------------------------
+//TE120--
 };
 
-#endif // C_PHYSICSPROP_H 
+#endif // C_PHYSICSPROP_H

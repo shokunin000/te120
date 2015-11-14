@@ -1,8 +1,8 @@
 [vpc crc file version 2]
-37fb0712 /run/media/vincent/8b27c2f6-fec9-4648-9355-fd426d7b45f3/sourceengine/Transmissions_Element_120_Source/game_2013_te120/devtools/bin/vpc_linux
+0731181f /media/vincent/dbcbf69d-8162-4768-976c-c7c5b5ace72b/sourceengine/Transmissions_Element_120_Source/src/devtools/bin/vpc_linux
 _Nc_/vpcgame:episodic_
-e313c78e client_episodic.vpc
-c7ae28fd ../../game/client/client_base.vpc
+7331a31b client_episodic.vpc
+0694f3d3 ../../game/client/client_base.vpc
 4832e67a ../../vpc_scripts/source_dll_base.vpc
 d752cf80 ../../vpc_scripts/platform_dirs.vpc
 6c4a5ff1 ../../vpc_scripts/source_base.vpc

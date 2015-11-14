@@ -7,8 +7,10 @@ exec &> ${logfile}.pipe
 rm ${logfile}.pipe
 
 # Set path to steam runtime sdk change this to your path!
-export STEAM_RUNTIME_ROOT="/run/media/vincent/8b27c2f6-fec9-4648-9355-fd426d7b45f3/sourceengine/steam-runtime-sdk_2013-09-05"
-
+# Arch
+#export STEAM_RUNTIME_ROOT="/run/media/vincent/dbcbf69d-8162-4768-976c-c7c5b5ace72b/sourceengine/steam-runtime-sdk"
+# Ubuntu
+export STEAM_RUNTIME_ROOT="/media/vincent/dbcbf69d-8162-4768-976c-c7c5b5ace72b/sourceengine/steam-runtime-sdk"
 # Stop the script if we run into any errors
 set -e
 
@@ -68,8 +70,10 @@ echo
 echo "Create Game Projects..."
 pushd `dirname $0`
 devtools/bin/vpc /2013
-devtools/bin/vpc /episodic +game /mksln games
-#devtools/bin/vpc /episodic +game_shader_dx9 +game /mksln games
+#devtools/bin/vpc /hl2 /episodic +everything /mksln everything
+#devtools/bin/vpc /episodic +game /mksln games
+#devtools/bin/vpc /episodic +game_shader_dx9 +game +everything /mksln games
+devtools/bin/vpc /episodic +game_shader_dx9 +game /mksln games
 #devtools/bin/vpc /hl2 /episodic +game /mksln games
 #devtools/bin/vpc /hl2 /episodic +game_shader_dx9 +game /mksln games
 popd

@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //=============================================================================//
@@ -43,12 +43,12 @@ public:
 #ifdef HL2_EPISODIC
 	CNetworkVar( float, m_flFlashBattery );
 	CNetworkVar( Vector, m_vecLocatorOrigin );
-//TE120--------------------
+//TE120--
 	CNetworkVar( int, m_iNumLocatorContacts );
 	// CNetworkArray( Vector, m_vecLocatorContactPos, LOCATOR_MAX_CONTACTS );
 	CNetworkArray( int, m_iLocatorContactType, LOCATOR_MAX_CONTACTS );
 	CNetworkArray( EHANDLE, m_locatorEnt, LOCATOR_MAX_CONTACTS );
-//TE120--------------
+//TE120--
 #endif
 
 	// Ladder related data

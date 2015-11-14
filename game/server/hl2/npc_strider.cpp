@@ -103,10 +103,10 @@ ConVar strider_ar2_altfire_dmg( "strider_ar2_altfire_dmg", "25" );
 
 // Number of RPG hits it takes to kill a strider on each skill level.
 ConVar sk_strider_num_missiles1("sk_strider_num_missiles1", "5");
-//TE120-----------------changed
+//TE120--
 ConVar sk_strider_num_missiles2("sk_strider_num_missiles2", "5");
 ConVar sk_strider_num_missiles3("sk_strider_num_missiles3", "5");
-//TE120---------------------------
+//TE120--
 
 ConVar strider_missile_suppress_dist( "strider_missile_suppress_dist", "240" );
 ConVar strider_missile_suppress_time( "strider_missile_suppress_time", "3" );
@@ -128,14 +128,14 @@ enum bodygroups
 //-----------------------------------------------------------------------------
 
 #define STRIDER_DEFAULT_SHOOT_DURATION			2.5 // spend this much time stitching to each target.
-//TE120-changed
+//TE120--
 #define STRIDER_SHOOT_ON_TARGET_TIME			0.3 // How much of DEFAULT_SHOOT_DURATION is spent on-target (vs. stitching up to a target)
 #define STRIDER_SHOOT_VARIATION					1.5 // up to 1 second of variance
 #define STRIDER_SHOOT_DOWNTIME					2.0 // This much downtime between bursts
 #define STRIDER_SUBSEQUENT_TARGET_DURATION		2.5 // Spend this much time stitching to targets chosen by distributed fire.
 #define STRIDER_IGNORE_TARGET_DURATION			2.0
 #define STRIDER_IGNORE_PLAYER_DURATION			2.0
-//TE120-----------------------
+//TE120--
 #define STRIDER_DEFAULT_RATE_OF_FIRE			5	// Rounds per second
 
 #define STRIDER_EP1_RATE_OF_FIRE			10.0f
@@ -189,7 +189,7 @@ enum bodygroups
 #define STRIDER_NO_TRACK_NAME			"null"
 
 // Time after which if you haven't seen your enemy you stop facing him
-#define STRIDER_TIME_STOP_FACING_ENEMY 3.0 
+#define STRIDER_TIME_STOP_FACING_ENEMY 3.0
 
 // Spawnflags
 enum
@@ -245,7 +245,7 @@ static const char *pFollowerBoneNames[] =
 	"Combine_Strider.Leg_Left_Bone1",
 	"Combine_Strider.Leg_Right_Bone1",
 	"Combine_Strider.Leg_Hind_Bone1",
-	
+
 	// upper legs
 	"Combine_Strider.Leg_Left_Bone",
 	"Combine_Strider.Leg_Right_Bone",
@@ -261,7 +261,7 @@ enum
 	STRIDER_GUN1_FOLLOWER_INDEX,
 	STRIDER_GUN2_FOLLOWER_INDEX,
 #endif //HL2_EPISODIC
-	
+
 	STRIDER_LEFT_LEG_FOLLOWER_INDEX,
 	STRIDER_RIGHT_LEG_FOLLOWER_INDEX,
 	STRIDER_BACK_LEG_FOLLOWER_INDEX,
@@ -319,8 +319,8 @@ BEGIN_DATADESC( CNPC_Strider )
 	DEFINE_FIELD( m_vecHitPos,				FIELD_POSITION_VECTOR ),
 	DEFINE_AUTO_ARRAY( m_vecIKTarget, FIELD_POSITION_VECTOR ),
 
-	DEFINE_EMBEDDED( m_PlayerFreePass ), 
-	
+	DEFINE_EMBEDDED( m_PlayerFreePass ),
+
 	DEFINE_EMBEDDED( m_PostureAnimationTimer ),
 
 	DEFINE_EMBEDDED( m_BoneFollowerManager ),
@@ -487,12 +487,12 @@ void CNPC_Strider::Spawn()
 {
 	Precache();
 
-	m_miniGunAmmo = GetAmmoDef()->Index("StriderMinigun"); 
+	m_miniGunAmmo = GetAmmoDef()->Index("StriderMinigun");
 	m_miniGunDirectAmmo = GetAmmoDef()->Index("StriderMinigunDirect");
 	m_pMinigun->Init();
 
 	EnableServerIK();
-	
+
 	SetModel( STRING( GetModelName() ) );
 
 	BaseClass::Spawn();
@@ -501,13 +501,13 @@ void CNPC_Strider::Spawn()
 	SetHullType( HULL_LARGE_CENTERED );
 	SetHullSizeNormal();
 	SetDefaultEyeOffset();
-	
+
 	SetNavType( NAV_FLY );
 	m_flGroundSpeed	= STRIDER_SPEED;
 	m_flSpeedScale = m_flTargetSpeedScale = 1.0;
 	m_NPCState = NPC_STATE_NONE;
 	m_bloodColor = DONT_BLEED;
-	
+
 	m_iHealth = sk_strider_health.GetFloat();
 	m_iMaxHealth = 500;
 
@@ -528,7 +528,7 @@ void CNPC_Strider::Spawn()
 	// BMCD: Force collision hooks
 	AddSolidFlags( FSOLID_CUSTOMRAYTEST | FSOLID_CUSTOMBOXTEST );
 	SetupGlobalModelData();
-	
+
 	CapabilitiesAdd( bits_CAP_MOVE_FLY | bits_CAP_INNATE_RANGE_ATTACK2 | bits_CAP_INNATE_MELEE_ATTACK1 | bits_CAP_INNATE_MELEE_ATTACK2 | bits_CAP_SQUAD );
 
 	// Don't allow us to skip animation setup because our attachments are critical to us!
@@ -559,7 +559,7 @@ void CNPC_Strider::Spawn()
 
 	m_EnemyUpdatedTimer.Set( 0 );
 
-	// Don't minigun things farther than 500 feet away. 
+	// Don't minigun things farther than 500 feet away.
 	m_flDistTooFar = 500.0f * 12.0f;
 
 	GetEnemies()->SetFreeKnowledgeDuration( strider_free_knowledge.GetFloat() );
@@ -618,7 +618,7 @@ void CNPC_Strider::PopulatePoseParameters( void )
 //---------------------------------------------------------
 bool CNPC_Strider::CreateVPhysics()
 {
-	// The strider has bone followers for every solid part of its body, 
+	// The strider has bone followers for every solid part of its body,
 	// so there's no reason for the bounding box to be solid.
 	//BaseClass::CreateVPhysics();
 
@@ -631,7 +631,7 @@ bool CNPC_Strider::CreateVPhysics()
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CNPC_Strider::InitBoneFollowers( void )
 {
@@ -658,8 +658,8 @@ void CNPC_Strider::PostNPCInit()
 	}
 
 	m_PlayerFreePass.SetPassTarget( UTIL_PlayerByIndex(1) );
-	
-	AI_FreePassParams_t freePassParams = 
+
+	AI_FreePassParams_t freePassParams =
 	{
 		strider_free_pass_start_time.GetFloat(),		// timeToTrigger
 		strider_free_pass_duration.GetFloat(), 			// duration
@@ -671,7 +671,7 @@ void CNPC_Strider::PostNPCInit()
 		strider_peek_eye_dist.GetFloat(), 				// peekEyeDist
 		strider_peek_eye_dist_z.GetFloat(), 			// peekEyeDistZ
 	};
-	
+
 	m_PlayerFreePass.SetParams( freePassParams );
 }
 
@@ -740,7 +740,7 @@ void CNPC_Strider::UpdateOnRemove()
 void CNPC_Strider::InitBoneControllers()
 {
 	BaseClass::InitBoneControllers( );
-	
+
 	SetHeight( GetMaxHeight() );
 	SetIdealHeight( GetMaxHeight() );
 }
@@ -914,7 +914,7 @@ void CNPC_Strider::NPCThink(void)
 	}
 
 	BaseClass::NPCThink();
-	
+
 	m_pMinigun->Think( this, 0.1 );
 
 	// update follower bones
@@ -967,7 +967,7 @@ void CNPC_Strider::PrescheduleThink()
 //---------------------------------------------------------
 void CNPC_Strider::GatherConditions()
 {
-	if ( AIGetNumFollowers( this, m_iszHunterClassname ) == 0 )	
+	if ( AIGetNumFollowers( this, m_iszHunterClassname ) == 0 )
 	{
 		// This works with old data because need to do before base class so as to not choose as enemy
 		if ( m_PlayerFreePass.HasPass() || ( !m_pMinigun->IsShooting() || GetEnemy() != m_PlayerFreePass.GetPassTarget() ) ) // no free pass when in midst of shooting at target
@@ -1014,7 +1014,7 @@ void CNPC_Strider::GatherConditions()
 			if( !m_pMinigun->IsShooting() && GetEnemy() && GetEnemy()->IsPlayer() )
 			{
 				// If the missile is closer to the player than I am, stay suppressed. This is essentially
-				// allowing the missile to strike me if it was fired off before I started shooting. 
+				// allowing the missile to strike me if it was fired off before I started shooting.
 				// If the missile passes me or goes way off course, I can shoot.
 				float flPlayerMissileDist;
 				float flPlayerStriderDist;
@@ -1071,7 +1071,7 @@ void CNPC_Strider::GatherConditions()
 	if( !m_bCrouchLocked && !m_bDontCrouch )
 	{
 		if( m_hCannonTarget != NULL )
-		{	
+		{
 			if( !IsStriderCrouching() && !IsStriderStanding() )
 			{
 				if ( WeaponLOSCondition( GetAdjustedOrigin(), m_hCannonTarget->GetAbsOrigin(), false ) )
@@ -1131,7 +1131,7 @@ void CNPC_Strider::GatherConditions()
 			if ( GetEnemy() ) // Can go null above
 			{
 				if ( !IsStriderCrouching() && !IsStriderStanding() &&
-					 ( !HasCondition( COND_SEE_ENEMY ) || 
+					 ( !HasCondition( COND_SEE_ENEMY ) ||
 					   !WeaponLOSCondition( GetAdjustedOrigin(), GetEnemy()->BodyTarget( GetAdjustedOrigin() ), false ) ) )
 				{
 #if 0
@@ -1187,7 +1187,7 @@ void CNPC_Strider::GatherHeightConditions( const Vector &vTestPos, CBaseEntity *
 				Vector targetPos = pEntity->BodyTarget( GetAdjustedOrigin() );
 
 				GetAttachment( "minigun", muzzlePos );
-				
+
 				trace_t tr;
 				AI_TraceLine( muzzlePos, targetPos, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr);
 
@@ -1394,7 +1394,7 @@ int CNPC_Strider::SelectSchedule()
 		{
 			return SCHED_STRIDER_STAND;
 		}
-		
+
 		if ( HasCondition( COND_CAN_MELEE_ATTACK1 ) )
 		{
 			return SCHED_MELEE_ATTACK1;
@@ -1542,7 +1542,7 @@ void CNPC_Strider::StartTask( const Task_t *pTask )
 			SetPoseParameter( gm_PitchControl, m_aimPitch );
 			Vector vecShootPos;
 			GetAttachment( gm_CannonAttachment, vecShootPos );
-		
+
 			// tell the client side effect to complete
 			EntityMessageBegin( this, true );
 				WRITE_BYTE( STRIDER_MSG_STREAKS );
@@ -1620,13 +1620,13 @@ void CNPC_Strider::StartTask( const Task_t *pTask )
 				TaskFail("No Cannon Target");
 				return;
 			}
-		
+
 			AI_PROFILE_SCOPE(CAI_BaseNPC_FindLosToEnemy);
 			Vector vecEnemy 	= GetCannonTarget()->WorldSpaceCenter();
 
 			float flMaxRange = 4096;
 			float flMinRange = 0;
-			
+
 			Vector posLos;
 			bool found = false;
 
@@ -1685,14 +1685,14 @@ void CNPC_Strider::StartTask( const Task_t *pTask )
 		if ( m_hCannonTarget != NULL )
 		{
 			GetMotor()->SetIdealYawToTarget( m_hCannonTarget->WorldSpaceCenter() );
-			SetTurnActivity(); 
+			SetTurnActivity();
 		}
 		else
 		{
 			TaskFail(FAIL_NO_TARGET);
 		}
 		break;
-		
+
 	case TASK_STRIDER_SET_HEIGHT:
 		SetIdealHeight( pTask->flTaskData );
 		TaskComplete();
@@ -1734,7 +1734,7 @@ void CNPC_Strider::RunTask( const Task_t *pTask )
 			}
 		}
 		break;
-	
+
 	case TASK_STRIDER_AIM:
 		{
 			// BUGBUG: Need the real flInterval here, not just 0.1
@@ -1808,22 +1808,22 @@ void CNPC_Strider::RunTask( const Task_t *pTask )
 
 	default:
 		BaseClass::RunTask( pTask );
-		break;		
+		break;
 	}
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CNPC_Strider::Explode( void )
 {
-	Vector			velocity = vec3_origin + Vector(0,0,-64); //TE120 added
+	Vector velocity = vec3_origin + Vector( 0, 0, -64 );//TE120
 	AngularImpulse	angVelocity = RandomAngularImpulse( -150, 150 );
 
 	// Break into pieces
-	breakablepropparams_t params( EyePosition() + Vector(0,0,64), GetAbsAngles(), velocity, angVelocity ); //TE120 changed
+	breakablepropparams_t params( EyePosition() + Vector( 0 ,0 , 64 ), GetAbsAngles(), velocity, angVelocity );//TE120
 	params.impactEnergyScale = 1.0f;
-	params.defBurstScale = 300.0f; //TE120 changed
+	params.defBurstScale = 300.0f;//TE120
 	params.defCollisionGroup = COLLISION_GROUP_NPC;
 	PropBreakableCreateAll( GetModelIndex(), NULL, params, this, -1, true, true );
 
@@ -1834,7 +1834,7 @@ void CNPC_Strider::Explode( void )
 	SetNextThink( gpGlobals->curtime + 0.1f );
 
 	AddEffects( EF_NODRAW );
-	
+
 	StopSmoking();
 
 	m_BoneFollowerManager.DestroyBoneFollowers();
@@ -1874,35 +1874,35 @@ void CNPC_Strider::HandleAnimEvent( animevent_t *pEvent )
 		break;
 	case STRIDER_AE_WINDUPCANNON:
 		{
-//TE120------------------------
+//TE120--
 			// Don't shoot unless player is looking.
 			CBasePlayer *pPlayer = UTIL_GetLocalPlayer();
 			// if( !pPlayer->FInViewCone(this) )
 			if ( pPlayer->FVisible(this) )
 			{
-			AimCannonAt( GetCannonTarget(), 0.1 );
+				AimCannonAt( GetCannonTarget(), 0.1 );
 
-			// Stop the minigun for a bit, the big gun's about to shoot!
-			m_pMinigun->StopShootingForSeconds( this, m_pMinigun->GetTarget(), 5 );
+				// Stop the minigun for a bit, the big gun's about to shoot!
+				m_pMinigun->StopShootingForSeconds( this, m_pMinigun->GetTarget(), 5 );
 
-			m_aimYaw = 0;
-			m_aimPitch = 0;
+				m_aimYaw = 0;
+				m_aimPitch = 0;
 
-			// clear out the previous shooting
-			SetPoseParameter( gm_YawControl, m_aimYaw );
-			SetPoseParameter( gm_PitchControl, m_aimPitch );
-			Vector vecShootPos;
-			GetAttachment( gm_CannonAttachment, vecShootPos );
-		
-			// tell the client side effect to start
-			EntityMessageBegin( this, true );
+				// clear out the previous shooting
+				SetPoseParameter( gm_YawControl, m_aimYaw );
+				SetPoseParameter( gm_PitchControl, m_aimPitch );
+				Vector vecShootPos;
+				GetAttachment( gm_CannonAttachment, vecShootPos );
+
+				// tell the client side effect to start
+				EntityMessageBegin( this, true );
 				WRITE_BYTE( STRIDER_MSG_STREAKS );
 				WRITE_VEC3COORD( vecShootPos );
-			MessageEnd();
-			CPASAttenuationFilter filter2( this, "NPC_Strider.Charge" );
-			EmitSound( filter2, entindex(), "NPC_Strider.Charge" );
-		}
-//TE120----------------------------------
+				MessageEnd();
+				CPASAttenuationFilter filter2( this, "NPC_Strider.Charge" );
+				EmitSound( filter2, entindex(), "NPC_Strider.Charge" );
+			}
+//TE120--
 		}
 		break;
 	case STRIDER_AE_CANNONHIT:
@@ -2086,7 +2086,7 @@ void CNPC_Strider::InputSetCannonTarget( inputdata_t &inputdata )
 	{
 		if ( m_hCannonTarget == pTarget )
 			return;
-			
+
 		CAI_BaseNPC **ppAIs = g_AI_Manager.AccessAIs();
 		CNPC_Strider *pStrider;
 		for ( int i = 0; i < g_AI_Manager.NumAIs(); i++ )
@@ -2185,7 +2185,7 @@ void CNPC_Strider::InputDisableCollisionWith( inputdata_t &inputdata )
 	if ( !pIgnorePhys )
 		return;
 
-	
+
 	// CBoneFollower *pFol;
 
 	for (int idx = m_BoneFollowerManager.GetNumBoneFollowers() - 1 ; idx >= 0 ; --idx) // stop when the function starts returning null (idx is no longer good)
@@ -2197,7 +2197,7 @@ void CNPC_Strider::InputDisableCollisionWith( inputdata_t &inputdata )
 }
 
 
- 
+
 //---------------------------------------------------------
 //---------------------------------------------------------
 void CNPC_Strider::InputEnableCollisionWith( inputdata_t &inputdata )
@@ -2220,7 +2220,7 @@ void CNPC_Strider::InputEnableCollisionWith( inputdata_t &inputdata )
 		IPhysicsObject *pFollowPhys = GetBoneFollowerByIndex(idx)->VPhysicsGetObject();
 		PhysEnableEntityCollisions( pIgnorePhys, pFollowPhys );
 	}
-} 
+}
 
 //---------------------------------------------------------
 //---------------------------------------------------------
@@ -2265,15 +2265,9 @@ void CNPC_Strider::InputSetTargetPath( inputdata_t &inputdata )
 {
 	m_strTrackName = MAKE_STRING( inputdata.value.String() );
 	SetGoalEnt( NULL );
-	//TE120----commented out
-	// if( !IsStriderCrouching() && !IsStriderStanding() && !IsInCrouchedPosture() )
-	// {
-		SetTargetPath();
-	// }
-//TE120-------------
-	// Otherwise, we just leave the track name set and the AI will
-	// get to it as soon as possible (as soon as the strider can be
-	// made to stand).
+//TE120--
+	SetTargetPath();
+//TE120--
 }
 
 //---------------------------------------------------------
@@ -2361,7 +2355,7 @@ void CNPC_Strider::InputDisableMoveToLOS( inputdata_t &inputdata )
 void CNPC_Strider::InputExplode( inputdata_t &inputdata )
 {
 	CTakeDamageInfo killInfo;
-	killInfo.SetAttacker( UTIL_GetLocalPlayer() ); //TE120 changed
+	killInfo.SetAttacker( UTIL_GetLocalPlayer() );//TE120
 	killInfo.SetInflictor( this );
 	killInfo.SetDamage( GetHealth() );
 	TakeDamage( killInfo );
@@ -2379,7 +2373,7 @@ void CNPC_Strider::InputScaleGroundSpeed( inputdata_t &inputdata )
 bool CNPC_Strider::FVisible( CBaseEntity *pEntity, int traceMask, CBaseEntity **ppBlocker )
 {
 	bool bIsVisible = BaseClass::FVisible( pEntity, traceMask, ppBlocker );
-	
+
 	if ( bIsVisible && pEntity == m_PlayerFreePass.GetPassTarget() )
 	{
 		bIsVisible = m_PlayerFreePass.ShouldAllowFVisible( bIsVisible );
@@ -2462,10 +2456,10 @@ bool CNPC_Strider::UpdateEnemyMemory( CBaseEntity *pEnemy, const Vector &positio
 		{
 			m_PlayerFreePass.Revoke();
 		}
-		
+
 		BaseClass::UpdateEnemyMemory( GetFocus(), GetFocus()->GetAbsOrigin(), pInformer );
 
-		// Change the informer to myself so that information provided by a scanner is 
+		// Change the informer to myself so that information provided by a scanner is
 		// as good as firsthand knowledge insofar as enemy memory is concerned.
 		pInformer = this;
 	}
@@ -2481,9 +2475,9 @@ bool CNPC_Strider::UpdateEnemyMemory( CBaseEntity *pEnemy, const Vector &positio
 float CNPC_Strider::StriderEnemyDistance( CBaseEntity *pEnemy )
 {
 	Vector enemyDelta = pEnemy->WorldSpaceCenter() - WorldSpaceCenter();
-	
+
 	// NOTE: We ignore rotation for computing height.  Assume it isn't an effect
-	// we care about, so we simply use OBBSize().z for height.  
+	// we care about, so we simply use OBBSize().z for height.
 	// Otherwise you'd do this:
 	// float enemyHeight = enemyMaxs.z - enemyMins.z;
 
@@ -2491,7 +2485,7 @@ float CNPC_Strider::StriderEnemyDistance( CBaseEntity *pEnemy )
 	Vector striderSurroundMins, striderSurroundMaxs;
 	CollisionProp()->WorldSpaceSurroundingBounds( &striderSurroundMins, &striderSurroundMaxs );
 	float myHeight = striderSurroundMaxs.z - striderSurroundMins.z;
-	
+
 	// max distance our centers can be apart with the boxes still overlapping
 	float flMaxZDist = ( enemyHeight + myHeight ) * 0.5f;
 
@@ -2533,7 +2527,7 @@ bool CNPC_Strider::FCanCheckAttacks()
 //---------------------------------------------------------
 int CNPC_Strider::RangeAttack2Conditions( float flDot, float flDist )
 {
-	// All of this code has moved to GatherConditions(), since the 
+	// All of this code has moved to GatherConditions(), since the
 	// strider uses the cannon on things that aren't the enemy!
 	return COND_NONE;
 }
@@ -2572,7 +2566,7 @@ int CNPC_Strider::MeleeAttack1Conditions( float flDot, float flDist )
 
 	// recompute this because the base class function does not work for the strider
 	flDist = StriderEnemyDistance( pEnemy );
-	
+
 	if ( flDist > STRIDER_STOMP_RANGE )
 	{
 		return COND_NONE;
@@ -2711,8 +2705,8 @@ bool CNPC_Strider::IsValidShootPosition( const Vector &vecCoverLocation, CAI_Nod
 
 //---------------------------------------------------------
 //---------------------------------------------------------
-bool CNPC_Strider::TestShootPosition(const Vector &vecShootPos, const Vector &targetPos )	
-{ 
+bool CNPC_Strider::TestShootPosition(const Vector &vecShootPos, const Vector &targetPos )
+{
 	if ( BaseClass::TestShootPosition( vecShootPos, targetPos ) )
 	{
 		return true;
@@ -2769,7 +2763,7 @@ void CNPC_Strider::DoImpactEffect( trace_t &tr, int nDamageType )
 
 	// Add a halo
 	CBroadcastRecipientFilter filter;
-	te->BeamRingPoint( filter, 0.0, 
+	te->BeamRingPoint( filter, 0.0,
 		tr.endpos,							//origin
 		0,									//start radius
 		64,									//end radius
@@ -2790,7 +2784,7 @@ void CNPC_Strider::DoImpactEffect( trace_t &tr, int nDamageType )
 		);
 
 	g_pEffects->EnergySplash( tr.endpos, tr.plane.normal );
-	
+
 	// Punch the effect through?
 	if( tr.m_pEnt && !tr.m_pEnt->MyNPCPointer() )
 	{
@@ -2812,7 +2806,7 @@ void CNPC_Strider::DoImpactEffect( trace_t &tr, int nDamageType )
 
 //---------------------------------------------------------
 // Trace didn't hit the intended target, but should the strider
-// shoot anyway? We use this to get the strider to destroy 
+// shoot anyway? We use this to get the strider to destroy
 // breakables that are between him and his target.
 //---------------------------------------------------------
 bool CNPC_Strider::CanShootThrough( const trace_t &tr, const Vector &vecTarget )
@@ -2905,7 +2899,7 @@ bool CNPC_Strider::GetWeaponLosZ( const Vector &vOrigin, float minZ, float maxZ,
 			return true;
 		}
 	}
-	
+
 
 	// Try at max height
 	vTestPos.z = maxZ;
@@ -2926,14 +2920,14 @@ bool CNPC_Strider::GetWeaponLosZ( const Vector &vOrigin, float minZ, float maxZ,
 		*pResult = vTestPos.z;
 		return true;
 	}
-	
+
 	// Test up from min
 	vTestPos = vOrigin + vIncrement;
 	while ( vTestPos.z <= maxZ && !WeaponLOSCondition( vTestPos, vTargetPos, false ) )
 	{
 		vTestPos += vIncrement;
 	}
-	
+
 	if ( vTestPos.z <= maxZ )
 	{
 		if ( strider_show_weapon_los_z.GetBool() )
@@ -2948,7 +2942,7 @@ bool CNPC_Strider::GetWeaponLosZ( const Vector &vOrigin, float minZ, float maxZ,
 	{
 		vTestPos -= vIncrement;
 	}
-	
+
 	if ( vTestPos.z >= minZ )
 	{
 		if ( strider_show_weapon_los_z.GetBool() )
@@ -2956,7 +2950,7 @@ bool CNPC_Strider::GetWeaponLosZ( const Vector &vOrigin, float minZ, float maxZ,
 		*pResult = vTestPos.z;
 		return true;
 	}
-		
+
 	return false;
 }
 
@@ -3089,7 +3083,7 @@ int CNPC_Strider::OnTakeDamage_Alive( const CTakeDamageInfo &info )
 	if ( (info.GetDamageType() & DMG_BLAST) && info.GetMaxDamage() > 50 )
 	{
 		Vector headPos = BodyTarget( info.GetDamagePosition(), false );
-		
+
 		float dist = CalcDistanceToAABB( WorldAlignMins(), WorldAlignMaxs(), info.GetDamagePosition() - headPos );
 		// close enough to do damage?
 		if ( dist < 200 )
@@ -3228,7 +3222,7 @@ int CNPC_Strider::TakeDamageFromCombineBall( const CTakeDamageInfo &info )
 		RestartGesture( ACT_GESTURE_BIG_FLINCH );
 	else
 		RestartGesture( ACT_GESTURE_SMALL_FLINCH );
-	
+
 	PainSound( info );
 
 	m_iHealth -= damage;
@@ -3261,7 +3255,7 @@ void CNPC_Strider::Event_Killed( const CTakeDamageInfo &info )
 		StopSmoking();
 
 		m_BoneFollowerManager.DestroyBoneFollowers();
-	
+
 	}
 
 	if( IsUsingAggressiveBehavior() )
@@ -3331,8 +3325,8 @@ void CNPC_Strider::RagdollDeathEffect( CRagdollProp *pRagdoll, float flDuration 
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : &info - 
+// Purpose:
+// Input  : &info -
 // Output : Returns true on success, false on failure.
 //-----------------------------------------------------------------------------
 bool CNPC_Strider::ShouldExplodeFromDamage( const CTakeDamageInfo &info )
@@ -3360,8 +3354,8 @@ bool CNPC_Strider::ShouldExplodeFromDamage( const CTakeDamageInfo &info )
 //---------------------------------------------------------
 //---------------------------------------------------------
 ConVarRef mat_dxlevel( "mat_dxlevel" );
-bool CNPC_Strider::BecomeRagdoll( const CTakeDamageInfo &info, const Vector &forceVector ) 
-{ 
+bool CNPC_Strider::BecomeRagdoll( const CTakeDamageInfo &info, const Vector &forceVector )
+{
 	// Combine balls make us explode
 	if ( m_bExploding )
 	{
@@ -3430,10 +3424,10 @@ bool CNPC_Strider::BecomeRagdoll( const CTakeDamageInfo &info, const Vector &for
 			pRagdoll->DisableAutoFade();
 		}
 	}
-	
+
 	UTIL_Remove(this);
 
-	return true; 
+	return true;
 }
 
 //---------------------------------------------------------
@@ -3444,7 +3438,7 @@ void CNPC_Strider::StartSmoking( void )
 		return;
 
 	m_hSmoke = SmokeTrail::CreateSmokeTrail();
-	
+
 	if ( m_hSmoke )
 	{
 		m_hSmoke->m_SpawnRate			= 32;
@@ -3455,7 +3449,7 @@ void CNPC_Strider::StartSmoking( void )
 		m_hSmoke->m_MinSpeed			= 8;
 		m_hSmoke->m_MaxSpeed			= 64;
 		m_hSmoke->m_Opacity 			= 0.3;
-		
+
 		m_hSmoke->m_StartColor.Init( 0.25f, 0.25f, 0.25f );
 		m_hSmoke->m_EndColor.Init( 0, 0, 0 );
 		m_hSmoke->SetLifetime( 500.0f );
@@ -3502,12 +3496,12 @@ void CNPC_Strider::SetIdealHeight( float h )
 void CNPC_Strider::SetAbsIdealHeight( float z )
 {
 	float h = GetMaxHeight() - ( z - GetAbsOrigin().z );
-	
+
 	SetIdealHeight( h );
 }
 
 //---------------------------------------------------------
-// At this moment, am I in the PROCESS of crouching? 
+// At this moment, am I in the PROCESS of crouching?
 // as in, and I transitioning from standing to crouch?
 //---------------------------------------------------------
 bool CNPC_Strider::IsStriderCrouching()
@@ -3573,7 +3567,7 @@ bool CNPC_Strider::OverrideMove( float flInterval )
 		const float minVelocity = 10;
 
 		#define HEIGHTINVDECAY	0.8	// maintain X percent of velocity when slowing down
-		#define HEIGHTDECAYTIME	0.4161	// Sum( 1..cycle, HEIGHTINVDECAY^cycle ) 
+		#define HEIGHTDECAYTIME	0.4161	// Sum( 1..cycle, HEIGHTINVDECAY^cycle )
 		#define HEIGHTACCEL		0.5		// accel toward maxVelocity by X percent each cycle
 
 		if (fabsf( m_HeightVelocity ) < minVelocity)
@@ -3710,20 +3704,10 @@ bool CNPC_Strider::HasPendingTargetPath()
 //---------------------------------------------------------
 void CNPC_Strider::SetTargetPath()
 {
-	//SetGoalEnt( NULL ); //TE120
 	CBaseEntity *pGoalEnt = gEntList.FindEntityByName( NULL, m_strTrackName );
 	if ( pGoalEnt == NULL )
 	{
 		DevWarning( "%s: Could not find target path '%s'!\n", GetClassname(), STRING( m_strTrackName ) );
-
-		// Don't try anymore. It just hurts the AI.
-//TE120---------
-/*
-		m_strTrackName = MAKE_STRING( STRIDER_NO_TRACK_NAME );
-
-		UTIL_Remove( this );
-*/
-//TE120----------
 		return;
 	}
 
@@ -3746,13 +3730,13 @@ void CNPC_Strider::SetTargetPath()
 		visits.Insert( pCurEnt );
 		pCurEnt = GetNavigator()->GetNextPathcorner( pCurEnt );
 	}
-//TE120-----
+//TE120--
 	if ( GetGoalEnt() != pClosestEnt )
 	{
 		SetGoalEnt( NULL );
-	ScheduledFollowPath( SCHED_IDLE_WALK, pClosestEnt, ACT_WALK );
+		ScheduledFollowPath( SCHED_IDLE_WALK, pClosestEnt, ACT_WALK );
 	}
-//TE120-----
+//TE120--
 }
 
 //---------------------------------------------------------
@@ -3767,7 +3751,7 @@ float CNPC_Strider::GetDefaultNavGoalTolerance()
 //---------------------------------------------------------
 void CNPC_Strider::OnMovementComplete()
 {
-	if ( GetGoalEnt() && 
+	if ( GetGoalEnt() &&
 		 ( IsCurSchedule( SCHED_IDLE_WALK ) ||
 		   IsCurSchedule( SCHED_ALERT_WALK ) ||
 		   IsCurSchedule( SCHED_COMBAT_WALK ) ||
@@ -3812,12 +3796,12 @@ float CNPC_Strider::MaxYawSpeed()
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CNPC_Strider::DoMuzzleFlash( void )
 {
 	BaseClass::DoMuzzleFlash();
-	
+
 	CEffectData data;
 
 	data.m_nAttachmentIndex = LookupAttachment( "MiniGun" );
@@ -3835,7 +3819,7 @@ void CNPC_Strider::ShootMinigun( const Vector *pTarget, float aimError, const Ve
 		QAngle muzzleAng;
 
 		GetAttachment( "minigun", muzzlePos, muzzleAng );
-		
+
 		Vector vecShootDir = *pTarget - muzzlePos;
 		VectorNormalize( vecShootDir );
 
@@ -3859,7 +3843,7 @@ void CNPC_Strider::ShootMinigun( const Vector *pTarget, float aimError, const Ve
 
 //---------------------------------------------------------
 //---------------------------------------------------------
-void CNPC_Strider::UpdateMinigunControls( float &yaw, float &pitch ) 
+void CNPC_Strider::UpdateMinigunControls( float &yaw, float &pitch )
 {
 	SetPoseParameter( m_poseMiniGunYaw, yaw );
 	SetPoseParameter( m_poseMiniGunPitch, pitch );
@@ -3890,7 +3874,7 @@ void CNPC_Strider::OnMinigunStopShooting( CBaseEntity *pTarget )
 
 	if( IsUsingAggressiveBehavior() )
 	{
-		// From now on, direct fire. 
+		// From now on, direct fire.
 		m_bMinigunUseDirectFire = true;
 	}
 }
@@ -3936,7 +3920,7 @@ float CNPC_Strider::GetMinigunShootDuration()
 	if( IsUsingAggressiveBehavior() )
 		return STRIDER_EP1_SHOOT_DURATION;
 
-	return STRIDER_DEFAULT_SHOOT_DURATION; 
+	return STRIDER_DEFAULT_SHOOT_DURATION;
 }
 
 //---------------------------------------------------------
@@ -4024,19 +4008,19 @@ bool CNPC_Strider::AimCannonAt( CBaseEntity *pEntity, float flInterval )
 	m_vecHitPos = pEntity->GetAbsOrigin();
 	Vector localEnemyPosition;
 	VectorITransform( pEntity->GetAbsOrigin(), gunMatrix, localEnemyPosition );
-	
+
 	// do a look at in gun space (essentially a delta-lookat)
 	QAngle localEnemyAngles;
 	VectorAngles( localEnemyPosition, localEnemyAngles );
-	
+
 	// convert to +/- 180 degrees
-	localEnemyAngles.x = UTIL_AngleDiff( localEnemyAngles.x, 0 );	
+	localEnemyAngles.x = UTIL_AngleDiff( localEnemyAngles.x, 0 );
 	localEnemyAngles.y = UTIL_AngleDiff( localEnemyAngles.y, 0 );
 
 	float targetYaw = m_aimYaw + localEnemyAngles.y;
 	float targetPitch = m_aimPitch + localEnemyAngles.x;
-	
-	Vector unitAngles = Vector( localEnemyAngles.x, localEnemyAngles.y, localEnemyAngles.z ); 
+
+	Vector unitAngles = Vector( localEnemyAngles.x, localEnemyAngles.y, localEnemyAngles.z );
 	float angleDiff = VectorNormalize(unitAngles);
 	const float aimSpeed = 16;
 
@@ -4058,7 +4042,7 @@ bool CNPC_Strider::AimCannonAt( CBaseEntity *pEntity, float flInterval )
 	m_aimPitch = GetPoseParameter( gm_PitchControl );
 	m_aimYaw = GetPoseParameter( gm_YawControl );
 
-	// UNDONE: Zero out any movement past the limit and go ahead and fire if the strider hit its 
+	// UNDONE: Zero out any movement past the limit and go ahead and fire if the strider hit its
 	// target except for clamping.  Need to clamp targets to limits and compare?
 	if ( angleDiff < 1 )
 		return true;
@@ -4068,13 +4052,13 @@ bool CNPC_Strider::AimCannonAt( CBaseEntity *pEntity, float flInterval )
 
 //---------------------------------------------------------
 //---------------------------------------------------------
-void CNPC_Strider::FireCannon() 
+void CNPC_Strider::FireCannon()
 {
 	ASSERT( m_hCannonTarget != NULL );
 	if ( !m_hCannonTarget )
 	{
 		DevMsg( "Strider firing cannon at NULL target\n" );
-		
+
 		// Turn the cannon off
 		EntityMessageBegin( this, true );
 			WRITE_BYTE( STRIDER_MSG_DEAD );
@@ -4140,7 +4124,7 @@ void CNPC_Strider::CannonHitThink()
 
 			pCannonTarget->TakeDamage( info );
 		}
-		
+
 		// Clear this guy now that we've shot him
 		m_hCannonTarget = NULL;
 	}
@@ -4271,7 +4255,7 @@ Vector CNPC_Strider::RightFootHit( float eventtime )
 	Vector footPosition;
 
 	GetAttachment( "right foot", footPosition );
-	
+
 	if ( hl2_episodic.GetBool() )
 	{
 		CPASAttenuationFilter filter( this, "NPC_Strider.FootstepEverywhere" );
@@ -4326,7 +4310,7 @@ static Vector GetAttachmentPositionInSpaceOfBone( CStudioHdr *pStudioHdr, const 
 
 	matrix3x4_t inputToOutputBone;
 	Studio_CalcBoneToBoneTransform( pStudioHdr, iBone, outputBoneIndex, inputToOutputBone );
-	
+
 	Vector out;
 	VectorTransform( localAttach, inputToOutputBone, out );
 
@@ -4391,7 +4375,7 @@ void CNPC_Strider::StompHit( int followerBoneIndex )
 		return;
 
 	Vector vecBloodDelta = footPosition - vecStabPos;
-	vecBloodDelta.z = 0; // effect looks better 
+	vecBloodDelta.z = 0; // effect looks better
 	VectorNormalize( vecBloodDelta );
 	UTIL_BloodSpray( vecStabPos + vecBloodDelta * 4, vecBloodDelta, BLOOD_COLOR_RED, 8, FX_BLOODSPRAY_ALL );
 	UTIL_BloodSpray( vecStabPos + vecBloodDelta * 4, vecBloodDelta, BLOOD_COLOR_RED, 11, FX_BLOODSPRAY_DROPS );
@@ -4414,7 +4398,7 @@ void CNPC_Strider::FootFX( const Vector &origin )
 	trace_t tr;
 	AI_TraceLine( origin + Vector(0, 0, 48), origin - Vector(0,0,100), MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr );
 	float yaw = random->RandomInt(0,120);
-	
+
 	if ( UTIL_PointContents( tr.endpos + Vector( 0, 0, 1 ) ) & MASK_WATER )
 	{
 		float flWaterZ = UTIL_FindWaterSurface( tr.endpos, tr.endpos.z, tr.endpos.z + 100.0f );
@@ -4440,7 +4424,7 @@ void CNPC_Strider::FootFX( const Vector &origin )
 		}
 	}
 	UTIL_ScreenShake( tr.endpos, 4.0, 1.0, 0.5, 1000, SHAKE_START, false );
-	
+
 	if ( npc_strider_shake_ropes_radius.GetInt() )
 	{
 		CRopeKeyframe::ShakeRopes( tr.endpos, npc_strider_shake_ropes_radius.GetFloat(), npc_strider_shake_ropes_magnitude.GetFloat() );
@@ -4533,7 +4517,7 @@ void LookaheadPath( const Vector &current, AI_Waypoint_t *pWaypoint, float dist,
 	nextPos = pWaypoint->GetPos();
 	dist -= dist2D;
 	dir = nextPos;
-	
+
 	LookaheadPath( dir, pWaypoint->GetNext(), dist, nextPos );
 }
 
@@ -4582,7 +4566,7 @@ bool CNPC_Strider::CNavigator::MoveUpdateWaypoint( AIMoveResult_t *pResult )
 		{
 			OnNavComplete();
 			*pResult = AIMR_OK;
-			
+
 		}
 		else
 		{
@@ -4591,7 +4575,7 @@ bool CNPC_Strider::CNavigator::MoveUpdateWaypoint( AIMoveResult_t *pResult )
 		}
 		return true;
 	}
-	
+
 	return false;
 }
 
@@ -4608,17 +4592,17 @@ bool CNPC_Strider::CNavigator::DoFindPathToPos()
 		AI_Waypoint_t *pFirstWaypoint = waypoints.GetFirst();
 		AI_Waypoint_t *pLast = waypoints.GetLast();
 
-		if ( pFirstWaypoint->IsReducible() && 
-			 pFirstWaypoint->GetNext() && 
-			 pFirstWaypoint->GetNext()->iNodeID != NO_NODE && 
+		if ( pFirstWaypoint->IsReducible() &&
+			 pFirstWaypoint->GetNext() &&
+			 pFirstWaypoint->GetNext()->iNodeID != NO_NODE &&
 			 pFirstWaypoint->GetNext()->NavType() == GetNavType() )
 		{
 			// Find nearest point on the line segment of our path
 			Vector vOrigin = GetOuter()->GetAbsOrigin();
 			Vector vClosest;
 			CalcClosestPointOnLineSegment( vOrigin,
-				pFirstWaypoint->GetPos(), 
-				pFirstWaypoint->GetNext()->GetPos(), 
+				pFirstWaypoint->GetPos(),
+				pFirstWaypoint->GetNext()->GetPos(),
 				vClosest );
 
 			// Find both these positions as offset from the ground
@@ -4662,7 +4646,7 @@ bool CNPC_Strider::CNavigator::DoFindPathToPos()
 					Vector vNewEnd = vec3_invalid;
 					int segmentDestClosest = NO_NODE;
 
-					for (int link=0; link < pLastNode->NumLinks();link++) 
+					for (int link=0; link < pLastNode->NumLinks();link++)
 					{
 						CAI_Link *pLink = pLastNode->GetLinkByIndex(link);
 						if ( !( pLink->m_LinkInfo & bits_LINK_OFF ) && (pLink->m_iAcceptedMoveTypes[GetHullType()] & bits_CAP_MOVE_FLY) )
@@ -4671,8 +4655,8 @@ bool CNPC_Strider::CNavigator::DoFindPathToPos()
 							if ( pTestNode->GetHint() && pTestNode->GetHint()->HintType() == HINT_STRIDER_NODE )
 							{
 								Vector vClosest;
-								CalcClosestPointOnLineSegment( pLast->vecLocation, 
-															   pLastNodeWaypoint->vecLocation, pTestNode->GetPosition(GetHullType()), 
+								CalcClosestPointOnLineSegment( pLast->vecLocation,
+															   pLastNodeWaypoint->vecLocation, pTestNode->GetPosition(GetHullType()),
 															   vClosest );
 								float distTestSq = ( pLast->vecLocation - vClosest ).LengthSqr();
 								if ( distTestSq < bestDistSq )
@@ -4684,7 +4668,7 @@ bool CNPC_Strider::CNavigator::DoFindPathToPos()
 							}
 						}
 					}
-					
+
 					if ( vNewEnd == vec3_invalid )
 					{
 						DbgNavMsg(  GetOuter(), "Strider resetting goal to last node waypoint\n");
@@ -4766,7 +4750,7 @@ CBoneFollower *CNPC_Strider::GetBoneFollowerByIndex( int nIndex )
 	physfollower_t *pFollower = m_BoneFollowerManager.GetBoneFollower( nIndex );
 	if ( pFollower != NULL )
 		return pFollower->hFollower;
-	
+
 	return NULL;
 }
 
@@ -4847,7 +4831,7 @@ BEGIN_DATADESC_NO_BASE( CStriderMinigun )
 	// Silence, Classcheck!
 	// DEFINE_FIELD( m_yaw, StriderMinigunAnimController_t ),
 	// DEFINE_FIELD( m_pitch, StriderMinigunAnimController_t ),
-	
+
 	DEFINE_FIELD( m_yaw.current,		FIELD_FLOAT ),
 	DEFINE_FIELD( m_yaw.target,			FIELD_FLOAT ),
 	DEFINE_FIELD( m_yaw.rate,			FIELD_FLOAT ),
@@ -4927,7 +4911,7 @@ void CStriderMinigun::AimAtPoint( IStriderMinigunHost *pHost, const Vector &vecP
 	// transform the point into gun space
 	Vector localPointPosition;
 	VectorITransform( vecPoint, gunMatrix, localPointPosition );
-	
+
 	// do a look at in gun space (essentially a delta-lookat)
 	QAngle localPointAngles;
 	VectorAngles( localPointPosition, localPointAngles );
@@ -4983,7 +4967,7 @@ void CStriderMinigun::StartShooting( IStriderMinigunHost *pHost, CBaseEntity *pT
 	bool bHasSetAnchor = false;
 
 	SetState( MINIGUN_SHOOTING );
-	
+
 	m_nextBulletTime = gpGlobals->curtime;
 	m_burstTime = gpGlobals->curtime + duration;
 
@@ -4994,7 +4978,7 @@ void CStriderMinigun::StartShooting( IStriderMinigunHost *pHost, CBaseEntity *pT
 
 	if( pTarget->IsPlayer() )
 	{
-		// Don't shoot a player in the back if they aren't looking. 
+		// Don't shoot a player in the back if they aren't looking.
 		// Give them a chance to see they're being fired at.
 		CBasePlayer *pPlayer = dynamic_cast<CBasePlayer*>(pTarget);
 
@@ -5048,7 +5032,7 @@ void CStriderMinigun::StartShooting( IStriderMinigunHost *pHost, CBaseEntity *pT
 
 		// Start 5 or 10 feet off target.
 		Vector offset = right * random->RandomFloat( 60, 120 );
-		
+
 		// Flip a coin to decide left or right.
 		if( random->RandomInt( 0, 1 ) == 0 )
 		{
@@ -5186,7 +5170,7 @@ bool CStriderMinigun::CanStartShooting( IStriderMinigunHost *pHost, CBaseEntity 
 
 	if( !pTargetEnt )
 		return false;
-	
+
 	if( gpGlobals->curtime < m_burstTime )
 		return false;
 
@@ -5222,7 +5206,7 @@ bool CStriderMinigun::CanStartShooting( IStriderMinigunHost *pHost, CBaseEntity 
 			}
 		}
 	}
-	
+
 	Vector los = ( pTargetEnt->WorldSpaceCenter() - pHost->GetEntity()->EyePosition() );
 
 	// Following code stolen from FVisible. This check done in 2d intentionally.
@@ -5271,10 +5255,10 @@ void CStriderMinigun::Think( IStriderMinigunHost *pHost, float dt )
 
 		// Take my host's enemy.
 		SetTarget( pHost, pHost->GetEntity()->GetEnemy() );
-		
+
 		if( IsShooting() )
 		{
-			// Changing targets hot! 
+			// Changing targets hot!
 			if( pOldTarget )
 			{
 				m_vecAnchor = pOldTarget->WorldSpaceCenter();
@@ -5282,7 +5266,7 @@ void CStriderMinigun::Think( IStriderMinigunHost *pHost, float dt )
 
 			ExtendShooting( STRIDER_SUBSEQUENT_TARGET_DURATION + random->RandomFloat( 0, 0.5 ) );
 		}
-		
+
 		pHost->NewTarget();
 	}
 
@@ -5313,7 +5297,7 @@ void CStriderMinigun::Think( IStriderMinigunHost *pHost, float dt )
 		AimAtTarget( pHost, pTargetEnt );
 	}
 
-	// Update the minigun's pose parameters using approaching. 
+	// Update the minigun's pose parameters using approaching.
 	m_yaw.Update( dt );
 	m_pitch.Update( dt );
 
@@ -5359,7 +5343,7 @@ void CStriderMinigun::Think( IStriderMinigunHost *pHost, float dt )
 			Vector vecTarget = pTargetEnt->BodyTarget( assert_cast<CNPC_Strider *>(pHost->GetEntity())->GetAdjustedOrigin());
 
 			Vector vecLine = m_vecAnchor - vecTarget;
-			
+
 			float flDist = VectorNormalize( vecLine );
 
 			vecTarget += vecLine * flDist * flFactor;
@@ -5415,7 +5399,7 @@ void CSparkTrail::Spawn()
 	vecVelocity.x = random->RandomFloat( 100, 400 );
 	vecVelocity.y = random->RandomFloat( 100, 400 );
 	vecVelocity.z = random->RandomFloat( 0, 100 );
-	
+
 	if( random->RandomInt( 0, 1 ) == 0 )
 		vecVelocity.x *= -1;
 
@@ -5504,7 +5488,7 @@ AI_BEGIN_CUSTOM_NPC( npc_strider, CNPC_Strider )
 	DECLARE_CONDITION( COND_STRIDER_HAS_LOS_Z )
 
 	DECLARE_INTERACTION( g_interactionPlayerLaunchedRPG )
-	
+
 	//=========================================================
 	// Hunt (Basic logic for strider thinking)
 	//=========================================================
@@ -5616,7 +5600,7 @@ AI_BEGIN_CUSTOM_NPC( npc_strider, CNPC_Strider )
 		"	"
 		"	Interrupts"
 	)
-	
+
 	//=========================================================
 	// Stomp on an enemy
 	//=========================================================
@@ -5629,7 +5613,7 @@ AI_BEGIN_CUSTOM_NPC( npc_strider, CNPC_Strider )
 		"		TASK_STRIDER_STOMP		0"
 		"	"
 		"	Interrupts"
-	);		
+	);
 
 	// Stomp on an enemy
 	//=========================================================

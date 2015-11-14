@@ -206,6 +206,7 @@
       <File Name="ai_speechfilter.cpp"/>
       <File Name="ai_squad.cpp"/>
       <File Name="ai_squadslot.cpp"/>
+      <File Name="ai_striderfinale.cpp"/>
       <File Name="ai_tacticalservices.cpp"/>
       <File Name="ai_task.cpp"/>
       <File Name="ai_trackpather.cpp"/>
@@ -952,6 +953,7 @@
       <File Name="ai_speechfilter.h"/>
       <File Name="ai_squad.h"/>
       <File Name="ai_squadslot.h"/>
+      <File Name="ai_striderfinale.h"/>
       <File Name="ai_tacticalservices.h"/>
       <File Name="ai_task.h"/>
       <File Name="ai_trackpather.h"/>

@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //
@@ -157,7 +157,7 @@ void Host_Say( edict_t *pEdict, const CCommand &args, bool teamonly )
 			return;
 
 		// See if the player wants to modify of check the text
-		pPlayer->CheckChatText( p, 127 );	// though the buffer szTemp that p points to is 256, 
+		pPlayer->CheckChatText( p, 127 );	// though the buffer szTemp that p points to is 256,
 											// chat text is capped to 127 in CheckChatText above
 
 		Assert( strlen( pPlayer->GetPlayerName() ) > 0 );
@@ -175,7 +175,7 @@ void Host_Say( edict_t *pEdict, const CCommand &args, bool teamonly )
 	if ( g_pGameRules )
 	{
 		pszFormat = g_pGameRules->GetChatFormat( teamonly, pPlayer );
-		pszPrefix = g_pGameRules->GetChatPrefix( teamonly, pPlayer );	
+		pszPrefix = g_pGameRules->GetChatPrefix( teamonly, pPlayer );
 		pszLocation = g_pGameRules->GetChatLocation( teamonly, pPlayer );
 	}
 
@@ -203,7 +203,7 @@ void Host_Say( edict_t *pEdict, const CCommand &args, bool teamonly )
 
 	Q_strncat( text, p, sizeof( text ), COPY_ALL_CHARACTERS );
 	Q_strncat( text, "\n", sizeof( text ), COPY_ALL_CHARACTERS );
- 
+
 	// loop through all players
 	// Start with the first player.
 	// This may return the world in single player if the client types something between levels or during spawn
@@ -215,7 +215,7 @@ void Host_Say( edict_t *pEdict, const CCommand &args, bool teamonly )
 		client = ToBaseMultiplayerPlayer( UTIL_PlayerByIndex( i ) );
 		if ( !client || !client->edict() )
 			continue;
-		
+
 		if ( client->edict() == pEdict )
 			continue;
 
@@ -282,7 +282,7 @@ void Host_Say( edict_t *pEdict, const CCommand &args, bool teamonly )
 			playerTeam = team->GetName();
 		}
 	}
-		
+
 	if ( teamonly )
 		UTIL_LogPrintf( "\"%s<%i><%s><%s>\" say_team \"%s\"\n", playerName, userid, networkID, playerTeam, p );
 	else
@@ -303,17 +303,14 @@ void Host_Say( edict_t *pEdict, const CCommand &args, bool teamonly )
 void ClientPrecache( void )
 {
 	// Precache cable textures.
-	CBaseEntity::PrecacheModel( "cable/cable.vmt" );	
-	CBaseEntity::PrecacheModel( "cable/cable_lit.vmt" );	
-	CBaseEntity::PrecacheModel( "cable/chain.vmt" );	
-	CBaseEntity::PrecacheModel( "cable/rope.vmt" );	
-	CBaseEntity::PrecacheModel( "sprites/blueglow1.vmt" );	
-	CBaseEntity::PrecacheModel( "sprites/purpleglow1.vmt" );	
-	CBaseEntity::PrecacheModel( "sprites/purplelaser1.vmt" );	
-	
-#ifndef HL2MP
-	CBaseEntity::PrecacheScriptSound( "Hud.Hint" );
-#endif // HL2MP
+	CBaseEntity::PrecacheModel( "cable/cable.vmt" );
+	CBaseEntity::PrecacheModel( "cable/cable_lit.vmt" );
+	CBaseEntity::PrecacheModel( "cable/chain.vmt" );
+	CBaseEntity::PrecacheModel( "cable/rope.vmt" );
+	CBaseEntity::PrecacheModel( "sprites/blueglow1.vmt" );
+	CBaseEntity::PrecacheModel( "sprites/purpleglow1.vmt" );
+	CBaseEntity::PrecacheModel( "sprites/purplelaser1.vmt" );
+
 	CBaseEntity::PrecacheScriptSound( "Player.FallDamage" );
 	CBaseEntity::PrecacheScriptSound( "Player.Swim" );
 
@@ -340,7 +337,7 @@ void ClientPrecache( void )
 CON_COMMAND_F( cast_ray, "Tests collision detection", FCVAR_CHEAT )
 {
 	CBasePlayer *pPlayer = UTIL_GetCommandClient();
-	
+
 	Vector forward;
 	trace_t tr;
 
@@ -362,7 +359,7 @@ CON_COMMAND_F( cast_ray, "Tests collision detection", FCVAR_CHEAT )
 CON_COMMAND_F( cast_hull, "Tests hull collision detection", FCVAR_CHEAT )
 {
 	CBasePlayer *pPlayer = UTIL_GetCommandClient();
-	
+
 	Vector forward;
 	trace_t tr;
 
@@ -394,9 +391,9 @@ CBaseEntity *GetNextCommandEntity( CBasePlayer *pPlayer, const char *name, CBase
 		return NULL;
 
 	// If no name was given set bits based on the picked
-	if (FStrEq(name,"")) 
+	if (FStrEq(name,""))
 	{
-		// If we've already found an entity, return NULL. 
+		// If we've already found an entity, return NULL.
 		// Makes it easier to write code using this func.
 		if ( ent )
 			return NULL;
@@ -407,18 +404,18 @@ CBaseEntity *GetNextCommandEntity( CBasePlayer *pPlayer, const char *name, CBase
 	int index = atoi( name );
 	if ( index )
 	{
-		// If we've already found an entity, return NULL. 
+		// If we've already found an entity, return NULL.
 		// Makes it easier to write code using this func.
 		if ( ent )
 			return NULL;
 
 		return CBaseEntity::Instance( index );
 	}
-		
+
 	// Loop through all entities matching, starting from the specified previous
 	while ( (ent = gEntList.NextEnt(ent)) != NULL )
 	{
-		if (  (ent->GetEntityName() != NULL_STRING	&& ent->NameMatches(name))	|| 
+		if (  (ent->GetEntityName() != NULL_STRING	&& ent->NameMatches(name))	||
 			  (ent->m_iClassname != NULL_STRING && ent->ClassMatches(name)) )
 		{
 			return ent;
@@ -460,8 +457,8 @@ void SetDebugBits( CBasePlayer* pPlayer, const char *name, int bit )
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : pKillTargetName - 
+// Purpose:
+// Input  : pKillTargetName -
 //-----------------------------------------------------------------------------
 void KillTargets( const char *pKillTargetName )
 {
@@ -485,7 +482,7 @@ void KillTargets( const char *pKillTargetName )
 void ConsoleKillTarget( CBasePlayer *pPlayer, const char *name )
 {
 	// If no name was given use the picker
-	if (FStrEq(name,"")) 
+	if (FStrEq(name,""))
 	{
 		CBaseEntity *pEntity = FindPickerEntity( pPlayer );
 		if ( pEntity )
@@ -500,7 +497,7 @@ void ConsoleKillTarget( CBasePlayer *pPlayer, const char *name )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 class CPointClientCommand : public CPointEntity
 {
@@ -550,7 +547,7 @@ END_DATADESC()
 LINK_ENTITY_TO_CLASS( point_clientcommand, CPointClientCommand );
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 class CPointServerCommand : public CPointEntity
 {
@@ -561,8 +558,8 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : inputdata - 
+// Purpose:
+// Input  : inputdata -
 //-----------------------------------------------------------------------------
 void CPointServerCommand::InputCommand( inputdata_t& inputdata )
 {
@@ -600,7 +597,7 @@ void CC_DrawLine( const CCommand &args )
 static ConCommand drawline("drawline", CC_DrawLine, "Draws line between two 3D Points.\n\tGreen if no collision\n\tRed is collides with something\n\tArguments: x1 y1 z1 x2 y2 z2", FCVAR_CHEAT);
 
 //------------------------------------------------------------------------------
-// Purpose : Draw a cross at a points.  
+// Purpose : Draw a cross at a points.
 // Input   :
 // Output  :
 //------------------------------------------------------------------------------
@@ -727,7 +724,7 @@ CON_COMMAND_F( explodevector, "Kills a player applying an explosive force. Usage
 //------------------------------------------------------------------------------
 CON_COMMAND_F( buddha, "Toggle.  Player takes damage but won't die. (Shows red cross when health is zero)", FCVAR_CHEAT )
 {
-	CBasePlayer *pPlayer = ToBasePlayer( UTIL_GetCommandClient() ); 
+	CBasePlayer *pPlayer = ToBasePlayer( UTIL_GetCommandClient() );
 	if ( pPlayer )
 	{
 		if (pPlayer->m_debugOverlays & OVERLAY_BUDDHA_MODE)
@@ -749,18 +746,18 @@ CON_COMMAND_F( buddha, "Toggle.  Player takes damage but won't die. (Shows red c
 //------------------------------------------------------------------------------
 CON_COMMAND( say, "Display player message" )
 {
-	CBasePlayer *pPlayer = ToBasePlayer( UTIL_GetCommandClient() ); 
+	CBasePlayer *pPlayer = ToBasePlayer( UTIL_GetCommandClient() );
 	if ( pPlayer )
 	{
-		if (( pPlayer->LastTimePlayerTalked() + TALK_INTERVAL ) < gpGlobals->curtime) 
+		if (( pPlayer->LastTimePlayerTalked() + TALK_INTERVAL ) < gpGlobals->curtime)
 		{
 			Host_Say( pPlayer->edict(), args, 0 );
 			pPlayer->NotePlayerTalked();
 		}
 	}
 	// This will result in a "console" say.  Ignore anything from
-	// an index greater than 0 when we don't have a player pointer, 
-	// as would be the case when a client that's connecting generates 
+	// an index greater than 0 when we don't have a player pointer,
+	// as would be the case when a client that's connecting generates
 	// text via a script.  This can be exploited to flood everyone off.
 	else if ( UTIL_GetCommandClientIndex() == 0 )
 	{
@@ -773,10 +770,10 @@ CON_COMMAND( say, "Display player message" )
 //------------------------------------------------------------------------------
 CON_COMMAND( say_team, "Display player message to team" )
 {
-	CBasePlayer *pPlayer = ToBasePlayer( UTIL_GetCommandClient() ); 
+	CBasePlayer *pPlayer = ToBasePlayer( UTIL_GetCommandClient() );
 	if (pPlayer)
 	{
-		if (( pPlayer->LastTimePlayerTalked() + TALK_INTERVAL ) < gpGlobals->curtime) 
+		if (( pPlayer->LastTimePlayerTalked() + TALK_INTERVAL ) < gpGlobals->curtime)
 		{
 			Host_Say( pPlayer->edict(), args, 1 );
 			pPlayer->NotePlayerTalked();
@@ -789,9 +786,9 @@ CON_COMMAND( say_team, "Display player message to team" )
 //------------------------------------------------------------------------------
 CON_COMMAND( give, "Give item to player.\n\tArguments: <item_name>" )
 {
-	CBasePlayer *pPlayer = ToBasePlayer( UTIL_GetCommandClient() ); 
-	if ( pPlayer 
-		&& (gpGlobals->maxClients == 1 || sv_cheats->GetBool()) 
+	CBasePlayer *pPlayer = ToBasePlayer( UTIL_GetCommandClient() );
+	if ( pPlayer
+		&& (gpGlobals->maxClients == 1 || sv_cheats->GetBool())
 		&& args.ArgC() >= 2 )
 	{
 		char item_to_give[ 256 ];
@@ -868,14 +865,14 @@ void CC_Player_SetModel( const CCommand &args )
 static ConCommand setmodel("setmodel", CC_Player_SetModel, "Changes's player's model", FCVAR_CHEAT );
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CC_Player_TestDispatchEffect( const CCommand &args )
 {
 	CBasePlayer *pPlayer = ToBasePlayer( UTIL_GetCommandClient() );
 	if ( !pPlayer)
 		return;
-	
+
 	if ( args.ArgC() < 2 )
 	{
 		Msg(" Usage: test_dispatcheffect <effect name> <distance away> <flags> <magnitude> <scale>\n " );
@@ -952,7 +949,7 @@ static ConCommand test_dispatcheffect("test_dispatcheffect", CC_Player_TestDispa
 void CC_Player_PhysSwap( void )
 {
 	CBasePlayer *pPlayer = ToBasePlayer( UTIL_GetCommandClient() );
-	
+
 	if ( pPlayer )
 	{
 		CBaseCombatWeapon *pWeapon = pPlayer->GetActiveWeapon();
@@ -963,16 +960,16 @@ void CC_Player_PhysSwap( void )
 			engine->ClientCommand( UTIL_GetCommandClient()->edict(), "cancelselect" );
 
 			const char *strWeaponName = pWeapon->GetName();
-//TE120----
+//TE120--
 			if ( !Q_stricmp( strWeaponName, "weapon_physconcussion" ) )
 			{
-				// PhysCannonForceDrop( pWeapon, NULL );
 				pPlayer->SelectLastItem();
 			}
 			else
 			{
-				pPlayer->SelectItem( "weapon_physconcussion" );//TE120----
+				pPlayer->SelectItem( "weapon_physconcussion" );
 			}
+//TE120--
 		}
 	}
 }
@@ -985,7 +982,7 @@ static ConCommand physswap("phys_swap", CC_Player_PhysSwap, "Automatically swaps
 void CC_Player_BugBaitSwap( void )
 {
 	CBasePlayer *pPlayer = ToBasePlayer( UTIL_GetCommandClient() );
-	
+
 	if ( pPlayer )
 	{
 		CBaseCombatWeapon *pWeapon = pPlayer->GetActiveWeapon();
@@ -1014,7 +1011,7 @@ static ConCommand bugswap("bug_swap", CC_Player_BugBaitSwap, "Automatically swap
 //------------------------------------------------------------------------------
 void CC_Player_Use( const CCommand &args )
 {
-	CBasePlayer *pPlayer = ToBasePlayer( UTIL_GetCommandClient() ); 
+	CBasePlayer *pPlayer = ToBasePlayer( UTIL_GetCommandClient() );
 	if ( pPlayer)
 	{
 		pPlayer->SelectItem((char *)args[1]);
@@ -1027,7 +1024,7 @@ static ConCommand use("use", CC_Player_Use, "Use a particular weapon\t\nArgument
 // A small wrapper around SV_Move that never clips against the supplied entity.
 //------------------------------------------------------------------------------
 static bool TestEntityPosition ( CBasePlayer *pPlayer )
-{	
+{
 	trace_t	trace;
 	UTIL_TraceEntity( pPlayer, pPlayer->GetAbsOrigin(), pPlayer->GetAbsOrigin(), MASK_PLAYERSOLID, &trace );
 	return (trace.startsolid == 0);
@@ -1035,7 +1032,7 @@ static bool TestEntityPosition ( CBasePlayer *pPlayer )
 
 
 //------------------------------------------------------------------------------
-// Searches along the direction ray in steps of "step" to see if 
+// Searches along the direction ray in steps of "step" to see if
 // the entity position is passible.
 // Used for putting the player in valid space when toggling off noclip mode.
 //------------------------------------------------------------------------------
@@ -1074,7 +1071,7 @@ void CC_Player_NoClip( void )
 	if ( !sv_cheats->GetBool() )
 		return;
 
-	CBasePlayer *pPlayer = ToBasePlayer( UTIL_GetCommandClient() ); 
+	CBasePlayer *pPlayer = ToBasePlayer( UTIL_GetCommandClient() );
 	if ( !pPlayer )
 		return;
 
@@ -1097,7 +1094,7 @@ void CC_Player_NoClip( void )
 		Vector forward, right, up;
 
 		AngleVectors ( pl->v_angle, &forward, &right, &up);
-		
+
 		// Try to move into the world
 		if ( !FindPassableSpace( pPlayer, forward, 1, oldorigin ) )
 		{
@@ -1134,7 +1131,7 @@ void CC_God_f (void)
 	if ( !sv_cheats->GetBool() )
 		return;
 
-	CBasePlayer *pPlayer = ToBasePlayer( UTIL_GetCommandClient() ); 
+	CBasePlayer *pPlayer = ToBasePlayer( UTIL_GetCommandClient() );
 	if ( !pPlayer )
 		return;
 
@@ -1167,7 +1164,7 @@ CON_COMMAND_F( setpos, "Move player to specified origin (must have sv_cheats).",
 	if ( !sv_cheats->GetBool() )
 		return;
 
-	CBasePlayer *pPlayer = ToBasePlayer( UTIL_GetCommandClient() ); 
+	CBasePlayer *pPlayer = ToBasePlayer( UTIL_GetCommandClient() );
 	if ( !pPlayer )
 		return;
 
@@ -1201,7 +1198,7 @@ void CC_setang_f (const CCommand &args)
 	if ( !sv_cheats->GetBool() )
 		return;
 
-	CBasePlayer *pPlayer = ToBasePlayer( UTIL_GetCommandClient() ); 
+	CBasePlayer *pPlayer = ToBasePlayer( UTIL_GetCommandClient() );
 	if ( !pPlayer )
 		return;
 
@@ -1230,7 +1227,7 @@ static float GetHexFloat( const char *pStr )
 		uint32 f = (uint32)V_atoi64( pStr );
 		return *reinterpret_cast< const float * >( &f );
 	}
-	
+
 	return atof( pStr );
 }
 
@@ -1242,7 +1239,7 @@ CON_COMMAND_F( setpos_exact, "Move player to an exact specified origin (must hav
 	if ( !sv_cheats->GetBool() )
 		return;
 
-	CBasePlayer *pPlayer = ToBasePlayer( UTIL_GetCommandClient() ); 
+	CBasePlayer *pPlayer = ToBasePlayer( UTIL_GetCommandClient() );
 	if ( !pPlayer )
 		return;
 
@@ -1276,7 +1273,7 @@ CON_COMMAND_F( setang_exact, "Snap player eyes and orientation to specified pitc
 	if ( !sv_cheats->GetBool() )
 		return;
 
-	CBasePlayer *pPlayer = ToBasePlayer( UTIL_GetCommandClient() ); 
+	CBasePlayer *pPlayer = ToBasePlayer( UTIL_GetCommandClient() );
 	if ( !pPlayer )
 		return;
 
@@ -1310,7 +1307,7 @@ void CC_Notarget_f (void)
 	if ( !sv_cheats->GetBool() )
 		return;
 
-	CBasePlayer *pPlayer = ToBasePlayer( UTIL_GetCommandClient() ); 
+	CBasePlayer *pPlayer = ToBasePlayer( UTIL_GetCommandClient() );
 	if ( !pPlayer )
 		return;
 
@@ -1334,7 +1331,7 @@ void CC_HurtMe_f(const CCommand &args)
 	if ( !sv_cheats->GetBool() )
 		return;
 
-	CBasePlayer *pPlayer = ToBasePlayer( UTIL_GetCommandClient() ); 
+	CBasePlayer *pPlayer = ToBasePlayer( UTIL_GetCommandClient() );
 	if ( !pPlayer )
 		return;
 
@@ -1378,7 +1375,7 @@ static int DescribeGroundList( CBaseEntity *ent )
 
 	int c = 1;
 
-	Msg( "%i : %s (ground %i %s)\n", ent->entindex(), ent->GetClassname(), 
+	Msg( "%i : %s (ground %i %s)\n", ent->entindex(), ent->GetClassname(),
 		ent->GetGroundEntity() ? ent->GetGroundEntity()->entindex() : -1,
 		ent->GetGroundEntity() ? ent->GetGroundEntity()->GetClassname() : "NULL" );
 	groundlink_t *root = ( groundlink_t * )ent->GetDataObject( GROUNDLINK );
@@ -1478,7 +1475,7 @@ void ClientCommand( CBasePlayer *pPlayer, const CCommand &args )
 		}
 	}
 	*/
-	
+
 	if ( FStrEq( pCmd, "killtarget" ) )
 	{
 		if ( g_pDeveloper->GetBool() && sv_cheats->GetBool() && UTIL_IsCommandIssuedByServerAdmin() )
@@ -1486,15 +1483,15 @@ void ClientCommand( CBasePlayer *pPlayer, const CCommand &args )
 			ConsoleKillTarget( pPlayer, args[1] );
 		}
 	}
-	else if ( FStrEq( pCmd, "demorestart" ) ) 
+	else if ( FStrEq( pCmd, "demorestart" ) )
 	{
-		pPlayer->ForceClientDllUpdate(); 
+		pPlayer->ForceClientDllUpdate();
 	}
 	else if ( FStrEq( pCmd, "fade" ) )
 	{
 		color32 black = {32,63,100,200};
 		UTIL_ScreenFade( pPlayer, black, 3, 3, FFADE_OUT  );
-	} 
+	}
 	else if ( FStrEq( pCmd, "te" ) )
 	{
 		if ( sv_cheats->GetBool() && UTIL_IsCommandIssuedByServerAdmin() )
@@ -1517,7 +1514,7 @@ void ClientCommand( CBasePlayer *pPlayer, const CCommand &args )
 			}
 		}
 	}
-	else 
+	else
 	{
 		if ( !g_pGameRules->ClientCommand( pPlayer, args ) )
 		{

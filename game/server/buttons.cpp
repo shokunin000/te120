@@ -39,15 +39,15 @@ BEGIN_DATADESC( CBaseButton )
 
 	DEFINE_FIELD( m_bLockedSound, FIELD_CHARACTER ),
 	DEFINE_FIELD( m_bLockedSentence, FIELD_CHARACTER ),
-	DEFINE_FIELD( m_bUnlockedSound, FIELD_CHARACTER ),	
+	DEFINE_FIELD( m_bUnlockedSound, FIELD_CHARACTER ),
 	DEFINE_FIELD( m_bUnlockedSentence, FIELD_CHARACTER ),
 	DEFINE_FIELD( m_bLocked, FIELD_BOOLEAN ),
 	DEFINE_FIELD( m_sNoise, FIELD_SOUNDNAME ),
 	DEFINE_FIELD( m_flUseLockedTime, FIELD_TIME ),
 	DEFINE_FIELD( m_bSolidBsp, FIELD_BOOLEAN ),
-	
+
 	DEFINE_KEYFIELD( m_sounds, FIELD_INTEGER, "sounds" ),
-	
+
 //	DEFINE_FIELD( m_ls, FIELD_SOUNDNAME ),   // This is restored in Precache()
 //  DEFINE_FIELD( m_nState, FIELD_INTEGER ),
 
@@ -65,8 +65,10 @@ BEGIN_DATADESC( CBaseButton )
 	DEFINE_INPUTFUNC( FIELD_VOID, "Press", InputPress ),
 	DEFINE_INPUTFUNC( FIELD_VOID, "PressIn", InputPressIn ),
 	DEFINE_INPUTFUNC( FIELD_VOID, "PressOut", InputPressOut ),
-	DEFINE_INPUTFUNC( FIELD_VOID, "Enable", InputEnable ),//TE120----
-	DEFINE_INPUTFUNC( FIELD_VOID, "Disable", InputDisable ),//TE120----
+//TE120--
+	DEFINE_INPUTFUNC( FIELD_VOID, "Enable", InputEnable ),
+	DEFINE_INPUTFUNC( FIELD_VOID, "Disable", InputDisable ),
+//TE120--
 
 	// Outputs
 	DEFINE_OUTPUT( m_OnDamaged, "OnDamaged" ),
@@ -110,7 +112,7 @@ void CBaseButton::Precache( void )
 		case 7: m_ls.sLockedSentence = MAKE_STRING("NCON"); break; // gen containment
 		case 8: m_ls.sLockedSentence = MAKE_STRING("NH"); break; // maintenance door
 		case 9: m_ls.sLockedSentence = MAKE_STRING("NG"); break; // broken door
-		
+
 		default: m_ls.sLockedSentence = NULL_STRING; break;
 	}
 
@@ -124,7 +126,7 @@ void CBaseButton::Precache( void )
 		case 6: m_ls.sUnlockedSentence = MAKE_STRING("ERAD"); break; // radiation door
 		case 7: m_ls.sUnlockedSentence = MAKE_STRING("ECON"); break; // gen containment
 		case 8: m_ls.sUnlockedSentence = MAKE_STRING("EH"); break; // maintenance door
-	
+
 		default: m_ls.sUnlockedSentence = NULL_STRING; break;
 	}
 
@@ -137,8 +139,8 @@ void CBaseButton::Precache( void )
 
 //-----------------------------------------------------------------------------
 // Purpose: Cache user-entity-field values until spawn is called.
-// Input  : szKeyName - 
-//			szValue - 
+// Input  : szKeyName -
+//			szValue -
 // Output : Returns true if handled, false if not.
 //-----------------------------------------------------------------------------
 bool CBaseButton::KeyValue( const char *szKeyName, const char *szValue )
@@ -186,7 +188,7 @@ void CBaseButton::Unlock()
 	m_bLocked = false;
 }
 
-//TE120----
+//TE120--
 //-----------------------------------------------------------------------------
 // Purpose: Start the spawner
 //-----------------------------------------------------------------------------
@@ -205,7 +207,8 @@ void CBaseButton::InputDisable( inputdata_t &inputdata )
 	RemoveEFlags( EFL_USE_PARTITION_WHEN_NOT_SOLID );
 	SetSolid( SOLID_NONE );
 }
-//TE120----
+//TE120--
+
 //-----------------------------------------------------------------------------
 // Purpose: Locks the button. If locked, the button will play the locked sound
 //			when the player tries to use it.
@@ -313,11 +316,11 @@ void CBaseButton::InputPressOut( inputdata_t &inputdata )
 
 //-----------------------------------------------------------------------------
 // Purpose: We have been damaged. Possibly activate, depending on our flags.
-// Input  : pInflictor - 
-//			pAttacker - 
-//			flDamage - 
-//			bitsDamageType - 
-// Output : 
+// Input  : pInflictor -
+//			pAttacker -
+//			flDamage -
+//			bitsDamageType -
+// Output :
 //-----------------------------------------------------------------------------
 int CBaseButton::OnTakeDamage( const CTakeDamageInfo &info )
 {
@@ -378,7 +381,7 @@ int CBaseButton::OnTakeDamage( const CTakeDamageInfo &info )
 
 
 void CBaseButton::Spawn( )
-{ 
+{
 	//----------------------------------------------------
 	//determine sounds for buttons
 	//a sound of 0 should not make a sound
@@ -408,7 +411,7 @@ void CBaseButton::Spawn( )
 	SetMoveType( MOVETYPE_PUSH );
 	SetSolid( SOLID_BSP );
 	SetModel( STRING( GetModelName() ) );
-	
+
 	if (m_flSpeed == 0)
 	{
 		m_flSpeed = 40;
@@ -467,7 +470,7 @@ void CBaseButton::Spawn( )
 	{
 		SetTouch( &CBaseButton::ButtonTouch );
 	}
-	else 
+	else
 	{
 		SetTouch ( NULL );
 	}
@@ -491,7 +494,7 @@ bool CBaseButton::CreateVPhysics()
 // Output : Returns a pointer to the corresponding sound file.
 //-----------------------------------------------------------------------------
 string_t MakeButtonSound( int sound )
-{ 
+{
 	char tmp[1024];
 	Q_snprintf( tmp, sizeof(tmp), "Buttons.snd%d", sound );
 	return AllocPooledString(tmp);
@@ -530,17 +533,17 @@ bool CBaseButton::OnUseLocked( CBaseEntity *pActivator )
 
 //-----------------------------------------------------------------------------
 // Purpose: Use function that starts the button moving.
-// Input  : pActivator - 
-//			pCaller - 
-//			useType - 
-//			value - 
+// Input  : pActivator -
+//			pCaller -
+//			useType -
+//			value -
 //-----------------------------------------------------------------------------
 void CBaseButton::ButtonUse( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value )
 {
 	// Ignore touches if button is moving, or pushed-in and waiting to auto-come-out.
 	// UNDONE: Should this use ButtonResponseToTouch() too?
 	if (m_toggle_state == TS_GOING_UP || m_toggle_state == TS_GOING_DOWN )
-		return;		
+		return;
 
 	if (m_bLocked)
 	{
@@ -587,7 +590,7 @@ void CBaseButton::ButtonUse( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_
 // Purpose: Returns a code indicating how the button should respond to being touched.
 // Output : Returns one of the following:
 //				BUTTON_NOTHING - do nothing
-//				BUTTON_RETURN - 
+//				BUTTON_RETURN -
 //				BUTTON_ACTIVATE - act as if pressed
 //-----------------------------------------------------------------------------
 CBaseButton::BUTTON_CODE CBaseButton::ButtonResponseToTouch( void )
@@ -668,7 +671,7 @@ void CBaseButton::ButtonTouch( CBaseEntity *pOther )
 
 //-----------------------------------------------------------------------------
 // Purpose: Starts the button moving "in/up".
-// Input  : *pOther - 
+// Input  : *pOther -
 //-----------------------------------------------------------------------------
 void CBaseButton::ButtonActivate( void )
 {
@@ -684,7 +687,7 @@ void CBaseButton::ButtonActivate( void )
 
 		EmitSound( filter, entindex(), ep );
 	}
-	
+
 	if (!UTIL_IsMasterTriggered(m_sMaster, m_hActivator) || m_bLocked)
 	{
 		// button is locked, play locked sound
@@ -699,7 +702,7 @@ void CBaseButton::ButtonActivate( void )
 
 	ASSERT(m_toggle_state == TS_AT_BOTTOM);
 	m_toggle_state = TS_GOING_UP;
-	
+
 	SetMoveDone( &CBaseButton::TriggerAndWait );
 	if (!m_fRotating)
 		LinearMove( m_vecPosition2, m_flSpeed);
@@ -732,7 +735,7 @@ void CBaseButton::TriggerAndWait( void )
 	}
 
 	m_toggle_state = TS_AT_TOP;
-	
+
 	//
 	// Re-instate touches if the button is of the toggle variety.
 	//
@@ -757,7 +760,7 @@ void CBaseButton::TriggerAndWait( void )
 		SetNextThink( gpGlobals->curtime + m_flWait );
 		SetThink( &CBaseButton::ButtonReturn );
 	}
-	
+
 	m_nState = 1;			// use alternate textures
 
 	m_OnIn.FireOutput(m_hActivator, this);
@@ -771,7 +774,7 @@ void CBaseButton::ButtonReturn( void )
 {
 	ASSERT(m_toggle_state == TS_AT_TOP);
 	m_toggle_state = TS_GOING_DOWN;
-	
+
 	SetMoveDone( &CBaseButton::ButtonBackHome );
 	if (!m_fRotating)
 		LinearMove( m_vecPosition1, m_flSpeed);
@@ -821,7 +824,7 @@ int CBaseButton::DrawDebugTextOverlays()
 {
 	int text_offset = BaseClass::DrawDebugTextOverlays();
 
-	if (m_debugOverlays & OVERLAY_TEXT_BIT) 
+	if (m_debugOverlays & OVERLAY_TEXT_BIT)
 	{
 		static const char *pszStates[] =
 		{
@@ -831,7 +834,7 @@ int CBaseButton::DrawDebugTextOverlays()
 			"Unpressing...",
 			"<UNKNOWN STATE>",
 		};
-	
+
 		char tempstr[255];
 
 		int nState = m_toggle_state;
@@ -884,7 +887,7 @@ void CRotButton::Spawn( void )
 	}
 
 	SetMoveType( MOVETYPE_PUSH );
-	
+
 #ifdef HL1_DLL
 	SetSolid( SOLID_BSP );
 #else
@@ -897,7 +900,7 @@ void CRotButton::Spawn( void )
 	}
 
 	SetModel( STRING( GetModelName() ) );
-	
+
 	if (m_flSpeed == 0)
 		m_flSpeed = 40;
 
@@ -958,10 +961,10 @@ BEGIN_DATADESC( CMomentaryRotButton )
 	DEFINE_FIELD( m_IdealYaw, FIELD_FLOAT ),
 	DEFINE_FIELD( m_sNoise, FIELD_SOUNDNAME ),
 	DEFINE_FIELD( m_bUpdateTarget, FIELD_BOOLEAN ),
-//TE120----
+//TE120--
 	DEFINE_KEYFIELD( m_ls.sLockedSound, FIELD_SOUNDNAME, "locked_sound" ),
 	DEFINE_KEYFIELD( m_ls.sUnlockedSound, FIELD_SOUNDNAME, "unlocked_sound" ),
-//TE120----
+//TE120--
 
 	DEFINE_KEYFIELD( m_direction, FIELD_INTEGER, "StartDirection" ),
 	DEFINE_KEYFIELD( m_returnSpeed, FIELD_FLOAT, "returnspeed" ),
@@ -979,7 +982,7 @@ BEGIN_DATADESC( CMomentaryRotButton )
 	DEFINE_INPUTFUNC( FIELD_FLOAT, "SetPositionImmediately", InputSetPositionImmediately ),
 	DEFINE_INPUTFUNC( FIELD_VOID, "_DisableUpdateTarget", InputDisableUpdateTarget ),
 	DEFINE_INPUTFUNC( FIELD_VOID, "_EnableUpdateTarget", InputEnableUpdateTarget ),
-	DEFINE_INPUTFUNC( FIELD_FLOAT, "SetSpeed", InputSetSpeed ),//TE120----
+	DEFINE_INPUTFUNC( FIELD_FLOAT, "SetSpeed", InputSetSpeed ),//TE120
 	// Outputs
 	DEFINE_OUTPUT( m_Position, "Position" ),
 	DEFINE_OUTPUT( m_OnUnpressed, "OnUnpressed" ),
@@ -1079,7 +1082,7 @@ void CMomentaryRotButton::Spawn( void )
 
 	SetMoveType( MOVETYPE_PUSH );
 	SetModel( STRING( GetModelName() ) );
-	
+
 	CreateVPhysics();
 
 	// Slam the object back to solid - if we really want it to be solid.
@@ -1089,7 +1092,7 @@ void CMomentaryRotButton::Spawn( void )
 	}
 
 	m_bDisabled = false;
-//TE120----
+//TE120--
 	// get door button sounds, for doors which require buttons to open
 	if (m_bLockedSound)
 	{
@@ -1099,66 +1102,30 @@ void CMomentaryRotButton::Spawn( void )
 		m_ls.sLockedSound = AllocPooledString(tmp);
 		PrecacheScriptSound(m_ls.sLockedSound.ToCStr());
 	}
-	/*
-	if (m_bUnlockedSound)
-	{
-		m_ls.sUnlockedSound = MakeButtonSound( (int)m_bUnlockedSound );
-		PrecacheScriptSound(m_ls.sUnlockedSound.ToCStr());
-	}
-
-	// get sentence group names, for doors which are directly 'touched' to open
-
-	switch (m_bLockedSentence)
-	{
-		case 1: m_ls.sLockedSentence = MAKE_STRING("NA"); break; // access denied
-		case 2: m_ls.sLockedSentence = MAKE_STRING("ND"); break; // security lockout
-		case 3: m_ls.sLockedSentence = MAKE_STRING("NF"); break; // blast door
-		case 4: m_ls.sLockedSentence = MAKE_STRING("NFIRE"); break; // fire door
-		case 5: m_ls.sLockedSentence = MAKE_STRING("NCHEM"); break; // chemical door
-		case 6: m_ls.sLockedSentence = MAKE_STRING("NRAD"); break; // radiation door
-		case 7: m_ls.sLockedSentence = MAKE_STRING("NCON"); break; // gen containment
-		case 8: m_ls.sLockedSentence = MAKE_STRING("NH"); break; // maintenance door
-		case 9: m_ls.sLockedSentence = MAKE_STRING("NG"); break; // broken door
-		
-		default: m_ls.sLockedSentence = NULL_STRING; break;
-	}
-
-	switch (m_bUnlockedSentence)
-	{
-		case 1: m_ls.sUnlockedSentence = MAKE_STRING("EA"); break; // access granted
-		case 2: m_ls.sUnlockedSentence = MAKE_STRING("ED"); break; // security door
-		case 3: m_ls.sUnlockedSentence = MAKE_STRING("EF"); break; // blast door
-		case 4: m_ls.sUnlockedSentence = MAKE_STRING("EFIRE"); break; // fire door
-		case 5: m_ls.sUnlockedSentence = MAKE_STRING("ECHEM"); break; // chemical door
-		case 6: m_ls.sUnlockedSentence = MAKE_STRING("ERAD"); break; // radiation door
-		case 7: m_ls.sUnlockedSentence = MAKE_STRING("ECON"); break; // gen containment
-		case 8: m_ls.sUnlockedSentence = MAKE_STRING("EH"); break; // maintenance door
 	
-		default: m_ls.sUnlockedSentence = NULL_STRING; break;
-	}
-	*/
 	if ( m_sNoise != NULL_STRING )
 	{
 		PrecacheScriptSound( STRING( m_sNoise ) );
-	}//TE120----
+	}
+//TE120--
 }
 
-int	CMomentaryRotButton::ObjectCaps( void ) 
-{ 
+int	CMomentaryRotButton::ObjectCaps( void )
+{
 	int flags = BaseClass::ObjectCaps();
 	if (!HasSpawnFlags(SF_BUTTON_USE_ACTIVATES))
 	{
 		return flags;
 	}
 	else
-	{	
+	{
 		return (flags | FCAP_CONTINUOUS_USE | FCAP_USE_IN_RADIUS);
 	}
 }
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 bool CMomentaryRotButton::CreateVPhysics( void )
 {
@@ -1169,7 +1136,7 @@ bool CMomentaryRotButton::CreateVPhysics( void )
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CMomentaryRotButton::PlaySound( void )
 {
@@ -1190,7 +1157,7 @@ void CMomentaryRotButton::PlaySound( void )
 
 //-----------------------------------------------------------------------------
 // Purpose: Returns a given angular position as a value along our motion from 0 to 1.
-// Input  : vecAngles - 
+// Input  : vecAngles -
 //-----------------------------------------------------------------------------
 float CMomentaryRotButton::GetPos( const QAngle &vecAngles )
 {
@@ -1204,22 +1171,23 @@ float CMomentaryRotButton::GetPos( const QAngle &vecAngles )
 	return( clamp( flPos, 0.f, 1.f ));
 }
 
-//TE120----
+//TE120--
 //------------------------------------------------------------------------------
 // Purpose :
-// Input   : flSpeed 
+// Input   : flSpeed
 //------------------------------------------------------------------------------
 void CMomentaryRotButton::InputSetSpeed( inputdata_t &inputdata )
 {
 	m_flSpeed = inputdata.value.Float();
 
-	if (m_flSpeed <= 0)
+	if ( m_flSpeed <= 0 )
 		m_flSpeed = 100;
 }
-//TE120----
+//TE120--
+
 //------------------------------------------------------------------------------
 // Purpose :
-// Input   : flPosition 
+// Input   : flPosition
 //------------------------------------------------------------------------------
 void CMomentaryRotButton::InputSetPosition( inputdata_t &inputdata )
 {
@@ -1272,7 +1240,7 @@ void CMomentaryRotButton::InputSetPosition( inputdata_t &inputdata )
 
 //------------------------------------------------------------------------------
 // Purpose :
-// Input   : flPosition 
+// Input   : flPosition
 //------------------------------------------------------------------------------
 void CMomentaryRotButton::InputSetPositionImmediately( inputdata_t &inputdata )
 {
@@ -1390,11 +1358,11 @@ void CMomentaryRotButton::SetPositionMoveDone(void)
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : pActivator - 
-//			pCaller - 
-//			useType - 
-//			value - 
+// Purpose:
+// Input  : pActivator -
+//			pCaller -
+//			useType -
+//			value -
 //-----------------------------------------------------------------------------
 void CMomentaryRotButton::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value )
 {
@@ -1436,7 +1404,7 @@ void CMomentaryRotButton::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, US
 	// pauses between uses.
 	//
 	bool bPlaySound = false;
-	
+
 	if ( !m_lastUsed )
 	{
 		bPlaySound = true;
@@ -1501,7 +1469,7 @@ void CMomentaryRotButton::UpdateSelf( float value, bool bPlaySound )
 		m_OnFullyOpen.FireOutput(this, this);
 		return;
 	}
-	
+
 	if ( bPlaySound )
 	{
 		PlaySound();
@@ -1608,14 +1576,14 @@ void CMomentaryRotButton::UpdateThink( void )
 // Purpose: Draw any debug text overlays
 // Output : Current text offset from the top
 //-----------------------------------------------------------------------------
-int CMomentaryRotButton::DrawDebugTextOverlays(void) 
+int CMomentaryRotButton::DrawDebugTextOverlays(void)
 {
 	int text_offset = BaseClass::DrawDebugTextOverlays();
 
-	if (m_debugOverlays & OVERLAY_TEXT_BIT) 
+	if (m_debugOverlays & OVERLAY_TEXT_BIT)
 	{
 		char tempstr[255];
-		
+
 		Q_snprintf(tempstr,sizeof(tempstr),"QAngle: %.2f %.2f %.2f", GetLocalAngles()[0], GetLocalAngles()[1], GetLocalAngles()[2]);
 		EntityText(text_offset,tempstr,0);
 		text_offset++;
@@ -1664,13 +1632,13 @@ void CMomentaryRotButton::InputDisable( inputdata_t &inputdata )
 void CMomentaryRotButton::Enable( void )
 {
 	m_bDisabled = false;
-//TE120----
+//TE120--
 	if ( HasSpawnFlags( SF_ROTBUTTON_NOTSOLID ) )
 	{
 		AddEFlags( EFL_USE_PARTITION_WHEN_NOT_SOLID );
 		SetSolid( SOLID_VPHYSICS );
 	}
-//TE120----
+//TE120--
 }
 
 
@@ -1680,11 +1648,11 @@ void CMomentaryRotButton::Enable( void )
 void CMomentaryRotButton::Disable( void )
 {
 	m_bDisabled = true;
-//TE120----
+//TE120--
 	if ( HasSpawnFlags( SF_ROTBUTTON_NOTSOLID ) )
 	{
 		RemoveEFlags( EFL_USE_PARTITION_WHEN_NOT_SOLID );
 		SetSolid( SOLID_NONE );
 	}
-//TE120----
+//TE120--
 }

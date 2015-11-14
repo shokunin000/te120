@@ -20,17 +20,17 @@
 
 
 /********************************************************************
- NOTE: if you are looking at this file becase you would like flares 
- to be considered as fires (and thereby trigger gas traps), be aware 
- that the env_flare class is actually found in weapon_flaregun.cpp 
- and is really a repurposed piece of ammunition. (env_flare isn't the 
+ NOTE: if you are looking at this file becase you would like flares
+ to be considered as fires (and thereby trigger gas traps), be aware
+ that the env_flare class is actually found in weapon_flaregun.cpp
+ and is really a repurposed piece of ammunition. (env_flare isn't the
  rod-like safety flare prop, but rather the bit of flame on the end.)
 
- You will have some difficulty making it work here, because CFlare 
- does not inherit from CFire and will thus not be enumerated by 
- CFireSphere::EnumElement(). In order to have flares be detected and 
- used by this system, you will need to promote certain member functions 
- of CFire into an interface class from which both CFire and CFlare 
+ You will have some difficulty making it work here, because CFlare
+ does not inherit from CFire and will thus not be enumerated by
+ CFireSphere::EnumElement(). In order to have flares be detected and
+ used by this system, you will need to promote certain member functions
+ of CFire into an interface class from which both CFire and CFlare
  inherit. You will also need to modify CFireSphere::EnumElement so that
  it properly disambiguates between fires and flares.
 
@@ -58,7 +58,7 @@ BEGIN_DATADESC( CFlare )
 	DEFINE_FIELD( m_bPropFlare,		FIELD_BOOLEAN ),
 	DEFINE_FIELD( m_bInActiveList,	FIELD_BOOLEAN ),
 	DEFINE_FIELD( m_pNextFlare,		FIELD_CLASSPTR ),
-	
+
 	//Input functions
 	DEFINE_INPUTFUNC( FIELD_FLOAT, "Start", InputStart ),
 	DEFINE_INPUTFUNC( FIELD_FLOAT, "Die", InputDie ),
@@ -89,7 +89,7 @@ CFlare *CFlare::GetActiveFlares( void )
 
 Class_T CFlare::Classify( void )
 {
-	return CLASS_FLARE; 
+	return CLASS_FLARE;
 }
 
 CBaseEntity *CreateFlare( Vector vOrigin, QAngle Angles, CBaseEntity *pOwner, float flDuration )
@@ -121,7 +121,7 @@ void KillFlare( CBaseEntity *pOwnerEntity, CBaseEntity *pEntity, float flKillTim
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 CFlare::CFlare( void )
 {
@@ -147,11 +147,11 @@ CFlare::~CFlare()
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CFlare::Precache( void )
 {
-	PrecacheModel("models/weapons/shell.mdl" );//TE120----
+	PrecacheModel("models/weapons/shell.mdl" );//TE120
 
 	PrecacheScriptSound( "Weapon_FlareGun.Burn" );
 
@@ -160,8 +160,8 @@ void CFlare::Precache( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : &restore - 
+// Purpose:
+// Input  : &restore -
 // Output : int
 //-----------------------------------------------------------------------------
 int CFlare::Restore( IRestore &restore )
@@ -182,13 +182,13 @@ int CFlare::Restore( IRestore &restore )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CFlare::Spawn( void )
 {
 	Precache();
 
-	SetModel( "models/weapons/shell.mdl" );//TE120----
+	SetModel( "models/weapons/shell.mdl" );//TE120
 
 	UTIL_SetSize( this, Vector( -2, -2, -2 ), Vector( 2, 2, 2 ) );
 
@@ -226,7 +226,7 @@ void CFlare::Spawn( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CFlare::Activate( void )
 {
@@ -240,23 +240,23 @@ void CFlare::Activate( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CFlare::StartBurnSound( void )
 {
 	if ( m_pBurnSound == NULL )
 	{
 		CPASAttenuationFilter filter( this );
-		m_pBurnSound = CSoundEnvelopeController::GetController().SoundCreate( 
+		m_pBurnSound = CSoundEnvelopeController::GetController().SoundCreate(
 			filter, entindex(), CHAN_WEAPON, "Weapon_FlareGun.Burn", 3.0f );
 	}
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : vecOrigin - 
-//			vecAngles - 
-//			*pOwner - 
+// Purpose:
+// Input  : vecOrigin -
+//			vecAngles -
+//			*pOwner -
 // Output : CFlare
 //-----------------------------------------------------------------------------
 CFlare *CFlare::Create( Vector vecOrigin, QAngle vecAngles, CBaseEntity *pOwner, float lifetime )
@@ -272,7 +272,7 @@ CFlare *CFlare::Create( Vector vecOrigin, QAngle vecAngles, CBaseEntity *pOwner,
 	pFlare->Spawn();
 	pFlare->SetTouch( &CFlare::FlareTouch );
 	pFlare->SetThink( &CFlare::FlareThink );
-	
+
 	//Start up the flare
 	pFlare->Start( lifetime );
 
@@ -294,7 +294,7 @@ CFlare *CFlare::Create( Vector vecOrigin, QAngle vecAngles, CBaseEntity *pOwner,
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 unsigned int CFlare::PhysicsSolidMaskForEntity( void ) const
 {
@@ -302,7 +302,7 @@ unsigned int CFlare::PhysicsSolidMaskForEntity( void ) const
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CFlare::FlareThink( void )
 {
@@ -336,7 +336,7 @@ void CFlare::FlareThink( void )
 			return;
 		}
 	}
-	
+
 	//Act differently underwater
 	if ( GetWaterLevel() > 1 )
 	{
@@ -357,8 +357,8 @@ void CFlare::FlareThink( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : *pOther - 
+// Purpose:
+// Input  : *pOther -
 //-----------------------------------------------------------------------------
 void CFlare::FlareBurnTouch( CBaseEntity *pOther )
 {
@@ -370,8 +370,8 @@ void CFlare::FlareBurnTouch( CBaseEntity *pOther )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : *pOther - 
+// Purpose:
+// Input  : *pOther -
 //-----------------------------------------------------------------------------
 void CFlare::FlareTouch( CBaseEntity *pOther )
 {
@@ -434,7 +434,7 @@ void CFlare::FlareTouch( CBaseEntity *pOther )
 		//Only do this on the first bounce
 		if ( m_nBounces == 0 )
 		{
-			const surfacedata_t *pdata = physprops->GetSurfaceData( tr.surface.surfaceProps );	
+			const surfacedata_t *pdata = physprops->GetSurfaceData( tr.surface.surfaceProps );
 
 			if ( pdata != NULL )
 			{
@@ -454,16 +454,16 @@ void CFlare::FlareTouch( CBaseEntity *pOther )
 						UTIL_SetOrigin( this, tr.endpos + ( tr.plane.normal * 2.0f ) );
 						SetAbsVelocity( vec3_origin );
 						SetMoveType( MOVETYPE_NONE );
-						
+
 						SetTouch( &CFlare::FlareBurnTouch );
-						
+
 						int index = decalsystem->GetDecalIndexForName( "SmallScorch" );
 						if ( index >= 0 )
 						{
 							CBroadcastRecipientFilter filter;
 							te->Decal( filter, 0.0, &tr.endpos, &tr.startpos, ENTINDEX( tr.m_pEnt ), tr.hitbox, index );
 						}
-						
+
 						CPASAttenuationFilter filter2( this, "Flare.Touch" );
 						EmitSound( filter2, entindex(), "Flare.Touch" );
 
@@ -487,11 +487,11 @@ void CFlare::FlareTouch( CBaseEntity *pOther )
 		// Change our flight characteristics
 		SetMoveType( MOVETYPE_FLYGRAVITY, MOVECOLLIDE_FLY_BOUNCE );
 		SetGravity( UTIL_ScaleForGravity( 640 ) );
-		
+
 		m_nBounces++;
 
 		//After the first bounce, smacking into whoever fired the flare is fair game
-		SetOwnerEntity( this );	
+		SetOwnerEntity( this );
 
 		// Slow down
 		Vector vecNewVelocity = GetAbsVelocity();
@@ -512,14 +512,14 @@ void CFlare::FlareTouch( CBaseEntity *pOther )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CFlare::Start( float lifeTime )
 {
 	StartBurnSound();
 
 	if ( m_pBurnSound != NULL )
-	{		
+	{
 		CSoundEnvelopeController::GetController().Play( m_pBurnSound, 0.0f, 60 );
 		CSoundEnvelopeController::GetController().SoundChangeVolume( m_pBurnSound, 0.8f, 2.0f );
 		CSoundEnvelopeController::GetController().SoundChangePitch( m_pBurnSound, 100, 2.0f );
@@ -541,7 +541,7 @@ void CFlare::Start( float lifeTime )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CFlare::Die( float fadeTime )
 {
@@ -552,7 +552,7 @@ void CFlare::Die( float fadeTime )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CFlare::Launch( const Vector &direction, float speed )
 {
@@ -575,8 +575,8 @@ void CFlare::Launch( const Vector &direction, float speed )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : &inputdata - 
+// Purpose:
+// Input  : &inputdata -
 //-----------------------------------------------------------------------------
 void CFlare::InputStart( inputdata_t &inputdata )
 {
@@ -584,8 +584,8 @@ void CFlare::InputStart( inputdata_t &inputdata )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : &inputdata - 
+// Purpose:
+// Input  : &inputdata -
 //-----------------------------------------------------------------------------
 void CFlare::InputDie( inputdata_t &inputdata )
 {
@@ -593,8 +593,8 @@ void CFlare::InputDie( inputdata_t &inputdata )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : &inputdata - 
+// Purpose:
+// Input  : &inputdata -
 //-----------------------------------------------------------------------------
 void CFlare::InputLaunch( inputdata_t &inputdata )
 {
@@ -685,7 +685,7 @@ void CFlaregun::Precache( void )
 void CFlaregun::PrimaryAttack( void )
 {
 	CBasePlayer *pOwner = ToBasePlayer( GetOwner() );
-	
+
 	if ( pOwner == NULL )
 		return;
 
@@ -715,12 +715,12 @@ void CFlaregun::PrimaryAttack( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CFlaregun::SecondaryAttack( void )
 {
 	CBasePlayer *pOwner = ToBasePlayer( GetOwner() );
-	
+
 	if ( pOwner == NULL )
 		return;
 

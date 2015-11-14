@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 //=============================================================================//
 #include "cbase.h"
@@ -29,7 +29,7 @@ ConVar r_PhysPropStaticLighting( "r_PhysPropStaticLighting", "1" );
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 C_PhysicsProp::C_PhysicsProp( void )
 {
@@ -38,12 +38,14 @@ C_PhysicsProp::C_PhysicsProp( void )
 
 	// default true so static lighting will get recomputed when we go to sleep
 	m_bAwakeLastTime = true;
-	m_bClientGlow = false;//TE120
-	m_pEntGlowEffect = ( CEntGlowEffect* )g_pScreenSpaceEffects->GetScreenSpaceEffect( "ge_entglow" );//TE120
+//TE120--
+	m_bClientGlow = false;
+	m_pEntGlowEffect = ( CEntGlowEffect* )g_pScreenSpaceEffects->GetScreenSpaceEffect( "ge_entglow" );
+//TE120--
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 C_PhysicsProp::~C_PhysicsProp( void )
 {
@@ -55,7 +57,7 @@ ConVar r_visualizeproplightcaching( "r_visualizeproplightcaching", "0" );
 
 //-----------------------------------------------------------------------------
 // Purpose: Draws the object
-// Input  : flags - 
+// Input  : flags -
 //-----------------------------------------------------------------------------
 bool C_PhysicsProp::OnInternalDrawModel( ClientModelRenderInfo_t *pInfo )
 {
@@ -90,11 +92,11 @@ bool C_PhysicsProp::OnInternalDrawModel( ClientModelRenderInfo_t *pInfo )
 		// going to sleep, have static lighting
 		pInfo->flags |= STUDIO_STATIC_LIGHTING;
 	}
-	
+
 	// track state
 	m_bAwakeLastTime = m_bAwake;
 
-	//TE120-------------------------------------
+//TE120--
 	if ( m_bClientGlow != m_bEnableGlow )
 	{
 		if ( m_bEnableGlow )
@@ -110,7 +112,7 @@ bool C_PhysicsProp::OnInternalDrawModel( ClientModelRenderInfo_t *pInfo )
 
 		m_bClientGlow = m_bEnableGlow;
 	}
-	//TE120------------------------------------
+//TE120--
 
 	return true;
 }

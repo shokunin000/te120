@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //=============================================================================//
@@ -36,12 +36,14 @@ public:
 
 	int			DrawDebugTextOverlays(void);
 
+	virtual void SetParent( CBaseEntity* pNewParent, int iAttachment = -1 );
+
 	// Input handlers
 	void InputOpen( inputdata_t &inputdata );
 	void InputClose( inputdata_t &inputdata );
 	void InputSetPosition( inputdata_t &inputdata );
 	void InputSetSpeed( inputdata_t &inputdata );
-	
+
 	DECLARE_DATADESC();
 
 	Vector		m_vecMoveDir;			// Move direction.
@@ -54,8 +56,10 @@ public:
 	float		m_flStartPosition;		// Position of brush when spawned
 	float		m_flMoveDistance;		// Total distance the brush can move
 
-	EHANDLE		m_hPosition1;			// Used to mark end position //TE120
-	EHANDLE		m_hPosition2;			// Used to mark start position //TE120
+//TE120----
+	EHANDLE		m_hPosition1;			// Used to mark end position
+	EHANDLE		m_hPosition2;			// Used to mark start position
+//TE120----
 
 	IPhysicsFluidController *m_pFluidController;
 

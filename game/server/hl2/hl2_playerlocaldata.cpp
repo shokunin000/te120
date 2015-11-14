@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //=============================================================================//
@@ -32,12 +32,12 @@ BEGIN_SEND_TABLE_NOBASE( CHL2PlayerLocalData, DT_HL2Local )
 #ifdef HL2_EPISODIC
 	SendPropFloat( SENDINFO(m_flFlashBattery) ),
 	SendPropVector( SENDINFO(m_vecLocatorOrigin) ),
-//TE120---------------------
+//TE120--
 	SendPropInt( SENDINFO(m_iNumLocatorContacts), 8 ),
 	// SendPropArray( SendPropVector( SENDINFO_ARRAY(m_vecLocatorContactPos), -1, SPROP_COORD), m_vecLocatorContactPos ),
 	SendPropArray( SendPropInt(SENDINFO_ARRAY(m_iLocatorContactType), LOCATOR_CONTACT_TYPE_BITS ), m_iLocatorContactType ),
 	SendPropArray( SendPropEHandle(SENDINFO_ARRAY(m_locatorEnt), LOCATOR_CONTACT_TYPE_BITS ), m_locatorEnt ),
-//TE120----------------------
+//TE120--
 #endif
 END_SEND_TABLE()
 
@@ -54,11 +54,11 @@ BEGIN_SIMPLE_DATADESC( CHL2PlayerLocalData )
 #ifdef HL2_EPISODIC
 	DEFINE_FIELD( m_flFlashBattery, FIELD_FLOAT ),
 	DEFINE_FIELD( m_vecLocatorOrigin, FIELD_POSITION_VECTOR ),
-	//TE120------------------
+//TE120--
 	DEFINE_FIELD( m_iNumLocatorContacts, FIELD_INTEGER ),
 	DEFINE_ARRAY( m_locatorEnt, FIELD_EHANDLE, LOCATOR_MAX_CONTACTS ),
 	DEFINE_ARRAY( m_iLocatorContactType, FIELD_INTEGER, LOCATOR_MAX_CONTACTS ),
-//TE120------------------------
+//TE120--
 #endif
 	// Ladder related stuff
 	DEFINE_FIELD( m_hLadder, FIELD_EHANDLE ),
@@ -79,4 +79,3 @@ CHL2PlayerLocalData::CHL2PlayerLocalData()
 	m_iNumLocatorContacts = 0;//TE120
 #endif
 }
-

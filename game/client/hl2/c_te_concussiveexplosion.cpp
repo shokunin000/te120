@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //===========================================================================//
@@ -10,9 +10,7 @@
 #include "ragdollexplosionenumerator.h"
 #include "tier1/KeyValues.h"
 #include "toolframework_client.h"
-//TE120---------------------------------------------------
-#include "c_te_effect_dispatch.h"
-//TE120---------------------------------------------------
+#include "c_te_effect_dispatch.h"//TE120
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -43,13 +41,13 @@ public:
 IMPLEMENT_CLIENTCLASS_EVENT_DT( C_TEConcussiveExplosion, DT_TEConcussiveExplosion, CTEConcussiveExplosion )
 	RecvPropVector( RECVINFO(m_vecNormal)),
 	RecvPropFloat( RECVINFO(m_flScale)),
-	RecvPropInt( RECVINFO(m_nRadius)),	
+	RecvPropInt( RECVINFO(m_nRadius)),
 	RecvPropInt( RECVINFO(m_nMagnitude)),
 END_RECV_TABLE()
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void C_TEConcussiveExplosion::AffectRagdolls( void )
 {
@@ -60,9 +58,9 @@ void C_TEConcussiveExplosion::AffectRagdolls( void )
 	partition->EnumerateElementsInSphere( PARTITION_CLIENT_RESPONSIVE_EDICTS, m_vecOrigin, m_nRadius, false, &ragdollEnum );
 }
 
-//TE120---------------------------------------------------
+//TE120--
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 bool FX_AffectConcussionRagdolls( Vector vecOrigin, float radius, float magnitude )
 {
@@ -77,8 +75,8 @@ bool FX_AffectConcussionRagdolls( Vector vecOrigin, float radius, float magnitud
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : &data - 
+// Purpose:
+// Input  : &data -
 //-----------------------------------------------------------------------------
 void RagdollConcussionCallback( const CEffectData &data )
 {
@@ -86,10 +84,10 @@ void RagdollConcussionCallback( const CEffectData &data )
 }
 
 DECLARE_CLIENT_EFFECT( "RagdollConcussion", RagdollConcussionCallback );
-//TE120---------------------------------------------------
+//TE120--
 
 //-----------------------------------------------------------------------------
-// Recording 
+// Recording
 //-----------------------------------------------------------------------------
 static inline void RecordConcussiveExplosion( const Vector& start, const Vector &vecDirection )
 {
@@ -117,7 +115,7 @@ static inline void RecordConcussiveExplosion( const Vector& start, const Vector 
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void C_TEConcussiveExplosion::PostDataUpdate( DataUpdateType_t updateType )
 {
@@ -126,7 +124,7 @@ void C_TEConcussiveExplosion::PostDataUpdate( DataUpdateType_t updateType )
 	FX_ConcussiveExplosion( m_vecOrigin, m_vecNormal );
 	RecordConcussiveExplosion( m_vecOrigin, m_vecNormal );
 }
-						  
+
 void TE_ConcussiveExplosion( IRecipientFilter& filter, float delay, KeyValues *pKeyValues )
 {
 	Vector vecOrigin, vecDirection;

@@ -105,7 +105,7 @@ BEGIN_DATADESC( CBaseNPCMaker )
 	DEFINE_THINKFUNC( MakerThink ),
 
 	DEFINE_FIELD( m_hIgnoreEntity, FIELD_EHANDLE ),
-	DEFINE_KEYFIELD( m_iszIngoreEnt, FIELD_STRING, "IgnoreEntity" ), 
+	DEFINE_KEYFIELD( m_iszIngoreEnt, FIELD_STRING, "IgnoreEntity" ),
 END_DATADESC()
 
 
@@ -180,7 +180,7 @@ bool CBaseNPCMaker::CanMakeNPC( bool bIgnoreSolidEntities )
 	Vector mins = GetAbsOrigin() - Vector( 34, 34, 0 );
 	Vector maxs = GetAbsOrigin() + Vector( 34, 34, 0 );
 	maxs.z = GetAbsOrigin().z;
-	
+
 	// If we care about not hitting solid entities, look for 'em
 	if ( !bIgnoreSolidEntities )
 	{
@@ -336,7 +336,7 @@ void CBaseNPCMaker::InputToggle( inputdata_t &inputdata )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CBaseNPCMaker::InputSetMaxChildren( inputdata_t &inputdata )
 {
@@ -344,7 +344,7 @@ void CBaseNPCMaker::InputSetMaxChildren( inputdata_t &inputdata )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CBaseNPCMaker::InputAddMaxChildren( inputdata_t &inputdata )
 {
@@ -352,7 +352,7 @@ void CBaseNPCMaker::InputAddMaxChildren( inputdata_t &inputdata )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CBaseNPCMaker::InputSetMaxLiveChildren( inputdata_t &inputdata )
 {
@@ -421,7 +421,7 @@ void CNPCMaker::MakeNPC( void )
 		Warning("NULL Ent in NPCMaker!\n" );
 		return;
 	}
-	
+
 	// ------------------------------------------------
 	//  Intialize spawned NPC's relationships
 	// ------------------------------------------------
@@ -480,8 +480,8 @@ void CNPCMaker::MakeNPC( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : *pChild - 
+// Purpose:
+// Input  : *pChild -
 //-----------------------------------------------------------------------------
 void CBaseNPCMaker::ChildPostSpawn( CAI_BaseNPC *pChild )
 {
@@ -523,8 +523,8 @@ void CBaseNPCMaker::MakerThink ( void )
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : *pVictim - 
+// Purpose:
+// Input  : *pVictim -
 //-----------------------------------------------------------------------------
 void CBaseNPCMaker::DeathNotice( CBaseEntity *pVictim )
 {
@@ -648,7 +648,7 @@ CNPCSpawnDestination *CTemplateNPCMaker::FindSpawnDestination()
 		DevWarning("Template NPC Spawner (%s) doesn't have any spawn destinations!\n", GetDebugName() );
 		return NULL;
 	}
-	
+
 	while( pEnt )
 	{
 		CNPCSpawnDestination *pDestination;
@@ -666,14 +666,18 @@ CNPCSpawnDestination *CTemplateNPCMaker::FindSpawnDestination()
 				Vector vecTopOfHull = NAI_Hull::Maxs( HULL_HUMAN );
 				vecTopOfHull.x = 0;
 				vecTopOfHull.y = 0;
-//TE120----
+//TE120--
 				bool fVisible = (pPlayer->FInViewCone( vecTest ) || pPlayer->FInViewCone( vecTest + vecTopOfHull ) );
 
-				if (fVisible)
-					fVisible = (pPlayer->FVisible( vecTest, MASK_VISIBLE ) || pPlayer->FVisible( vecTest + vecTopOfHull, MASK_VISIBLE ) );
+				if (fVisible )
+				{
+					fVisible = ( pPlayer->FVisible( vecTest, MASK_VISIBLE ) || pPlayer->FVisible( vecTest + vecTopOfHull, MASK_VISIBLE ) );
+				}
 				else
+				{
 					DevMsg( 1, "(%s) Spawner not visible.\n", STRING( GetEntityName() ) );
-//TE120----
+				}
+//TE120--
 				if( m_CriterionVisibility == TS_YN_YES )
 				{
 					if( !fVisible )
@@ -683,15 +687,17 @@ CNPCSpawnDestination *CTemplateNPCMaker::FindSpawnDestination()
 				{
 					if( fVisible )
 					{
-//TE120----
-						if ( !(pPlayer->GetFlags() & FL_NOTARGET) )
+//TE120--
+						if ( !( pPlayer->GetFlags() & FL_NOTARGET ) )
 						{
 							fValid = false;
 							DevMsg( 1, "(%s) Not counting current spawner since visible\n", STRING( GetEntityName() ) );
 						}
 						else
+						{
 							DevMsg( 1, "Spawner %s spawning even though seen due to notarget\n", STRING( GetEntityName() ) );
-//TE120----
+						}
+//TE120--
 					}
 				}
 			}
@@ -702,19 +708,21 @@ CNPCSpawnDestination *CTemplateNPCMaker::FindSpawnDestination()
 				count++;
 			}
 		}
-//TE120----
+//TE120--
 		else
+		{
 			DevMsg( 1, "(%s) Not counting spawner due to reuse delay\n", STRING( GetEntityName() ) );
-//TE120----
+		}
+//TE120--
 		pEnt = gEntList.FindEntityByName( pEnt, m_iszDestinationGroup );
 	}
-//TE120----
+//TE120--
 	if( count < 1 )
 	{
 		DevMsg( 1, "(%s) No valid spawner found\n", STRING( GetEntityName() ) );
 		return NULL;
 	}
-//TE120----
+//TE120--
 
 	// Now find the nearest/farthest based on distance criterion
 	if( m_CriterionDistance == TS_DIST_DONT_CARE )
@@ -731,9 +739,9 @@ CNPCSpawnDestination *CTemplateNPCMaker::FindSpawnDestination()
 				return pRandomDest;
 			}
 		}
-//TE120----
+//TE120--
 		DevMsg( 2, "Couldn't find any valid spawns where AI will fit.\n", STRING( GetEntityName() ) );
-//TE120----
+//TE120--
 		return NULL;
 	}
 	else
@@ -788,7 +796,7 @@ CNPCSpawnDestination *CTemplateNPCMaker::FindSpawnDestination()
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CTemplateNPCMaker::MakeNPC( void )
 {
@@ -826,7 +834,7 @@ void CTemplateNPCMaker::MakeNPC( void )
 		Warning("NULL Ent in NPCMaker!\n" );
 		return;
 	}
-	
+
 	if ( pDestination )
 	{
 		pent->SetAbsOrigin( pDestination->GetAbsOrigin() );
@@ -909,7 +917,7 @@ void CTemplateNPCMaker::MakeNPCInLine( void )
 		Warning("NULL Ent in NPCMaker!\n" );
 		return;
 	}
-	
+
 	m_OnSpawnNPC.Set( pEntity, pEntity, this );
 
 	PlaceNPCInLine( pent );
@@ -1004,7 +1012,7 @@ void CTemplateNPCMaker::MakeNPCInRadius( void )
 		Warning("NULL Ent in NPCMaker!\n" );
 		return;
 	}
-	
+
 	if ( !PlaceNPCInRadius( pent ) )
 	{
 		// Failed to place the NPC. Abort

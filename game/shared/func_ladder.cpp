@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 //=============================================================================//
 #include "cbase.h"
@@ -15,7 +15,7 @@
 
 CUtlVector< CFuncLadder * >	CFuncLadder::s_Ladders;
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 CFuncLadder::CFuncLadder() :
 	m_bDisabled( false )
@@ -24,7 +24,7 @@ CFuncLadder::CFuncLadder() :
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 CFuncLadder::~CFuncLadder()
 {
@@ -45,7 +45,7 @@ CFuncLadder *CFuncLadder::GetLadder( int index )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CFuncLadder::Spawn()
 {
@@ -55,7 +55,7 @@ void CFuncLadder::Spawn()
 	SetSolid( SOLID_NONE );
 	SetMoveType( MOVETYPE_NONE );
 	SetCollisionGroup( COLLISION_GROUP_NONE );
-	
+
 	//AddFlag( FL_WORLDBRUSH );
 	SetModelName( NULL_STRING );
 
@@ -72,9 +72,9 @@ void CFuncLadder::Spawn()
 
 #if !defined( CLIENT_DLL )
 	trace_t bottomtrace, toptrace;
-	UTIL_TraceHull( m_vecPlayerMountPositionBottom, m_vecPlayerMountPositionBottom, 
+	UTIL_TraceHull( m_vecPlayerMountPositionBottom, m_vecPlayerMountPositionBottom,
 		playerMins, playerMaxs, MASK_PLAYERSOLID_BRUSHONLY, NULL, COLLISION_GROUP_PLAYER_MOVEMENT, &bottomtrace );
-	UTIL_TraceHull( m_vecPlayerMountPositionTop, m_vecPlayerMountPositionTop, 
+	UTIL_TraceHull( m_vecPlayerMountPositionTop, m_vecPlayerMountPositionTop,
 		playerMins, playerMaxs, MASK_PLAYERSOLID_BRUSHONLY, NULL, COLLISION_GROUP_PLAYER_MOVEMENT, &toptrace );
 
 	if ( bottomtrace.startsolid || toptrace.startsolid )
@@ -85,10 +85,10 @@ void CFuncLadder::Spawn()
 				m_vecPlayerMountPositionBottom.GetX(),
 				m_vecPlayerMountPositionBottom.GetY(),
 				m_vecPlayerMountPositionBottom.GetZ(),
-				bottomtrace.m_pEnt 
-					? 
-					UTIL_VarArgs( "%s/%s", bottomtrace.m_pEnt->GetClassname(), bottomtrace.m_pEnt->GetEntityName().ToCStr() ) 
-					: 
+				bottomtrace.m_pEnt
+					?
+					UTIL_VarArgs( "%s/%s", bottomtrace.m_pEnt->GetClassname(), bottomtrace.m_pEnt->GetEntityName().ToCStr() )
+					:
 					"NULL" );
 		}
 		if ( toptrace.startsolid )
@@ -97,10 +97,10 @@ void CFuncLadder::Spawn()
 				m_vecPlayerMountPositionTop.GetX(),
 				m_vecPlayerMountPositionTop.GetY(),
 				m_vecPlayerMountPositionTop.GetZ(),
-				toptrace.m_pEnt 
-					? 
-					UTIL_VarArgs( "%s/%s", toptrace.m_pEnt->GetClassname(), toptrace.m_pEnt->GetEntityName().ToCStr() ) 
-					: 
+				toptrace.m_pEnt
+					?
+					UTIL_VarArgs( "%s/%s", toptrace.m_pEnt->GetClassname(), toptrace.m_pEnt->GetEntityName().ToCStr() )
+					:
 					"NULL" );
 		}
 
@@ -115,7 +115,7 @@ void CFuncLadder::Spawn()
 	m_vecPlayerMountPositionBottom -= GetAbsOrigin();
 
 	// Compute mins, maxs of points
-	// 
+	//
 	Vector mins( MAX_COORD_INTEGER, MAX_COORD_INTEGER, MAX_COORD_INTEGER );
 	Vector maxs( -MAX_COORD_INTEGER, -MAX_COORD_INTEGER, -MAX_COORD_INTEGER );
 	int i;
@@ -170,7 +170,7 @@ void CFuncLadder::Activate()
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CFuncLadder::SearchForDismountPoints()
 {
@@ -204,7 +204,7 @@ void CFuncLadder::SearchForDismountPoints()
 	}
 #endif
 }
-//TE120----
+//TE120--
 void CFuncLadder::OffsetTop( inputdata_t &inputdata )
 {
 #if !defined( CLIENT_DLL )
@@ -213,7 +213,7 @@ void CFuncLadder::OffsetTop( inputdata_t &inputdata )
 	SetEndPoints( m_vecPlayerMountPositionTop, m_vecPlayerMountPositionBottom );
 #endif
 }
-//TE120----
+//TE120--
 void CFuncLadder::SetEndPoints( const Vector& p1, const Vector& p2 )
 {
 	m_vecPlayerMountPositionTop = p1;
@@ -231,7 +231,7 @@ void CFuncLadder::SetEndPoints( const Vector& p1, const Vector& p2 )
 	Vector playerMaxs = VEC_HULL_MAX;
 
 	trace_t result;
-	UTIL_TraceHull( m_vecPlayerMountPositionTop + Vector( 0, 0, 4 ), m_vecPlayerMountPositionTop, 
+	UTIL_TraceHull( m_vecPlayerMountPositionTop + Vector( 0, 0, 4 ), m_vecPlayerMountPositionTop,
 		playerMins, playerMaxs, MASK_PLAYERSOLID_BRUSHONLY, NULL, COLLISION_GROUP_PLAYER_MOVEMENT, &result );
 
 	if ( !result.startsolid )
@@ -239,7 +239,7 @@ void CFuncLadder::SetEndPoints( const Vector& p1, const Vector& p2 )
 		m_vecPlayerMountPositionTop = result.endpos;
 	}
 
-	UTIL_TraceHull( m_vecPlayerMountPositionBottom + Vector( 0, 0, 4 ), m_vecPlayerMountPositionBottom, 
+	UTIL_TraceHull( m_vecPlayerMountPositionBottom + Vector( 0, 0, 4 ), m_vecPlayerMountPositionBottom,
 		playerMins, playerMaxs, MASK_PLAYERSOLID_BRUSHONLY, NULL, COLLISION_GROUP_PLAYER_MOVEMENT, &result );
 
 	if ( !result.startsolid )
@@ -250,7 +250,7 @@ void CFuncLadder::SetEndPoints( const Vector& p1, const Vector& p2 )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CFuncLadder::DrawDebugGeometryOverlays()
 {
@@ -273,7 +273,7 @@ void CFuncLadder::DrawDebugGeometryOverlays()
 	NDebugOverlay::EntityBounds(this, 200, 180, 63, 63, 0);
 
 	trace_t bottomtrace;
-	UTIL_TraceHull( m_vecPlayerMountPositionBottom, m_vecPlayerMountPositionBottom, 
+	UTIL_TraceHull( m_vecPlayerMountPositionBottom, m_vecPlayerMountPositionBottom,
 		playerMins, playerMaxs, MASK_PLAYERSOLID_BRUSHONLY, NULL, COLLISION_GROUP_PLAYER_MOVEMENT, &bottomtrace );
 
 	int c = m_Dismounts.Count();
@@ -289,8 +289,8 @@ void CFuncLadder::DrawDebugGeometryOverlays()
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : org - 
+// Purpose:
+// Input  : org -
 //-----------------------------------------------------------------------------
 void CFuncLadder::GetTopPosition( Vector& org )
 {
@@ -298,8 +298,8 @@ void CFuncLadder::GetTopPosition( Vector& org )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : org - 
+// Purpose:
+// Input  : org -
 //-----------------------------------------------------------------------------
 void CFuncLadder::GetBottomPosition( Vector& org )
 {
@@ -307,8 +307,8 @@ void CFuncLadder::GetBottomPosition( Vector& org )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : bottomToTopVec - 
+// Purpose:
+// Input  : bottomToTopVec -
 //-----------------------------------------------------------------------------
 void CFuncLadder::ComputeLadderDir( Vector& bottomToTopVec )
 {
@@ -322,7 +322,7 @@ void CFuncLadder::ComputeLadderDir( Vector& bottomToTopVec )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 // Output : int
 //-----------------------------------------------------------------------------
 int CFuncLadder::GetDismountCount() const
@@ -331,8 +331,8 @@ int CFuncLadder::GetDismountCount() const
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : index - 
+// Purpose:
+// Input  : index -
 // Output : CInfoLadderDismountHandle
 //-----------------------------------------------------------------------------
 CInfoLadderDismount *CFuncLadder::GetDismount( int index )
@@ -343,10 +343,10 @@ CInfoLadderDismount *CFuncLadder::GetDismount( int index )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : origin - 
-//			radius - 
-//			list - 
+// Purpose:
+// Input  : origin -
+//			radius -
+//			list -
 //-----------------------------------------------------------------------------
 void CFuncLadder::FindNearbyDismountPoints( const Vector& origin, float radius, CUtlVector< CInfoLadderDismountHandle >& list )
 {
@@ -377,8 +377,8 @@ void CFuncLadder::FindNearbyDismountPoints( const Vector& origin, float radius, 
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : &inputdata - 
+// Purpose:
+// Input  : &inputdata -
 //-----------------------------------------------------------------------------
 void CFuncLadder::InputEnable( inputdata_t &inputdata )
 {
@@ -386,8 +386,8 @@ void CFuncLadder::InputEnable( inputdata_t &inputdata )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : &inputdata - 
+// Purpose:
+// Input  : &inputdata -
 //-----------------------------------------------------------------------------
 void CFuncLadder::InputDisable( inputdata_t &inputdata )
 {
@@ -395,8 +395,8 @@ void CFuncLadder::InputDisable( inputdata_t &inputdata )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : *pPlayer - 
+// Purpose:
+// Input  : *pPlayer -
 //-----------------------------------------------------------------------------
 void CFuncLadder::PlayerGotOn( CBasePlayer *pPlayer )
 {
@@ -407,8 +407,8 @@ void CFuncLadder::PlayerGotOn( CBasePlayer *pPlayer )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : *pPlayer - 
+// Purpose:
+// Input  : *pPlayer -
 //-----------------------------------------------------------------------------
 void CFuncLadder::PlayerGotOff( CBasePlayer *pPlayer )
 {
@@ -418,7 +418,7 @@ void CFuncLadder::PlayerGotOff( CBasePlayer *pPlayer )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 // Output : Returns true on success, false on failure.
 //-----------------------------------------------------------------------------
 bool CFuncLadder::DontGetOnLadder( void ) const
@@ -480,7 +480,7 @@ BEGIN_DATADESC( CFuncLadder )
 END_DATADESC()
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CInfoLadderDismount::DrawDebugGeometryOverlays()
 {

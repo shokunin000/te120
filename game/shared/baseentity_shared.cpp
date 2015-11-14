@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //=============================================================================//
@@ -130,8 +130,8 @@ void CBaseEntity::UnsetPlayerSimulated( void )
 
 // position of eyes
 Vector CBaseEntity::EyePosition( void )
-{ 
-	return GetAbsOrigin() + GetViewOffset(); 
+{
+	return GetAbsOrigin() + GetViewOffset();
 }
 
 const QAngle &CBaseEntity::EyeAngles( void )
@@ -146,25 +146,25 @@ const QAngle &CBaseEntity::LocalEyeAngles( void )
 
 // position of ears
 Vector CBaseEntity::EarPosition( void )
-{ 
-	return EyePosition(); 
+{
+	return EyePosition();
 }
 
-void CBaseEntity::SetViewOffset( const Vector& v ) 
-{ 
-	m_vecViewOffset = v; 
+void CBaseEntity::SetViewOffset( const Vector& v )
+{
+	m_vecViewOffset = v;
 }
 
-const Vector& CBaseEntity::GetViewOffset() const 
-{ 
-	return m_vecViewOffset; 
+const Vector& CBaseEntity::GetViewOffset() const
+{
+	return m_vecViewOffset;
 }
 
 
 //-----------------------------------------------------------------------------
 // center point of entity
 //-----------------------------------------------------------------------------
-const Vector &CBaseEntity::WorldSpaceCenter( ) const 
+const Vector &CBaseEntity::WorldSpaceCenter( ) const
 {
 	return CollisionProp()->WorldSpaceCenter();
 }
@@ -226,8 +226,8 @@ void CBaseEntity::SetEffects( int nEffects )
 	}
 }
 
-void CBaseEntity::AddEffects( int nEffects ) 
-{ 
+void CBaseEntity::AddEffects( int nEffects )
+{
 #if !defined( CLIENT_DLL )
 #ifdef HL2_EPISODIC
 	if ( (nEffects & (EF_BRIGHTLIGHT|EF_DIMLIGHT)) && !(m_fEffects & (EF_BRIGHTLIGHT|EF_DIMLIGHT)) )
@@ -241,7 +241,7 @@ void CBaseEntity::AddEffects( int nEffects )
 #endif // HL2_EPISODIC
 #endif // !CLIENT_DLL
 
-	m_fEffects |= nEffects; 
+	m_fEffects |= nEffects;
 
 	if ( nEffects & EF_NODRAW)
 	{
@@ -265,9 +265,9 @@ void CBaseEntity::SetBlocksLOS( bool bBlocksLOS )
 	}
 }
 
-bool CBaseEntity::BlocksLOS( void ) 
-{ 
-	return !IsEFlagSet(EFL_DONTBLOCKLOS); 
+bool CBaseEntity::BlocksLOS( void )
+{
+	return !IsEFlagSet(EFL_DONTBLOCKLOS);
 }
 
 void CBaseEntity::SetAIWalkable( bool bBlocksLOS )
@@ -282,8 +282,8 @@ void CBaseEntity::SetAIWalkable( bool bBlocksLOS )
 	}
 }
 
-bool CBaseEntity::IsAIWalkable( void ) 
-{ 
+bool CBaseEntity::IsAIWalkable( void )
+{
 	return !IsEFlagSet(EFL_DONTWALKON);
 }
 
@@ -306,10 +306,10 @@ void CBaseEntity::ParseMapData( CEntityMapData *mapData )
 	// loop through all keys in the data block and pass the info back into the object
 	if ( mapData->GetFirstKey(keyName, value) )
 	{
-		do 
+		do
 		{
 			KeyValue( keyName, value );
-		} 
+		}
 		while ( mapData->GetNextKey(keyName, value) );
 	}
 }
@@ -317,7 +317,7 @@ void CBaseEntity::ParseMapData( CEntityMapData *mapData )
 //-----------------------------------------------------------------------------
 // Parse data from a map file
 //-----------------------------------------------------------------------------
-bool CBaseEntity::KeyValue( const char *szKeyName, const char *szValue ) 
+bool CBaseEntity::KeyValue( const char *szKeyName, const char *szValue )
 {
 	//!! temp hack, until worldcraft is fixed
 	// strip the # tokens from (duplicate) key names
@@ -335,7 +335,7 @@ bool CBaseEntity::KeyValue( const char *szKeyName, const char *szValue )
 		// don't copy alpha, legacy support uses renderamt
 		return true;
 	}
-	
+
 	if ( FStrEq( szKeyName, "renderamt" ) )
 	{
 		SetRenderColorA( atoi( szValue ) );
@@ -436,8 +436,8 @@ bool CBaseEntity::KeyValue( const char *szKeyName, const char *szValue )
 		return true;
 	}
 
-#ifdef GAME_DLL	
-	
+#ifdef GAME_DLL
+
 	if ( FStrEq( szKeyName, "targetname" ) )
 	{
 		m_iName = AllocPooledString( szValue );
@@ -480,7 +480,7 @@ bool CBaseEntity::KeyValue( const char *szKeyName, const char *szValue )
 			{
 				if ( printKeyHits )
 					Msg( "(%s) key: %-16s value: %s\n", debugName, szKeyName, szValue );
-				
+
 				return true;
 			}
 		}
@@ -495,7 +495,7 @@ bool CBaseEntity::KeyValue( const char *szKeyName, const char *szValue )
 	return false;
 }
 
-bool CBaseEntity::KeyValue( const char *szKeyName, float flValue ) 
+bool CBaseEntity::KeyValue( const char *szKeyName, float flValue )
 {
 	char	string[256];
 
@@ -504,7 +504,7 @@ bool CBaseEntity::KeyValue( const char *szKeyName, float flValue )
 	return KeyValue( szKeyName, string );
 }
 
-bool CBaseEntity::KeyValue( const char *szKeyName, const Vector &vecValue ) 
+bool CBaseEntity::KeyValue( const char *szKeyName, const Vector &vecValue )
 {
 	char	string[256];
 
@@ -514,7 +514,7 @@ bool CBaseEntity::KeyValue( const char *szKeyName, const Vector &vecValue )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 // Input  :
 // Output :
 //-----------------------------------------------------------------------------
@@ -527,7 +527,7 @@ bool CBaseEntity::GetKeyValue( const char *szKeyName, char *szValue, int iMaxLen
 		Q_snprintf( szValue, iMaxLen, "%d %d %d %d", tmp.r, tmp.g, tmp.b, tmp.a );
 		return true;
 	}
-	
+
 	if ( FStrEq( szKeyName, "renderamt" ) )
 	{
 		color32 tmp = GetRenderColor();
@@ -587,8 +587,8 @@ bool CBaseEntity::GetKeyValue( const char *szKeyName, char *szValue, int iMaxLen
 		return true;
 	}
 
-#ifdef GAME_DLL	
-	
+#ifdef GAME_DLL
+
 	if ( FStrEq( szKeyName, "targetname" ) )
 	{
 		Q_snprintf( szValue, iMaxLen, "%s", STRING( GetEntityName() ) );
@@ -612,8 +612,8 @@ bool CBaseEntity::GetKeyValue( const char *szKeyName, char *szValue, int iMaxLen
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : collisionGroup - 
+// Purpose:
+// Input  : collisionGroup -
 // Output : Returns true on success, false on failure.
 //-----------------------------------------------------------------------------
 bool CBaseEntity::ShouldCollide( int collisionGroup, int contentsMask ) const
@@ -628,8 +628,8 @@ bool CBaseEntity::ShouldCollide( int collisionGroup, int contentsMask ) const
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : seed - 
+// Purpose:
+// Input  : seed -
 //-----------------------------------------------------------------------------
 void CBaseEntity::SetPredictionRandomSeed( const CUserCmd *cmd )
 {
@@ -668,7 +668,7 @@ void CBaseEntity::ImpactTrace( trace_t *pTrace, int iDamageType, const char *pCu
 	Assert( pTrace->m_pEnt );
 
 	CBaseEntity *pEntity = pTrace->m_pEnt;
- 
+
 	// Build the impact data
 	CEffectData data;
 	data.m_vOrigin = pTrace->endpos;
@@ -714,7 +714,7 @@ char const *CBaseEntity::DamageDecal( int bitsDamageType, int gameMaterial )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 int	CBaseEntity::GetIndexForThinkContext( const char *pszContext )
 {
@@ -748,7 +748,7 @@ int CBaseEntity::RegisterThinkContext( const char *szContext )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 BASEPTR	CBaseEntity::ThinkSet( BASEPTR func, float thinkTime, const char *szContext )
 {
@@ -768,7 +768,7 @@ BASEPTR	CBaseEntity::ThinkSet( BASEPTR func, float thinkTime, const char *szCont
 		m_pfnThink = func;
 #if !defined( CLIENT_DLL )
 #ifdef _DEBUG
-		FunctionCheck( *(reinterpret_cast<void **>(&m_pfnThink)), "BaseThinkFunc" ); 
+		FunctionCheck( *(reinterpret_cast<void **>(&m_pfnThink)), "BaseThinkFunc" );
 #endif
 #endif
 		return m_pfnThink;
@@ -784,7 +784,7 @@ BASEPTR	CBaseEntity::ThinkSet( BASEPTR func, float thinkTime, const char *szCont
 	m_aThinkFunctions[ iIndex ].m_pfnThink = func;
 #if !defined( CLIENT_DLL )
 #ifdef _DEBUG
-	FunctionCheck( *(reinterpret_cast<void **>(&m_aThinkFunctions[ iIndex ].m_pfnThink)), szContext ); 
+	FunctionCheck( *(reinterpret_cast<void **>(&m_aThinkFunctions[ iIndex ].m_pfnThink)), szContext );
 #endif
 #endif
 
@@ -798,7 +798,7 @@ BASEPTR	CBaseEntity::ThinkSet( BASEPTR func, float thinkTime, const char *szCont
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CBaseEntity::SetNextThink( float thinkTime, const char *szContext )
 {
@@ -836,7 +836,7 @@ void CBaseEntity::SetNextThink( float thinkTime, const char *szContext )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 float CBaseEntity::GetNextThink( const char *szContext )
 {
@@ -910,7 +910,7 @@ int	CBaseEntity::GetNextThinkTick( const char *szContext /*= NULL*/ )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 float CBaseEntity::GetLastThink( const char *szContext )
 {
@@ -935,7 +935,7 @@ float CBaseEntity::GetLastThink( const char *szContext )
 
 	return m_aThinkFunctions[ iIndex ].m_nLastThinkTick * TICK_INTERVAL;
 }
-	
+
 int CBaseEntity::GetLastThinkTick( const char *szContext /*= NULL*/ )
 {
 	// Are we currently in a think function with a context?
@@ -1020,7 +1020,7 @@ bool CBaseEntity::WillSimulateGamePhysics()
 	if ( !IsPlayer() )
 	{
 		MoveType_t movetype = GetMoveType();
-		
+
 		if ( movetype == MOVETYPE_NONE || movetype == MOVETYPE_VPHYSICS )
 			return false;
 
@@ -1089,7 +1089,7 @@ float CBaseEntity::GetNextThink( int nContextIndex ) const
 	if (nContextIndex < 0)
 		return m_nNextThinkTick * TICK_INTERVAL;
 
-	return m_aThinkFunctions[nContextIndex].m_nNextThinkTick * TICK_INTERVAL; 
+	return m_aThinkFunctions[nContextIndex].m_nNextThinkTick * TICK_INTERVAL;
 }
 
 int	CBaseEntity::GetNextThinkTick( int nContextIndex ) const
@@ -1097,7 +1097,7 @@ int	CBaseEntity::GetNextThinkTick( int nContextIndex ) const
 	if (nContextIndex < 0)
 		return m_nNextThinkTick;
 
-	return m_aThinkFunctions[nContextIndex].m_nNextThinkTick; 
+	return m_aThinkFunctions[nContextIndex].m_nNextThinkTick;
 }
 
 
@@ -1151,7 +1151,7 @@ void CBaseEntity::VPhysicsUpdate( IPhysicsObject *pPhysics )
 				}
 				angles = vec3_angle;
 			}
-#ifndef CLIENT_DLL 
+#ifndef CLIENT_DLL
 			Vector prevOrigin = GetAbsOrigin();
 #endif
 
@@ -1179,8 +1179,8 @@ void CBaseEntity::VPhysicsUpdate( IPhysicsObject *pPhysics )
 				SetCollisionGroup( COLLISION_GROUP_DEBRIS );
 			}
 
-#ifndef CLIENT_DLL 
-//TE120----
+#ifndef CLIENT_DLL
+//TE120--
 			// Trace ahead a bit to scare enemies if the object is massive
 			if ( pPhysics->GetMass() > 250) {
 				if ( gpGlobals->curtime > m_flNextScareTime )
@@ -1191,8 +1191,8 @@ void CBaseEntity::VPhysicsUpdate( IPhysicsObject *pPhysics )
 					Vector  vecDir;
 					AngularImpulse angTemp;
 					pPhysics->GetVelocity( &vecDir, &angTemp );
-					int		iLength;
-					int		i;
+					int iLength;
+					int i;
 					UTIL_TraceLine( vecStart, vecStart + vecDir, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
 					// DebugDrawLine( tr.startpos, tr.endpos, 255, 0, 0, true, 2.0 );
 					iLength = ( tr.startpos - tr.endpos ).Length();
@@ -1208,7 +1208,7 @@ void CBaseEntity::VPhysicsUpdate( IPhysicsObject *pPhysics )
 					m_flNextScareTime = gpGlobals->curtime + 1.5;
 				}
 			}
-//TE120----
+//TE120--
 			PhysicsTouchTriggers( &prevOrigin );
 			PhysicsRelinkChildren(gpGlobals->frametime);
 #endif
@@ -1267,8 +1267,8 @@ IPhysicsObject *CBaseEntity::VPhysicsInitStatic( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : *pPhysics - 
+// Purpose:
+// Input  : *pPhysics -
 //-----------------------------------------------------------------------------
 void CBaseEntity::VPhysicsSetObject( IPhysicsObject *pPhysics )
 {
@@ -1284,7 +1284,7 @@ void CBaseEntity::VPhysicsSetObject( IPhysicsObject *pPhysics )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CBaseEntity::VPhysicsDestroyObject( void )
 {
@@ -1299,7 +1299,7 @@ void CBaseEntity::VPhysicsDestroyObject( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 bool CBaseEntity::VPhysicsInitSetup()
 {
@@ -1398,7 +1398,7 @@ IPhysicsObject *CBaseEntity::VPhysicsInitShadow( bool allowPhysicsMovement, bool
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 bool CBaseEntity::CreateVPhysics()
 {
@@ -1407,20 +1407,20 @@ bool CBaseEntity::CreateVPhysics()
 
 bool CBaseEntity::IsStandable() const
 {
-	if (GetSolidFlags() & FSOLID_NOT_STANDABLE) 
+	if (GetSolidFlags() & FSOLID_NOT_STANDABLE)
 		return false;
 
 	if ( GetSolid() == SOLID_BSP || GetSolid() == SOLID_VPHYSICS || GetSolid() == SOLID_BBOX )
 		return true;
 
-	return IsBSPModel( ); 
+	return IsBSPModel( );
 }
 
 bool CBaseEntity::IsBSPModel() const
 {
 	if ( GetSolid() == SOLID_BSP )
 		return true;
-	
+
 	const model_t *model = modelinfo->GetModel( GetModelIndex() );
 
 	if ( GetSolid() == SOLID_VPHYSICS && modelinfo->GetModelType( model ) == mod_brush )
@@ -1436,10 +1436,10 @@ bool CBaseEntity::IsBSPModel() const
 void CBaseEntity::InvalidatePhysicsRecursive( int nChangeFlags )
 {
 	// Main entry point for dirty flag setting for the 90% case
-	// 1) If the origin changes, then we have to update abstransform, Shadow projection, PVS, KD-tree, 
+	// 1) If the origin changes, then we have to update abstransform, Shadow projection, PVS, KD-tree,
 	//    client-leaf system.
 	// 2) If the angles change, then we have to update abstransform, Shadow projection,
-	//    shadow render-to-texture, client-leaf system, and surrounding bounds. 
+	//    shadow render-to-texture, client-leaf system, and surrounding bounds.
 	//	  Children have to additionally update absvelocity, KD-tree, and PVS.
 	//	  If the surrounding bounds actually update, when we also need to update the KD-tree and the PVS.
 	// 3) If it's due to attachment, then all children who are attached to an attachment point
@@ -1447,7 +1447,7 @@ void CBaseEntity::InvalidatePhysicsRecursive( int nChangeFlags )
 
 	// Other stuff:
 	// 1) Marking the surrounding bounds dirty will automatically mark KD tree + PVS dirty.
-	
+
 	int nDirtyFlags = 0;
 
 	if ( nChangeFlags & VELOCITY_CHANGED )
@@ -1545,7 +1545,7 @@ void CBaseEntity::InvalidatePhysicsRecursive( int nChangeFlags )
 	//	{
 	//		C_BaseAnimating *pAnim = GetBaseAnimating();
 	//		if ( pAnim )
-	//			pAnim->InvalidateBoneCache();		
+	//			pAnim->InvalidateBoneCache();
 	//	}
 	//#endif
 }
@@ -1579,7 +1579,7 @@ bool CBaseEntity::IsPrecacheAllowed()
 
 //-----------------------------------------------------------------------------
 // Purpose: static method
-// Input  : allow - 
+// Input  : allow -
 //-----------------------------------------------------------------------------
 void CBaseEntity::SetAllowPrecache( bool allow )
 {
@@ -1606,8 +1606,8 @@ public:
 		{
 			CBaseEntity *pEntity = EntityFromEntityHandle( pHandleEntity );
 			CBaseEntity *pPassEntity = EntityFromEntityHandle( m_PassEntities[0] );
-			if ( pEntity && pPassEntity && pEntity->GetOwnerEntity() == pPassEntity && 
-				pPassEntity->IsSolidFlagSet(FSOLID_NOT_SOLID) && pPassEntity->IsSolidFlagSet( FSOLID_CUSTOMBOXTEST ) && 
+			if ( pEntity && pPassEntity && pEntity->GetOwnerEntity() == pPassEntity &&
+				pPassEntity->IsSolidFlagSet(FSOLID_NOT_SOLID) && pPassEntity->IsSolidFlagSet( FSOLID_CUSTOMBOXTEST ) &&
 				pPassEntity->IsSolidFlagSet( FSOLID_CUSTOMRAYTEST ) )
 			{
 				// It's a bone follower of the entity to ignore (toml 8/3/2007)
@@ -1629,7 +1629,7 @@ void CBaseEntity::FireBullets( const FireBulletsInfo_t &info )
 	CAmmoDef*	pAmmoDef	= GetAmmoDef();
 	int			nDamageType	= pAmmoDef->DamageType(info.m_iAmmoType);
 	int			nAmmoFlags	= pAmmoDef->Flags(info.m_iAmmoType);
-	
+
 	bool bDoServerEffects = true;
 
 #if defined( HL2MP ) && defined( GAME_DLL )
@@ -1676,13 +1676,13 @@ void CBaseEntity::FireBullets( const FireBulletsInfo_t &info )
 	{
 		ApplyMultiDamage();
 	}
-	  
+
 	ClearMultiDamage();
 	g_MultiDamage.SetDamageType( nDamageType | DMG_NEVERGIB );
 
 	Vector vecDir;
 	Vector vecEnd;
-	
+
 	// Skip multiple entities when tracing
 	CBulletsTraceFilter traceFilter( COLLISION_GROUP_NONE );
 	traceFilter.SetPassEntity( this ); // Standard pass entity for THIS so that it can be easily removed from the list after passing through a portal
@@ -1721,7 +1721,7 @@ void CBaseEntity::FireBullets( const FireBulletsInfo_t &info )
 
 	bool bDoImpacts = false;
 	bool bDoTracers = false;
-	
+
 	float flCumulativeDamage = 0.0f;
 
 	for (int iShot = 0; iShot < info.m_iShots; iShot++)
@@ -1798,7 +1798,7 @@ void CBaseEntity::FireBullets( const FireBulletsInfo_t &info )
 
 		// Tracker 70354/63250:  ywb 8/2/07
 		// Fixes bug where trace from turret with attachment point outside of Vcollide
-		//  starts solid so doesn't hit anything else in the world and the final coord 
+		//  starts solid so doesn't hit anything else in the world and the final coord
 		//  is outside of the MAX_COORD_FLOAT range.  This cause trying to send the end pos
 		//  of the tracer down to the client with an origin which is out-of-range for networking
 		if ( tr.startsolid )
@@ -1835,7 +1835,7 @@ void CBaseEntity::FireBullets( const FireBulletsInfo_t &info )
 #endif //#ifdef PORTAL
 
 			CreateBubbleTrailTracer( vBubbleStart, vBubbleEnd, vecDir );
-			
+
 #ifdef PORTAL
 			if ( pShootThroughPortal )
 			{
@@ -1927,7 +1927,7 @@ void CBaseEntity::FireBullets( const FireBulletsInfo_t &info )
 				dmgInfo.ScaleDamageForce( info.m_flDamageForceScale );
 				dmgInfo.SetAmmoType( info.m_iAmmoType );
 				tr.m_pEnt->DispatchTraceAttack( dmgInfo, vecDir, &tr );
-			
+
 				if ( ToBaseCombatCharacter( tr.m_pEnt ) )
 				{
 					flCumulativeDamage += dmgInfo.GetDamage();
@@ -1951,15 +1951,15 @@ void CBaseEntity::FireBullets( const FireBulletsInfo_t &info )
 					data.m_vStart = tr.startpos;
 					data.m_vOrigin = tr.endpos;
 					data.m_nDamageType = nDamageType;
-					
+
 					DispatchEffect( "RagdollImpact", data );
 				}
-	
+
 #ifdef GAME_DLL
 				if ( nAmmoFlags & AMMO_FORCE_DROP_IF_CARRIED )
 				{
 					// Make sure if the player is holding this, he drops it
-					Pickup_ForcePlayerToDropThisObject( tr.m_pEnt );		
+					Pickup_ForcePlayerToDropThisObject( tr.m_pEnt );
 				}
 #endif
 			}
@@ -2080,14 +2080,14 @@ bool CBaseEntity::ShouldDrawUnderwaterBulletBubbles()
 //-----------------------------------------------------------------------------
 // Handle shot entering water
 //-----------------------------------------------------------------------------
-bool CBaseEntity::HandleShotImpactingWater( const FireBulletsInfo_t &info, 
+bool CBaseEntity::HandleShotImpactingWater( const FireBulletsInfo_t &info,
 	const Vector &vecEnd, ITraceFilter *pTraceFilter, Vector *pVecTracerDest )
 {
 	trace_t	waterTrace;
 
 	// Trace again with water enabled
 	AI_TraceLine( info.m_vecSrc, vecEnd, (MASK_SHOT|CONTENTS_WATER|CONTENTS_SLIME), pTraceFilter, &waterTrace );
-	
+
 	// See if this is the point we entered
 	if ( ( enginetrace->GetPointContents( waterTrace.endpos - Vector(0,0,0.1f) ) & (CONTENTS_WATER|CONTENTS_SLIME) ) == 0 )
 		return false;
@@ -2115,7 +2115,7 @@ bool CBaseEntity::HandleShotImpactingWater( const FireBulletsInfo_t &info,
 		if ( pWaterBullet )
 		{
 			pWaterBullet->Spawn( waterTrace.endpos, info.m_vecDirShooting );
-					 
+
 			CEffectData tracerData;
 			tracerData.m_vStart = waterTrace.endpos;
 			tracerData.m_vOrigin = waterTrace.endpos + info.m_vecDirShooting * 400.0f;
@@ -2166,7 +2166,7 @@ void CBaseEntity::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir
 		}
 
 		int blood = BloodColor();
-		
+
 		if ( blood != DONT_BLEED )
 		{
 			SpawnBlood( vecOrigin, vecDir, blood, info.GetDamage() );// a little surface blood.
@@ -2183,7 +2183,7 @@ void CBaseEntity::DoImpactEffect( trace_t &tr, int nDamageType )
 {
 	// give shooter a chance to do a custom impact.
 	UTIL_ImpactTrace( &tr, nDamageType );
-} 
+}
 
 
 //-----------------------------------------------------------------------------
@@ -2200,7 +2200,7 @@ void CBaseEntity::ComputeTracerStartPosition( const Vector &vecShotSrc, Vector *
 		return;
 	}
 #endif
-	
+
 	if ( IsPlayer() )
 	{
 		// adjust tracer position for player
@@ -2282,7 +2282,7 @@ int CBaseEntity::GetTracerAttachment( void )
 
 int CBaseEntity::BloodColor()
 {
-	return DONT_BLEED; 
+	return DONT_BLEED;
 }
 
 
@@ -2382,7 +2382,7 @@ void CBaseEntity::FollowEntity( CBaseEntity *pBaseEntity, bool bBoneMerge )
 	{
 		SetParent( pBaseEntity );
 		SetMoveType( MOVETYPE_NONE );
-		
+
 		if ( bBoneMerge )
 			AddEffects( EF_BONEMERGE );
 
@@ -2407,7 +2407,7 @@ void CBaseEntity::SetEffectEntity( CBaseEntity *pEffectEnt )
 void CBaseEntity::ApplyLocalVelocityImpulse( const Vector &inVecImpulse )
 {
 	// NOTE: Don't have to use GetVelocity here because local values
-	// are always guaranteed to be correct, unlike abs values which may 
+	// are always guaranteed to be correct, unlike abs values which may
 	// require recomputation
 	if ( inVecImpulse != vec3_origin )
 	{
@@ -2557,7 +2557,7 @@ void CBaseEntity::SetWaterType( int nType )
 ConVar	sv_alternateticks( "sv_alternateticks", ( IsX360() ) ? "1" : "0", FCVAR_SPONLY, "If set, server only simulates entities on even numbered ticks.\n" );
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 // Output : Returns true on success, false on failure.
 //-----------------------------------------------------------------------------
 bool CBaseEntity::IsSimulatingOnAlternateTicks()
@@ -2572,8 +2572,8 @@ bool CBaseEntity::IsSimulatingOnAlternateTicks()
 
 #ifdef CLIENT_DLL
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  :  - 
+// Purpose:
+// Input  :  -
 // Output : Returns true on success, false on failure.
 //-----------------------------------------------------------------------------
 bool CBaseEntity::IsToolRecording() const

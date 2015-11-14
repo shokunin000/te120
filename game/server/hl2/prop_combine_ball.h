@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 //=============================================================================//
 
@@ -16,9 +16,9 @@
 //-----------------------------------------------------------------------------
 #include "player_pickup.h"	// for combine ball inheritance
 
-//TE120-----
+//TE120--
 #define PROP_COMBINE_BALL_MODEL	"models/effects/combineball.mdl"
-#define PROP_COMBINE_BALL_SPRITE_TRAIL "sprites/combineball_trail_black_1.vmt" 
+#define PROP_COMBINE_BALL_SPRITE_TRAIL "sprites/combineball_trail_black_1.vmt"
 
 #define PROP_COMBINE_BALL_LIFETIME	4.0f	// Seconds
 
@@ -46,7 +46,7 @@ static const char *s_pExplodeTimerContext = "ExplodeTimerContext";
 static const char *s_pAnimThinkContext = "AnimThinkContext";
 static const char *s_pCaptureContext = "CaptureContext";
 static const char *s_pRemoveContext = "RemoveContext";
-//TE120-----
+//TE120--
 
 //-----------------------------------------------------------------------------
 // Forward declarations
@@ -143,7 +143,7 @@ public:
 	{
 		m_bEmit = bEmit;
 	}
-//TE120-----
+//TE120--
 	void SetFiredGrabbedOutput( bool bFiredGrabbedOutput )
 	{
 		m_bFiredGrabbedOutput = bFiredGrabbedOutput;
@@ -190,19 +190,19 @@ public:
 	}
 
 	CSpriteTrail *GetGlowTrail() { return m_pGlowTrail; }
-//TE120-----
+//TE120--
 	void SetOriginalOwner( CBaseEntity *pEntity ) { m_hOriginalOwner = pEntity; }
-//TE120-----	
+//TE120--
 	void SetNState( char nState )
 	{
 		m_nState = nState;
 	}
-	
+
 	void SetLastBounceTime( float flLastBounceTime )
 	{
 		m_flLastBounceTime = flLastBounceTime;
 	}
-//TE120-----
+//TE120--
 	CBaseEntity *GetOriginalOwner() { return m_hOriginalOwner; }
 
 private:
@@ -211,28 +211,26 @@ private:
 
 	float GetBallHoldDissolveTime();
 	float GetBallHoldSoundRampTime();
-	//TE120----- removed void DoExplosion( );
 	void StartAnimating( void );
 	void StopAnimating( void );
 
 	void SetBallAsLaunched( void );
-	//TE120----- removed void CollisionEventToTrace
 	bool DissolveEntity( CBaseEntity *pEntity );
-	virtual void OnHitEntity( CBaseEntity *pHitEntity, float flSpeed, int index, gamevcollisionevent_t *pEvent );//TE120-----
-	virtual void DoImpactEffect( const Vector &preVelocity, int index, gamevcollisionevent_t *pEvent );//TE120-----
+	virtual void OnHitEntity( CBaseEntity *pHitEntity, float flSpeed, int index, gamevcollisionevent_t *pEvent );//TE120
+	virtual void DoImpactEffect( const Vector &preVelocity, int index, gamevcollisionevent_t *pEvent );//TE120
 
-	// Bounce inside the spawner: 
+	// Bounce inside the spawner:
 	void BounceInSpawner( float flSpeed, int index, gamevcollisionevent_t *pEvent );
 
 	bool IsAttractiveTarget( CBaseEntity *pEntity );
 
-	// Deflects the ball toward enemies in case of a collision 
-	virtual void DeflectTowardEnemy( float flSpeed, int index, gamevcollisionevent_t *pEvent );//TE120-----
+	// Deflects the ball toward enemies in case of a collision
+	virtual void DeflectTowardEnemy( float flSpeed, int index, gamevcollisionevent_t *pEvent );//TE120
 
-	// Is this something we can potentially dissolve? 
-	virtual bool IsHittableEntity( CBaseEntity *pHitEntity );//TE120-----
+	// Is this something we can potentially dissolve?
+	virtual bool IsHittableEntity( CBaseEntity *pHitEntity );//TE120
 
-	// Sucky. 
+	// Sucky.
 	void WhizSoundThink();
 	void DieThink();
 	void DissolveThink();
@@ -240,7 +238,7 @@ private:
 	void AnimThink( void );
 
 	void FadeOut( float flDuration );
-//TE120----- removed
+
 private:
 
 	int		m_nBounceCount;
@@ -250,7 +248,6 @@ private:
 	float	m_flLastBounceTime;
 
 	bool	m_bFiredGrabbedOutput;
-	//TE120----- removed m_bStruckEntity;
 	bool	m_bWeaponLaunched;		// Means this was fired from the AR2
 	bool	m_bForward;				// Movement direction in ball spawner
 
@@ -272,11 +269,11 @@ private:
 	CNetworkVar( bool, m_bEmit );
 	CNetworkVar( bool, m_bHeld );
 	CNetworkVar( bool, m_bLaunched );
-//TE120-----	
+//TE120--
 protected:
 
 	// Pow!
-	virtual void DoExplosion( );
+	virtual void DoExplosion();
 	void CollisionEventToTrace( int index, gamevcollisionevent_t *pEvent, trace_t &tr );
 
 	bool OutOfBounces( void ) const
@@ -285,7 +282,7 @@ protected:
 	}
 
 	bool	m_bStruckEntity;		// Has hit an entity already (control accuracy)
-//TE120-----
+//TE120--
 	CNetworkVar( float, m_flRadius );
 };
 

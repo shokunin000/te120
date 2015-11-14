@@ -59,11 +59,11 @@ bool CRuleEntity::CanFireForActivator( CBaseEntity *pActivator )
 		else
 			return false;
 	}
-	
+
 	return true;
 }
 
-// 
+//
 // CRulePointEntity -- base class for all rule "point" entities (not brushes)
 //
 class CRulePointEntity : public CRuleEntity
@@ -93,7 +93,7 @@ void CRulePointEntity::Spawn( void )
 	m_Score = 0;
 }
 
-// 
+//
 // CRuleBrushEntity -- base class for all rule "brush" entities (not brushes)
 // Default behavior is to set up like a trigger, invisible, but keep the model for volume testing
 //
@@ -114,7 +114,7 @@ void CRuleBrushEntity::Spawn( void )
 }
 
 
-// CGameScore / game_score	-- award points to player / team 
+// CGameScore / game_score	-- award points to player / team
 //	Points +/- total
 //	Flag: Allow negative scores					SF_SCORE_NEGATIVE
 //	Flag: Award points to team in teamplay		SF_SCORE_TEAM
@@ -484,7 +484,7 @@ void CGamePlayerZone::InputCountPlayersInZone( inputdata_t &inputdata )
 				hullType = HULL_SMALL_CENTERED;
 			}
 
-			UTIL_TraceModel( pPlayer->GetAbsOrigin(), pPlayer->GetAbsOrigin(), NAI_Hull::Mins(hullType), 
+			UTIL_TraceModel( pPlayer->GetAbsOrigin(), pPlayer->GetAbsOrigin(), NAI_Hull::Mins(hullType),
 				NAI_Hull::Maxs(hullType), this, COLLISION_GROUP_NONE, &trace );
 
 			if ( trace.startsolid )
@@ -523,7 +523,7 @@ public:
 	DECLARE_DATADESC();
 
 private:
-	
+
 	float m_flDamage;		// Damage to inflict, negative values give health.
 
 	COutputEvent m_OnUse;
@@ -556,7 +556,7 @@ void CGamePlayerHurt::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TY
 			pActivator->TakeDamage( this, this, m_flDamage, DMG_GENERIC );
 		}
 	}
-	
+
 	SUB_UseTargets( pActivator, useType, value );
 	m_OnUse.FireOutput(pActivator, this); // dvsents2: handle useType and value here - they are passed through
 
@@ -647,7 +647,7 @@ void CGamePlayerEquip::Touch( CBaseEntity *pOther )
 
 void CGamePlayerEquip::EquipPlayer( CBaseEntity *pEntity )
 {
-//TE120----
+//TE120--
 	//CBasePlayer *pPlayer = ToBasePlayer(pEntity);
 	CBasePlayer *pPlayer = NULL;
 
@@ -663,9 +663,8 @@ void CGamePlayerEquip::EquipPlayer( CBaseEntity *pEntity )
 	{
 		pPlayer = (CBasePlayer *)pEntity;
 		//Msg("pPlayer is: %s\n", pPlayer->GetEntityName() ); //Debug
-
 	}
-//TE120----
+//TE120--
 
 	if ( !pPlayer )
 		return;
@@ -710,7 +709,7 @@ private:
 	inline bool RemoveOnFire( void ) { return (m_spawnflags & SF_PTEAM_FIREONCE) ? true : false; }
 	inline bool ShouldKillPlayer( void ) { return (m_spawnflags & SF_PTEAM_KILL) ? true : false; }
 	inline bool ShouldGibPlayer( void ) { return (m_spawnflags & SF_PTEAM_GIB) ? true : false; }
-	
+
 	const char *TargetTeamName( const char *pszTargetName, CBaseEntity *pActivator );
 };
 
@@ -745,11 +744,9 @@ void CGamePlayerTeam::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TY
 			g_pGameRules->ChangePlayerTeam( pPlayer, pszTargetTeam, ShouldKillPlayer(), ShouldGibPlayer() );
 		}
 	}
-	
+
 	if ( RemoveOnFire() )
 	{
 		UTIL_Remove( this );
 	}
 }
-
-

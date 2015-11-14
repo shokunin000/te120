@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //=============================================================================//
@@ -34,7 +34,7 @@
 #define SIZE_AMMO_357_LARGE			20
 #define SIZE_AMMO_CROSSBOW			6
 #define	SIZE_AMMO_AR2_ALTFIRE		1
-#define SIZE_AMMO_GC_ENERGY			10 //TE120
+#define SIZE_AMMO_GC_ENERGY			10//TE120
 
 #define SF_ITEM_START_CONSTRAINED	0x00000001
 
@@ -88,7 +88,7 @@ private:
 	bool		m_bActivateWhenAtRest;
 	COutputEvent m_OnPlayerTouch;
 	COutputEvent m_OnCacheInteraction;
-	
+
 	Vector		m_vOriginalSpawnOrigin;
 	QAngle		m_vOriginalSpawnAngles;
 

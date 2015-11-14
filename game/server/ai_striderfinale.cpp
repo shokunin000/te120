@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2013, Dorian Gorski, All rights reserved. ============//
+//========= Copyright, Dorian Gorski, All rights reserved. ============//
 //
 // Purpose: Manage Striders in finale combat, one stays near player the other patrols
 // at nearby defined patrol location.
@@ -6,8 +6,8 @@
 //=================================================================================//
 
 #include "cbase.h"
-#include "AI_StriderFinale.h"
-#include "ndebugoverlay.h"
+#include "ai_striderfinale.h"
+//#include "ndebugoverlay.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -29,8 +29,8 @@ void CAI_StriderFinale::Spawn()
 
 //-------------------------------------
 // Should be called when a strider dies or spawns
-void CAI_StriderFinale::InputActivate( inputdata_t &inputdata )		
-{ 
+void CAI_StriderFinale::InputActivate( inputdata_t &inputdata )
+{
 	m_bActive = true;
 
 	FillRoles();
@@ -146,7 +146,7 @@ void CAI_StriderFinale::FillRoles()
 		if ( !m_npcStrider2 || !m_npcStrider2->IsAlive() || m_npcStrider2 == m_npcStrider1 )
 		{
 			m_npcStrider2 = dynamic_cast<CNPC_Strider*>( gEntList.FindEntityByName( NULL, m_iszStrider2 ) );
-		
+
 			// If no strider found or both slot 1 & 2 are assigned to the same strider than try strider 3
 			if ( !m_npcStrider2 || !m_npcStrider2->IsAlive() || m_npcStrider2 == m_npcStrider1 )
 			{
@@ -170,7 +170,7 @@ void CAI_StriderFinale::FillRoles()
 	if ( m_npcStrider1 && m_npcStrider2 && bUpdated )
 	{
 		CBaseEntity *pPlayer = UTIL_GetLocalPlayer();
-			
+
 		if ( m_npcStrider1->StriderEnemyDistance(pPlayer) > m_npcStrider2->StriderEnemyDistance(pPlayer) )
 		{
 			CNPC_Strider *pTemp = m_npcStrider1;

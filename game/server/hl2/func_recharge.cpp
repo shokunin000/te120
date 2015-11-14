@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //
@@ -47,20 +47,20 @@ public:
 
 private:
 	void InputRecharge( inputdata_t &inputdata );
-	
+
 	float MaxJuice() const;
 	void UpdateJuice( int newJuice );
 
 	DECLARE_DATADESC();
 
-	float	m_flNextCharge; 
+	float	m_flNextCharge;
 	int		m_iReactivate ; // DeathMatch Delay until reactvated
 	int		m_iJuice;
 	int		m_iOn;			// 0 = off, 1 = startup, 2 = going
 	float   m_flSoundTime;
-	
+
 	int		m_nState;
-	
+
 	COutputFloat m_OutRemainingCharge;
 	COutputEvent m_OnHalfEmpty;
 	COutputEvent m_OnEmpty;
@@ -88,7 +88,7 @@ BEGIN_DATADESC( CRecharge )
 	DEFINE_OUTPUT(m_OnPlayerUse, "OnPlayerUse" ),
 
 	DEFINE_INPUTFUNC( FIELD_VOID, "Recharge", InputRecharge ),
-	
+
 END_DATADESC()
 
 
@@ -127,7 +127,7 @@ void CRecharge::Spawn()
 
 	UpdateJuice( MaxJuice() );
 
-	m_nState = 0;			
+	m_nState = 0;
 
 	CreateVPhysics();
 }
@@ -138,11 +138,11 @@ bool CRecharge::CreateVPhysics()
 	return true;
 }
 
-int CRecharge::DrawDebugTextOverlays(void) 
+int CRecharge::DrawDebugTextOverlays(void)
 {
 	int text_offset = BaseClass::DrawDebugTextOverlays();
 
-	if (m_debugOverlays & OVERLAY_TEXT_BIT) 
+	if (m_debugOverlays & OVERLAY_TEXT_BIT)
 	{
 		char tempstr[512];
 		Q_snprintf(tempstr,sizeof(tempstr),"Charge left: %i", m_iJuice );
@@ -158,18 +158,13 @@ int CRecharge::DrawDebugTextOverlays(void)
 //-----------------------------------------------------------------------------
 float CRecharge::MaxJuice()	const
 {
-//TE120----------
-	//if ( HasSpawnFlags( SF_CITADEL_RECHARGER ) )
-	//{
-		return sk_suitcharger_citadel.GetFloat();
-	//}
-//TE120----------
+	return sk_suitcharger_citadel.GetFloat();//TE120
 }
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : newJuice - 
+// Purpose:
+// Input  : newJuice -
 //-----------------------------------------------------------------------------
 void CRecharge::UpdateJuice( int newJuice )
 {
@@ -202,7 +197,7 @@ void CRecharge::InputRecharge( inputdata_t &inputdata )
 }
 
 void CRecharge::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value )
-{ 
+{
 	// if it's not a player, ignore
 	if ( !pActivator || !pActivator->IsPlayer() )
 		return;
@@ -221,7 +216,7 @@ void CRecharge::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE use
 	// if there is no juice left, turn it off
 	if (m_iJuice <= 0)
 	{
-		m_nState = 1;			
+		m_nState = 1;
 		Off();
 	}
 
@@ -253,7 +248,7 @@ void CRecharge::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE use
 
 	if (!m_hActivator->IsPlayer() )
 		return;
-	
+
 	// Play the on sound or the looping charging sound
 	if (!m_iOn)
 	{
@@ -306,7 +301,7 @@ void CRecharge::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE use
 void CRecharge::Recharge(void)
 {
 	UpdateJuice( MaxJuice() );
-	m_nState = 0;			
+	m_nState = 0;
 	SetThink( &CRecharge::SUB_DoNothing );
 }
 
@@ -358,17 +353,17 @@ private:
 
 	DECLARE_DATADESC();
 
-	float	m_flNextCharge; 
+	float	m_flNextCharge;
 	bool	m_bHasWPC;//TE120
 	int		m_iReactivate ; // DeathMatch Delay until reactvated
 	int		m_iJuice;
 	int		m_iOn;			// 0 = off, 1 = startup, 2 = going
 	float   m_flSoundTime;
-	
+
 	int		m_nState;
 	int		m_iCaps;
 	int		m_iMaxJuice;
-	
+
 	COutputFloat m_OutRemainingCharge;
 	COutputEvent m_OnHalfEmpty;
 	COutputEvent m_OnEmpty;
@@ -404,7 +399,7 @@ BEGIN_DATADESC( CNewRecharge )
 
 	DEFINE_INPUTFUNC( FIELD_VOID, "Recharge", InputRecharge ),
 	DEFINE_INPUTFUNC( FIELD_INTEGER, "SetCharge", InputSetCharge ),
-	
+
 END_DATADESC()
 
 
@@ -463,13 +458,13 @@ void CNewRecharge::SetInitialCharge( void )
 		return;
 	}
 
-//TE120----------------------------
+//TE120--
 	if ( HasSpawnFlags( SF_PHYSCON_RECHARGER ) )
 	{
 		m_iMaxJuice = 40.0f;
 		return;
 	}
-//TE120----------------------
+//TE120--
 	m_iMaxJuice =  sk_suitcharger.GetFloat();
 }
 
@@ -490,14 +485,14 @@ void CNewRecharge::Spawn()
 
 	UpdateJuice( MaxJuice() );
 
-	m_nState = 0;		
+	m_nState = 0;
 	m_iCaps	= FCAP_CONTINUOUS_USE;
-//TE120--------------------
+//TE120--
 	m_bHasWPC = false;
 
 	if ( HasSpawnFlags( SF_PHYSCON_RECHARGER ) )
 		m_nSkin = 1;
-//TE120----------------------
+//TE120--
 
 	CreateVPhysics();
 
@@ -514,11 +509,11 @@ bool CNewRecharge::CreateVPhysics()
 	return true;
 }
 
-int CNewRecharge::DrawDebugTextOverlays(void) 
+int CNewRecharge::DrawDebugTextOverlays(void)
 {
 	int text_offset = BaseClass::DrawDebugTextOverlays();
 
-	if (m_debugOverlays & OVERLAY_TEXT_BIT) 
+	if (m_debugOverlays & OVERLAY_TEXT_BIT)
 	{
 		char tempstr[512];
 		Q_snprintf(tempstr,sizeof(tempstr),"Charge left: %i", m_iJuice );
@@ -561,8 +556,8 @@ float CNewRecharge::MaxJuice()	const
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : newJuice - 
+// Purpose:
+// Input  : newJuice -
 //-----------------------------------------------------------------------------
 void CNewRecharge::UpdateJuice( int newJuice )
 {
@@ -605,7 +600,7 @@ void CNewRecharge::InputSetCharge( inputdata_t &inputdata )
 }
 
 void CNewRecharge::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value )
-{ 
+{
 	// if it's not a player, ignore
 	if ( !pActivator || !pActivator->IsPlayer() )
 		return;
@@ -623,7 +618,7 @@ void CNewRecharge::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE 
 		if ( HasSpawnFlags( SF_CITADEL_RECHARGER ) )
 			 flCharges = CITADEL_CHARGES_PER_SECOND;
 
-		m_flJuice -= flCharges / flCalls;		
+		m_flJuice -= flCharges / flCalls;
 		StudioFrameAdvance();
 	}
 
@@ -643,12 +638,12 @@ void CNewRecharge::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE 
 	{
 		// Start our deny animation over again
 		ResetSequence( LookupSequence( "emptyclick" ) );
-		
+
 		m_nState = 1;
-		
+
 		// Shut off
 		Off();
-		
+
 		// Play a deny sound
 		if ( m_flSoundTime <= gpGlobals->curtime )
 		{
@@ -665,14 +660,14 @@ void CNewRecharge::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE 
 	{
 		nMaxArmor = sk_suitcharger_citadel_maxarmor.GetInt();
 	}
-	
+
 	int nIncrementArmor = 1;
 
 	// The citadel charger gives more per charge and also gives health
 	if ( HasSpawnFlags(	SF_CITADEL_RECHARGER ) )
 	{
 		nIncrementArmor = 10;
-		
+
 #ifdef HL2MP
 		nIncrementArmor = 2;
 #endif
@@ -683,18 +678,18 @@ void CNewRecharge::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE 
 			pActivator->TakeHealth( 5, DMG_GENERIC );
 		}
 	}
-//TE120----------------------------------
+//TE120--
 	int numIndexGC = GetAmmoDef()->Index( "GC_Energy" );
 	if ( HasSpawnFlags( SF_PHYSCON_RECHARGER ) )
 	{
 		for ( int i = 0; ( i < MAX_WEAPONS ) && !m_bHasWPC; i++ )
 		{
 			CBaseCombatWeapon *pWeap = pPlayer->GetWeapon(i);
-			if ( pWeap ) 
+			if ( pWeap )
 			{
 				// Msg( "pWeap: %s\n", pWeap->GetClassname() );
 				char *szWPCName = "weapon_physconcussion";
-				if ( !strcmp( pWeap->GetClassname(), szWPCName ) )
+				if ( !Q_strcmp( pWeap->GetClassname(), szWPCName ) )
 				{
 					// Msg( "WPC found.\n" );
 					m_bHasWPC = true;
@@ -702,10 +697,10 @@ void CNewRecharge::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE 
 			}
 		}
 	}
-//TE120---------------------------
+//TE120--
 
 	// If we're over our limit, debounce our keys
-	if ( pPlayer->ArmorValue() >= nMaxArmor && (!m_bHasWPC || pPlayer->GetAmmoCount(numIndexGC) >= GetAmmoDef()->MaxCarry(numIndexGC)) ) //TE120 changed value
+	if ( pPlayer->ArmorValue() >= nMaxArmor && (!m_bHasWPC || pPlayer->GetAmmoCount(numIndexGC) >= GetAmmoDef()->MaxCarry(numIndexGC)) ) //TE120
 	{
 		// Citadel charger must also be at max health
 		if ( !HasSpawnFlags(SF_CITADEL_RECHARGER) || ( HasSpawnFlags( SF_CITADEL_RECHARGER ) && pActivator->GetHealth() >= pActivator->GetMaxHealth() ) )
@@ -713,7 +708,7 @@ void CNewRecharge::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE 
 			// Make the user re-use me to get started drawing health.
 			pPlayer->m_afButtonPressed &= ~IN_USE;
 			m_iCaps = FCAP_IMPULSE_USE;
-			
+
 			EmitSound( "SuitRecharge.Deny" );
 			return;
 		}
@@ -726,7 +721,7 @@ void CNewRecharge::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE 
 	// Time to recharge yet?
 	if ( m_flNextCharge >= gpGlobals->curtime )
 		return;
-	
+
 	// Play the on sound or the looping charging sound
 	if ( !m_iOn )
 	{
@@ -748,18 +743,18 @@ void CNewRecharge::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE 
 	// Give armor if we need it & give gc energy if needed
 	if ( pPlayer->ArmorValue() < nMaxArmor )
 	{
-		//TE120---------------------
+//TE120--
 		if ( m_bHasWPC && pPlayer->GetAmmoCount(numIndexGC) < GetAmmoDef()->MaxCarry(numIndexGC) && ( m_iJuice % 2 == 0 ) )
 		{
 			pPlayer->GiveAmmo( 5, numIndexGC, true );
 			CPASAttenuationFilter filter( this, "NPC_Advisor.Shieldup" );
 			EmitSound( filter, entindex(), "NPC_Advisor.Shieldup" );
 		}
-		//TE120---------------------
+//TE120--
 		UpdateJuice( m_iJuice - nIncrementArmor );
 		pPlayer->IncrementArmorValue( nIncrementArmor, nMaxArmor );
 	}
-	//TE120---------------------
+//TE120--
 	else if ( m_bHasWPC && pPlayer->GetAmmoCount( numIndexGC ) < GetAmmoDef()->MaxCarry( numIndexGC ) && ( m_iJuice % 2 == 0 ) )
 	{
 		UpdateJuice( m_iJuice - nIncrementArmor );
@@ -768,8 +763,10 @@ void CNewRecharge::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE 
 		EmitSound( filter, entindex(), "NPC_Advisor.Shieldup" );
 	}
 	else if ( m_bHasWPC && pPlayer->GetAmmoCount( numIndexGC ) < GetAmmoDef()->MaxCarry( numIndexGC ) )
+	{
 		UpdateJuice( m_iJuice - nIncrementArmor );
-	//TE120---------------------
+	}
+//TE120--
 
 	// Send the output.
 	float flRemaining = m_iJuice / MaxJuice();
@@ -786,7 +783,7 @@ void CNewRecharge::Recharge(void)
 
 	UpdateJuice( MaxJuice() );
 
-	m_nState = 0;		
+	m_nState = 0;
 	m_flJuice = m_iJuice;
 	m_iReactivate = 0;
 	StudioFrameAdvance();
@@ -801,7 +798,7 @@ void CNewRecharge::Off(void)
 	{
 		StopSound( "SuitRecharge.ChargingLoop" );
 	}
-	
+
 	if ( m_nState == 1 )
 	{
 		SetCycle( 1.0f );

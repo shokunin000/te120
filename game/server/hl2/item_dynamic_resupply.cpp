@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 //=============================================================================//
 
@@ -56,7 +56,7 @@ static DynamicResupplyItems_t g_DynamicResupplyAmmoItems[] =
 	{ "item_ammo_357",				"357",			SIZE_AMMO_357,			0.0f },
 	{ "item_ammo_crossbow",			"XBowBolt",		SIZE_AMMO_CROSSBOW,		0.0f },
 	{ "item_ammo_ar2_altfire",		"AR2AltFire",	SIZE_AMMO_AR2_ALTFIRE,	0.0f },
-	{ "item_gc_energy",				"GC_Energy",	SIZE_AMMO_GC_ENERGY,	0.0f }, //TE120
+	{ "item_gc_energy",				"GC_Energy",	SIZE_AMMO_GC_ENERGY,	0.0f },//TE120
 };
 
 #define DS_HEALTH_INDEX		0
@@ -128,7 +128,7 @@ static DynamicResupplyHandle_t	g_MasterResupply;
 
 
 //-----------------------------------------------------------------------------
-// Save/load: 
+// Save/load:
 //-----------------------------------------------------------------------------
 BEGIN_DATADESC( CItem_DynamicResupply )
 
@@ -163,7 +163,7 @@ END_DATADESC()
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 CItem_DynamicResupply::CItem_DynamicResupply( void )
 {
@@ -188,10 +188,10 @@ CItem_DynamicResupply::CItem_DynamicResupply( void )
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CItem_DynamicResupply::Spawn( void )
-{ 
+{
 	if ( g_pGameRules->IsAllowedToSpawn( this ) == false )
 	{
 		UTIL_Remove( this );
@@ -214,10 +214,10 @@ void CItem_DynamicResupply::Spawn( void )
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CItem_DynamicResupply::Activate( void )
-{ 
+{
 	BaseClass::Activate();
 
 	if ( HasSpawnFlags( SF_DYNAMICRESUPPLY_IS_MASTER ) )
@@ -242,7 +242,7 @@ void CItem_DynamicResupply::Activate( void )
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CItem_DynamicResupply::Precache( void )
 {
@@ -261,7 +261,7 @@ void CItem_DynamicResupply::Precache( void )
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CItem_DynamicResupply::CheckPVSThink( void )
 {
@@ -280,8 +280,8 @@ void CItem_DynamicResupply::CheckPVSThink( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : &data - 
+// Purpose:
+// Input  : &data -
 //-----------------------------------------------------------------------------
 void CItem_DynamicResupply::InputKill( inputdata_t &data )
 {
@@ -289,8 +289,8 @@ void CItem_DynamicResupply::InputKill( inputdata_t &data )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : &data - 
+// Purpose:
+// Input  : &data -
 //-----------------------------------------------------------------------------
 void CItem_DynamicResupply::InputCalculateType( inputdata_t &data )
 {
@@ -299,8 +299,8 @@ void CItem_DynamicResupply::InputCalculateType( inputdata_t &data )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : &data - 
+// Purpose:
+// Input  : &data -
 //-----------------------------------------------------------------------------
 void CItem_DynamicResupply::InputBecomeMaster( inputdata_t &data )
 {
@@ -361,8 +361,8 @@ void CItem_DynamicResupply::SpawnFullItem( CItem_DynamicResupply *pMaster, CBase
 		flRatio[0] = 1.0f;
 		flTotalProb = 1.0f;
 	}
-	
-	float flChoice = random->RandomFloat( 0.0f, flTotalProb ); 
+
+	float flChoice = random->RandomFloat( 0.0f, flTotalProb );
 	for ( i = 0; i < NUM_AMMO_ITEMS; ++i )
 	{
 		if ( flChoice <= flRatio[i] )
@@ -385,7 +385,7 @@ void CItem_DynamicResupply::SpawnFullItem( CItem_DynamicResupply *pMaster, CBase
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CItem_DynamicResupply::FindPotentialItems( int nCount, DynamicResupplyItems_t *pItems, int iDebug, SpawnInfo_t *pSpawnInfo )
 {
@@ -429,7 +429,7 @@ void CItem_DynamicResupply::FindPotentialItems( int nCount, DynamicResupplyItems
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CItem_DynamicResupply::ComputeHealthRatios( CItem_DynamicResupply* pMaster, CBasePlayer *pPlayer, int iDebug, SpawnInfo_t *pSpawnInfo )
 {
@@ -447,7 +447,7 @@ void CItem_DynamicResupply::ComputeHealthRatios( CItem_DynamicResupply* pMaster,
 		}
 		else if ( i == DS_ARMOR_INDEX )
 		{
-			// Armor 
+			// Armor
 			// Ignore armor if we don't have the suit
 			if ( !pPlayer->IsSuitEquipped() )
 			{
@@ -471,7 +471,7 @@ void CItem_DynamicResupply::ComputeHealthRatios( CItem_DynamicResupply* pMaster,
 		Msg("Calculating desired health ratios & deltas:\n");
 		for ( int i = 0; i < NUM_HEALTH_ITEMS; i++ )
 		{
-			Msg("   %s Desired Ratio: %.2f, Current Ratio: %.2f = Delta of %.2f\n", 
+			Msg("   %s Desired Ratio: %.2f, Current Ratio: %.2f = Delta of %.2f\n",
 				g_DynamicResupplyHealthItems[i].sEntityName, pSpawnInfo[i].m_flDesiredRatio, pSpawnInfo[i].m_flCurrentRatio, pSpawnInfo[i].m_flDelta );
 		}
 	}
@@ -479,7 +479,7 @@ void CItem_DynamicResupply::ComputeHealthRatios( CItem_DynamicResupply* pMaster,
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CItem_DynamicResupply::ComputeAmmoRatios( CItem_DynamicResupply* pMaster, CBasePlayer *pPlayer, int iDebug, SpawnInfo_t *pSpawnInfo )
 {
@@ -513,7 +513,7 @@ void CItem_DynamicResupply::ComputeAmmoRatios( CItem_DynamicResupply* pMaster, C
 		Msg("Calculating desired ammo ratios & deltas:\n");
 		for ( int i = 0; i < NUM_AMMO_ITEMS; i++ )
 		{
-			Msg("   %s Desired Ratio: %.2f, Current Ratio: %.2f = Delta of %.2f\n", 
+			Msg("   %s Desired Ratio: %.2f, Current Ratio: %.2f = Delta of %.2f\n",
 				g_DynamicResupplyAmmoItems[i].sEntityName, pSpawnInfo[i].m_flDesiredRatio, pSpawnInfo[i].m_flCurrentRatio, pSpawnInfo[i].m_flDelta );
 		}
 	}
@@ -521,7 +521,7 @@ void CItem_DynamicResupply::ComputeAmmoRatios( CItem_DynamicResupply* pMaster, C
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 bool CItem_DynamicResupply::SpawnItemFromRatio( int nCount, DynamicResupplyItems_t *pItems, int iDebug, SpawnInfo_t *pSpawnInfo, Vector *pVecSpawnOrigin )
 {
@@ -557,7 +557,7 @@ bool CItem_DynamicResupply::SpawnItemFromRatio( int nCount, DynamicResupplyItems
 		float dz = pVecSpawnOrigin->z - vecWorldMins.z;
 		pVecSpawnOrigin->z += dz;
 		vecWorldMaxs.z += dz;
-		pEnt->SetAbsOrigin( *pVecSpawnOrigin ); 
+		pEnt->SetAbsOrigin( *pVecSpawnOrigin );
 	}
 
 	// Update the spawn position to spawn them on top of each other
@@ -569,9 +569,9 @@ bool CItem_DynamicResupply::SpawnItemFromRatio( int nCount, DynamicResupplyItems
 	return true;
 }
 
-	
+
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CItem_DynamicResupply::SpawnDynamicItem( CBasePlayer *pPlayer )
 {
@@ -618,7 +618,7 @@ void CItem_DynamicResupply::SpawnDynamicItem( CBasePlayer *pPlayer )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 // Output : float
 //-----------------------------------------------------------------------------
 float DynamicResupply_GetDesiredHealthPercentage( void )

@@ -3,13 +3,13 @@
 // Purpose:
 //		-	Handles model rendering requests from the
 //			shader editor library
-// 
+//
 // ******************************************************
 
 #include "cbase.h"
 
-#include "vgui/iinput.h"
-#include "vgui_controls/controls.h"
+#include "vgui/IInput.h"
+#include "vgui_controls/Controls.h"
 
 #include "shadereditor/sedit_modelrender.h"
 #include "model_types.h"
@@ -42,7 +42,7 @@ void ScreenToWorld( int mousex, int mousey, float fov,
 	dx = (float)mousex - c_x;
 	dy = c_y - (float)mousey;
 
-	float dist_denom = tan(M_PI * scaled_fov / 360.0f); 
+	float dist_denom = tan(M_PI * scaled_fov / 360.0f);
 	dist = c_x / dist_denom;
 	AngleVectors( vecRenderAngles, &vpn, &vright, &vup );
 	vecPickingRay = vpn * dist + vright * ( dx ) + vup * ( dy );
@@ -144,7 +144,7 @@ bool SEditModelRender::LoadModel( const char *localPath )
 
 	pEnt->SetAbsAngles( vec3_angle );
 	pEnt->SetAbsOrigin( vec3_origin );
-	
+
 	pEnt->AddEffects( EF_NODRAW | EF_NOINTERP );
 	pEnt->m_EntClientFlags |= ENTCLIENTFLAG_DONTUSEIK;
 

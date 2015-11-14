@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //
@@ -27,7 +27,7 @@ using namespace vgui;
 #include "tier0/memdbgon.h"
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 class CHudGeiger: public CHudElement, public vgui::Panel
 {
@@ -40,18 +40,18 @@ public:
 	virtual void	ApplySchemeSettings( vgui::IScheme *scheme );
 	virtual void	Paint( void );
 	void MsgFunc_Geiger(bf_read &msg);
-	
+
 private:
 	int m_iGeigerRange;
 	float m_flLastSoundTestTime;
-	bool	bFlashingLocator;//TE120
+	bool bFlashingLocator;//TE120
 };
 
 DECLARE_HUDELEMENT( CHudGeiger );
 DECLARE_HUD_MESSAGE( CHudGeiger, Geiger );
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 CHudGeiger::CHudGeiger( const char *pElementName ) :
 	CHudElement( pElementName ), BaseClass( NULL, "HudGeiger" )
@@ -72,7 +72,7 @@ void CHudGeiger::ApplySchemeSettings( IScheme *scheme )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CHudGeiger::Init(void)
 {
@@ -82,7 +82,7 @@ void CHudGeiger::Init(void)
 };
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CHudGeiger::VidInit(void)
 {
@@ -90,7 +90,7 @@ void CHudGeiger::VidInit(void)
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CHudGeiger::MsgFunc_Geiger( bf_read &msg )
 {
@@ -100,11 +100,11 @@ void CHudGeiger::MsgFunc_Geiger( bf_read &msg )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 bool CHudGeiger::ShouldDraw( void )
 {
-//TE120------------------------------	
+//TE120--
 	// Repeating this here since it's possible to skip this due to timing delays in the paint function
 	if ( (m_iGeigerRange > 450) )
 	{
@@ -120,27 +120,27 @@ bool CHudGeiger::ShouldDraw( void )
 		g_pClientMode->GetViewportAnimationController()->StartAnimationSequence("RadiationHigh");
 		bFlashingLocator = true;
 	}
-//TE120----------------------------
+//TE120--
 
 	return ( ( m_iGeigerRange > 0 && m_iGeigerRange < 1000 ) && CHudElement::ShouldDraw() );
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CHudGeiger::Paint()
 {
 	int pct;
 	float flvol=0;
 	bool highsound = false;
-	
+
 	if ( gpGlobals->curtime - m_flLastSoundTestTime < 0.06 )
 	{
 		return;
 	}
 
 	m_flLastSoundTestTime = gpGlobals->curtime;
-//TE120-changed-----------------------------------------
+//TE120--
 	// piecewise linear is better than continuous formula for this
 	int range = m_iGeigerRange + 50;
 
@@ -197,7 +197,7 @@ void CHudGeiger::Paint()
 	}
 	else if (range > 50)
 	{
-//TE120-changed-----------------------------------------
+//TE120--
 		pct = 90;
 		flvol = 0.475;		//Msg ( "range > 50\n");
 	}
@@ -234,7 +234,7 @@ void CHudGeiger::Paint()
 			ep.m_SoundLevel = params.soundlevel;
 			ep.m_nPitch = params.pitch;
 
-			C_BaseEntity::EmitSound( filter, SOUND_FROM_LOCAL_PLAYER, ep ); 
+			C_BaseEntity::EmitSound( filter, SOUND_FROM_LOCAL_PLAYER, ep );
 		}
 	}
 }

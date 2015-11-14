@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //=============================================================================//
@@ -42,14 +42,14 @@ extern int AE_ZOMBIE_POUND;
 #define ZOMBIE_BLOOD_RIGHT_HAND		1
 #define ZOMBIE_BLOOD_BOTH_HANDS		2
 #define ZOMBIE_BLOOD_BITE			3
-	
+
 
 enum HeadcrabRelease_t
 {
 	RELEASE_NO,
 	RELEASE_IMMEDIATE,		// release the headcrab right now!
 	RELEASE_SCHEDULED,		// release the headcrab through the AI schedule.
-	RELEASE_VAPORIZE,		// just destroy the crab.	
+	RELEASE_VAPORIZE,		// just destroy the crab.
 	RELEASE_RAGDOLL,		// release a dead crab
 	RELEASE_RAGDOLL_SLICED_OFF	// toss the crab up a bit
 };
@@ -79,7 +79,7 @@ enum
 //=========================================================
 // tasks
 //=========================================================
-enum 
+enum
 {
 	TASK_ZOMBIE_DELAY_SWAT = LAST_SHARED_TASK,
 	TASK_ZOMBIE_GET_PATH_TO_PHYSOBJ,
@@ -141,7 +141,7 @@ public:
 
 	// No range attacks
 	int RangeAttack1Conditions ( float flDot, float flDist ) { return( 0 ); }
-	
+
 	virtual float GetHitgroupDamageMultiplier( int iHitGroup, const CTakeDamageInfo &info );
 	void TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator );
 	int OnTakeDamage_Alive( const CTakeDamageInfo &info );
@@ -167,7 +167,7 @@ public:
 
 	virtual void PoundSound();
 
-	// Custom damage/death 
+	// Custom damage/death
 	bool ShouldIgnite( const CTakeDamageInfo &info );
 	bool ShouldIgniteZombieGib( void );
 	virtual bool IsChopped( const CTakeDamageInfo &info );
@@ -239,7 +239,7 @@ public:
 public:
 	CAI_ActBusyBehavior		m_ActBusyBehavior;
 
-	//TE120-------------
+//TE120--
 	bool	m_bDisallowHeadcrab;	// is this zombie allowed to spawn headcrab in death?
 
 	//---------------------------------
@@ -247,16 +247,16 @@ public:
 	//---------------------------------
 	COutputEvent		m_OnIlluminated;
 	COutputEvent		m_OnNotIlluminated;
-	//TE120-------------
+//TE120--
 protected:
 
 	CSoundPatch	*m_pMoanSound;
 
 	bool	m_fIsTorso;			// is this is a half-zombie?
 	bool	m_fIsHeadless;		// is this zombie headless
-	//TE120-------------
+//TE120--
 	bool	m_fIsIlluminated;	// is this zombie illuminated by the players flashlight?
-	//TE120-------------
+//TE120--
 	float	m_flNextFlinch;
 
 	bool m_bHeadShot;			// Used to determine the survival of our crab beyond our death.

@@ -1,7 +1,7 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
 // Purpose: Bullseyes act as targets for other NPC's to attack and to trigger
-//			events 
+//			events
 //
 // $NoKeywords: $
 //=============================================================================//
@@ -25,7 +25,7 @@ public:
 	{
 	}
 
-	virtual void LevelShutdownPostEntity() 
+	virtual void LevelShutdownPostEntity()
 	{
 		Clear();
 	}
@@ -128,7 +128,7 @@ CNPC_Bullseye::~CNPC_Bullseye( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CNPC_Bullseye::Precache( void )
 {
@@ -137,7 +137,7 @@ void CNPC_Bullseye::Precache( void )
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CNPC_Bullseye::Spawn( void )
 {
@@ -175,12 +175,12 @@ void CNPC_Bullseye::Spawn( void )
 	{
 		AddSolidFlags( FSOLID_NOT_SOLID );
 	}
-	
+
 	if ( m_spawnflags & SF_BULLSEYE_VPHYSICSSHADOW )
 	{
 		VPhysicsInitShadow( false, false );
 	}
-	
+
 	if( m_spawnflags & SF_BULLSEYE_NODAMAGE )
 	{
 		m_takedamage = DAMAGE_NO;
@@ -207,7 +207,7 @@ void CNPC_Bullseye::Spawn( void )
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CNPC_Bullseye::Activate( void )
 {
@@ -285,7 +285,7 @@ void CNPC_Bullseye::DecalTrace( trace_t *pOldTrace, char const *decalName )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CNPC_Bullseye::ImpactTrace( trace_t *pTrace, int iDamageType, const char *pCustomImpactName )
 {
@@ -310,10 +310,10 @@ void CNPC_Bullseye::ImpactTrace( trace_t *pTrace, int iDamageType, const char *p
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //
 //
-// Output : 
+// Output :
 //-----------------------------------------------------------------------------
 Class_T	CNPC_Bullseye::Classify( void )
 {
@@ -336,7 +336,7 @@ void CNPC_Bullseye::OnRestore( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CNPC_Bullseye::BullseyeThink( void )
 {
@@ -367,7 +367,7 @@ bool CNPC_Bullseye::CanBeAnEnemyOf( CBaseEntity *pEnemy )
 	if ( m_flMinDistValidEnemy > 0 )
 	{
 		float distSq = ( GetAbsOrigin().AsVector2D() - pEnemy->GetAbsOrigin().AsVector2D() ).LengthSqr();
-		if ( distSq > Square( m_flMinDistValidEnemy ) ) //TE120 changed
+		if ( distSq > Square( m_flMinDistValidEnemy ) )//TE120
 		{
 			return false;
 		}
@@ -387,12 +387,12 @@ bool CNPC_Bullseye::IsLightDamage( const CTakeDamageInfo &info )
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : *pAttacker - 
-//			flDamage - 
-//			&vecDir - 
-//			*ptr - 
-//			bitsDamageType - 
+// Purpose:
+// Input  : *pAttacker -
+//			flDamage -
+//			&vecDir -
+//			*ptr -
+//			bitsDamageType -
 //-----------------------------------------------------------------------------
 void CNPC_Bullseye::TraceAttack( const CTakeDamageInfo &info, const Vector &vecDir, trace_t *ptr, CDmgAccumulator *pAccumulator )
 {
@@ -419,11 +419,11 @@ void CNPC_Bullseye::TraceAttack( const CTakeDamageInfo &info, const Vector &vecD
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : *pInflictor - 
-//			*pAttacker - 
-//			flDamage - 
-//			bitsDamageType - 
+// Purpose:
+// Input  : *pInflictor -
+//			*pAttacker -
+//			flDamage -
+//			bitsDamageType -
 // Output : int
 //-----------------------------------------------------------------------------
 int CNPC_Bullseye::OnTakeDamage( const CTakeDamageInfo &info )
@@ -441,12 +441,12 @@ int CNPC_Bullseye::OnTakeDamage( const CTakeDamageInfo &info )
 		if ( pInstigator->GetEnemy() != this )
 			return 0;
 	}
-	
+
 	//If we're a pain proxy, send the damage through
 	if ( m_hPainPartner != NULL )
 	{
 		m_hPainPartner->TakeDamage( info );
-		
+
 		//Fire all pain indicators but take no real damage
 		CTakeDamageInfo subInfo = info;
 		subInfo.SetDamage( 0 );
@@ -457,8 +457,8 @@ int CNPC_Bullseye::OnTakeDamage( const CTakeDamageInfo &info )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : *pOther - 
+// Purpose:
+// Input  : *pOther -
 //-----------------------------------------------------------------------------
 void CNPC_Bullseye::SetPainPartner( CBaseEntity *pOther )
 {
@@ -474,13 +474,13 @@ void CNPC_Bullseye::InputReleased( inputdata_t &inputdata )
 {
 	m_OnReleased.FireOutput( inputdata.pActivator, inputdata.pCaller, 0 );
 }
-//TE120-----------------------------------
+//TE120--
 void CNPC_Bullseye::InputPlayerFormation( inputdata_t &inputdata )
 {
 	Vector vTemp;
 	inputdata.value.Vector3D( vTemp );
 
-	CBasePlayer* pPlayer = UTIL_PlayerByIndex(1);
+	CBasePlayer* pPlayer = UTIL_GetLocalPlayer();
 
 	if( pPlayer )
 	{
@@ -492,4 +492,5 @@ void CNPC_Bullseye::InputPlayerFormation( inputdata_t &inputdata )
 
 		SetAbsOrigin( vPlayerPos );
 	}
-}//TE120------------
+}
+//TE120--

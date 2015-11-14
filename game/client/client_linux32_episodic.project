@@ -539,6 +539,7 @@
       <File Name="weapons_resource.cpp"/>
       <File Name="weapon_selection.cpp"/>
       <File Name="WorldDimsProxy.cpp"/>
+      <File Name="worldlight.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="Header Files">
       <File Name="../../common/language.h"/>
@@ -1138,6 +1139,7 @@
       <File Name="view_scene.h"/>
       <File Name="weapons_resource.h"/>
       <File Name="weapon_selection.h"/>
+      <File Name="worldlight.h"/>
     </VirtualDirectory>
     <VirtualDirectory Name="Resources">
     </VirtualDirectory>

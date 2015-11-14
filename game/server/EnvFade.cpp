@@ -7,7 +7,7 @@
 
 #include "cbase.h"
 #include "shake.h"
-#include "te_effect_dispatch.h"//TE120-------------
+#include "te_effect_dispatch.h"//TE120
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -61,7 +61,7 @@ END_DATADESC()
 #define SF_FADE_STAYOUT			0x0008
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CEnvFade::Spawn( void )
 {
@@ -82,12 +82,12 @@ void CEnvFade::InputFade( inputdata_t &inputdata )
 	else
 	{
 		fadeFlags |= FFADE_OUT;
-		//TE120-------------
-#ifdef _WIN32 //Disabled on Linux
+//TE120--
+#ifdef _WIN32
 		CEffectData	data;
 		DispatchEffect( "CE_DisableDirtyLens", data );
-		//TE120-------------
 #endif
+//TE120--
 	}
 
 	if ( m_spawnflags & SF_FADE_MODULATE )
@@ -130,7 +130,7 @@ static void GetFadeParms( const CCommand &args, float &flTime, color32 &clrFade)
 	{
 		flTime = atof( args[1] );
 	}
-	
+
 	clrFade.r = 0;
 	clrFade.g = 0;
 	clrFade.b = 0;
@@ -185,11 +185,11 @@ static ConCommand fadein("fadein", CC_FadeIn, "fadein {time r g b}: Fades the sc
 // Purpose: Draw any debug text overlays
 // Output : Current text offset from the top
 //-----------------------------------------------------------------------------
-int CEnvFade::DrawDebugTextOverlays( void ) 
+int CEnvFade::DrawDebugTextOverlays( void )
 {
 	int text_offset = BaseClass::DrawDebugTextOverlays();
 
-	if (m_debugOverlays & OVERLAY_TEXT_BIT) 
+	if (m_debugOverlays & OVERLAY_TEXT_BIT)
 	{
 		char tempstr[512];
 

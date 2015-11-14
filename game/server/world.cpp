@@ -43,7 +43,7 @@ extern CUtlMemoryPool g_EntityListPool;
 
 #define SF_DECAL_NOTINDEATHMATCH		2048
 
-class CDecal : public CServerOnlyPointEntity //TE120
+class CDecal : public CServerOnlyPointEntity//TE120
 {
 public:
 	DECLARE_CLASS( CDecal, CServerOnlyPointEntity );//TE120
@@ -53,14 +53,7 @@ public:
 
 	// Need to apply static decals here to get them into the signon buffer for the server appropriately
 	virtual void Activate();
-//TE120----
-/*
-	void	TriggerDecal( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value );
 
-	// Input handlers.
-	void	InputActivate( inputdata_t &inputdata );
-*/
-//TE120----
 	DECLARE_DATADESC();
 
 public:
@@ -79,13 +72,6 @@ BEGIN_DATADESC( CDecal )
 
 	// Function pointers
 	DEFINE_FUNCTION( StaticDecal ),
-//TE120----
-/*
-	DEFINE_FUNCTION( TriggerDecal ),
-
-	DEFINE_INPUTFUNC( FIELD_VOID, "Activate", InputActivate ),
-*/
-//TE120----
 
 END_DATADESC()
 
@@ -94,64 +80,20 @@ LINK_ENTITY_TO_CLASS( infodecal, CDecal );
 // UNDONE:  These won't get sent to joining players in multi-player
 void CDecal::Spawn( void )
 {
-	if ( m_nTexture < 0 || 
+	if ( m_nTexture < 0 ||
 		(gpGlobals->deathmatch && HasSpawnFlags( SF_DECAL_NOTINDEATHMATCH )) )
 	{
 		UTIL_Remove( this );
 		return;
-	} 
+	}
 }
 
 void CDecal::Activate()
 {
 	BaseClass::Activate();
-//TE120----
-	// Note from Dorian: I removed ability to trigger decals since I changed decals to be
-	// server only entities to reduce edicts.
-	// if ( !GetEntityName() )
-	// {
-		StaticDecal();
-	// }
-/*
-	else
-	{
-		// if there IS a targetname, the decal sprays itself on when it is triggered.
-		SetThink ( &CDecal::SUB_DoNothing );
-		SetUse(&CDecal::TriggerDecal);
-	}
-*/
-//TE120----
+	StaticDecal();
 }
 
-//TE120----
-/*
-void CDecal::TriggerDecal ( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value )
-{
-	// this is set up as a USE function for info_decals that have targetnames, so that the
-	// decal doesn't get applied until it is fired. (usually by a scripted sequence)
-	trace_t		trace;
-	int			entityIndex;
-
-	UTIL_TraceLine( GetAbsOrigin() - Vector(5,5,5), GetAbsOrigin() + Vector(5,5,5), MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &trace );
-
-	entityIndex = trace.m_pEnt ? trace.m_pEnt->entindex() : 0;
-
-	CBroadcastRecipientFilter filter;
-
-	te->BSPDecal( filter, 0.0, 
-		&GetAbsOrigin(), entityIndex, m_nTexture );
-
-	SetThink( &CDecal::SUB_Remove );
-	SetNextThink( gpGlobals->curtime + 0.1f );
-}
-
-
-void CDecal::InputActivate( inputdata_t &inputdata )
-{
-	TriggerDecal( inputdata.pActivator, inputdata.pCaller, USE_ON, 0 );
-}
-*/
-//TE120----
 void CDecal::StaticDecal( void )
 {
 	class CTraceFilterValidForDecal : public CTraceFilterSimple
@@ -164,7 +106,7 @@ void CDecal::StaticDecal( void )
 
 		virtual bool ShouldHitEntity( IHandleEntity *pServerEntity, int contentsMask )
 		{
-			static const char *ppszIgnoredClasses[] = 
+			static const char *ppszIgnoredClasses[] =
 			{
 				"weapon_*",
 				"item_*",
@@ -223,12 +165,6 @@ void CDecal::StaticDecal( void )
 
 	if ( canDraw )
 	{
-//TE120----
-		// if (m_bLowPriority) {
-		// 	Warning( "This is the problem child. m_nTexture: %d\n", m_nTexture );
-		// }
-//TE120----
-
 		engine->StaticDecal( position, m_nTexture, entityIndex, modelIndex, m_bLowPriority );
 	}
 
@@ -242,10 +178,7 @@ bool CDecal::KeyValue( const char *szKeyName, const char *szValue )
 	{
 		// FIXME:  should decals all be preloaded?
 		m_nTexture = UTIL_PrecacheDecal( szValue, true );
-//TE120----		
-		// if (FStrEq(szValue, "decals/ao_blured_round_2x"))
-		//	Warning( "Here's are culprit. m_nTexture: %d szValue: %s\n", m_nTexture, szValue );
-//TE120----
+
 		// Found
 		if (m_nTexture >= 0 )
 			return true;
@@ -253,10 +186,6 @@ bool CDecal::KeyValue( const char *szKeyName, const char *szValue )
 	}
 	else
 	{
-//TE120----
-		// if (FStrEq(szValue, "decals/ao_blured_round_2x"))
-		// 	Warning( "Here's are culprit, not finding texture. m_nTexture: %d szValue: %s\n", m_nTexture, szValue );
-//TE120----
 		return BaseClass::KeyValue( szKeyName, szValue );
 	}
 
@@ -266,10 +195,10 @@ bool CDecal::KeyValue( const char *szKeyName, const char *szValue )
 //-----------------------------------------------------------------------------
 // Purpose: Projects a decal against a prop
 //-----------------------------------------------------------------------------
-class CProjectedDecal : public CServerOnlyPointEntity//TE120
+class CProjectedDecal : public CServerOnlyEntity//TE120
 {
 public:
-	DECLARE_CLASS( CProjectedDecal, CServerOnlyPointEntity );//TE120
+	DECLARE_CLASS( CProjectedDecal, CServerOnlyEntity );//TE120
 
 	void	Spawn( void );
 	bool	KeyValue( const char *szKeyName, const char *szValue );
@@ -313,12 +242,12 @@ LINK_ENTITY_TO_CLASS( info_projecteddecal, CProjectedDecal );
 // UNDONE:  These won't get sent to joining players in multi-player
 void CProjectedDecal::Spawn( void )
 {
-	if ( m_nTexture < 0 || 
+	if ( m_nTexture < 0 ||
 		(gpGlobals->deathmatch && HasSpawnFlags( SF_DECAL_NOTINDEATHMATCH )) )
 	{
 		UTIL_Remove( this );
 		return;
-	} 
+	}
 }
 
 void CProjectedDecal::Activate()
@@ -344,7 +273,7 @@ void CProjectedDecal::InputActivate( inputdata_t &inputdata )
 
 void CProjectedDecal::ProjectDecal( CRecipientFilter& filter )
 {
-	te->ProjectDecal( filter, 0.0, 
+	te->ProjectDecal( filter, 0.0,
 		&GetAbsOrigin(), &GetAbsAngles(), m_flDistance, m_nTexture );
 }
 
@@ -375,7 +304,7 @@ bool CProjectedDecal::KeyValue( const char *szKeyName, const char *szValue )
 	{
 		// FIXME:  should decals all be preloaded?
 		m_nTexture = UTIL_PrecacheDecal( szValue, true );
-		
+
 		// Found
 		if (m_nTexture >= 0 )
 			return true;
@@ -464,7 +393,7 @@ bool CWorld::KeyValue( const char *szKeyName, const char *szValue )
 	else if ( FStrEq(szKeyName, "world_maxs") )
 	{
 		Vector vec;
-		sscanf(	szValue, "%f %f %f", &vec.x, &vec.y, &vec.z ); 
+		sscanf(	szValue, "%f %f %f", &vec.x, &vec.y, &vec.z );
 		m_WorldMaxs = vec;
 	}
 	else
@@ -488,7 +417,7 @@ CWorld::CWorld( )
 	NetworkProp()->AttachEdict( INDEXENT(RequiredEdictIndex()) );
 	ActivityList_Init();
 	EventList_Init();
-	
+
 	SetSolid( SOLID_BSP );
 	SetMoveType( MOVETYPE_NONE );
 
@@ -653,7 +582,7 @@ void CWorld::Precache( void )
 
 // the area based ambient sounds MUST be the first precache_sounds
 
-// player precaches     
+// player precaches
 	W_Precache ();									// get weapon precaches
 	ClientPrecache();
 	g_pGameRules->Precache();
@@ -702,7 +631,7 @@ void CWorld::Precache( void )
 	CBaseCombatCharacter::InitInteractionSystem();
 
 	// Call all registered precachers.
-	CPrecacheRegister::Precache();	
+	CPrecacheRegister::Precache();
 
 	if ( m_iszChapterTitle != NULL_STRING )
 	{
@@ -724,7 +653,7 @@ void CWorld::Precache( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 // Output : float
 //-----------------------------------------------------------------------------
 float GetRealTime()
