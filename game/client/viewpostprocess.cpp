@@ -2709,7 +2709,7 @@ void GravityBallFadeConcCallback( const CEffectData &data )
 
 DECLARE_CLIENT_EFFECT( "CE_GravityBallFadeConcOn", GravityBallFadeConcCallback );
 
-#ifdef _WIN32 //Disabled on Linux
+// #ifdef _WIN32 //Disabled on Linux
 void DisableDirtyLens( const CEffectData &data )
 {
 	if (shaderEdit) {
@@ -2723,7 +2723,8 @@ void DisableDirtyLens( const CEffectData &data )
 }
 
 DECLARE_CLIENT_EFFECT( "CE_DisableDirtyLens", DisableDirtyLens );
-#endif
+// #endif
+
 //TE120---------------------------------
 
 // Motion Blur Material Proxy =========================================================================================

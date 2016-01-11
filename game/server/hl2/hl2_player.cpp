@@ -458,6 +458,11 @@ void CHL2_Player::Precache( void )
 	PrecacheScriptSound( "HL2Player.Use" );
 	PrecacheScriptSound( "HL2Player.BurnPain" );
 	PrecacheScriptSound( "JNK_Radar_Ping_Friendly" );//TE120
+
+	// Reset drunk post process
+	CEffectData	data;
+	data.m_flScale = -1;
+	DispatchEffect( "CE_GravityBallFadeConcOn", data );
 }
 
 //-----------------------------------------------------------------------------

@@ -83,11 +83,11 @@ void CEnvFade::InputFade( inputdata_t &inputdata )
 	{
 		fadeFlags |= FFADE_OUT;
 		//TE120-------------
-#ifdef _WIN32 //Disabled on Linux
+// #ifdef _WIN32 //Disabled on Linux
 		CEffectData	data;
 		DispatchEffect( "CE_DisableDirtyLens", data );
 		//TE120-------------
-#endif
+// #endif
 	}
 
 	if ( m_spawnflags & SF_FADE_MODULATE )
