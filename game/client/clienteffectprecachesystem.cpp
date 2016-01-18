@@ -15,6 +15,7 @@
 
 CLIENTEFFECT_REGISTER_BEGIN( PrecacheMyPostProcessingEffects )
 	CLIENTEFFECT_MATERIAL( "drunk" )
+	CLIENTEFFECT_MATERIAL( "combinedlens" )
 CLIENTEFFECT_REGISTER_END()
 
 //Global singelton accessor
