@@ -288,6 +288,14 @@ extern "C" {
 #define ACHIEVEMENT_TF_LAST_ORANGEBOX				150
 
 //
+// TE120 Achievements
+//
+#define ACHIEVEMENT_E120_REUNITED	0
+#define ACHIEVEMENT_E120_MY_FIRST_GRAVITY_JUMP 1
+// TODO: add more achievements,
+// add logic_achievement's to levels
+
+//
 // Stats view ids
 //
 // These are used in the dwViewId member of the XUSER_STATS_SPEC structure
@@ -366,5 +374,3 @@ extern "C" {
 #endif
 
 #endif // __THE_ORANGE_BOX_SPA_H__
-
-
