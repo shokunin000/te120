@@ -2,7 +2,7 @@
 //
 // Purpose: Manage Striders in finale combat, one stays near player the other patrols
 // at nearby defined patrol location.
-//
+// 
 //=================================================================================//
 
 #ifndef AI_STRIDERFINALE_H
