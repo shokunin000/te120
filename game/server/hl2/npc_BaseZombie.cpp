@@ -893,6 +893,11 @@ int CNPC_BaseZombie::OnTakeDamage_Alive( const CTakeDamageInfo &inputInfo )
 				Vector vecForce = inputInfo.GetDamageForce() * 0.1;
 				vecForce += Vector( 0, 0, 2000.0 );
 				ReleaseHeadcrab( EyePosition(), vecForce, true, false, true );
+
+				// Fire event for achievement: E120_SLICER
+				IGameEvent *event = gameeventmanager->CreateEvent( "sliced_zombie" );
+				if ( event )
+					gameeventmanager->FireEvent( event );
 			}
 			break;
 
