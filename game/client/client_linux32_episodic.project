@@ -34,6 +34,8 @@
       <File Name="../../common/language.cpp"/>
       <File Name="../../common/randoverride.cpp"/>
       <File Name="../../game/client/c_vote_controller.cpp"/>
+      <File Name="../../game/client/shadereditor/sedit_modelrender.cpp"/>
+      <File Name="../../game/client/shadereditor/shadereditorsystem.cpp"/>
       <File Name="../../game/shared/achievementmgr.cpp"/>
       <File Name="../../game/shared/achievements_hlx.cpp"/>
       <File Name="../../game/shared/achievement_saverestore.cpp"/>
@@ -65,6 +67,7 @@
       <File Name="../../game/shared/episodic/achievements_ep1.cpp"/>
       <File Name="../../game/shared/episodic/achievements_ep2.cpp"/>
       <File Name="../../game/shared/episodic/achievements_epx.cpp"/>
+      <File Name="../../game/shared/episodic/achievements_te120.cpp"/>
       <File Name="../../game/shared/eventlist.cpp"/>
       <File Name="../../game/shared/func_ladder.cpp"/>
       <File Name="../../game/shared/gamemovement.cpp"/>
@@ -201,6 +204,7 @@
       <File Name="c_colorcorrectionvolume.cpp"/>
       <File Name="c_dynamiclight.cpp"/>
       <File Name="c_effects.cpp"/>
+      <File Name="c_entgloweffect.cpp"/>
       <File Name="c_entitydissolve.cpp"/>
       <File Name="c_entityparticletrail.cpp"/>
       <File Name="c_env_fog_controller.cpp"/>
@@ -257,6 +261,7 @@
       <File Name="c_stickybolt.cpp"/>
       <File Name="c_sun.cpp"/>
       <File Name="c_te.cpp"/>
+      <File Name="c_te120_stats.cpp"/>
       <File Name="c_team.cpp"/>
       <File Name="c_team_objectiveresource.cpp"/>
       <File Name="c_tesla.cpp"/>
@@ -358,7 +363,6 @@
       <File Name="game_controls/teammenu.cpp"/>
       <File Name="game_controls/vguitextwindow.cpp"/>
       <File Name="geiger.cpp"/>
-      <File Name="ge_screeneffects.cpp"/>
       <File Name="glow_outline_effect.cpp"/>
       <File Name="glow_overlay.cpp"/>
       <File Name="history_resource.cpp"/>
@@ -539,10 +543,15 @@
       <File Name="weapons_resource.cpp"/>
       <File Name="weapon_selection.cpp"/>
       <File Name="WorldDimsProxy.cpp"/>
+      <File Name="worldlight.cpp"/>
     </VirtualDirectory>
     <VirtualDirectory Name="Header Files">
       <File Name="../../common/language.h"/>
       <File Name="../../game/client/c_vote_controller.h"/>
+      <File Name="../../game/client/shadereditor/isedit_modelrender.h"/>
+      <File Name="../../game/client/shadereditor/ivshadereditor.h"/>
+      <File Name="../../game/client/shadereditor/sedit_modelrender.h"/>
+      <File Name="../../game/client/shadereditor/shadereditorsystem.h"/>
       <File Name="../../game/shared/achievementmgr.h"/>
       <File Name="../../game/shared/achievements_and_stats_interface.h"/>
       <File Name="../../game/shared/achievement_saverestore.h"/>
@@ -937,6 +946,7 @@
       <File Name="c_baseviewmodel.h"/>
       <File Name="c_breakableprop.h"/>
       <File Name="c_effects.h"/>
+      <File Name="c_entgloweffect.h"/>
       <File Name="c_entitydissolve.h"/>
       <File Name="c_env_fog_controller.h"/>
       <File Name="c_fire_smoke.h"/>
@@ -1008,7 +1018,6 @@
       <File Name="game_controls/spectatorgui.h"/>
       <File Name="game_controls/teammenu.h"/>
       <File Name="game_controls/vguitextwindow.h"/>
-      <File Name="ge_screeneffects.h"/>
       <File Name="glow_outline_effect.h"/>
       <File Name="glow_overlay.h"/>
       <File Name="history_resource.h"/>
@@ -1138,6 +1147,7 @@
       <File Name="view_scene.h"/>
       <File Name="weapons_resource.h"/>
       <File Name="weapon_selection.h"/>
+      <File Name="worldlight.h"/>
     </VirtualDirectory>
     <VirtualDirectory Name="Resources">
     </VirtualDirectory>

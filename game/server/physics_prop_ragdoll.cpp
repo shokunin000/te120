@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 //=============================================================================//
 
@@ -152,7 +152,7 @@ void CRagdollProp::DisableAutoFade()
 	m_flDefaultFadeScale = 0;
 }
 
-	
+
 void CRagdollProp::Spawn( void )
 {
 	// Starts out as the default fade scale value
@@ -212,7 +212,7 @@ void CRagdollProp::OnSave( IEntitySaveUtils *pUtils )
 	if ( !m_ragdoll.listCount )
 		return;
 
-	// Don't save ragdoll element 0, base class saves the pointer in 
+	// Don't save ragdoll element 0, base class saves the pointer in
 	// m_pPhysicsObject
 	Assert( m_ragdoll.list[0].parentIndex == -1 );
 	Assert( m_ragdoll.list[0].pConstraint == NULL );
@@ -293,14 +293,14 @@ int CRagdollProp::ObjectCaps()
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CRagdollProp::InitRagdollAnimation()
 {
 	m_flAnimTime = gpGlobals->curtime;
 	m_flPlaybackRate = 0.0;
 	SetCycle( 0 );
-	
+
 	// put into ACT_DIERAGDOLL if it exists, otherwise use sequence 0
 	int nSequence = SelectWeightedSequence( ACT_DIERAGDOLL );
 	if ( nSequence < 0 )
@@ -327,7 +327,7 @@ IResponseSystem *CRagdollProp::GetResponseSystem()
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CRagdollProp::ModifyOrAppendCriteria( AI_CriteriaSet& set )
 {
@@ -343,7 +343,7 @@ void CRagdollProp::ModifyOrAppendCriteria( AI_CriteriaSet& set )
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CRagdollProp::OnPhysGunPickup( CBasePlayer *pPhysGunUser, PhysGunPickup_t reason )
 {
@@ -358,21 +358,6 @@ void CRagdollProp::OnPhysGunPickup( CBasePlayer *pPhysGunUser, PhysGunPickup_t r
 		m_strSourceClassName = NULL_STRING;
 	}
 	m_bHasBeenPhysgunned = true;
-//TE120----
-	/*
-	if( HasPhysgunInteraction( "onpickup", "boogie" ) )
-	{
-		if ( reason == PUNTED_BY_CANNON )
-		{
-			CRagdollBoogie::Create( this, 150, gpGlobals->curtime, 3.0f, SF_RAGDOLL_BOOGIE_ELECTRICAL );
-		}
-		else
-		{
-			CRagdollBoogie::Create( this, 150, gpGlobals->curtime, 2.0f, 0.0f );
-		}
-	}
-	*/
-//TE120----
 
 	if ( HasSpawnFlags( SF_RAGDOLLPROP_USE_LRU_RETIREMENT ) )
 	{
@@ -392,22 +377,13 @@ void CRagdollProp::OnPhysGunPickup( CBasePlayer *pPhysGunUser, PhysGunPickup_t r
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CRagdollProp::OnPhysGunDrop( CBasePlayer *pPhysGunUser, PhysGunDrop_t Reason )
 {
 	CDefaultPlayerPickupVPhysics::OnPhysGunDrop( pPhysGunUser, Reason );
 	m_hPhysicsAttacker = pPhysGunUser;
 	m_flLastPhysicsInfluenceTime = gpGlobals->curtime;
-
-//TE120----------------
-/*
-	if( HasPhysgunInteraction( "onpickup", "boogie" ) )
-	{
-		CRagdollBoogie::Create( this, 150, gpGlobals->curtime, 3.0f, SF_RAGDOLL_BOOGIE_ELECTRICAL );
-	}
-*/
-//TE120----------------
 
 	if ( HasSpawnFlags( SF_RAGDOLLPROP_USE_LRU_RETIREMENT ) )
 	{
@@ -472,7 +448,7 @@ CBasePlayer *CRagdollProp::HasPhysicsAttacker( float dt )
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CRagdollProp::VPhysicsCollision( int index, gamevcollisionevent_t *pEvent )
 {
@@ -497,7 +473,7 @@ void CRagdollProp::VPhysicsCollision( int index, gamevcollisionevent_t *pEvent )
 	{
 		HandleFirstCollisionInteractions( index, pEvent );
 	}
-	
+
 	if ( m_takedamage != DAMAGE_NO )
 	{
 		int damageType = 0;
@@ -575,7 +551,7 @@ void CRagdollProp::HandleFirstCollisionInteractions( int index, gamevcollisionev
 
 	if( HasPhysgunInteraction( "onfirstimpact", "break" ) )
 	{
-		// Looks like it's best to break by having the object damage itself. 
+		// Looks like it's best to break by having the object damage itself.
 		CTakeDamageInfo info;
 
 		info.SetDamage( m_iHealth );
@@ -599,10 +575,10 @@ void CRagdollProp::HandleFirstCollisionInteractions( int index, gamevcollisionev
 	if( HasPhysgunInteraction( "onfirstimpact", "paintsplat" ) )
 	{
 		IPhysicsObject *pObj = VPhysicsGetObject();
- 
+
 		Vector vecPos;
 		pObj->GetPosition( &vecPos, NULL );
- 
+
 		trace_t tr;
 		UTIL_TraceLine( vecPos, vecPos + pEvent->preVelocity[0] * 1.5, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
 
@@ -626,10 +602,10 @@ void CRagdollProp::HandleFirstCollisionInteractions( int index, gamevcollisionev
 	if( bAlienBloodSplat || HasPhysgunInteraction( "onfirstimpact", "bloodsplat" ) )
 	{
 		IPhysicsObject *pObj = VPhysicsGetObject();
- 
+
 		Vector vecPos;
 		pObj->GetPosition( &vecPos, NULL );
- 
+
 		trace_t tr;
 		UTIL_TraceLine( vecPos, vecPos + pEvent->preVelocity[0] * 1.5, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
 
@@ -639,7 +615,7 @@ void CRagdollProp::HandleFirstCollisionInteractions( int index, gamevcollisionev
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CRagdollProp::ClearFlagsThink( void )
 {
@@ -665,8 +641,8 @@ AngularImpulse CRagdollProp::PhysGunLaunchAngularImpulse()
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : activity - 
+// Purpose:
+// Input  : activity -
 //-----------------------------------------------------------------------------
 void CRagdollProp::SetOverlaySequence( Activity activity )
 {
@@ -791,7 +767,7 @@ void CRagdollProp::SetDamageEntity( CBaseEntity *pEntity )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 int	CRagdollProp::OnTakeDamage( const CTakeDamageInfo &info )
 {
@@ -831,7 +807,7 @@ void CRagdollProp::TraceAttack( const CTakeDamageInfo &info, const Vector &dir, 
 
 void CRagdollProp::SetupBones( matrix3x4_t *pBoneToWorld, int boneMask )
 {
-	// no ragdoll, fall through to base class 
+	// no ragdoll, fall through to base class
 	if ( !m_ragdoll.listCount )
 	{
 		BaseClass::SetupBones( pBoneToWorld, boneMask );
@@ -866,7 +842,7 @@ void CRagdollProp::SetupBones( matrix3x4_t *pBoneToWorld, int boneMask )
 	{
 		if ( sim[i] )
 			continue;
-		
+
 		if ( !(pStudioHdr->boneFlags(i) & boneMask) )
 			continue;
 
@@ -947,7 +923,7 @@ void CRagdollProp::Teleport( const Vector *newPosition, const QAngle *newAngles,
 	ConcatTransforms( endMatrix, startMatrixInv, xform );
 	// now xform is the relative transform the entity must undergo
 
-	// we need to call the base class and it will teleport our vphysics object, 
+	// we need to call the base class and it will teleport our vphysics object,
 	// so set object 0 up and compute the origin/angles for its new position (base implementation has side effects)
 	VPhysicsSwapObject( m_ragdoll.list[0].pObject );
 	matrix3x4_t obj0source, obj0Target;
@@ -957,7 +933,7 @@ void CRagdollProp::Teleport( const Vector *newPosition, const QAngle *newAngles,
 	QAngle obj0Angles;
 	MatrixAngles( obj0Target, obj0Angles, obj0Pos );
 	BaseClass::Teleport( &obj0Pos, &obj0Angles, newVelocity );
-	
+
 	for ( int i = 1; i < m_ragdoll.listCount; i++ )
 	{
 		matrix3x4_t matrix, newMatrix;
@@ -1015,7 +991,7 @@ void CRagdollProp::VPhysicsUpdate( IPhysicsObject *pPhysics )
 			RagdollSolveSeparation( m_ragdoll, this );
 		}
 	}
-	
+
 	// Interactive debris converts back to debris when it comes to rest
 	if ( m_allAsleep && GetCollisionGroup() == COLLISION_GROUP_INTERACTIVE_DEBRIS )
 	{
@@ -1100,7 +1076,7 @@ void CRagdollProp::UpdateNetworkDataFromVPhysics( IPhysicsObject *pPhysics, int 
 //-----------------------------------------------------------------------------
 #define FADE_OUT_LENGTH 0.5f
 
-void CRagdollProp::FadeOut( float flDelay, float fadeTime ) 
+void CRagdollProp::FadeOut( float flDelay, float fadeTime )
 {
 	if ( IsFading() )
 		return;
@@ -1117,7 +1093,7 @@ bool CRagdollProp::IsFading()
 	return ( GetNextThink( s_pFadeOutContext ) >= gpGlobals->curtime );
 }
 
-void CRagdollProp::FadeOutThink(void) 
+void CRagdollProp::FadeOutThink(void)
 {
 	float dt = gpGlobals->curtime - m_flFadeOutStartTime;
 	if ( dt < 0 )
@@ -1150,11 +1126,11 @@ void CRagdollProp::FadeOutThink(void)
 // Purpose: Draw any debug text overlays
 // Output : Current text offset from the top
 //-----------------------------------------------------------------------------
-int CRagdollProp::DrawDebugTextOverlays(void) 
+int CRagdollProp::DrawDebugTextOverlays(void)
 {
 	int text_offset = BaseClass::DrawDebugTextOverlays();
 
-	if (m_debugOverlays & OVERLAY_TEXT_BIT) 
+	if (m_debugOverlays & OVERLAY_TEXT_BIT)
 	{
 		if (m_ragdoll.listCount)
 		{
@@ -1177,9 +1153,9 @@ int CRagdollProp::DrawDebugTextOverlays(void)
 	return text_offset;
 }
 
-void CRagdollProp::DrawDebugGeometryOverlays() 
+void CRagdollProp::DrawDebugGeometryOverlays()
 {
-	if (m_debugOverlays & OVERLAY_BBOX_BIT) 
+	if (m_debugOverlays & OVERLAY_BBOX_BIT)
 	{
 		DrawServerHitboxes();
 	}
@@ -1196,13 +1172,13 @@ void CRagdollProp::DrawDebugGeometryOverlays()
 				NDebugOverlay::EntityTextAtPosition( pos, 0, str.Access(), 0, 0, 255, 0, 255 );
 			}
 		}
-	} 
+	}
 	BaseClass::DrawDebugGeometryOverlays();
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : *pOther - 
+// Purpose:
+// Input  : *pOther -
 //-----------------------------------------------------------------------------
 void CRagdollProp::SetUnragdoll( CBaseAnimating *pOther )
 {
@@ -1276,7 +1252,7 @@ static void SyncAnimatingWithPhysics( CBaseAnimating *pAnimating )
 	}
 }
 
-	
+
 CBaseAnimating *CreateServerRagdollSubmodel( CBaseAnimating *pOwner, const char *pModelName, const Vector &position, const QAngle &angles, int collisionGroup )
 {
 	CRagdollProp *pRagdoll = (CRagdollProp *)CBaseEntity::CreateNoSpawn( "prop_ragdoll", position, angles, pOwner );
@@ -1311,7 +1287,7 @@ CBaseEntity *CreateServerRagdoll( CBaseAnimating *pAnimating, int forceBone, con
 
 	pRagdoll->InitRagdollAnimation();
 	matrix3x4_t pBoneToWorld[MAXSTUDIOBONES], pBoneToWorldNext[MAXSTUDIOBONES];
-	
+
 	float dt = 0.1f;
 
 	// Copy over dissolve state...
@@ -1334,7 +1310,7 @@ CBaseEntity *CreateServerRagdoll( CBaseAnimating *pAnimating, int forceBone, con
 	// Get Bones positions before
 	// Store current cycle
 	float fSequenceDuration = pAnimating->SequenceDuration( pAnimating->GetSequence() );
-	float fSequenceTime = pAnimating->GetCycle() * fSequenceDuration;		
+	float fSequenceTime = pAnimating->GetCycle() * fSequenceDuration;
 
 	if( fSequenceTime <= dt && fSequenceTime > 0.0f )
 	{
@@ -1348,7 +1324,7 @@ CBaseEntity *CreateServerRagdoll( CBaseAnimating *pAnimating, int forceBone, con
 	pAnimating->SetupBones( pBoneToWorldNext, BONE_USED_BY_ANYTHING );
 	// Get previous bones positions
 	pAnimating->SetCycle( fPreviousCycle );
-	pAnimating->SetupBones( pBoneToWorld, BONE_USED_BY_ANYTHING );		
+	pAnimating->SetupBones( pBoneToWorld, BONE_USED_BY_ANYTHING );
 	// Restore current cycle
 	pAnimating->SetCycle( fCurCycle );
 
@@ -1365,12 +1341,12 @@ CBaseEntity *CreateServerRagdoll( CBaseAnimating *pAnimating, int forceBone, con
 		{
 			Vector deltaPos;
 			QAngle deltaAngles;
-			if (Studio_SeqMovement( pstudiohdr, 
-				pAnimating->GetSequence(), 
-				fPreviousCycle, 
-				pAnimating->GetCycle(), 
-				pAnimating->GetPoseParameterArray(), 
-				deltaPos, 
+			if (Studio_SeqMovement( pstudiohdr,
+				pAnimating->GetSequence(),
+				fPreviousCycle,
+				pAnimating->GetCycle(),
+				pAnimating->GetPoseParameterArray(),
+				deltaPos,
 				deltaAngles ))
 			{
 				VectorRotate( deltaPos, pAnimating->EntityToWorldTransform(), vel );
@@ -1407,7 +1383,7 @@ CBaseEntity *CreateServerRagdoll( CBaseAnimating *pAnimating, int forceBone, con
 		int boxList[128];
 		Vector normal(0,0,-1);
 		int count = pAnimating->GetHitboxesFrontside( boxList, ARRAYSIZE(boxList), normal, DotProduct( normal, info.GetDamagePosition() ) );
-		
+
 		// distribute force over mass of entire character
 		float massScale = Studio_GetMass(pAnimating->GetModelPtr());
 		massScale = clamp( massScale, 1.f, 1.e4f );
@@ -1490,18 +1466,18 @@ void CRagdollPropAttached::Detach()
 	RecheckCollisionFilter();
 }
 
-void CRagdollPropAttached::InitRagdollAttached( 
-	IPhysicsObject *pAttached, 
-	const Vector &forceVector, 
-	int forceBone, 
-	matrix3x4_t *pPrevBones, 
-	matrix3x4_t *pBoneToWorld, 
-	float dt, 
-	int collisionGroup, 
-	CBaseAnimating *pFollow, 
-	int boneIndexRoot, 
-	const Vector &boneLocalOrigin, 
-	int parentBoneAttach, 
+void CRagdollPropAttached::InitRagdollAttached(
+	IPhysicsObject *pAttached,
+	const Vector &forceVector,
+	int forceBone,
+	matrix3x4_t *pPrevBones,
+	matrix3x4_t *pBoneToWorld,
+	float dt,
+	int collisionGroup,
+	CBaseAnimating *pFollow,
+	int boneIndexRoot,
+	const Vector &boneLocalOrigin,
+	int parentBoneAttach,
 	const Vector &worldAttachOrigin )
 {
 	int ragdollAttachedIndex = 0;
@@ -1513,7 +1489,7 @@ void CRagdollPropAttached::InitRagdollAttached(
 	}
 
 	InitRagdoll( forceVector, forceBone, vec3_origin, pPrevBones, pBoneToWorld, dt, collisionGroup, false );
-	
+
 	IPhysicsObject *pRefObject = m_ragdoll.list[ragdollAttachedIndex].pObject;
 
 	Vector attachmentPointRagdollSpace;
@@ -1569,7 +1545,7 @@ void CRagdollPropAttached::InitRagdollAttached(
 	m_boneIndexAttached = boneIndexRoot;
 	m_ragdollAttachedObjectIndex = ragdollAttachedIndex;
 	m_attachmentPointBoneSpace = boneLocalOrigin;
-	
+
 	Vector vTemp;
 	MatrixGetColumn( constraint.constraintToReference, 3, vTemp );
 	m_attachmentPointRagdollSpace = vTemp;
@@ -1588,7 +1564,7 @@ CRagdollProp *CreateServerRagdollAttached( CBaseAnimating *pAnimating, const Vec
 	matrix3x4_t pBoneToWorld[MAXSTUDIOBONES];
 	pAnimating->SetupBones( pBoneToWorld, BONE_USED_BY_ANYTHING );
 	pRagdoll->InitRagdollAttached( pAttached, vecForce, forceBone, pBoneToWorld, pBoneToWorld, 0.1, collisionGroup, pParentEntity, boneAttach, boneOrigin, parentBoneAttach, originAttached );
-	
+
 	return pRagdoll;
 }
 
@@ -1703,7 +1679,7 @@ void CRagdollProp::InputTurnOff( inputdata_t &inputdata )
 void CRagdollProp::InputFadeAndRemove( inputdata_t &inputdata )
 {
 	float flFadeDuration = inputdata.value.Float();
-	
+
 	if( flFadeDuration == 0.0f )
 		flFadeDuration = 1.0f;
 

@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //=============================================================================//
@@ -33,7 +33,7 @@ IMPLEMENT_SERVERCLASS_ST_NOBASE( CRopeKeyframe, DT_RopeKeyframe )
 	SendPropEHandle(SENDINFO(m_hEndPoint)),
 	SendPropInt( SENDINFO(m_iStartAttachment), 5, 0 ),
 	SendPropInt( SENDINFO(m_iEndAttachment), 5, 0 ),
-	
+
 	SendPropInt( SENDINFO(m_Slack), 12 ),
 	SendPropInt( SENDINFO(m_RopeLength), 15 ),
 	SendPropInt( SENDINFO(m_fLockedPoints), 4, SPROP_UNSIGNED ),
@@ -80,7 +80,7 @@ BEGIN_DATADESC( CRopeKeyframe )
 	DEFINE_FIELD( m_hEndPoint,		FIELD_EHANDLE ),
 	DEFINE_FIELD( m_iStartAttachment,	FIELD_SHORT ),
 	DEFINE_FIELD( m_iEndAttachment,	FIELD_SHORT ),
-	
+
 	// Inputs
 	DEFINE_INPUTFUNC( FIELD_FLOAT,	"SetScrollSpeed",	InputSetScrollSpeed ),
 	DEFINE_INPUTFUNC( FIELD_VECTOR,	"SetForce",			InputSetForce ),
@@ -98,7 +98,7 @@ END_DATADESC()
 CRopeKeyframe::CRopeKeyframe()
 {
 	AddEFlags( EFL_FORCE_CHECK_TRANSMIT );
-	
+
 	m_takedamage = DAMAGE_YES;
 
 	m_iStartAttachment = m_iEndAttachment = 0;
@@ -136,7 +136,7 @@ void CRopeKeyframe::SetAttachmentPoint( CBaseHandle &hOutEnt, short &iOutAttachm
 		pCurEnt->DecrementTransmitStateOwnedCounter();
 		pCurEnt->DispatchUpdateTransmitState();
 	}
-	
+
 	hOutEnt = pEnt;
 	iOutAttachment = iAttachment;
 
@@ -262,11 +262,11 @@ void CRopeKeyframe::ActivateStartDirectionConstraints( bool bEnable )
 {
 	if (bEnable)
 	{
-		m_fLockedPoints.Set( m_fLockedPoints | ROPE_LOCK_START_DIRECTION ); 
+		m_fLockedPoints.Set( m_fLockedPoints | ROPE_LOCK_START_DIRECTION );
 	}
 	else
 	{
-		m_fLockedPoints &= ~((int)ROPE_LOCK_START_DIRECTION); 
+		m_fLockedPoints &= ~((int)ROPE_LOCK_START_DIRECTION);
 	}
 }
 
@@ -275,11 +275,11 @@ void CRopeKeyframe::ActivateEndDirectionConstraints( bool bEnable )
 {
 	if (bEnable)
 	{
-		m_fLockedPoints.Set( m_fLockedPoints | ROPE_LOCK_END_DIRECTION ); 
+		m_fLockedPoints.Set( m_fLockedPoints | ROPE_LOCK_END_DIRECTION );
 	}
 	else
 	{
-		m_fLockedPoints &= ~((int)ROPE_LOCK_END_DIRECTION); 
+		m_fLockedPoints &= ~((int)ROPE_LOCK_END_DIRECTION);
 	}
 }
 
@@ -305,7 +305,7 @@ bool CRopeKeyframe::SetupHangDistance( float flHangDist )
 	Vector v1 = pEnt1->GetAbsOrigin();
 	if ( pEnt1->GetBaseAnimating() )
 		pEnt1->GetBaseAnimating()->GetAttachment( m_iStartAttachment, v1 );
-		
+
 	Vector v2 = pEnt2->GetAbsOrigin();
 	if ( pEnt2->GetBaseAnimating() )
 		pEnt2->GetBaseAnimating()->GetAttachment( m_iEndAttachment, v2 );
@@ -336,7 +336,7 @@ void CRopeKeyframe::Init()
 void CRopeKeyframe::Activate()
 {
 	BaseClass::Activate();
-	
+
 	if( !m_bCreatedFromMapFile )
 		return;
 
@@ -355,7 +355,7 @@ void CRopeKeyframe::Activate()
 	}
 	else
 	{
-		// If we're from the map file, and we don't have a target ent, and 
+		// If we're from the map file, and we don't have a target ent, and
 		// "Start Dangling" wasn't set, then this rope keyframe doesn't have
 		// any rope coming out of it.
 		if ( m_fLockedPoints & (int)ROPE_LOCK_END_POINT )
@@ -367,7 +367,7 @@ void CRopeKeyframe::Activate()
 	// By default, our start point is our own entity.
 	SetStartPoint( this );
 
-	// If we don't do this here, then when we save/load, we won't "own" the transmit 
+	// If we don't do this here, then when we save/load, we won't "own" the transmit
 	// state of our parent, so the client might get our entity without our parent entity.
 	SetParent( GetParent(), GetParentAttachment() );
 
@@ -431,9 +431,9 @@ void CRopeKeyframe::DieAtNextRest( void )
 void CRopeKeyframe::SetTransmit( CCheckTransmitInfo *pInfo, bool bAlways )
 {
 	if ( !pInfo->m_pTransmitEdict->Get( entindex() ) )
-	{	
+	{
 		BaseClass::SetTransmit( pInfo, bAlways );
-	
+
 		// Make sure our target ents are sent too.
 		CBaseEntity *pEnt = m_hStartPoint;
 		if ( pEnt )
@@ -548,35 +548,23 @@ void CRopeKeyframe::InputSetForce( inputdata_t &inputdata )
 
 //-----------------------------------------------------------------------------
 // Purpose: Breaks the rope if able
-// Input  : &inputdata - 
+// Input  : &inputdata -
 //-----------------------------------------------------------------------------
 void CRopeKeyframe::InputBreak( inputdata_t &inputdata )
 {
 	//Route through the damage code
 	Break();
 }
-//TE120----
+
+//TE120--
 //-----------------------------------------------------------------------------
 // Purpose: Updates rope for lighting
-// Input  : &inputdata - 
+// Input  : &inputdata -
 //-----------------------------------------------------------------------------
 void CRopeKeyframe::InputUpdateRope( inputdata_t &inputdata )
 {
-	/*
-	SetStartPoint( this );
-	CBaseEntity *pEnt = gEntList.FindEntityByName( NULL, m_iNextLinkName );
-	if( pEnt && pEnt->edict() )
-	{
-		SetEndPoint( pEnt );
-	}
-
-	m_iRopeMaterialModelIndex = PrecacheModel( STRING( m_strRopeMaterialModel ) );
-	EndpointsChanged();
-	Init();
-	*/
-
 	CRopeKeyframe *pRet = (CRopeKeyframe*)CreateEntityByName( "keyframe_rope" );
-	if( pRet )
+	if ( pRet )
 	{
 		pRet->SetAbsOrigin( GetAbsOrigin() );
 
@@ -589,17 +577,17 @@ void CRopeKeyframe::InputUpdateRope( inputdata_t &inputdata )
 
 		pRet->m_iNextLinkName = m_iNextLinkName;
 		CBaseEntity *pEnt = gEntList.FindEntityByName( NULL, m_iNextLinkName );
-		if( pEnt && pEnt->edict() )
+		if ( pEnt && pEnt->edict() )
 		{
 			Msg( "End Point Ent: %s\n", STRING( pEnt->GetEntityName() ) );
 			pRet->SetEndPoint( pEnt );
 
-			if( m_spawnflags & SF_ROPE_RESIZE )
+			if ( m_spawnflags & SF_ROPE_RESIZE )
 				pRet->m_RopeFlags |= ROPE_RESIZE;
 		}
 		else
 		{
-			// If we're from the map file, and we don't have a target ent, and 
+			// If we're from the map file, and we don't have a target ent, and
 			// "Start Dangling" wasn't set, then this rope keyframe doesn't have
 			// any rope coming out of it.
 			if ( m_fLockedPoints & (int)ROPE_LOCK_END_POINT )
@@ -624,7 +612,7 @@ void CRopeKeyframe::InputUpdateRope( inputdata_t &inputdata )
 		pRet->m_flScrollSpeed = m_flScrollSpeed;
 		pRet->m_Subdiv = m_Subdiv;
 
-		if (pRet->GetParent() == this)
+		if ( pRet->GetParent() == this )
 			pRet->SetParent( NULL, -1 );
 
 		// We have to set the name a frame later otherwise the name is still occupied
@@ -644,9 +632,10 @@ void CRopeKeyframe::CallNameThink()
 
 void CRopeKeyframe::SetNameThink()
 {
-	SetName(m_strNameThink);
+	SetName( m_strNameThink );
 }
-//TE120----
+//TE120--
+
 //-----------------------------------------------------------------------------
 // Purpose: Breaks the rope
 // Output : Returns true on success, false on failure.
@@ -665,7 +654,7 @@ bool CRopeKeyframe::Break( void )
 		{
 			pTest->DetachPoint( 1 );
 		}
-	
+
 		pTest = gEntList.NextEntByClass( pTest );
 	}
 
@@ -726,7 +715,7 @@ void CRopeKeyframe::Precache()
 void CRopeKeyframe::DetachPoint( int iPoint )
 {
 	Assert( iPoint == 0 || iPoint == 1 );
-	
+
 	m_fLockedPoints &= ~(1 << iPoint);
 }
 
@@ -773,7 +762,7 @@ bool CRopeKeyframe::KeyValue( const char *szKeyName, const char *szValue )
 	{
 		if( atoi( szValue ) == 1 )
 			m_fLockedPoints &= ~ROPE_LOCK_END_POINT; // detach our dest point
-		
+
 		return true;
 	}
 	else if( stricmp( szKeyName, "Type" ) == 0 )
@@ -824,7 +813,7 @@ bool CRopeKeyframe::KeyValue( const char *szKeyName, const char *szValue )
 			m_RopeFlags |= ROPE_NO_WIND;
 		}
 	}
-	
+
 	return BaseClass::KeyValue( szKeyName, szValue );
 }
 
@@ -852,7 +841,3 @@ int CRopeKeyframe::UpdateTransmitState()
 	// as they come in and out of the PVS.
 	return SetTransmitState( FL_EDICT_ALWAYS );
 }
-
-
-
-		

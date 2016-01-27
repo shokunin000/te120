@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //=============================================================================//
@@ -45,7 +45,7 @@ CLIENTEFFECT_REGISTER_END()
 
 // ----------------------------------------------------------------------------- //
 // This is a cache of preloaded keyvalues.
-// ----------------------------------------------------------------------------- // 
+// ----------------------------------------------------------------------------- //
 
 CUtlDict<KeyValues*, int> g_KeyValuesCache;
 
@@ -58,7 +58,7 @@ KeyValues* CacheKeyValuesForFile( const char *pFilename )
 		KeyValues *rDat = new KeyValues( pFilename );
 		rDat->LoadFromFile( filesystem, pFilename, NULL );
 		g_KeyValuesCache.Insert( pFilename, rDat );
-		return rDat;		
+		return rDat;
 	}
 	else
 	{
@@ -89,7 +89,7 @@ END_RECV_TABLE()
 
 
 //-----------------------------------------------------------------------------
-// Constructor 
+// Constructor
 //-----------------------------------------------------------------------------
 C_VGuiScreen::C_VGuiScreen()
 {
@@ -160,7 +160,7 @@ void C_VGuiScreen::GetAimEntOrigin( IClientEntity *pAttachedTo, Vector *pOrigin,
 			C_BaseAnimating::AutoAllowBoneAccess boneaccess( true, true );
 			pEnt->GetAttachment( m_nAttachmentIndex, *pOrigin, *pAngles );
 		}
-		
+
 		if ( IsAttachedToViewModel() )
 		{
 			FormatViewModelAttachment( *pOrigin, true );
@@ -214,7 +214,7 @@ bool C_VGuiScreen::IsActive() const
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 // Output : Returns true on success, false on failure.
 //-----------------------------------------------------------------------------
 bool C_VGuiScreen::IsAttachedToViewModel() const
@@ -223,7 +223,7 @@ bool C_VGuiScreen::IsAttachedToViewModel() const
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 // Output : Returns true on success, false on failure.
 //-----------------------------------------------------------------------------
 bool C_VGuiScreen::AcceptsInput() const
@@ -232,8 +232,8 @@ bool C_VGuiScreen::AcceptsInput() const
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : acceptsinput - 
+// Purpose:
+// Input  : acceptsinput -
 //-----------------------------------------------------------------------------
 void C_VGuiScreen::SetAcceptsInput( bool acceptsinput )
 {
@@ -242,7 +242,7 @@ void C_VGuiScreen::SetAcceptsInput( bool acceptsinput )
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 // Output : RenderGroup_t
 //-----------------------------------------------------------------------------
 RenderGroup_t C_VGuiScreen::GetRenderGroup()
@@ -275,7 +275,7 @@ bool C_VGuiScreen::IsVisibleToTeam( int nTeam )
 		if ( pOwner && (nTeam != pOwner->GetTeamNumber()) )
 			return false;
 	}
-	
+
 	return true;
 }
 
@@ -304,7 +304,7 @@ void C_VGuiScreen::SetButtonState( int nButtonState )
 
 
 //-----------------------------------------------------------------------------
-// Returns the panel name 
+// Returns the panel name
 //-----------------------------------------------------------------------------
 const char *C_VGuiScreen::PanelName() const
 {
@@ -316,11 +316,11 @@ const char *C_VGuiScreen::PanelName() const
 // Given a field of view and mouse/screen positions as well as the current
 // render origin and angles, returns a unit vector through the mouse position
 // that can be used to trace into the world under the mouse click pixel.
-// Input : 
+// Input :
 // mousex -
 // mousey -
 // fov -
-// vecRenderOrigin - 
+// vecRenderOrigin -
 // vecRenderAngles -
 // Output :
 // vecPickingRay
@@ -355,7 +355,7 @@ void ScreenToWorld( int mousex, int mousey, float fov,
 
 	// Convert to unit vector
 	VectorNormalize( vecPickingRay );
-} 
+}
 
 //-----------------------------------------------------------------------------
 // Purpose: Deal with input
@@ -380,20 +380,20 @@ void C_VGuiScreen::ClientThink( void )
 	vgui::Panel *pPanel = m_PanelWrapper.GetPanel();
 	if (!pPanel)
 		return;
-	
+
 	C_BasePlayer *pLocalPlayer = C_BasePlayer::GetLocalPlayer();
 	if (!pLocalPlayer)
 		return;
 
 	// Generate a ray along the view direction
 	Vector vecEyePosition = pLocalPlayer->EyePosition();
-	
+
 	QAngle viewAngles = pLocalPlayer->EyeAngles( );
 
 	// Compute cursor position...
 	Ray_t lookDir;
 	Vector endPos;
-	
+
 	float u, v;
 
 	// Viewmodel attached screens that take input need to have a moving cursor
@@ -567,7 +567,7 @@ int	C_VGuiScreen::DrawModel( int flags )
 	vgui::Panel *pPanel = m_PanelWrapper.GetPanel();
 	if (!pPanel || !IsActive())
 		return 0;
-	
+
 	// Don't bother drawing stuff not visible to me...
 	C_BasePlayer *pLocalPlayer = C_BasePlayer::GetLocalPlayer();
 	if (!pLocalPlayer || !IsVisibleToTeam(pLocalPlayer->GetTeamNumber()) )
@@ -577,7 +577,7 @@ int	C_VGuiScreen::DrawModel( int flags )
 	{
 		return 0;
 	}
-	
+
 	// Backface cull the entire panel here...
 	if (IsBackfacing(CurrentViewOrigin()))
 		return 0;
@@ -586,7 +586,7 @@ int	C_VGuiScreen::DrawModel( int flags )
 	// FIXME: Can this be cached off?
 	ComputePanelToWorld();
 
-	g_pMatSystemSurface->DrawPanelIn3DSpace( pPanel->GetVPanel(), m_PanelToWorld, 
+	g_pMatSystemSurface->DrawPanelIn3DSpace( pPanel->GetVPanel(), m_PanelToWorld,
 		m_nPixelWidth, m_nPixelHeight, m_flWidth, m_flHeight );
 
 	// Finally, a pass to set the z buffer...
@@ -652,7 +652,7 @@ IterationRetval_t CVGuiScreenEnumerator::EnumElement( IHandleEntity *pHandleEnti
 		return ITERATION_CONTINUE;
 
 	// FIXME.. pretty expensive...
-	C_VGuiScreen *pScreen = dynamic_cast<C_VGuiScreen*>(pEnt); 
+	C_VGuiScreen *pScreen = dynamic_cast<C_VGuiScreen*>(pEnt);
 	if ( pScreen )
 	{
 		int i = m_VguiScreens.AddToTail( );
@@ -670,7 +670,7 @@ int	CVGuiScreenEnumerator::GetScreenCount()
 C_VGuiScreen *CVGuiScreenEnumerator::GetVGuiScreen( int index )
 {
 	return m_VguiScreens[index].Get();
-}	
+}
 
 
 //-----------------------------------------------------------------------------
@@ -697,7 +697,7 @@ C_BaseEntity *FindNearbyVguiScreen( const Vector &viewPosition, const QAngle &vi
 	Vector lookDir;
 	AngleVectors( viewAngle, &lookDir );
 
-	// Create a ray used for raytracing 
+	// Create a ray used for raytracing
 	Vector lookEnd;
 	VectorMA( viewPosition, 2.0f * VGUI_SCREEN_MODE_RADIUS, lookDir, lookEnd );
 
@@ -764,7 +764,7 @@ C_BaseEntity *FindNearbyVguiScreen( const Vector &viewPosition, const QAngle &vi
 			pBestScreen = pScreen;
 		}
 	}
-	
+
 	return pBestScreen;
 }
 

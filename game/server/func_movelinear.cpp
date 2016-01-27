@@ -39,8 +39,10 @@ BEGIN_DATADESC( CFuncMoveLinear )
 	DEFINE_KEYFIELD( m_flBlockDamage,	 FIELD_FLOAT,	"BlockDamage"),
 	DEFINE_KEYFIELD( m_flStartPosition, FIELD_FLOAT,	"StartPosition"),
 	DEFINE_KEYFIELD( m_flMoveDistance,  FIELD_FLOAT,	"MoveDistance"),
-	DEFINE_KEYFIELD( m_hPosition1, FIELD_EHANDLE, "fmlPos1"),//TE120----
-	DEFINE_KEYFIELD( m_hPosition2, FIELD_EHANDLE, "fmlPos2"),//TE120----
+//TE120--
+	DEFINE_KEYFIELD( m_hPosition1, FIELD_EHANDLE, "fmlPos1"),
+	DEFINE_KEYFIELD( m_hPosition2, FIELD_EHANDLE, "fmlPos2"),
+//TE120--
 
 //	DEFINE_PHYSPTR( m_pFluidController ),
 
@@ -71,14 +73,14 @@ void CFuncMoveLinear::Spawn( void )
 
 	SetMoveType( MOVETYPE_PUSH );
 	SetModel( STRING( GetModelName() ) );
-	
+
 	// Don't allow zero or negative speeds
 	if (m_flSpeed <= 0)
 	{
 		m_flSpeed = 100;
 	}
-	
-	// If move distance is set to zero, use with width of the 
+
+	// If move distance is set to zero, use with width of the
 	// brush to determine the size of the move distance
 	if (m_flMoveDistance <= 0)
 	{
@@ -87,12 +89,14 @@ void CFuncMoveLinear::Spawn( void )
 		m_flMoveDistance = DotProductAbs( m_vecMoveDir, vecOBB ) - m_flLip;
 	}
 
-	m_hPosition1 = CreateEntityByName( "info_target" ); //TE120
-	m_hPosition2 = CreateEntityByName( "info_target" );//TE120
+//TE120--
+	m_hPosition1 = CreateEntityByName( "info_target" );
+	m_hPosition2 = CreateEntityByName( "info_target" );
+//TE120--
 
-	m_vecPosition1 = GetAbsOrigin() - (m_vecMoveDir * m_flMoveDistance * m_flStartPosition);
+	m_vecPosition1 = GetLocalOrigin() - (m_vecMoveDir * m_flMoveDistance * m_flStartPosition);
 	m_vecPosition2 = m_vecPosition1 + (m_vecMoveDir * m_flMoveDistance);
-//TE120----
+//TE120--
 	// Update position reference entities
 	if ( m_hPosition1 != NULL )
 	{
@@ -107,9 +111,9 @@ void CFuncMoveLinear::Spawn( void )
 		if ( GetParent() )
 			m_hPosition2->SetParent( GetParent() );
 	}
-
+//TE120--
 	m_vecFinalDest = GetLocalOrigin();
-//TE120----
+
 	SetTouch( NULL );
 
 	Precache();
@@ -135,11 +139,11 @@ bool CFuncMoveLinear::ShouldSavePhysics( void )
 {
 	// don't save physics for func_water_analog, regen
 	return !FClassnameIs( this, "func_water_analog" );
-		
+
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 bool CFuncMoveLinear::CreateVPhysics( void )
 {
@@ -159,7 +163,7 @@ bool CFuncMoveLinear::CreateVPhysics( void )
 
 		IPhysicsObject *pPhysics = VPhysicsInitShadow( false, false );
 		fluidparams_t fluid;
-		
+
 		Assert( CollisionProp()->GetCollisionAngles() == vec3_angle );
 		fluid.damping = 0.01f;
 		fluid.surfacePlane[0] = 0;
@@ -170,10 +174,10 @@ bool CFuncMoveLinear::CreateVPhysics( void )
 		fluid.torqueFactor = 0.1f;
 		fluid.viscosityFactor = 0.01f;
 		fluid.pGameData = static_cast<void *>(this);
-		
+
 		//FIXME: Currently there's no way to specify that you want slime
 		fluid.contents = CONTENTS_WATER;
-		
+
 		m_pFluidController = physenv->CreateFluidController( pPhysics, &fluid );
 	}
 
@@ -222,7 +226,7 @@ void CFuncMoveLinear::MoveTo(Vector vPosition, float flSpeed)
 				ep.m_flVolume = 1;
 				ep.m_SoundLevel = SNDLVL_NORM;
 
-				EmitSound( filter, entindex(), ep );	
+				EmitSound( filter, entindex(), ep );
 			}
 		}
 
@@ -277,18 +281,18 @@ void CFuncMoveLinear::MoveDone( void )
 	SetThink(&CFuncMoveLinear::StopMoveSound);
 	SetNextThink( gpGlobals->curtime + 0.1f );
 	BaseClass::MoveDone();
-//TE120----
+//TE120--
 	if ( m_hPosition2 != NULL && m_hPosition1 != NULL)
 	{
 		if ( GetLocalOrigin() == m_hPosition2->GetLocalOrigin() )
-	{
-		m_OnFullyOpen.FireOutput( this, this );
-	}
+		{
+			m_OnFullyOpen.FireOutput( this, this );
+		}
 		else if ( GetLocalOrigin() == m_hPosition1->GetLocalOrigin() )
-	{
-		m_OnFullyClosed.FireOutput( this, this );
-	}
-//TE120----
+		{
+			m_OnFullyClosed.FireOutput( this, this );
+		}
+//TE120--
 	}
 }
 
@@ -300,15 +304,15 @@ void CFuncMoveLinear::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TY
 {
 	if ( useType != USE_SET )		// Momentary buttons will pass down a float in here
 		return;
-//TE120----
-	if ( m_hPosition2 == NULL || m_hPosition1 == NULL)
+//TE120--
+	if ( m_hPosition2 == NULL || m_hPosition1 == NULL )
 		return;
-//TE120----
+//TE120--
 	if ( value > 1.0 )
 		value = 1.0;
-//TE120----
-	Vector move = m_hPosition1->GetLocalOrigin() + (value * (m_hPosition2->GetLocalOrigin() - m_hPosition1->GetLocalOrigin()));
-//TE120----
+//TE120--
+	Vector move = m_hPosition1->GetLocalOrigin() + ( value * ( m_hPosition2->GetLocalOrigin() - m_hPosition1->GetLocalOrigin() ) );
+//TE120--
 	Vector delta = move - GetLocalOrigin();
 	float speed = delta.Length() * 10;
 
@@ -320,14 +324,15 @@ void CFuncMoveLinear::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TY
 // Purpose: Sets the position as a value from [0..1].
 //-----------------------------------------------------------------------------
 void CFuncMoveLinear::SetPosition( float flPosition )
-{//TE120----
-	if ( m_hPosition2 == NULL || m_hPosition1 == NULL)
+{
+//TE120--
+	if ( m_hPosition2 == NULL || m_hPosition1 == NULL )
 		return;
 
 	Vector vTargetPos = m_hPosition1->GetLocalOrigin() + ( flPosition * (m_hPosition2->GetLocalOrigin() - m_hPosition1->GetLocalOrigin()));
-	if ((vTargetPos - GetLocalOrigin()).Length() > 0.001)
-//TE120----
+	if ( ( vTargetPos - GetLocalOrigin() ).Length() > 0.001 )
 	{
+//TE120--
 		MoveTo(vTargetPos, m_flSpeed);
 	}
 }
@@ -338,15 +343,15 @@ void CFuncMoveLinear::SetPosition( float flPosition )
 //------------------------------------------------------------------------------
 void CFuncMoveLinear::InputOpen( inputdata_t &inputdata )
 {
-//TE120----
+//TE120--
 	if ( m_hPosition2 == NULL )
 		return;
 
-	if (GetLocalOrigin() != m_hPosition2->GetLocalOrigin())
+	if ( GetLocalOrigin() != m_hPosition2->GetLocalOrigin() )
 	{
 		MoveTo(m_hPosition2->GetLocalOrigin(), m_flSpeed);
 	}
-//TE120----
+//TE120--
 }
 
 
@@ -355,15 +360,15 @@ void CFuncMoveLinear::InputOpen( inputdata_t &inputdata )
 //------------------------------------------------------------------------------
 void CFuncMoveLinear::InputClose( inputdata_t &inputdata )
 {
-//TE120----
+//TE120--
 	if ( m_hPosition1 == NULL )
 		return;
 
-	if (GetLocalOrigin() != m_hPosition1->GetLocalOrigin())
+	if ( GetLocalOrigin() != m_hPosition1->GetLocalOrigin() )
 	{
-		MoveTo(m_hPosition1->GetLocalOrigin(), m_flSpeed);
+		MoveTo( m_hPosition1->GetLocalOrigin(), m_flSpeed );
 	}
-//TE120----
+//TE120--
 }
 
 
@@ -383,7 +388,7 @@ void CFuncMoveLinear::InputSetPosition( inputdata_t &inputdata )
 //-----------------------------------------------------------------------------
 void CFuncMoveLinear::Blocked( CBaseEntity *pOther )
 {
-	// Hurt the blocker 
+	// Hurt the blocker
 	if ( m_flBlockDamage )
 	{
 		if ( pOther->m_takedamage == DAMAGE_EVENTS_ONLY )
@@ -397,8 +402,8 @@ void CFuncMoveLinear::Blocked( CBaseEntity *pOther )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : &inputdata - 
+// Purpose:
+// Input  : &inputdata -
 //-----------------------------------------------------------------------------
 void CFuncMoveLinear::InputSetSpeed( inputdata_t &inputdata )
 {
@@ -418,11 +423,11 @@ void CFuncMoveLinear::InputSetSpeed( inputdata_t &inputdata )
 // Purpose: Draw any debug text overlays
 // Output : Current text offset from the top
 //-----------------------------------------------------------------------------
-int CFuncMoveLinear::DrawDebugTextOverlays(void) 
+int CFuncMoveLinear::DrawDebugTextOverlays(void)
 {
 	int text_offset = BaseClass::DrawDebugTextOverlays();
 
-	if (m_debugOverlays & OVERLAY_TEXT_BIT) 
+	if (m_debugOverlays & OVERLAY_TEXT_BIT)
 	{
 		char tempstr[512];
 		float flTravelDist = (m_vecPosition1 - m_vecPosition2).Length();
@@ -437,4 +442,18 @@ int CFuncMoveLinear::DrawDebugTextOverlays(void)
 		text_offset++;
 	}
 	return text_offset;
+}
+
+
+//-----------------------------------------------------------------------------
+// Purpose: Runs a fix atfer the base version clearly dosen't cut it.
+//-----------------------------------------------------------------------------
+void CFuncMoveLinear::SetParent( CBaseEntity *pParentEntity, int iAttachment )
+{
+	BaseClass::SetParent( pParentEntity, iAttachment );
+
+	// Recompute all positions
+	m_vecPosition1 = GetLocalOrigin() - (m_vecMoveDir * m_flMoveDistance * m_flStartPosition);
+	m_vecPosition2 = m_vecPosition1 + (m_vecMoveDir * m_flMoveDistance);
+	m_vecFinalDest = GetLocalOrigin();
 }

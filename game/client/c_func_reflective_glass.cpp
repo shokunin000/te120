@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //===========================================================================//
@@ -58,14 +58,14 @@ C_FuncReflectiveGlass::~C_FuncReflectiveGlass()
 
 bool C_FuncReflectiveGlass::ShouldDraw()
 {
-//TE120-----------------------
+//TE120--
 	bool bLowEnd = ( g_pMaterialSystemHardwareConfig->GetDXSupportLevel() < 80 );
 
-	if (bLowEnd)
+	if ( bLowEnd )
 		return false;
 	else
-	return true;
-//TE120-----------------------------------
+		return true;
+//TE120--
 }
 
 
@@ -74,13 +74,12 @@ bool C_FuncReflectiveGlass::ShouldDraw()
 //-----------------------------------------------------------------------------
 bool IsReflectiveGlassInView( const CViewSetup& view, cplane_t &plane )
 {
-//TE120----------------------------
+//TE120--
 	bool bLowEnd = ( g_pMaterialSystemHardwareConfig->GetDXSupportLevel() < 80 );
 
-	if (bLowEnd)
+	if ( bLowEnd )
 		return false;
-//TE120------------------------------
-
+//TE120--
 	// Early out if no cameras
 	C_FuncReflectiveGlass *pReflectiveGlass = GetReflectiveGlassList();
 	if ( !pReflectiveGlass )
@@ -113,10 +112,10 @@ bool IsReflectiveGlassInView( const CViewSetup& view, cplane_t &plane )
 
 			MatrixTransformPlane( mat, localPlane, plane );			// Transform to world space
 			VectorTransform( vecOrigin, mat, vecWorld );
-					 
+
 			if ( view.origin.Dot( plane.normal ) <= plane.dist )	// Check for view behind plane
 				continue;
-			
+
 			VectorSubtract( vecWorld, view.origin, vecDelta );		// Backface cull
 			if ( vecDelta.Dot( plane.normal ) >= 0 )
 				continue;
@@ -127,6 +126,3 @@ bool IsReflectiveGlassInView( const CViewSetup& view, cplane_t &plane )
 
 	return false;
 }
-
-
-

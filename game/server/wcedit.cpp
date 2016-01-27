@@ -40,8 +40,8 @@ extern CAI_Link*		FindPickerAILink( CBasePlayer* pPlayer );
 extern float			GetFloorZ(const Vector &origin);
 
 //-----------------------------------------------------------------------------
-// Purpose: Make sure the version of the map in WC is the same as the map 
-//			that's being edited 
+// Purpose: Make sure the version of the map in WC is the same as the map
+//			that's being edited
 // Input  :
 // Output :
 //-----------------------------------------------------------------------------
@@ -78,14 +78,14 @@ Vector NWCEdit::AirNodePlacementPosition( void )
 {
 	CBasePlayer* pPlayer = UTIL_PlayerByIndex(CBaseEntity::m_nDebugPlayer);
 
-	if (!pPlayer) 
+	if (!pPlayer)
 	{
 		return vec3_origin;
 	}
 
 	Vector pForward;
 	pPlayer->EyeVectors( &pForward );
-	
+
 	Vector	floorVec = pForward;
 	floorVec.z = 0;
 	VectorNormalize( floorVec );
@@ -186,7 +186,7 @@ void NWCEdit::CreateAINode( CBasePlayer *pPlayer )
 		Vector vUpBit = testHull->GetAbsOrigin();
 		vUpBit.z += 1;
 		trace_t tr;
-		UTIL_TraceHull( testHull->GetAbsOrigin(), vUpBit, NAI_Hull::Mins(hullType), 
+		UTIL_TraceHull( testHull->GetAbsOrigin(), vUpBit, NAI_Hull::Mins(hullType),
 			NAI_Hull::Maxs(hullType), MASK_NPCSOLID, testHull, COLLISION_GROUP_NONE, &tr );
 		if (tr.startsolid || tr.fraction != 1.0)
 		{
@@ -243,7 +243,7 @@ void NWCEdit::CreateAINode( CBasePlayer *pPlayer )
 
 			pNodeEnt->m_debugOverlays |= OVERLAY_WC_CHANGE_ENTITY;
 			pNodeEnt->Spawn();
-		}	
+		}
 	}
 
 DoneCreate:
@@ -260,7 +260,7 @@ DoneCreate:
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 // Input  :
 // Output :
 //-----------------------------------------------------------------------------
@@ -280,7 +280,7 @@ void NWCEdit::UndoDestroyAINode(void)
 
 		int status;
 		int	nOldWCID	= g_pAINetworkManager->GetEditOps()->m_pNodeIndexTable[g_pAINetworkManager->GetEditOps()->m_pLastDeletedNode->GetId()];
-		
+
 		if (g_pAINetworkManager->GetEditOps()->m_bAirEditMode)
 		{
 			status = Editor_CreateNode("info_node_air", nOldWCID, nodePos.x, nodePos.y, nodePos.z, false);
@@ -363,7 +363,7 @@ void NWCEdit::DestroyAINode( CBasePlayer *pPlayer )
 					{
 						Msg( "Worldcraft failed on node link deletion...\n" );
 					}
-				}				
+				}
 			}
 		}
 	}
@@ -371,7 +371,7 @@ void NWCEdit::DestroyAINode( CBasePlayer *pPlayer )
 
 //-----------------------------------------------------------------------------
 // Purpose: For restroring links in WC edit mode.  This actually means
-//			destroying links in WC that have been marked as 
+//			destroying links in WC that have been marked as
 // Input  :
 // Output :
 //-----------------------------------------------------------------------------
@@ -449,7 +449,7 @@ void NWCEdit::DestroyAILink( CBasePlayer *pPlayer )
 Vector *g_EntityPositions = NULL;
 QAngle *g_EntityOrientations = NULL;
 string_t *g_EntityClassnames = NULL;
-//TE120----
+
 class GlobalCleanUp : public CAutoGameSystem
 {
 	void Shutdown()
@@ -460,7 +460,7 @@ class GlobalCleanUp : public CAutoGameSystem
 		delete this;
 	}
 };
-//TE120----
+
 //-----------------------------------------------------------------------------
 // Purpose: Saves the entity's position for future communication with Hammer
 //-----------------------------------------------------------------------------
@@ -471,7 +471,7 @@ void NWCEdit::RememberEntityPosition( CBaseEntity *pEntity )
 
 	if ( !g_EntityPositions )
 	{
-		new GlobalCleanUp();//TE120
+		new GlobalCleanUp();
 		g_EntityPositions = new Vector[NUM_ENT_ENTRIES];
 		g_EntityOrientations = new QAngle[NUM_ENT_ENTRIES];
 		// have to save these too because some entities change the classname on spawn (e.g. prop_physics_override, physics_prop)
@@ -501,7 +501,7 @@ void NWCEdit::UpdateEntityPosition( CBaseEntity *pEntity )
 
 	if ( !(pEntity->ObjectCaps() & FCAP_WCEDIT_POSITION) )
 		return;
-	
+
 	// can't do this unless in edit mode
 	if ( !engine->IsInEditMode() )
 		return;
@@ -554,7 +554,7 @@ error:
 }
 
 //------------------------------------------------------------------------------
-// Purpose : 
+// Purpose :
 // Input   :
 // Output  :
 //------------------------------------------------------------------------------
@@ -578,7 +578,7 @@ void CC_WC_Create( void )
 static ConCommand wc_create("wc_create", CC_WC_Create, "When in WC edit mode, creates a node where the player is looking if a node is allowed at that location for the currently selected hull size (see ai_next_hull)", FCVAR_CHEAT);
 
 //------------------------------------------------------------------------------
-// Purpose : 
+// Purpose :
 // Input   :
 // Output  :
 //------------------------------------------------------------------------------
@@ -606,7 +606,7 @@ void CC_WC_Destroy( void )
 static ConCommand wc_destroy("wc_destroy", CC_WC_Destroy, "When in WC edit mode, destroys the node that the player is nearest to looking at.  (The node will be highlighted by a red box).", FCVAR_CHEAT);
 
 //------------------------------------------------------------------------------
-// Purpose : 
+// Purpose :
 // Input   :
 // Output  :
 //------------------------------------------------------------------------------
@@ -623,7 +623,7 @@ void CC_WC_DestroyUndo( void )
 static ConCommand wc_destroy_undo("wc_destroy_undo", CC_WC_DestroyUndo, "When in WC edit mode restores the last deleted node", FCVAR_CHEAT);
 
 //------------------------------------------------------------------------------
-// Purpose : 
+// Purpose :
 // Input   :
 // Output  :
 //------------------------------------------------------------------------------
@@ -646,7 +646,7 @@ void CC_WC_AirNodeEdit( void )
 static ConCommand wc_air_node_edit("wc_air_node_edit", CC_WC_AirNodeEdit, "When in WC edit mode, toggles laying down or air nodes instead of ground nodes", FCVAR_CHEAT);
 
 //------------------------------------------------------------------------------
-// Purpose : 
+// Purpose :
 // Input   :
 // Output  :
 //------------------------------------------------------------------------------
@@ -661,7 +661,7 @@ void CC_WC_AirNodeEditFurther( void )
 static ConCommand wc_air_edit_further("wc_air_edit_further", CC_WC_AirNodeEditFurther, "When in WC edit mode and editing air nodes,  moves position of air node crosshair and placement location further away from player", FCVAR_CHEAT);
 
 //------------------------------------------------------------------------------
-// Purpose : 
+// Purpose :
 // Input   :
 // Output  :
 //------------------------------------------------------------------------------
@@ -676,13 +676,13 @@ void CC_WC_AirNodeEditNearer( void )
 static ConCommand wc_air_edit_nearer("wc_air_edit_nearer", CC_WC_AirNodeEditNearer, "When in WC edit mode and editing air nodes,  moves position of air node crosshair and placement location nearer to from player", FCVAR_CHEAT);
 
 //------------------------------------------------------------------------------
-// Purpose : 
+// Purpose :
 // Input   :
 // Output  :
 //------------------------------------------------------------------------------
 void CC_WC_LinkEdit( void )
 {
-	// Only allowed in wc_edit_mode 
+	// Only allowed in wc_edit_mode
 	if (engine->IsInEditMode())
 	{
 		// Toggle air edit mode state
@@ -702,7 +702,7 @@ static ConCommand wc_link_edit("wc_link_edit", CC_WC_LinkEdit, 0, FCVAR_CHEAT);
 
 /// This is an entity used by the hammer_update_safe_entities command. It allows designers
 /// to specify objects that should be ignored. It stores an array of sixteen strings
-/// which may correspond to names. Designers may ignore more than sixteen objects by 
+/// which may correspond to names. Designers may ignore more than sixteen objects by
 /// placing more than one of these in a level.
 class CWC_UpdateIgnoreList : public CBaseEntity
 {
@@ -711,11 +711,11 @@ public:
 
 	enum { MAX_IGNORELIST_NAMES = 16 }; ///< the number of names in the array below
 
-	inline const string_t &GetName( int x ) const { return m_nIgnoredEntityNames[x]; } 
+	inline const string_t &GetName( int x ) const { return m_nIgnoredEntityNames[x]; }
 
 protected:
 	// the list of names to ignore
-	string_t m_nIgnoredEntityNames[MAX_IGNORELIST_NAMES]; 
+	string_t m_nIgnoredEntityNames[MAX_IGNORELIST_NAMES];
 
 public:
 	DECLARE_DATADESC();

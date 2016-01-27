@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2013, Dorian Gorski, All rights reserved. ============//
+//========= Copyright, Dorian Gorski, All rights reserved. ============//
 //
 // Purpose: Manage Striders in finale combat, one stays near player the other patrols
 // at nearby defined patrol location.
@@ -6,8 +6,8 @@
 //=================================================================================//
 
 #include "cbase.h"
-#include "AI_StriderFinale.h"
-#include "ndebugoverlay.h"
+#include "ai_striderfinale.h"
+//#include "ndebugoverlay.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -23,20 +23,20 @@ void CAI_StriderFinale::Spawn()
 		FillRoles();
 
 		SetThink(&CAI_StriderFinale::MovementThink);
-		SetNextThink( gpGlobals->curtime + AISF_THINK_INTERVAL );
+		SetNextThink(gpGlobals->curtime + AISF_THINK_INTERVAL);
 	}
 }
 
 //-------------------------------------
 // Should be called when a strider dies or spawns
-void CAI_StriderFinale::InputActivate( inputdata_t &inputdata )		
-{ 
+void CAI_StriderFinale::InputActivate( inputdata_t &inputdata )
+{
 	m_bActive = true;
 
 	FillRoles();
 
 	SetThink(&CAI_StriderFinale::MovementThink);
-	SetNextThink( gpGlobals->curtime + AISF_THINK_INTERVAL );
+	SetNextThink(gpGlobals->curtime + AISF_THINK_INTERVAL);
 }
 
 //-------------------------------------
@@ -47,16 +47,16 @@ void CAI_StriderFinale::MovementThink()
 	FillRoles();
 
 	// If the player moved more than AISF_UPDATE_DIST units from the last position update strider 1 position
-	if (m_npcStrider1)
+	if ( m_npcStrider1 )
 	{
-		CBaseEntity *pPlayer = UTIL_GetLocalPlayer();
-		if ( pPlayer && ( (pPlayer->GetAbsOrigin() - m_vLastPos).Length() > AISF_UPDATE_DIST ) )
+		CBasePlayer *pPlayer = AI_GetSinglePlayer();
+		if ( pPlayer && ( ( pPlayer->GetAbsOrigin() - m_vLastPos).Length() > AISF_UPDATE_DIST ) )
 		{
 			StriderFollowPlayer();
 		}
 	}
 
-	SetNextThink( gpGlobals->curtime + AISF_THINK_INTERVAL );
+	SetNextThink(gpGlobals->curtime + AISF_THINK_INTERVAL);
 }
 
 //-------------------------------------
@@ -64,10 +64,12 @@ void CAI_StriderFinale::MovementThink()
 // If a guard path is set Strider1 will go there instead.
 void CAI_StriderFinale::StriderFollowPlayer()
 {
-	if (m_npcStrider1)
+	if ( m_npcStrider1 )
 	{
-		if (m_pGuardPath)
+		if ( m_pGuardPath )
+		{
 			StriderGuard();
+		}
 		else
 		{
 			inputdata_t id_temp;
@@ -77,8 +79,8 @@ void CAI_StriderFinale::StriderFollowPlayer()
 			m_npcStrider1->InputSetTargetPath(id_temp);
 
 			// Update last player position
-			CBaseEntity *pPlayer = UTIL_GetLocalPlayer();
-			if (pPlayer)
+			CBasePlayer *pPlayer = AI_GetSinglePlayer();
+			if ( pPlayer )
 				m_vLastPos = pPlayer->GetAbsOrigin();
 		}
 	}
@@ -88,7 +90,7 @@ void CAI_StriderFinale::StriderFollowPlayer()
 // This function is only called whenever slot 2 is filled or a new patrol path is set
 void CAI_StriderFinale::StriderPatrol()
 {
-	if (m_npcStrider2 && m_pPatrolPath)
+	if ( m_npcStrider2 && m_pPatrolPath )
 	{
 		inputdata_t id_temp;
 		id_temp.value.SetString( m_pPatrolPath->GetEntityName() );
@@ -100,7 +102,7 @@ void CAI_StriderFinale::StriderPatrol()
 // This function is only called whenever slot 2 is filled or a new patrol path is set
 void CAI_StriderFinale::StriderGuard()
 {
-	if (m_npcStrider1 && m_pGuardPath)
+	if ( m_npcStrider1 && m_pGuardPath )
 	{
 		inputdata_t id_temp;
 		id_temp.value.SetString( m_pGuardPath->GetEntityName() );
@@ -146,7 +148,7 @@ void CAI_StriderFinale::FillRoles()
 		if ( !m_npcStrider2 || !m_npcStrider2->IsAlive() || m_npcStrider2 == m_npcStrider1 )
 		{
 			m_npcStrider2 = dynamic_cast<CNPC_Strider*>( gEntList.FindEntityByName( NULL, m_iszStrider2 ) );
-		
+
 			// If no strider found or both slot 1 & 2 are assigned to the same strider than try strider 3
 			if ( !m_npcStrider2 || !m_npcStrider2->IsAlive() || m_npcStrider2 == m_npcStrider1 )
 			{
@@ -165,12 +167,12 @@ void CAI_StriderFinale::FillRoles()
 	}
 
 	// If strider 2 is closer to the player than strider 1 than swap roles
-	//		also only swap if any roles were recently updated
-	//		this prevents issue where a patrol strider could get closer and cause swap pattern
+	// also only swap if any roles were recently updated
+	// this prevents issue where a patrol strider could get closer and cause swap pattern
 	if ( m_npcStrider1 && m_npcStrider2 && bUpdated )
 	{
-		CBaseEntity *pPlayer = UTIL_GetLocalPlayer();
-			
+		CBasePlayer *pPlayer = AI_GetSinglePlayer();
+
 		if ( m_npcStrider1->StriderEnemyDistance(pPlayer) > m_npcStrider2->StriderEnemyDistance(pPlayer) )
 		{
 			CNPC_Strider *pTemp = m_npcStrider1;

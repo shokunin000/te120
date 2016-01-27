@@ -1,6 +1,6 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 //=============================================================================//
 
@@ -16,6 +16,9 @@
 #include "view.h"
 #include "view_scene.h"
 #include "beamdraw.h"
+
+// memdbgon must be the last include file in a .cpp file!!!
+#include "tier0/memdbgon.h"
 
 // Precache our effects
 CLIENTEFFECT_REGISTER_BEGIN( PrecacheEffectGravityBall )
@@ -36,7 +39,7 @@ IMPLEMENT_CLIENTCLASS_DT( C_PropGravityBall, DT_PropGravityBall, CPropGravityBal
 END_RECV_TABLE()
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 C_PropGravityBall::C_PropGravityBall( void )
 {
@@ -46,8 +49,8 @@ C_PropGravityBall::C_PropGravityBall( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : updateType - 
+// Purpose:
+// Input  : updateType -
 //-----------------------------------------------------------------------------
 void C_PropGravityBall::OnDataChanged( DataUpdateType_t updateType )
 {
@@ -61,7 +64,7 @@ void C_PropGravityBall::OnDataChanged( DataUpdateType_t updateType )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 // Output : RenderGroup_t
 //-----------------------------------------------------------------------------
 RenderGroup_t C_PropGravityBall::GetRenderGroup( void )
@@ -106,7 +109,7 @@ bool C_PropGravityBall::InitMaterials( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void C_PropGravityBall::DrawMotionBlur( void )
 {
@@ -114,9 +117,9 @@ void C_PropGravityBall::DrawMotionBlur( void )
 
 	Vector	vecDir = GetAbsOrigin() - m_vecLastOrigin;
 	float	speed = VectorNormalize( vecDir );
-	
+
 	speed = clamp( speed, 0, 32 );
-	
+
 	float	stepSize = min( ( speed * 0.5f ), 4.0f );
 
 	Vector	spawnPos = GetAbsOrigin();
@@ -139,7 +142,7 @@ void C_PropGravityBall::DrawMotionBlur( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void C_PropGravityBall::DrawFlicker( void )
 {
@@ -162,15 +165,15 @@ void C_PropGravityBall::DrawFlicker( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : pMaterial - 
-//			source - 
-//			color - 
+// Purpose:
+// Input  : pMaterial -
+//			source -
+//			color -
 //-----------------------------------------------------------------------------
 void DrawHaloOrientedG( const Vector& source, float scale, float const *color, float roll )
 {
 	Vector point, screen;
-	
+
 	CMatRenderContextPtr pRenderContext( materials );
 	IMesh* pMesh = pRenderContext->GetDynamicMesh();
 
@@ -218,21 +221,21 @@ void DrawHaloOrientedG( const Vector& source, float scale, float const *color, f
 	VectorMA (point, scale, right, point);
 	meshBuilder.Position3fv (point.Base());
 	meshBuilder.AdvanceVertex();
-	
+
 	meshBuilder.End();
 	pMesh->Draw();
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : flags - 
+// Purpose:
+// Input  : flags -
 // Output : int
 //-----------------------------------------------------------------------------
 int C_PropGravityBall::DrawModel( int flags )
 {
 	if ( !m_bEmit )
 		return 0;
-	
+
 	// Make sure our materials are cached
 	if ( !InitMaterials() )
 	{
@@ -243,7 +246,7 @@ int C_PropGravityBall::DrawModel( int flags )
 
 	// Draw the flickering overlay
 	DrawFlicker();
-	
+
 	// Draw the motion blur from movement
 	if ( m_bHeld || m_bLaunched )
 	{
@@ -275,15 +278,15 @@ int C_PropGravityBall::DrawModel( int flags )
 		pRenderContext->Bind( m_pBodyMaterial, (C_BaseEntity*) this );
 		DrawHaloOrientedG( GetAbsOrigin(), m_flRadius + sinOffs, color, roll );
 	}
-	
+
 	m_vecLastOrigin = GetAbsOrigin();
 
 	return 1;
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : &data - 
+// Purpose:
+// Input  : &data -
 //-----------------------------------------------------------------------------
 void GravityBallImpactCallback( const CEffectData &data )
 {
@@ -292,30 +295,30 @@ void GravityBallImpactCallback( const CEffectData &data )
 				data.m_vNormal,
 				data.m_flRadius * 10.0f,
 				0,
-				0.75f, 
+				0.75f,
 				1.0f,
 				0.0f,
 				0.4f,
-				random->RandomInt( 0, 360 ), 
+				random->RandomInt( 0, 360 ),
 				0,
-				Vector( 1.0f, 1.0f, 1.0f ), 
-				0.25f, 
+				Vector( 1.0f, 1.0f, 1.0f ),
+				0.25f,
 				"effects/combinemuzzle1b_nocull",
 				(FXQUAD_BIAS_SCALE|FXQUAD_BIAS_ALPHA) );
 
 	// Lingering burn
 	FX_AddQuad( data.m_vOrigin,
-				data.m_vNormal, 
+				data.m_vNormal,
 				data.m_flRadius * 2.0f,
 				data.m_flRadius * 4.0f,
-				0.75f, 
+				0.75f,
 				1.0f,
 				0.0f,
 				0.4f,
-				random->RandomInt( 0, 360 ), 
+				random->RandomInt( 0, 360 ),
 				0,
-				Vector( 1.0f, 1.0f, 1.0f ), 
-				0.5f, 
+				Vector( 1.0f, 1.0f, 1.0f ),
+				0.5f,
 				"effects/combinemuzzle2b_nocull",
 				(FXQUAD_BIAS_SCALE|FXQUAD_BIAS_ALPHA) );
 

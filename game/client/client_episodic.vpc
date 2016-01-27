@@ -15,7 +15,7 @@ $Configuration
 	$Compiler
 	{
 		$AdditionalIncludeDirectories	".\hl2;.\hl2\elements;$SRCDIR\game\shared\hl2;$SRCDIR\game\shared\episodic;..\..\public;$BASE"
-		$PreprocessorDefinitions		"$BASE;HL2_CLIENT_DLL;HL2_EPISODIC;SOURCE_2013"
+		$PreprocessorDefinitions		"$BASE;HL2_CLIENT_DLL;HL2_EPISODIC;SOURCE_2013"//TE120
 	}
 }
 
@@ -26,11 +26,14 @@ $Project "Client (Episodic)"
 		$File	"hud_chat.cpp"
 		$File	"c_team_objectiveresource.cpp"
 		$File	"c_team_objectiveresource.h"
-		//TE120---------------------------------------------------
+//TE120--
+		$File	"c_te120_stats.cpp"
 		$File	"c_weapon_physconcussion.cpp"
-		$File	"ge_screeneffects.cpp"
-		$File	"ge_screeneffects.h"
-		//------------------------------------------------------------
+		$File	"c_entgloweffect.cpp"
+		$File	"c_entgloweffect.h"
+		$File	"worldlight.cpp"
+		$File	"worldlight.h"
+//TE120--
 
 		$Folder	"HL2 DLL"
 		{
@@ -38,6 +41,7 @@ $Project "Client (Episodic)"
 			$File	"$SRCDIR\game\shared\episodic\achievements_ep1.cpp"
 			$File	"$SRCDIR\game\shared\episodic\achievements_ep2.cpp"
 			$File	"$SRCDIR\game\shared\episodic\achievements_epx.cpp"
+			$File	"$SRCDIR\game\shared\episodic\achievements_te120.cpp"//TE120
 			$File	"hl2\c_antlion_dust.cpp"
 			$File	"hl2\c_ar2_explosion.cpp"
 			$File	"hl2\c_barnacle.cpp"
@@ -65,10 +69,10 @@ $Project "Client (Episodic)"
 			$File	"hl2\c_plasma_beam_node.cpp"
 			$File	"hl2\c_prop_combine_ball.cpp"
 			$File	"hl2\c_prop_combine_ball.h"
-			//TE120---------------------------------------------------
+//TE120--
 			$File	"hl2\c_prop_gravity_ball.cpp"
 			$File	"hl2\c_prop_gravity_ball.h"
-			//-------------------------------------------------------------
+//TE120--
 			$File	"episodic\c_prop_scalable.cpp"
 			$File	"hl2\c_rotorwash.cpp"
 			$File	"hl2\c_script_intro.cpp"
@@ -120,11 +124,11 @@ $Project "Client (Episodic)"
 			$File	"hl2\hud_damageindicator.cpp"
 			$File	"hl2\hud_flashlight.cpp"
 			$File	"hl2\hud_locator.cpp"
-			//TE120---------------------------------------------------
+//TE120--
 			$File	"hl2\hud_locator.h"
-			//-------------------------------------------------------------
+//TE120--
 			$File	"hl2\hud_health.cpp"
-			$File	"hl2\hud_poisondamageindicator.cpp"			
+			$File	"hl2\hud_poisondamageindicator.cpp"
 			$File	"hud_posture.cpp"
 			$File	"hl2\hud_quickinfo.cpp"
 			$File	"hl2\hud_radar.cpp"
@@ -139,8 +143,9 @@ $Project "Client (Episodic)"
 			$File	"hl2\vgui_rootpanel_hl2.cpp"
 			$File	"episodic\c_npc_puppet.cpp"
 		}
+//TE120--
 		// Remove [$WIN32] to allow ShaderEditor build on any OS
-		$Folder "Shader Editor" [$WIN32]
+		$Folder "Shader Editor"
 		{
 			$Folder	"Header Files"
 			{
@@ -149,14 +154,14 @@ $Project "Client (Episodic)"
 				$File	"$SRCDIR\game\client\shadereditor\shadereditorsystem.h"
 				$File	"$SRCDIR\game\client\shadereditor\sedit_modelrender.h"
 			}
- 
+
 			$Folder	"Implementation Files"
 			{
 				$File	"$SRCDIR\game\client\shadereditor\shadereditorsystem.cpp"
 				$File	"$SRCDIR\game\client\shadereditor\sedit_modelrender.cpp"
 			}
 		}
-
+//TE120--
 	}
-	
+
 }

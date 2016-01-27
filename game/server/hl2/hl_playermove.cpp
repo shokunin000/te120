@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //=============================================================================//
@@ -85,7 +85,7 @@ void CHLPlayerMove::SetupMove( CBasePlayer *player, CUserCmd *ucmd, IMoveHelper 
 
 		if ( pVehicle )
 		{
-			pVehicle->SetupMove( player, ucmd, pHelper, move ); 
+			pVehicle->SetupMove( player, ucmd, pHelper, move );
 
 			if ( !m_bWasInVehicle )
 			{
@@ -110,7 +110,7 @@ void CHLPlayerMove::FinishMove( CBasePlayer *player, CUserCmd *ucmd, CMoveData *
 	// Call the default FinishMove code.
 	BaseClass::FinishMove( player, ucmd, move );
 	if ( gpGlobals->frametime != 0 )
-	{		
+	{
 		float distance = 0.0f;
 		IServerVehicle *pVehicle = player->GetVehicle();
 		if ( pVehicle )
@@ -126,7 +126,7 @@ void CHLPlayerMove::FinishMove( CBasePlayer *player, CUserCmd *ucmd, CMoveData *
 					distance = 0.0f;
 				m_vecSaveOrigin = newPos;
 			}
-			
+
 			CPropVehicleDriveable *driveable = dynamic_cast< CPropVehicleDriveable * >( player->GetVehicleEntity() );
 			if ( driveable )
 			{
@@ -154,6 +154,14 @@ void CHLPlayerMove::FinishMove( CBasePlayer *player, CUserCmd *ucmd, CMoveData *
 		if ( distance > 0 )
 		{
 			gamestats->Event_PlayerTraveled( player, distance, pVehicle ? true : false, !pVehicle && static_cast< CHL2_Player * >( player )->IsSprinting() );
+//TE120
+			float fCurrentStatValue;
+			steamapicontext->SteamUserStats()->GetStat( "stat_meters_traveled", &fCurrentStatValue );
+			DevMsg( "Current stat_meters_traveled value: %f\n", fCurrentStatValue );
+			steamapicontext->SteamUserStats()->SetStat( "stat_meters_traveled", fCurrentStatValue + ( distance * 0.0254f ) ); // convert inches to meters
+			steamapicontext->SteamUserStats()->StoreStats();
+			DevMsg( "New stat_meters_traveled value: %f\n", fCurrentStatValue );
+//TE120
 		}
 	}
 

@@ -68,7 +68,7 @@ ClientModeHLNormal::ClientModeHLNormal()
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 ClientModeHLNormal::~ClientModeHLNormal()
 {
@@ -76,7 +76,7 @@ ClientModeHLNormal::~ClientModeHLNormal()
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void ClientModeHLNormal::Init()
 {
@@ -94,6 +94,3 @@ bool ClientModeHLNormal::ShouldDrawCrosshair( void )
 {
 	return ( g_bRollingCredits == false );
 }
-
-
-

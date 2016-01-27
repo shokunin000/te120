@@ -30,16 +30,16 @@ static CHudTexture *FindHudTextureInDict( CUtlDict< CHudTexture *, int >& list, 
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Output : 
+// Purpose:
+// Output :
 //-----------------------------------------------------------------------------
 WeaponsResource::WeaponsResource( void )
 {
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Output : 
+// Purpose:
+// Output :
 //-----------------------------------------------------------------------------
 WeaponsResource::~WeaponsResource( void )
 {
@@ -54,7 +54,7 @@ void WeaponsResource::Init( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void WeaponsResource::Reset( void )
 {
@@ -79,7 +79,7 @@ void WeaponsResource::LoadAllWeaponSprites( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void WeaponsResource::LoadWeaponSprites( WEAPON_FILE_INFO_HANDLE hWeaponFileInfo )
 {
@@ -132,14 +132,13 @@ void WeaponsResource::LoadWeaponSprites( WEAPON_FILE_INFO_HANDLE hWeaponFileInfo
 	{
 		pWeaponInfo->iconAutoaim = gHUD.AddUnsearchableHudIconToList( *p );
 	}
-	//TE120-----------------------
+//TE120--
 	p = FindHudTextureInDict( tempList, "crosshair_use" );
 	if ( p )
 	{
 		pWeaponInfo->iconCrosshairUse = gHUD.AddUnsearchableHudIconToList( *p );
 	}
-	//TE120----------------------------------
-
+//TE120--
 	p = FindHudTextureInDict( tempList, "zoom" );
 	if ( p )
 	{
@@ -160,7 +159,7 @@ void WeaponsResource::LoadWeaponSprites( WEAPON_FILE_INFO_HANDLE hWeaponFileInfo
 		pWeaponInfo->iconZoomedAutoaim = pWeaponInfo->iconZoomedCrosshair;  //default to zoomed crosshair
 	}
 
-	CHudHistoryResource *pHudHR = GET_HUDELEMENT( CHudHistoryResource );	
+	CHudHistoryResource *pHudHR = GET_HUDELEMENT( CHudHistoryResource );
 	if( pHudHR )
 	{
 		p = FindHudTextureInDict( tempList, "weapon" );
@@ -275,4 +274,3 @@ const FileWeaponInfo_t *WeaponsResource::GetWeaponFromAmmo( int iAmmoId )
 
 	return NULL;
 }
-

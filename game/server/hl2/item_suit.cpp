@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //
@@ -28,11 +28,11 @@ public:
 	DECLARE_CLASS( CItemSuit, CItem );
 
 	void Spawn( void )
-	{ 
+	{
 		Precache( );
 		SetModel( "models/items/hevsuit.mdl" );
 		BaseClass::Spawn( );
-		
+
 		CollisionProp()->UseTriggerBounds( false, 0 );
 	}
 	void Precache( void )
@@ -44,15 +44,8 @@ public:
 		if ( pPlayer->IsSuitEquipped() )
 			return FALSE;
 
-		/*//TE120----commented out //Disabled suit sound on spawn
-		if ( m_spawnflags & SF_SUIT_SHORTLOGON )
-			UTIL_EmitSoundSuit(pPlayer->edict(), "!HEV_A0");		// short version of suit logon,
-		else
-			UTIL_EmitSoundSuit(pPlayer->edict(), "!HEV_AAx");	// long version of suit logon
-		*///TE120----commented out
-
 		pPlayer->EquipSuit();
-				
+
 		return true;
 	}
 };

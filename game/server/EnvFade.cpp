@@ -7,7 +7,7 @@
 
 #include "cbase.h"
 #include "shake.h"
-#include "te_effect_dispatch.h"//TE120-------------
+#include "te_effect_dispatch.h"//TE120
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -59,10 +59,12 @@ END_DATADESC()
 #define SF_FADE_MODULATE		0x0002		// Modulate, don't blend
 #define SF_FADE_ONLYONE			0x0004
 #define SF_FADE_STAYOUT			0x0008
+//TE120--
 #define SF_FADE_DONTDIRTY		0x0010		// If true dont fade dirty lens
+//TE120--
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CEnvFade::Spawn( void )
 {
@@ -83,24 +85,23 @@ void CEnvFade::InputFade( inputdata_t &inputdata )
 	else
 	{
 		fadeFlags |= FFADE_OUT;
-
-		//TE120-------------
+//TE120--
 		if ( m_spawnflags & SF_FADE_DONTDIRTY )
-		{
-			// Hack: If SF_FADE_DONTDIRTY flag is set, disable but
-			// fade back to on.
-			CEffectData	data;
-			data.m_flScale = 0;
-			DispatchEffect( "CE_DisableDirtyLensFade", data );
-		}
-		else
-		{
-			// Otherwise turn off and stay off
-			CEffectData	data;
-			data.m_flScale = 0;
-			DispatchEffect( "CE_DisableDirtyLens", data );
-		}
-		//TE120-------------
+ 		{
+ 			// Hack: If SF_FADE_DONTDIRTY flag is set, disable but
+ 			// fade back to on.
+ 			CEffectData	data;
+ 			data.m_flScale = 0;
+ 			DispatchEffect( "CE_DisableDirtyLensFade", data );
+ 		}
+ 		else
+ 		{
+ 			// Otherwise turn off and stay off
+ 			CEffectData	data;
+ 			data.m_flScale = 0;
+ 			DispatchEffect( "CE_DisableDirtyLens", data );
+ 		}
+//TE120--
 	}
 
 	if ( m_spawnflags & SF_FADE_MODULATE )
@@ -143,7 +144,7 @@ static void GetFadeParms( const CCommand &args, float &flTime, color32 &clrFade)
 	{
 		flTime = atof( args[1] );
 	}
-	
+
 	clrFade.r = 0;
 	clrFade.g = 0;
 	clrFade.b = 0;
@@ -198,11 +199,11 @@ static ConCommand fadein("fadein", CC_FadeIn, "fadein {time r g b}: Fades the sc
 // Purpose: Draw any debug text overlays
 // Output : Current text offset from the top
 //-----------------------------------------------------------------------------
-int CEnvFade::DrawDebugTextOverlays( void ) 
+int CEnvFade::DrawDebugTextOverlays( void )
 {
 	int text_offset = BaseClass::DrawDebugTextOverlays();
 
-	if (m_debugOverlays & OVERLAY_TEXT_BIT) 
+	if (m_debugOverlays & OVERLAY_TEXT_BIT)
 	{
 		char tempstr[512];
 

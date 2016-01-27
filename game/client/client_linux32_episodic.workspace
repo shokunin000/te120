@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CodeLite_Workspace Name="client_linux32_episodic" Database="./client_linux32_episodic.tags">
+  <BuildMatrix>
+    <WorkspaceConfiguration Name="Debug" Selected="yes"/>
+    <WorkspaceConfiguration Name="Release" Selected="no"/>
+  </BuildMatrix>
+</CodeLite_Workspace>

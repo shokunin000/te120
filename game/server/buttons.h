@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 //=============================================================================
 
@@ -47,17 +47,18 @@ protected:
 	void InputPress( inputdata_t &inputdata );
 	void InputPressIn( inputdata_t &inputdata );
 	void InputPressOut( inputdata_t &inputdata );
-
-	void InputEnable( inputdata_t &inputdata );//TE120----
-	void InputDisable( inputdata_t &inputdata );//TE120----
+//TE120--
+	void InputEnable( inputdata_t &inputdata );
+	void InputDisable( inputdata_t &inputdata );
+//TE120--
 
 	virtual int OnTakeDamage( const CTakeDamageInfo &info );
-	
+
 	enum BUTTON_CODE { BUTTON_NOTHING, BUTTON_ACTIVATE, BUTTON_RETURN, BUTTON_PRESS };
 
 	BUTTON_CODE	ButtonResponseToTouch( void );
 	void Press( CBaseEntity *pActivator, BUTTON_CODE eCode );
-	
+
 	DECLARE_DATADESC();
 
 	virtual int	ObjectCaps(void);
@@ -68,10 +69,10 @@ protected:
 	bool	m_fRotating;		// a rotating button?  default is a sliding button.
 
 	locksound_t m_ls;			// door lock sounds
-	
+
 	byte	m_bLockedSound;		// ordinals from entity selection
-	byte	m_bLockedSentence;	
-	byte	m_bUnlockedSound;	
+	byte	m_bLockedSentence;
+	byte	m_bUnlockedSound;
 	byte	m_bUnlockedSentence;
 	bool	m_bLocked;
 	int		m_sounds;
@@ -139,8 +140,7 @@ public:
 	void InputSetPositionImmediately( inputdata_t &inputdata );
 	void InputDisableUpdateTarget( inputdata_t &inputdata );
 	void InputEnableUpdateTarget( inputdata_t &inputdata );
-	void InputSetSpeed( inputdata_t &inputdata );//TE120----
-
+	void InputSetSpeed( inputdata_t &inputdata );//TE120
 	void InputEnable( inputdata_t &inputdata );
 	void InputDisable( inputdata_t &inputdata );
 

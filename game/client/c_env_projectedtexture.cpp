@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 //=============================================================================
 
@@ -16,13 +16,14 @@
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
-//TE120--changed mat_slopescaledepthbias_shadowmap to mat_slopescaledepthbias_shadowmap_alt
-static ConVar mat_slopescaledepthbias_shadowmap_alt( "mat_slopescaledepthbias_shadowmap_alt", "16", FCVAR_CHEAT );
-static ConVar mat_depthbias_shadowmap_alt(	"mat_depthbias_shadowmap_alt", "0.0005", FCVAR_CHEAT  );
-//TE120---------------------------
+
+//TE120--
+static ConVar mat_slopescaledepthbias_shadowmap( "mat_slopescaledepthbias_shadowmap", "4", FCVAR_CHEAT );
+static ConVar mat_depthbias_shadowmap( "mat_depthbias_shadowmap", "0.00001", FCVAR_CHEAT );
+//TE120--
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 class C_EnvProjectedTexture : public C_BaseEntity
 {
@@ -34,7 +35,7 @@ public:
 	void	ShutDownLightHandle( void );
 
 	virtual void Simulate();
-	virtual void CreateShadow();//TE120
+	virtual void CreateShadow();
 
 	void	UpdateLight( bool bForceUpdate );
 
@@ -100,8 +101,8 @@ void C_EnvProjectedTexture::ShutDownLightHandle( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : updateType - 
+// Purpose:
+// Input  : updateType -
 //-----------------------------------------------------------------------------
 void C_EnvProjectedTexture::OnDataChanged( DataUpdateType_t updateType )
 {
@@ -109,7 +110,7 @@ void C_EnvProjectedTexture::OnDataChanged( DataUpdateType_t updateType )
 	BaseClass::OnDataChanged( updateType );
 }
 
-//TE120-----------------------------------
+//TE120--
 void C_EnvProjectedTexture::CreateShadow()
 {
 	if ( m_bState == true )
@@ -117,7 +118,7 @@ void C_EnvProjectedTexture::CreateShadow()
 		BaseClass::CreateShadow();
 	}
 }
-//TE120------------------------------------
+//TE120--
 
 void C_EnvProjectedTexture::UpdateLight( bool bForceUpdate )
 {
@@ -144,11 +145,11 @@ void C_EnvProjectedTexture::UpdateLight( bool bForceUpdate )
 			if( pPlayer )
 			{
 				const QAngle playerAngles = pPlayer->GetAbsAngles();
-				
+
 				Vector vPlayerForward, vPlayerRight, vPlayerUp;
 				AngleVectors( playerAngles, &vPlayerForward, &vPlayerRight, &vPlayerUp );
 
-            				matrix3x4_t	mRotMatrix;
+            	matrix3x4_t	mRotMatrix;
 				AngleMatrix( angles, mRotMatrix );
 
 				VectorITransform( vPlayerForward, mRotMatrix, vForward );
@@ -200,10 +201,10 @@ void C_EnvProjectedTexture::UpdateLight( bool bForceUpdate )
 	state.m_Color[3] = 0.0f; // fixme: need to make ambient work m_flAmbient;
 	state.m_NearZ = m_flNearZ;
 	state.m_FarZ = m_flFarZ;
-	//TE120--changed
-	state.m_flShadowSlopeScaleDepthBias = mat_slopescaledepthbias_shadowmap_alt.GetFloat();
-	state.m_flShadowDepthBias = mat_depthbias_shadowmap_alt.GetFloat();
-	//TE120-----------changed
+	//TE120--
+	//state.m_flShadowSlopeScaleDepthBias = mat_slopescaledepthbias_shadowmap.GetFloat();
+	//state.m_flShadowDepthBias = mat_depthbias_shadowmap.GetFloat();
+	//TE120--
 	state.m_bEnableShadows = m_bEnableShadows;
 	state.m_pSpotlightTexture = materials->FindTexture( m_SpotlightTextureName, TEXTURE_GROUP_OTHER, false );
 	state.m_nSpotlightTextureFrame = m_nSpotlightTextureFrame;
@@ -233,18 +234,12 @@ void C_EnvProjectedTexture::UpdateLight( bool bForceUpdate )
 
 	g_pClientShadowMgr->SetFlashlightLightWorld( m_LightHandle, m_bLightWorld );
 
-//TE120 commented out
-	// if ( bForceUpdate == false )
-	// {
-		g_pClientShadowMgr->UpdateProjectedTexture( m_LightHandle, true );
-	// }
-//TE120
+	g_pClientShadowMgr->UpdateProjectedTexture( m_LightHandle, true );
 }
 
 void C_EnvProjectedTexture::Simulate( void )
 {
-	UpdateLight( GetMoveParent() != NULL ); //TE120 changed
+	UpdateLight( GetMoveParent() != NULL );
 
 	BaseClass::Simulate();
 }
-

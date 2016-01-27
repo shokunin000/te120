@@ -3,13 +3,13 @@
 // Purpose:
 //		-	Handles model rendering requests from the
 //			shader editor library
-// 
+//
 // ******************************************************
 
 #include "cbase.h"
 
-#include "vgui/iinput.h"
-#include "vgui_controls/controls.h"
+#include "vgui/IInput.h"
+#include "vgui_controls/Controls.h"
 
 #include "shadereditor/sedit_modelrender.h"
 #include "model_types.h"
@@ -22,6 +22,9 @@
 #include "input.h"
 
 #include "beamdraw.h"
+
+// memdbgon must be the last include file in a .cpp file!!!
+#include "tier0/memdbgon.h"
 
 #ifdef SOURCE_2006
 void ScreenToWorld( int mousex, int mousey, float fov,
@@ -42,7 +45,7 @@ void ScreenToWorld( int mousex, int mousey, float fov,
 	dx = (float)mousex - c_x;
 	dy = c_y - (float)mousey;
 
-	float dist_denom = tan(M_PI * scaled_fov / 360.0f); 
+	float dist_denom = tan(M_PI * scaled_fov / 360.0f);
 	dist = c_x / dist_denom;
 	AngleVectors( vecRenderAngles, &vpn, &vright, &vup );
 	vecPickingRay = vpn * dist + vright * ( dx ) + vup * ( dy );
@@ -144,7 +147,7 @@ bool SEditModelRender::LoadModel( const char *localPath )
 
 	pEnt->SetAbsAngles( vec3_angle );
 	pEnt->SetAbsOrigin( vec3_origin );
-	
+
 	pEnt->AddEffects( EF_NODRAW | EF_NOINTERP );
 	pEnt->m_EntClientFlags |= ENTCLIENTFLAG_DONTUSEIK;
 
@@ -375,7 +378,7 @@ int SEditModelRender::MaterialPicker( char ***szMat )
 				for ( int p = 0; p < numPaths; p++ )
 				{
 					char tmpPath[MAX_PATH];
-					Q_snprintf( tmpPath, MAX_PATH, "%s%s\0", pSHdr->pCdtexture( p ), matName );
+					Q_snprintf( tmpPath, MAX_PATH, "%s%s", pSHdr->pCdtexture( p ), matName );
 					Q_FixSlashes( tmpPath );
 					IMaterial *pTempMat = materials->FindMaterial( tmpPath, TEXTURE_GROUP_MODEL );
 					if ( !IsErrorMaterial( pTempMat ) )

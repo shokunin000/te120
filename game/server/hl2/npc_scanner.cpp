@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 //=============================================================================//
 
@@ -45,7 +45,7 @@ extern IMaterialSystemHardwareConfig *g_pMaterialSystemHardwareConfig;
 #define SCANNER_SOUND_INSPECT_LENGTH	5		// How long does the inspection last
 
 #define SCANNER_HINT_INSPECT_DELAY		15		// Check for hint nodes this often
-	
+
 #define	SPOTLIGHT_WIDTH					32
 
 #define SCANNER_SPOTLIGHT_NEAR_DIST		64
@@ -189,7 +189,7 @@ LINK_ENTITY_TO_CLASS(npc_cscanner, CNPC_CScanner);
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 CNPC_CScanner::CNPC_CScanner()
 {
@@ -220,7 +220,7 @@ CNPC_CScanner::CNPC_CScanner()
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CNPC_CScanner::Spawn(void)
 {
@@ -230,7 +230,7 @@ void CNPC_CScanner::Spawn(void)
 		DevMsg("CNPC_CScanner::Spawn: Invalid spotlight length <= 0, setting to 500\n");
 		m_flSpotlightMaxLength = 500;
 	}
-	
+
 	if (m_flSpotlightGoalWidth <= 0)
 	{
 		DevMsg("CNPC_CScanner::Spawn: Invalid spotlight width <= 0, setting to 100\n");
@@ -240,7 +240,17 @@ void CNPC_CScanner::Spawn(void)
 	if (m_flSpotlightGoalWidth > MAX_BEAM_WIDTH )
 	{
 		DevMsg("CNPC_CScanner::Spawn: Invalid spotlight width %.1f (max %.1f).\n", m_flSpotlightGoalWidth, MAX_BEAM_WIDTH );
-		m_flSpotlightGoalWidth = MAX_BEAM_WIDTH; 
+		m_flSpotlightGoalWidth = MAX_BEAM_WIDTH;
+	}
+
+	if ( IsStriderScout() )
+	{
+		// Streetwar scanners are claw scanners
+		m_bIsClawScanner = true;
+	}
+	else
+	{
+		m_bIsClawScanner = false;
 	}
 
 	Precache();
@@ -258,7 +268,7 @@ void CNPC_CScanner::Spawn(void)
 	m_iMaxHealth = m_iHealth;
 
 	// ------------------------------------
-	//	Init all class vars 
+	//	Init all class vars
 	// ------------------------------------
 	m_vInspectPos			= vec3_origin;
 	m_fInspectEndTime		= 0;
@@ -330,7 +340,7 @@ int CNPC_CScanner::OnTakeDamage_Alive( const CTakeDamageInfo &info )
 
 	return (BaseClass::OnTakeDamage_Alive( info ));
 }
-	
+
 //------------------------------------------------------------------------------
 // Purpose:
 //------------------------------------------------------------------------------
@@ -377,17 +387,17 @@ void CNPC_CScanner::Gib( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : pInflictor - 
-//			pAttacker - 
-//			flDamage - 
-//			bitsDamageType - 
+// Purpose:
+// Input  : pInflictor -
+//			pAttacker -
+//			flDamage -
+//			bitsDamageType -
 //-----------------------------------------------------------------------------
 void CNPC_CScanner::Event_Killed( const CTakeDamageInfo &info )
 {
 	// Copy off the takedamage info that killed me, since we're not going to call
 	// up into the base class's Event_Killed() until we gib. (gibbing is ultimate death)
-	m_KilledInfo = info;	
+	m_KilledInfo = info;
 
 	DeployMine();
 
@@ -408,9 +418,9 @@ void CNPC_CScanner::Event_Killed( const CTakeDamageInfo &info )
 	{
 		Vector vecDelta = GetLocalOrigin() - GetEnemy()->GetLocalOrigin();
 		if ( ( vecDelta.z > 120 ) && ( vecDelta.Length() > 360 ) )
-		{	
+		{
 			// If I'm divebombing, don't take any more damage. It will make Event_Killed() be called again.
-			// This is especially bad if someone machineguns the divebombing scanner. 
+			// This is especially bad if someone machineguns the divebombing scanner.
 			AttackDivebomb();
 			return;
 		}
@@ -422,7 +432,7 @@ void CNPC_CScanner::Event_Killed( const CTakeDamageInfo &info )
 
 //-----------------------------------------------------------------------------
 // Purpose: Tells use whether or not the NPC cares about a given type of hint node.
-// Input  : sHint - 
+// Input  : sHint -
 // Output : TRUE if the NPC is interested in this hint type, FALSE if not.
 //-----------------------------------------------------------------------------
 bool CNPC_CScanner::FValidateHintType(CAI_Hint *pHint)
@@ -432,10 +442,10 @@ bool CNPC_CScanner::FValidateHintType(CAI_Hint *pHint)
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : Type - 
+// Purpose:
+// Input  : Type -
 //-----------------------------------------------------------------------------
-int CNPC_CScanner::TranslateSchedule( int scheduleType ) 
+int CNPC_CScanner::TranslateSchedule( int scheduleType )
 {
 	switch ( scheduleType )
 	{
@@ -451,9 +461,9 @@ int CNPC_CScanner::TranslateSchedule( int scheduleType )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : idealActivity - 
-//			*pIdealWeaponActivity - 
+// Purpose:
+// Input  : idealActivity -
+//			*pIdealWeaponActivity -
 // Output : int
 //-----------------------------------------------------------------------------
 Activity CNPC_CScanner::NPC_TranslateActivity( Activity eNewActivity )
@@ -526,7 +536,7 @@ void CNPC_CScanner::NPCThink(void)
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CNPC_CScanner::Precache(void)
 {
@@ -562,7 +572,7 @@ void CNPC_CScanner::Precache(void)
 		PrecacheModel("models/combine_scanner.mdl");
 
 		PrecacheModel("models/gibs/scanner_gib01.mdl" );
-		PrecacheModel("models/gibs/scanner_gib02.mdl" );	
+		PrecacheModel("models/gibs/scanner_gib02.mdl" );
 		PrecacheModel("models/gibs/scanner_gib02.mdl" );
 		PrecacheModel("models/gibs/scanner_gib04.mdl" );
 		PrecacheModel("models/gibs/scanner_gib05.mdl" );
@@ -629,7 +639,7 @@ bool CNPC_CScanner::IsValidInspectTarget(CBaseEntity *pEntity)
 		}
 	}
 
-	// Make sure no other squad member has already chosen to 
+	// Make sure no other squad member has already chosen to
 	// inspect this entity
 	if (m_pSquad)
 	{
@@ -713,10 +723,10 @@ CBaseEntity* CNPC_CScanner::BestInspectTarget(void)
 			}
 		}
 	}
-	
+
 	// NPCs
 	CAI_BaseNPC **ppAIs = g_AI_Manager.AccessAIs();
-	
+
 	for ( i = 0; i < g_AI_Manager.NumAIs(); i++ )
 	{
 		if ( ppAIs[i] != this && vSearchOrigin.DistToSqr(ppAIs[i]->GetAbsOrigin()) < fSearchDistSq )
@@ -749,7 +759,7 @@ CBaseEntity* CNPC_CScanner::BestInspectTarget(void)
 				if ( IsValidInspectTarget( pEntity ) )
 				{
 					fBestDist	= fTestDist;
-					pBestEntity	= pEntity; 
+					pBestEntity	= pEntity;
 				}
 			}
 		}
@@ -766,7 +776,7 @@ void CNPC_CScanner::SetInspectTargetToEnt(CBaseEntity *pEntity, float fInspectDu
 {
 	ClearInspectTarget();
 	SetTarget(pEntity);
-	
+
 	m_fInspectEndTime = gpGlobals->curtime + fInspectDuration;
 }
 
@@ -789,10 +799,10 @@ void CNPC_CScanner::SetInspectTargetToHint(CAI_Hint *pHint, float fInspectDurati
 	pHint->GetPosition( this, &vHintOrigin );
 
 	Vector vHintEnd	= vHintOrigin + (vHintDir * 512);
-	
+
 	trace_t tr;
 	AI_TraceLine ( vHintOrigin, vHintEnd, MASK_BLOCKLOS, this, COLLISION_GROUP_NONE, &tr);
-	
+
 	if ( g_debug_cscanner.GetBool() )
 	{
 		NDebugOverlay::Line( vHintOrigin, tr.endpos, 255, 0, 0, true, 4.0f );
@@ -860,7 +870,7 @@ bool CNPC_CScanner::HaveInspectTarget( void )
 
 
 //------------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //------------------------------------------------------------------------------
 Vector CNPC_CScanner::InspectTargetPosition(void)
 {
@@ -895,19 +905,19 @@ Vector CNPC_CScanner::InspectTargetPosition(void)
 	else
 	{
 		DevMsg("InspectTargetPosition called with no target!\n");
-		
+
 		return m_vInspectPos;
 	}
 }
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CNPC_CScanner::InputShouldInspect( inputdata_t &inputdata )
 {
 	m_bShouldInspect = ( inputdata.value.Int() != 0 );
-	
+
 	if ( !m_bShouldInspect )
 	{
 		if ( GetEnemy() == GetTarget() )
@@ -954,7 +964,7 @@ void CNPC_CScanner::DeployMine()
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 float CNPC_CScanner::GetMaxSpeed()
 {
@@ -967,7 +977,7 @@ float CNPC_CScanner::GetMaxSpeed()
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CNPC_CScanner::InputDeployMine(inputdata_t &inputdata)
 {
@@ -976,7 +986,7 @@ void CNPC_CScanner::InputDeployMine(inputdata_t &inputdata)
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CNPC_CScanner::InputEquipMine(inputdata_t &inputdata)
 {
@@ -1007,7 +1017,7 @@ void CNPC_CScanner::InputEquipMine(inputdata_t &inputdata)
 		if( attachment > -1 )
 		{
 			GetAttachment( attachment, vecOrigin, angles );
-			
+
 			pEnt->SetAbsOrigin( vecOrigin );
 			pEnt->SetAbsAngles( angles );
 			pEnt->SetOwnerEntity( this );
@@ -1064,15 +1074,15 @@ void CNPC_CScanner::InputInspectTargetSpotlight(inputdata_t &inputdata)
 void CNPC_CScanner::InspectTarget( inputdata_t &inputdata, ScannerFlyMode_t eFlyMode )
 {
 	CBaseEntity *pEnt = gEntList.FindEntityGeneric( NULL, inputdata.value.String(), this, inputdata.pActivator );
-	
+
 	if ( pEnt != NULL )
 	{
 		// Set and begin to inspect our target
 		SetInspectTargetToEnt( pEnt, SCANNER_CIT_INSPECT_LENGTH );
-		
+
 		m_nFlyMode = eFlyMode;
 		SetCondition( COND_CSCANNER_HAVE_INSPECT_TARGET );
-		
+
 		// Stop us from any other navigation we were doing
 		GetNavigator()->ClearGoal();
 	}
@@ -1083,7 +1093,7 @@ void CNPC_CScanner::InspectTarget( inputdata_t &inputdata, ScannerFlyMode_t eFly
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 // Output : Returns true on success, false on failure.
 //-----------------------------------------------------------------------------
 bool CNPC_CScanner::MovingToInspectTarget( void )
@@ -1100,7 +1110,7 @@ bool CNPC_CScanner::MovingToInspectTarget( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CNPC_CScanner::GatherConditions( void )
 {
@@ -1119,7 +1129,7 @@ void CNPC_CScanner::GatherConditions( void )
 	// --------------------------------------
 	//  COND_CSCANNER_INSPECT_DONE
 	//
-	// If my inspection over 
+	// If my inspection over
 	// ---------------------------------------------------------
 
 	// Refresh our timing if we're still moving to our inspection target
@@ -1144,7 +1154,7 @@ void CNPC_CScanner::GatherConditions( void )
 	if ( ( HasCondition( COND_HEAR_COMBAT ) || HasCondition( COND_HEAR_DANGER ) ) && m_nFlyMode != SCANNER_FLY_FOLLOW )
 	{
 		CSound *pSound = GetBestSound();
-		
+
 		if ( pSound )
 		{
 			// Chase an owner if we can
@@ -1174,14 +1184,14 @@ void CNPC_CScanner::GatherConditions( void )
 	// --------------------------------------
 	//  COND_CSCANNER_HAVE_INSPECT_TARGET
 	//
-	// Look for a nearby citizen or player to hassle. 
+	// Look for a nearby citizen or player to hassle.
 	// ---------------------------------------------------------
 
 	// Check for citizens to inspect
 	if ( gpGlobals->curtime	> m_fCheckCitizenTime && HaveInspectTarget() == false )
 	{
 		CBaseEntity *pBestEntity = BestInspectTarget();
-		
+
 		if ( pBestEntity != NULL )
 		{
 			SetInspectTargetToEnt( pBestEntity, SCANNER_CIT_INSPECT_LENGTH );
@@ -1253,7 +1263,7 @@ void CNPC_CScanner::GatherConditions( void )
 		{
 			// Check that I'm in the right distance range
 			float  fInspectDist = (InspectTargetPosition() - GetAbsOrigin()).Length2D();
-			
+
 			// See if we're within range
 			if ( fInspectDist > SCANNER_PHOTO_NEAR_DIST && fInspectDist < SCANNER_PHOTO_FAR_DIST )
 			{
@@ -1262,7 +1272,7 @@ void CNPC_CScanner::GatherConditions( void )
 				{
 					trace_t tr;
 					AI_TraceLine ( GetAbsOrigin(), InspectTargetPosition(), MASK_BLOCKLOS, GetTarget(), COLLISION_GROUP_NONE, &tr);
-					
+
 					if ( tr.fraction == 1.0f )
 					{
 						SetCondition( COND_CSCANNER_CAN_PHOTOGRAPH );
@@ -1308,8 +1318,8 @@ Disposition_t CNPC_CScanner::IRelationType(CBaseEntity *pTarget)
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : *pTask - 
+// Purpose:
+// Input  : *pTask -
 //-----------------------------------------------------------------------------
 void CNPC_CScanner::RunTask( const Task_t *pTask )
 {
@@ -1318,7 +1328,7 @@ void CNPC_CScanner::RunTask( const Task_t *pTask )
 		case TASK_CSCANNER_PHOTOGRAPH:
 		{
 			if ( IsWaitFinished() )
-			{	
+			{
 				// If light was on turn it off
 				if ( m_pEyeFlash->GetBrightness() > 0 )
 				{
@@ -1348,7 +1358,7 @@ void CNPC_CScanner::RunTask( const Task_t *pTask )
 		case TASK_CSCANNER_ATTACK_PRE_FLASH:
 		{
 			AttackPreFlash();
-			
+
 			if ( IsWaitFinished() )
 			{
 				TaskComplete();
@@ -1404,7 +1414,7 @@ int CNPC_CScanner::SelectSchedule(void)
 	// -------------------------------
 	if ( HasCondition(COND_LIGHT_DAMAGE) || HasCondition(COND_HEAVY_DAMAGE) )
 	{
-		if ( IsHeldByPhyscannon( ) ) 
+		if ( IsHeldByPhyscannon( ) )
  			return SCHED_SMALL_FLINCH;
 
 		if ( m_NPCState == NPC_STATE_IDLE )
@@ -1426,7 +1436,7 @@ int CNPC_CScanner::SelectSchedule(void)
 	}
 
 	// I'm being held by the physcannon... struggle!
-	if ( IsHeldByPhyscannon( ) ) 
+	if ( IsHeldByPhyscannon( ) )
 		return SCHED_SCANNER_HELD_BY_PHYSCANNON;
 
 	// ----------------------------------------------------------
@@ -1440,18 +1450,18 @@ int CNPC_CScanner::SelectSchedule(void)
 		// Patrol if the enemy has vanished
 		if ( HasCondition( COND_LOST_ENEMY ) )
 			return SCHED_SCANNER_PATROL;
-		
+
 		// Chase via route if we're directly blocked
 		if ( HasCondition( COND_SCANNER_FLY_BLOCKED ) )
 			return SCHED_SCANNER_CHASE_ENEMY;
-		
+
 		// Attack if it's time
 		if ( gpGlobals->curtime < m_flNextAttack )
 			return SCHED_CSCANNER_SPOTLIGHT_HOVER;
 
 		// Melee attack if possible
 		if ( HasCondition( COND_CAN_MELEE_ATTACK1 ) )
-		{ 
+		{
 			if ( random->RandomInt(0,1) )
 				return SCHED_CSCANNER_ATTACK_FLASH;
 
@@ -1478,7 +1488,7 @@ int CNPC_CScanner::SelectSchedule(void)
 		if ( HasCondition( COND_SCANNER_FLY_BLOCKED ) )
 			return SCHED_CSCANNER_MOVE_TO_INSPECT;
 
-		// If I was chasing, pick with photographing or spotlighting 
+		// If I was chasing, pick with photographing or spotlighting
 		if ( m_nFlyMode == SCANNER_FLY_CHASE )
 		{
 			m_nFlyMode = (random->RandomInt(0,1)==0) ? SCANNER_FLY_SPOT : SCANNER_FLY_PHOTO;
@@ -1508,7 +1518,7 @@ int CNPC_CScanner::SelectSchedule(void)
 
 			return SCHED_CSCANNER_SPOTLIGHT_HOVER;
 		}
-		
+
 		// Handle photographing
 		if ( m_nFlyMode == SCANNER_FLY_PHOTO )
 		{
@@ -1517,7 +1527,7 @@ int CNPC_CScanner::SelectSchedule(void)
 
 			return SCHED_CSCANNER_PHOTOGRAPH_HOVER;
 		}
-		
+
 		// Handle following after a target
 		if ( m_nFlyMode == SCANNER_FLY_FOLLOW )
 		{
@@ -1544,7 +1554,7 @@ void CNPC_CScanner::SpotlightDestroy(void)
 	{
 		UTIL_Remove(m_hSpotlight);
 		m_hSpotlight = NULL;
-		
+
 		UTIL_Remove(m_hSpotlightTarget);
 		m_hSpotlightTarget = NULL;
 	}
@@ -1584,7 +1594,7 @@ void CNPC_CScanner::SpotlightCreate(void)
 	// Other wise just start looking down
 	else
 	{
-		m_vSpotlightDir	= Vector(0,0,-1); 
+		m_vSpotlightDir	= Vector(0,0,-1);
 	}
 
 	trace_t tr;
@@ -1604,7 +1614,7 @@ void CNPC_CScanner::SpotlightCreate(void)
 	m_hSpotlight = CBeam::BeamCreate( "sprites/glow_test02.vmt", SPOTLIGHT_WIDTH );
 	// Set the temporary spawnflag on the beam so it doesn't save (we'll recreate it on restore)
 	m_hSpotlight->AddSpawnFlags( SF_BEAM_TEMPORARY );
-	m_hSpotlight->SetColor( 255, 255, 255 ); 
+	m_hSpotlight->SetColor( 255, 255, 255 );
 	m_hSpotlight->SetHaloTexture( m_nHaloSprite );
 	m_hSpotlight->SetHaloScale( 32 );
 	m_hSpotlight->SetEndWidth( m_hSpotlight->GetWidth() );
@@ -1626,7 +1636,7 @@ void CNPC_CScanner::SpotlightCreate(void)
 Vector CNPC_CScanner::SpotlightTargetPos(void)
 {
 	// ----------------------------------------------
-	//  If I have an enemy 
+	//  If I have an enemy
 	// ----------------------------------------------
 	if (GetEnemy() != NULL)
 	{
@@ -1756,22 +1766,22 @@ void CNPC_CScanner::SpotlightUpdate(void)
 	}
 
 	if ((m_nFlyMode != SCANNER_FLY_SPOT) &&
-		(m_nFlyMode != SCANNER_FLY_PATROL) && 
+		(m_nFlyMode != SCANNER_FLY_PATROL) &&
 		(m_nFlyMode != SCANNER_FLY_FAST))
 	{
 		if ( m_hSpotlight )
-		{	
+		{
 			SpotlightDestroy();
 		}
 		return;
 	}
-	
+
 	// If I don't have a spotlight attempt to create one
 
 	if ( m_hSpotlight == NULL )
 	{
 		SpotlightCreate();
-		
+
 		if ( m_hSpotlight== NULL )
 			return;
 	}
@@ -1780,16 +1790,16 @@ void CNPC_CScanner::SpotlightUpdate(void)
 	m_vSpotlightCurrentPos = SpotlightCurrentPos();
 
 	// ------------------------------------------------------------------
-	//  If I'm not facing the spotlight turn it off 
+	//  If I'm not facing the spotlight turn it off
 	// ------------------------------------------------------------------
 	Vector vSpotDir = m_vSpotlightCurrentPos - GetAbsOrigin();
 	VectorNormalize(vSpotDir);
-	
+
 	Vector	vForward;
 	AngleVectors( GetAbsAngles(), &vForward );
 
 	float dotpr = DotProduct( vForward, vSpotDir );
-	
+
 	if ( dotpr < 0.0 )
 	{
 		// Leave spotlight off for a while
@@ -1826,13 +1836,13 @@ void CNPC_CScanner::SpotlightUpdate(void)
 	float flBeamLength	= VectorNormalize( m_hSpotlightTarget->m_vSpotlightDir );
 	m_flSpotlightCurLength = (0.80*m_flSpotlightCurLength) + (0.2*flBeamLength);
 
-	// Fade out spotlight end if past max length.  
+	// Fade out spotlight end if past max length.
 	if (m_flSpotlightCurLength > 2*m_flSpotlightMaxLength)
 	{
 		m_hSpotlightTarget->SetRenderColorA( 0 );
 		m_hSpotlight->SetFadeLength(m_flSpotlightMaxLength);
 	}
-	else if (m_flSpotlightCurLength > m_flSpotlightMaxLength)		
+	else if (m_flSpotlightCurLength > m_flSpotlightMaxLength)
 	{
 		m_hSpotlightTarget->SetRenderColorA( (1-((m_flSpotlightCurLength-m_flSpotlightMaxLength)/m_flSpotlightMaxLength)) );
 		m_hSpotlight->SetFadeLength(m_flSpotlightMaxLength);
@@ -1845,7 +1855,7 @@ void CNPC_CScanner::SpotlightUpdate(void)
 
 	// Adjust end width to keep beam width constant
 	float flNewWidth = SPOTLIGHT_WIDTH * ( flBeamLength/m_flSpotlightMaxLength);
-	
+
 	m_hSpotlight->SetWidth(flNewWidth);
 	m_hSpotlight->SetEndWidth(flNewWidth);
 
@@ -1867,7 +1877,7 @@ void CNPC_CScanner::UpdateOnRemove( void )
 void CNPC_CScanner::TakePhoto(void)
 {
 	ScannerEmitSound( "TakePhoto" );
-	
+
 	m_pEyeFlash->SetScale( 1.4 );
 	m_pEyeFlash->SetBrightness( 255 );
 	m_pEyeFlash->SetColor(255,255,255);
@@ -1883,7 +1893,7 @@ void CNPC_CScanner::TakePhoto(void)
 			m_OnPhotographPlayer.FireOutput( GetTarget(), this );
 			BlindFlashTarget( GetTarget() );
 		}
-		
+
 		if ( GetTarget()->MyNPCPointer() != NULL )
 		{
 			m_OnPhotographNPC.FireOutput( GetTarget(), this );
@@ -1946,15 +1956,15 @@ void CNPC_CScanner::AttackFlash(void)
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : *pTarget - 
+// Purpose:
+// Input  : *pTarget -
 //-----------------------------------------------------------------------------
 void CNPC_CScanner::BlindFlashTarget( CBaseEntity *pTarget )
 {
 	// Tell all the striders this person is here!
 	CAI_BaseNPC **	ppAIs 	= g_AI_Manager.AccessAIs();
 	int 			nAIs 	= g_AI_Manager.NumAIs();
-	
+
 	if( IsStriderScout() )
 	{
 		for ( int i = 0; i < nAIs; i++ )
@@ -1973,7 +1983,7 @@ void CNPC_CScanner::BlindFlashTarget( CBaseEntity *pTarget )
 	// Scale the flash value by how closely the player is looking at me
 	Vector vFlashDir = GetAbsOrigin() - pTarget->EyePosition();
 	VectorNormalize(vFlashDir);
-	
+
 	Vector vFacing;
 	AngleVectors( pTarget->EyeAngles(), &vFacing );
 
@@ -2040,8 +2050,8 @@ void CNPC_CScanner::AttackDivebomb( void )
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : pTask - 
+// Purpose:
+// Input  : pTask -
 //-----------------------------------------------------------------------------
 void CNPC_CScanner::StartTask( const Task_t *pTask )
 {
@@ -2057,12 +2067,12 @@ void CNPC_CScanner::StartTask( const Task_t *pTask )
 			}
 
 			if ( GetTarget() )
-			{	
+			{
 				//FIXME: Tweak
 				//Vector idealPos = IdealGoalForMovement( InspectTargetPosition(), GetAbsOrigin(), 128.0f, 128.0f );
-				
+
 				AI_NavGoal_t goal( GOALTYPE_TARGETENT, vec3_origin );
-			
+
 				if ( GetNavigator()->SetGoal( goal ) )
 				{
 					TaskComplete();
@@ -2072,7 +2082,7 @@ void CNPC_CScanner::StartTask( const Task_t *pTask )
 			else
 			{
 				AI_NavGoal_t goal( GOALTYPE_LOCATION, InspectTargetPosition() );
-			
+
 				if ( GetNavigator()->SetGoal( goal ) )
 				{
 					TaskComplete();
@@ -2107,7 +2117,7 @@ void CNPC_CScanner::StartTask( const Task_t *pTask )
 			else
 			{
 				pNPC->DispatchInteraction(g_interactionScannerInspectBegin,NULL,this);
-				
+
 				// Now we need some time to inspect
 				m_fInspectEndTime = gpGlobals->curtime + SCANNER_CIT_INSPECT_LENGTH;
 				TaskComplete();
@@ -2244,7 +2254,7 @@ void CNPC_CScanner::StartTask( const Task_t *pTask )
 
 			GetNavigator()->SetGoal( vNodePos );
 		}
-		else 
+		else
 		{
 			AI_NavGoal_t goal( (const Vector &)InspectTargetPosition() );
 			goal.pTarget = GetTarget();
@@ -2259,7 +2269,7 @@ void CNPC_CScanner::StartTask( const Task_t *pTask )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 char *CNPC_CScanner::GetScannerSoundPrefix( void )
 {
@@ -2283,7 +2293,7 @@ float CNPC_CScanner::MinGroundDist( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CNPC_CScanner::AdjustScannerVelocity( void )
 {
@@ -2294,8 +2304,8 @@ void CNPC_CScanner::AdjustScannerVelocity( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : flInterval - 
+// Purpose:
+// Input  : flInterval -
 // Output : Returns true on success, false on failure.
 //-----------------------------------------------------------------------------
 bool CNPC_CScanner::OverrideMove( float flInterval )
@@ -2311,13 +2321,13 @@ bool CNPC_CScanner::OverrideMove( float flInterval )
 	{
 		Vector vMoveTargetPos(0,0,0);
 		CBaseEntity *pMoveTarget = NULL;
-		
+
 		// The original line of code was, due to the accidental use of '|' instead of
 		// '&', always true. Replacing with 'true' to suppress the warning without changing
 		// the (long-standing) behavior.
 		if ( true ) //!GetNavigator()->IsGoalActive() || ( GetNavigator()->GetCurWaypointFlags() | bits_WP_TO_PATHCORNER ) )
 		{
-			// Select move target 
+			// Select move target
 			if ( GetTarget() != NULL )
 			{
 				pMoveTarget = GetTarget();
@@ -2326,11 +2336,11 @@ bool CNPC_CScanner::OverrideMove( float flInterval )
 			{
 				pMoveTarget = GetEnemy();
 			}
-			
-			// Select move target position 
+
+			// Select move target position
 			if ( HaveInspectTarget() )
 			{
-				vMoveTargetPos = InspectTargetPosition(); 
+				vMoveTargetPos = InspectTargetPosition();
 			}
 			else if ( GetEnemy() != NULL )
 			{
@@ -2352,7 +2362,7 @@ bool CNPC_CScanner::OverrideMove( float flInterval )
 			AI_TraceHull( GetAbsOrigin(), vMoveTargetPos, GetHullMins(), GetHullMaxs(), MASK_NPCSOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &tr );
 
 			float fTargetDist = (1.0f-tr.fraction)*(GetAbsOrigin() - vMoveTargetPos).Length();
-			
+
 			if ( ( tr.m_pEnt == pMoveTarget ) || ( fTargetDist < 50 ) )
 			{
 				if ( g_debug_cscanner.GetBool() )
@@ -2363,9 +2373,9 @@ bool CNPC_CScanner::OverrideMove( float flInterval )
 
 				SetCondition( COND_SCANNER_FLY_CLEAR );
 			}
-			else		
+			else
 			{
-				//HANDY DEBUG TOOL	
+				//HANDY DEBUG TOOL
 				if ( g_debug_cscanner.GetBool() )
 				{
 					NDebugOverlay::Line(GetLocalOrigin(), vMoveTargetPos, 255,0,0, true, 0);
@@ -2384,7 +2394,7 @@ bool CNPC_CScanner::OverrideMove( float flInterval )
 				BlendPhyscannonLaunchSpeed();
 				return true;
 			}
-		}	
+		}
 		else if (m_nFlyMode == SCANNER_FLY_SPOT)
 		{
 			MoveToSpotlight( flInterval );
@@ -2407,7 +2417,7 @@ bool CNPC_CScanner::OverrideMove( float flInterval )
 			{
 				SpotlightDestroy();
 			}
-			
+
 			MoveToAttack( flInterval );
 		}
 		// -----------------------------------------------------------------
@@ -2419,7 +2429,7 @@ bool CNPC_CScanner::OverrideMove( float flInterval )
 			Decelerate( flInterval, myDecay);
 		}
 	}
-		
+
 	MoveExecute_Alive( flInterval );
 
 	return true;
@@ -2435,7 +2445,7 @@ void CNPC_CScanner::MoveToTarget( float flInterval, const Vector &vecMoveTarget 
 	// Don't move if stalling
 	if ( m_flEngineStallTime > gpGlobals->curtime )
 		return;
-	
+
 	// Look at our inspection target if we have one
 	if ( GetEnemy() != NULL )
 	{
@@ -2511,8 +2521,8 @@ void CNPC_CScanner::MoveToTarget( float flInterval, const Vector &vecMoveTarget 
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : flInterval - 
+// Purpose:
+// Input  : flInterval -
 //-----------------------------------------------------------------------------
 void CNPC_CScanner::MoveToSpotlight( float flInterval )
 {
@@ -2535,7 +2545,7 @@ void CNPC_CScanner::MoveToSpotlight( float flInterval )
 	}
 
 	//float flDesiredDist = SCANNER_SPOTLIGHT_NEAR_DIST + ( ( SCANNER_SPOTLIGHT_FAR_DIST - SCANNER_SPOTLIGHT_NEAR_DIST ) / 2 );
-	
+
 	float flIdealHeightDiff = SCANNER_SPOTLIGHT_NEAR_DIST;
 	if( IsEnemyPlayerInSuit() )
 	{
@@ -2560,7 +2570,7 @@ void CNPC_CScanner::MoveToSpotlight( float flInterval )
 		if (pNearest)
 		{
 			Vector			vNearestDir = (pNearest->GetLocalOrigin() - GetLocalOrigin());
-			if (vNearestDir.Length() < SCANNER_SQUAD_FLY_DIST) 
+			if (vNearestDir.Length() < SCANNER_SQUAD_FLY_DIST)
 			{
 				vNearestDir		= pNearest->GetLocalOrigin() - GetLocalOrigin();
 				VectorNormalize(vNearestDir);
@@ -2580,7 +2590,7 @@ void CNPC_CScanner::MoveToSpotlight( float flInterval )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 // Output : float
 //-----------------------------------------------------------------------------
 float CNPC_CScanner::GetGoalDistance( void )
@@ -2604,7 +2614,7 @@ float CNPC_CScanner::GetGoalDistance( void )
 			return goalDist;
 		}
 		break;
-	
+
 	case SCANNER_FLY_FOLLOW:
 		return ( SCANNER_FOLLOW_DIST );
 		break;
@@ -2622,7 +2632,7 @@ void CNPC_CScanner::MoveToPhotograph(float flInterval)
 		return;
 
 	//float flDesiredDist = SCANNER_PHOTO_NEAR_DIST + ( ( SCANNER_PHOTO_FAR_DIST - SCANNER_PHOTO_NEAR_DIST ) / 2 );
-	
+
 	Vector idealPos = IdealGoalForMovement( InspectTargetPosition(), GetAbsOrigin(), GetGoalDistance(), 32.0f );
 
 	MoveToTarget( flInterval, idealPos );
@@ -2641,7 +2651,7 @@ void CNPC_CScanner::MoveToPhotograph(float flInterval)
 		if (pNearest)
 		{
 			Vector			vNearestDir = (pNearest->GetLocalOrigin() - GetLocalOrigin());
-			if (vNearestDir.Length() < SCANNER_SQUAD_FLY_DIST) 
+			if (vNearestDir.Length() < SCANNER_SQUAD_FLY_DIST)
 			{
 				vNearestDir		= pNearest->GetLocalOrigin() - GetLocalOrigin();
 				VectorNormalize(vNearestDir);
@@ -2724,8 +2734,8 @@ bool CNPC_CScanner::HandleInteraction(int interactionType, void *data, CBaseComb
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : &inputdata - 
+// Purpose:
+// Input  : &inputdata -
 //-----------------------------------------------------------------------------
 void CNPC_CScanner::InputDisableSpotlight( inputdata_t &inputdata )
 {
@@ -2733,11 +2743,11 @@ void CNPC_CScanner::InputDisableSpotlight( inputdata_t &inputdata )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 // Output : float
 //-----------------------------------------------------------------------------
-float CNPC_CScanner::GetHeadTurnRate( void ) 
-{ 
+float CNPC_CScanner::GetHeadTurnRate( void )
+{
 	if ( GetEnemy() )
 		return 800.0f;
 
@@ -2748,8 +2758,8 @@ float CNPC_CScanner::GetHeadTurnRate( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : &inputdata - 
+// Purpose:
+// Input  : &inputdata -
 //-----------------------------------------------------------------------------
 void CNPC_CScanner::InputSetFollowTarget( inputdata_t &inputdata )
 {
@@ -2757,13 +2767,13 @@ void CNPC_CScanner::InputSetFollowTarget( inputdata_t &inputdata )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : &inputdata - 
+// Purpose:
+// Input  : &inputdata -
 //-----------------------------------------------------------------------------
 void CNPC_CScanner::InputClearFollowTarget( inputdata_t &inputdata )
 {
 	SetInspectTargetToEnt( NULL, 0 );
-	
+
 	m_nFlyMode = SCANNER_FLY_PATROL;
 }
 
@@ -2995,7 +3005,7 @@ AI_BEGIN_CUSTOM_NPC( npc_cscanner, CNPC_CScanner )
 		"		COND_NEW_ENEMY"
 		"		COND_SCANNER_GRABBED_BY_PHYSCANNON"
 	)
-	
+
 AI_END_CUSTOM_NPC()
 
 //-----------------------------------------------------------------------------
@@ -3003,7 +3013,7 @@ AI_END_CUSTOM_NPC()
 //
 // Scanner that always spawns as a claw scanner
 //-----------------------------------------------------------------------------
-	
+
 class CNPC_ClawScanner : public CNPC_CScanner
 {
 DECLARE_CLASS( CNPC_ClawScanner, CNPC_CScanner );
@@ -3020,7 +3030,7 @@ END_DATADESC()
 LINK_ENTITY_TO_CLASS(npc_clawscanner, CNPC_ClawScanner);
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 CNPC_ClawScanner::CNPC_ClawScanner()
 {

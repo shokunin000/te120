@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 //=============================================================================//
 
@@ -17,12 +17,12 @@
 //
 // Will your mod be team based?
 // define SDK_USE_TEAMS
-//#define SDK_USE_TEAMS//TE120
+#define SDK_USE_TEAMS
 
 //
 // Do you use player classes?
 // define SDK_USE_PLAYERCLASSES
-//#define SDK_USE_PLAYERCLASSES//TE120
+#define SDK_USE_PLAYERCLASSES
 
 //================================
 // PLAYER MOVEMENT RELATED OPTIONS
@@ -31,12 +31,12 @@
 //
 // Do your players have stamina? - this is a pre-requisite for sprinting, if you define sprinting, and don't uncomment this, it will be included anyway.
 // define SDK_USE_STAMINA
-//#define SDK_USE_STAMINA//TE120
+#define SDK_USE_STAMINA
 
 //
 // Are your players able to sprint?
 // define SDK_USE_SPRINTING
-//#define SDK_USE_SPRINTING//TE120
+#define SDK_USE_SPRINTING
 
 //Tony; stamina is a pre-requisite to sprinting, if you don't declare stamina but you do declare sprinting
 //stamina needs to be included.
@@ -46,7 +46,7 @@
 //
 // Can your players go prone?
 // define SDK_USE_PRONE
-//#define SDK_USE_PRONE//TE120
+#define SDK_USE_PRONE
 
 //=====================
 // EXTRA WEAPON OPTIONS
@@ -55,17 +55,17 @@
 //
 // If you're allowing sprinting, do you want to be able to shoot while sprinting?
 // define SDK_SHOOT_WHILE_SPRINTING
-//#define SDK_SHOOT_WHILE_SPRINTING//TE120
+#define SDK_SHOOT_WHILE_SPRINTING
 
 //
 // Do you want your players to be able to shoot while climing ladders?
 // define SDK_SHOOT_ON_LADDERS
-//#define SDK_SHOOT_ON_LADDERS//TE120
+#define SDK_SHOOT_ON_LADDERS
 
 //
 // Do you want your players to be able to shoot while jumping?
 // define SDK_SHOOT_WHILE_JUMPING
-//#define SDK_SHOOT_WHILE_JUMPING//TE120
+#define SDK_SHOOT_WHILE_JUMPING
 
 
 
@@ -149,7 +149,7 @@ typedef enum
 	SDK_WEAPON_PISTOL,
 	SDK_WEAPON_CROWBAR,
 
-	
+
 	WEAPON_MAX,		// number of weapons weapon index
 } SDKWeaponID;
 
@@ -172,12 +172,12 @@ enum SDKPlayerState
 	// You can't move though if CSGameRules()->IsFreezePeriod() returns true.
 	// This state can jump to a bunch of other states like STATE_PICKINGCLASS or STATE_DEATH_ANIM.
 	STATE_ACTIVE=0,
-	
+
 	// This is the state you're in when you first enter the server.
-	// It's switching between intro cameras every few seconds, and there's a level info 
+	// It's switching between intro cameras every few seconds, and there's a level info
 	// screen up.
 	STATE_WELCOME,			// Show the level intro screen.
-	
+
 	// During these states, you can either be a new player waiting to join, or
 	// you can be a live player in the game who wants to change teams.
 	// Either way, you can't move while choosing team or class (or while any menu is up).
@@ -187,7 +187,7 @@ enum SDKPlayerState
 #if defined ( SDK_USE_PLAYERCLASSES )
 	STATE_PICKINGCLASS,			// Choosing class.
 #endif
-	
+
 	STATE_DEATH_ANIM,			// Playing death anim, waiting for that to finish.
 	STATE_OBSERVER_MODE,		// Noclipping around, watching players, etc.
 

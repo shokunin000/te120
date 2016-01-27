@@ -16,7 +16,7 @@ $Configuration
 	$Compiler
 	{
 		$AdditionalIncludeDirectories	".\hl2;.\hl2\elements;$SRCDIR\game\shared\hl2;$BASE"
-		$PreprocessorDefinitions		"$BASE;HL2_CLIENT_DLL;SOURCE_2013"
+		$PreprocessorDefinitions		"$BASE;HL2_CLIENT_DLL"
 	}
 }
 
@@ -27,11 +27,6 @@ $Project "Client (HL2)"
 		$File	"hud_chat.cpp"
 		$File	"c_team_objectiveresource.cpp"
 		$File	"c_team_objectiveresource.h"
-		//TE120---------------------------------------------------
-		$File	"c_weapon_physconcussion.cpp"
-		$File	"ge_screeneffects.cpp"
-		$File	"ge_screeneffects.h"
-		//------------------------------------------------------------
 
 		$Folder	"HL2 DLL"
 		{
@@ -64,10 +59,6 @@ $Project "Client (HL2)"
 			$File	"hl2\c_plasma_beam_node.cpp"
 			$File	"hl2\c_prop_combine_ball.cpp"
 			$File	"hl2\c_prop_combine_ball.h"
-			//TE120---------------------------------------------------
-			$File	"hl2\c_prop_gravity_ball.cpp"
-			$File	"hl2\c_prop_gravity_ball.h"
-			//-------------------------------------------------------------
 			$File	"hl2\c_rotorwash.cpp"
 			$File	"hl2\c_script_intro.cpp"
 			$File	"$SRCDIR\game\shared\script_intro_shared.cpp"
@@ -121,24 +112,6 @@ $Project "Client (HL2)"
 			$File	"hl2\shieldproxy.cpp"
 			$File	"hl2\vgui_rootpanel_hl2.cpp"
 			$File 	"episodic\c_vort_charge_token.cpp"
-		}
-
-		// Remove [$WIN32] to allow ShaderEditor build on any OS
-		$Folder "Shader Editor" [$WIN32]
-		{
-			$Folder	"Header Files"
-			{
-				$File	"$SRCDIR\game\client\shadereditor\isedit_modelrender.h"
-				$File	"$SRCDIR\game\client\shadereditor\ivshadereditor.h"
-				$File	"$SRCDIR\game\client\shadereditor\shadereditorsystem.h"
-				$File	"$SRCDIR\game\client\shadereditor\sedit_modelrender.h"
-			}
- 
-			$Folder	"Implementation Files"
-			{
-				$File	"$SRCDIR\game\client\shadereditor\shadereditorsystem.cpp"
-				$File	"$SRCDIR\game\client\shadereditor\sedit_modelrender.cpp"
-			}
 		}
 	}
 }

@@ -72,7 +72,7 @@ static CBasePlayer * UTIL_GetLocalPlayerOrListenServerHost( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CPointDevShotCamera::Spawn( void )
 {
@@ -93,7 +93,7 @@ void CPointDevShotCamera::Spawn( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 int CPointDevShotCamera::UpdateTransmitState()
 {
@@ -102,7 +102,7 @@ int CPointDevShotCamera::UpdateTransmitState()
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CPointDevShotCamera::DevShotThink_Setup( void )
 {
@@ -137,7 +137,7 @@ void CPointDevShotCamera::DevShotThink_Setup( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CPointDevShotCamera::DevShotThink_TakeShot( void )
 {
@@ -154,7 +154,7 @@ void CPointDevShotCamera::DevShotThink_TakeShot( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CPointDevShotCamera::DevShotThink_PostShot( void )
 {
@@ -244,8 +244,7 @@ public:
 					pkvCamera = pkvCamera->GetNextKey();
 				}
 			}
-
-			pkvMapCameras->deleteThis(); //TE120
+			pkvMapCameras->deleteThis();
 
 			if ( !g_iDevShotCameraCount )
 			{

@@ -56,11 +56,13 @@ private:
 	void	DiscloseNPCLocation( CBaseCombatCharacter *pSubject, CBaseCombatCharacter *pTarget );
 
 	string_t	m_iszSubject;
-	string_t	m_iszSubject2;//TE120----
-	string_t	m_iszSubject3;//TE120----
+	//TE120--
+	string_t	m_iszSubject2;
+	string_t	m_iszSubject3;
+	//TE120--
 	int			m_iDisposition;
 	int			m_iRank;
-	int			m_iMaxHandle;//TE120----
+	int			m_iMaxHandle;//TE120
 	bool		m_fStartActive;
 	bool		m_bIsActive;
 	int			m_iPreviousDisposition;
@@ -81,13 +83,15 @@ LINK_ENTITY_TO_CLASS( ai_relationship, CAI_Relationship );
 
 BEGIN_DATADESC( CAI_Relationship )
 	DEFINE_THINKFUNC( ApplyRelationshipThink ),
-	
+
 	DEFINE_KEYFIELD( m_iszSubject, FIELD_STRING, "subject" ),
-	DEFINE_KEYFIELD( m_iszSubject2, FIELD_STRING, "subject2" ),//TE120----
-	DEFINE_KEYFIELD( m_iszSubject3, FIELD_STRING, "subject3" ),//TE120----
+	//TE120--
+	DEFINE_KEYFIELD( m_iszSubject2, FIELD_STRING, "subject2" ),
+	DEFINE_KEYFIELD( m_iszSubject3, FIELD_STRING, "subject3" ),
+	//TE120--
 	DEFINE_KEYFIELD( m_iDisposition, FIELD_INTEGER, "disposition" ),
 	DEFINE_KEYFIELD( m_iRank, FIELD_INTEGER, "rank" ),
-	DEFINE_KEYFIELD( m_iMaxHandle, FIELD_INTEGER, "maxsubjects" ),//TE120----
+	DEFINE_KEYFIELD( m_iMaxHandle, FIELD_INTEGER, "maxsubjects" ),//TE120
 	DEFINE_KEYFIELD( m_fStartActive, FIELD_BOOLEAN, "StartActive" ),
 	DEFINE_FIELD( m_bIsActive, FIELD_BOOLEAN ),
 	DEFINE_KEYFIELD( m_flRadius, FIELD_FLOAT, "radius" ),
@@ -103,7 +107,7 @@ END_DATADESC()
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CAI_Relationship::Spawn()
 {
@@ -119,9 +123,10 @@ void CAI_Relationship::Spawn()
 		DevWarning("ai_relationship '%s' with no target specified, removing.\n", GetDebugName());
 		UTIL_Remove(this);
 	}
-
-	if ( m_iMaxHandle < 0 || m_iMaxHandle > 512 )//TE120----
-		m_iMaxHandle = 512;//TE120----
+//TE120--
+	if ( m_iMaxHandle < 0 || m_iMaxHandle > 512 )
+		m_iMaxHandle = 512;
+//TE120--
 }
 
 //---------------------------------------------------------
@@ -140,8 +145,8 @@ void CAI_Relationship::Activate()
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : bActive - 
+// Purpose:
+// Input  : bActive -
 //-----------------------------------------------------------------------------
 void CAI_Relationship::SetActive( bool bActive )
 {
@@ -196,8 +201,8 @@ void CAI_Relationship::ApplyRelationshipThink( void )
 //---------------------------------------------------------
 void CAI_Relationship::ApplyRelationship( CBaseEntity *pActivator, CBaseEntity *pCaller )
 {
-	// @TODO (toml 10-22-04): sort out MP relationships 
-	
+	// @TODO (toml 10-22-04): sort out MP relationships
+
 	// The player spawns slightly after the NPCs, meaning that if we don't wait, the
 	// player will miss any relationships placed on them.
 	if ( AI_IsSinglePlayer() && !UTIL_GetLocalPlayer() )
@@ -264,7 +269,7 @@ bool CAI_Relationship::IsASubject( CBaseEntity *pEntity )
 {
 	if( pEntity->NameMatches( m_iszSubject ) )
 		return true;
-//TE120----
+//TE120--
 	if( (m_iszSubject2 != NULL_STRING) && pEntity->NameMatches( m_iszSubject2 ) )
 		return true;
 
@@ -279,7 +284,7 @@ bool CAI_Relationship::IsASubject( CBaseEntity *pEntity )
 
 	if( (m_iszSubject3 != NULL_STRING) && pEntity->ClassMatches( m_iszSubject3 ) )
 		return true;
-//TE120----
+//TE120--
 	return false;
 }
 
@@ -319,7 +324,7 @@ void CAI_Relationship::OnEntityDeleted( CBaseEntity *pEntity )
 // Purpose: Translate special tokens for inputs
 // Input  : iszName - Name to check
 //			*pActivator - Activator
-//			*pCaller - Caller 
+//			*pCaller - Caller
 // Output : CBaseEntity - Entity that matches (NULL if none)
 //-----------------------------------------------------------------------------
 #define ACTIVATOR_KEYNAME "!activator"
@@ -389,11 +394,11 @@ void CAI_Relationship::ChangeRelationships( int disposition, int iReverting, CBa
 	// -------------------------------
 
 	float radiusSq = Square( m_flRadius );
-	
+
 	// Search players first
 	for ( int i = 1; i <= gpGlobals->maxClients; i++ )
 	{
-		if ( subjectList.Count() == m_iMaxHandle || targetList.Count() == m_iMaxHandle )//TE120----
+		if ( subjectList.Count() == m_iMaxHandle || targetList.Count() == m_iMaxHandle )//TE120
 		{
 			DevMsg( "Too many entities handled by ai_relationship %s\n", GetDebugName() );
 			break;
@@ -417,7 +422,7 @@ void CAI_Relationship::ChangeRelationships( int disposition, int iReverting, CBa
 	// Search NPCs
 	for ( int i = 0; i < g_AI_Manager.NumAIs(); i++ )
 	{
-		if ( subjectList.Count() == m_iMaxHandle || targetList.Count() == m_iMaxHandle )//TE120----
+		if ( subjectList.Count() == m_iMaxHandle || targetList.Count() == m_iMaxHandle )//TE120
 		{
 			DevMsg( "Too many entities handled by ai_relationship %s\n", GetDebugName() );
 			break;
@@ -484,8 +489,8 @@ void CAI_Relationship::ChangeRelationships( int disposition, int iReverting, CBa
 					pTarget->RemoveEntityRelationship( pSubject );
 				}
 			}
-			else if( pSubject->IRelationType(pTarget) != disposition || 
-				     pSubject->IRelationPriority(pTarget) != m_iRank || 
+			else if( pSubject->IRelationType(pTarget) != disposition ||
+				     pSubject->IRelationPriority(pTarget) != m_iRank ||
 					 HasSpawnFlags( SF_RELATIONSHIP_NOTIFY_SUBJECT ) ||
 					 HasSpawnFlags( SF_RELATIONSHIP_NOTIFY_TARGET ) )
 			{
@@ -514,4 +519,3 @@ void CAI_Relationship::ChangeRelationships( int disposition, int iReverting, CBa
 		}
 	}
 }
-

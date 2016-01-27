@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //=============================================================================//
@@ -37,7 +37,7 @@ const char *GetMassEquivalent(float flMass);
 // NOTE: Springs are not physical in the sense that they only create force, they do not collide with
 // anything or have any REAL constraints.  They can be stretched infinitely (though this will create
 // and infinite force), they can penetrate any other object (or spring). They do not occupy any space.
-// 
+//
 
 #define SF_SPRING_ONLYSTRETCH		0x0001
 
@@ -67,7 +67,7 @@ public:
 
 	DECLARE_DATADESC();
 
-private:	
+private:
 	IPhysicsSpring		*m_pSpring;
 	bool			m_isLocal;
 
@@ -102,7 +102,7 @@ BEGIN_DATADESC( CPhysicsSpring )
 	DEFINE_KEYFIELD( m_end, FIELD_POSITION_VECTOR, "springaxis" ),
 	DEFINE_FIELD( m_isLocal, FIELD_BOOLEAN ),
 
-	// Not necessary to save... it's only there to make sure 
+	// Not necessary to save... it's only there to make sure
 //	DEFINE_FIELD( m_teleportTick, FIELD_INTEGER ),
 
 	// Inputs
@@ -189,11 +189,11 @@ void CPhysicsSpring::InputSetSpringLength( inputdata_t &inputdata )
 // Purpose: Draw any debug text overlays
 // Output : Current text offset from the top
 //-----------------------------------------------------------------------------
-int CPhysicsSpring::DrawDebugTextOverlays(void) 
+int CPhysicsSpring::DrawDebugTextOverlays(void)
 {
 	int text_offset = BaseClass::DrawDebugTextOverlays();
 
-	if (m_debugOverlays & OVERLAY_TEXT_BIT) 
+	if (m_debugOverlays & OVERLAY_TEXT_BIT)
 	{
 		char tempstr[512];
 		Q_snprintf(tempstr,sizeof(tempstr),"Constant: %3.2f",m_tempConstant);
@@ -215,9 +215,9 @@ int CPhysicsSpring::DrawDebugTextOverlays(void)
 //-----------------------------------------------------------------------------
 // Purpose: Override base class to add display of fly direction
 // Input  :
-// Output : 
+// Output :
 //-----------------------------------------------------------------------------
-void CPhysicsSpring::DrawDebugGeometryOverlays(void) 
+void CPhysicsSpring::DrawDebugGeometryOverlays(void)
 {
 	if ( !m_pSpring )
 		return;
@@ -245,7 +245,7 @@ void CPhysicsSpring::DrawDebugGeometryOverlays(void)
 bool PointIsNearer( IPhysicsObject *pObject1, const Vector &point1, const Vector &point2 )
 {
 	Vector center;
-	
+
 	pObject1->GetPosition( &center, 0 );
 
 	float dist1 = (center - point1).LengthSqr();
@@ -378,7 +378,7 @@ BEGIN_DATADESC( CPhysBox )
 	DEFINE_KEYFIELD( m_damageType, FIELD_INTEGER, "Damagetype" ),
 	DEFINE_KEYFIELD( m_iszOverrideScript, FIELD_STRING, "overridescript" ),
 	DEFINE_KEYFIELD( m_damageToEnableMotion, FIELD_INTEGER, "damagetoenablemotion" ),
-	DEFINE_KEYFIELD( m_flForceToEnableMotion, FIELD_FLOAT, "forcetoenablemotion" ), 
+	DEFINE_KEYFIELD( m_flForceToEnableMotion, FIELD_FLOAT, "forcetoenablemotion" ),
 	DEFINE_KEYFIELD( m_angPreferredCarryAngles, FIELD_VECTOR, "preferredcarryangles" ),
 	DEFINE_KEYFIELD( m_bNotSolidToWorld, FIELD_BOOLEAN, "notsolid" ),
 	DEFINE_KEYFIELD( m_fDisappearDist, FIELD_FLOAT, "DisappearDist" ),//TE120
@@ -414,7 +414,7 @@ END_DATADESC()
 // UNDONE: Angles are saved in the entity, but not propagated back to the IPhysicsObject on restore
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CPhysBox::Spawn( void )
 {
@@ -443,7 +443,7 @@ void CPhysBox::Spawn( void )
 	{
 		m_takedamage = DAMAGE_YES;
 	}
-  
+
 	SetMoveType( MOVETYPE_NONE );
 	SetAbsVelocity( vec3_origin );
 	SetModel( STRING( GetModelName() ) );
@@ -478,7 +478,7 @@ void CPhysBox::Spawn( void )
 	}
 }
 
-// shared from studiomdl, checks for long, thin objects and adds some damping 
+// shared from studiomdl, checks for long, thin objects and adds some damping
 // to prevent endless rolling due to low inertia
 static bool ShouldDampRotation( const CPhysCollide *pCollide )
 {
@@ -546,12 +546,12 @@ bool CPhysBox::CreateVPhysics()
 	return true;
 }
 
-       
+
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
-int CPhysBox::ObjectCaps() 
-{ 
+int CPhysBox::ObjectCaps()
+{
 	int caps = BaseClass::ObjectCaps() | FCAP_WCEDIT_POSITION;
 	if ( HasSpawnFlags( SF_PHYSBOX_ENABLE_PICKUP_OUTPUT ) )
 	{
@@ -569,7 +569,7 @@ int CPhysBox::ObjectCaps()
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CPhysBox::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value )
 {
@@ -599,9 +599,9 @@ bool CPhysBox::CanBePickedUpByPhyscannon()
 	IPhysicsObject *pPhysicsObject = VPhysicsGetObject();
 	if ( !pPhysicsObject )
 		return false;
-		
+
 	if ( !pPhysicsObject->IsMotionEnabled() && !HasSpawnFlags( SF_PHYSBOX_ENABLE_ON_PHYSCANNON ) )
-		return false;		
+		return false;
 
 	return true;
 }
@@ -611,11 +611,11 @@ bool CPhysBox::CanBePickedUpByPhyscannon()
 // Purpose: Draw any debug text overlays
 // Output : Current text offset from the top
 //-----------------------------------------------------------------------------
-int CPhysBox::DrawDebugTextOverlays(void) 
+int CPhysBox::DrawDebugTextOverlays(void)
 {
 	int text_offset = BaseClass::DrawDebugTextOverlays();
 
-	if (m_debugOverlays & OVERLAY_TEXT_BIT) 
+	if (m_debugOverlays & OVERLAY_TEXT_BIT)
 	{
 		if (VPhysicsGetObject())
 		{
@@ -657,7 +657,7 @@ void CPhysBox::InputEnableMotion( inputdata_t &inputdata )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CPhysBox::EnableMotion( void )
 {
@@ -704,18 +704,19 @@ void CPhysBox::InputForceDrop( inputdata_t &inputdata )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
-//TE120----
+//TE120--
 void CPhysBox::InputConvertToDebris( inputdata_t &inputdata )
 {
 	AddSpawnFlags( SF_PHYSPROP_DEBRIS );
 	// Hack to make object interact with other phys objects but not the player
 	SetCollisionGroup( HasSpawnFlags( SF_PHYSBOX_IGNOREUSE ) ? COLLISION_GROUP_PASSABLE_DOOR : COLLISION_GROUP_DEBRIS );
 }
-//TE120----
+//TE120--
+
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CPhysBox::Move( const Vector &direction )
 {
@@ -740,7 +741,7 @@ void CPhysBox::VPhysicsUpdate( IPhysicsObject *pPhysics )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CPhysBox::OnPhysGunPickup( CBasePlayer *pPhysGunUser, PhysGunPickup_t reason )
 {
@@ -772,7 +773,7 @@ void CPhysBox::OnPhysGunPickup( CBasePlayer *pPhysGunUser, PhysGunPickup_t reaso
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CPhysBox::OnPhysGunDrop( CBasePlayer *pPhysGunUser, PhysGunDrop_t Reason )
 {
@@ -783,7 +784,7 @@ void CPhysBox::OnPhysGunDrop( CBasePlayer *pPhysGunUser, PhysGunDrop_t Reason )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CPhysBox::VPhysicsCollision( int index, gamevcollisionevent_t *pEvent )
 {
@@ -810,7 +811,7 @@ void CPhysBox::VPhysicsCollision( int index, gamevcollisionevent_t *pEvent )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 int CPhysBox::OnTakeDamage( const CTakeDamageInfo &info )
 {
@@ -886,7 +887,7 @@ BEGIN_DATADESC( CPhysExplosion )
 	// Inputs
 	DEFINE_INPUTFUNC( FIELD_VOID, "Explode", InputExplode ),
 
-	// Outputs 
+	// Outputs
 	DEFINE_OUTPUT( m_OnPushedPlayer, "OnPushedPlayer" ),
 
 END_DATADESC()
@@ -931,7 +932,7 @@ CBaseEntity *CPhysExplosion::FindEntity( CBaseEntity *pEntity, CBaseEntity *pAct
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CPhysExplosion::InputExplode( inputdata_t &inputdata )
 {
@@ -940,7 +941,7 @@ void CPhysExplosion::InputExplode( inputdata_t &inputdata )
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CPhysExplosion::Explode( CBaseEntity *pActivator, CBaseEntity *pCaller )
 {
@@ -960,14 +961,14 @@ void CPhysExplosion::Explode( CBaseEntity *pActivator, CBaseEntity *pCaller )
 		if ( pEntity->m_takedamage != DAMAGE_NO && (pEntity->GetMoveType() == MOVETYPE_VPHYSICS || (pEntity->VPhysicsGetObject() /*&& !pEntity->IsPlayer()*/)) )
 		{
 			vecOrigin = GetAbsOrigin();
-			
+
 			vecSpot = pEntity->BodyTarget( vecOrigin );
 			// Squash this down to a circle
 			if ( HasSpawnFlags( SF_PHYSEXPLOSION_RADIAL ) )
 			{
 				vecOrigin[2] = vecSpot[2];
 			}
-			
+
 			// decrease damage for an ent that's farther from the bomb.
 			flDist = ( vecOrigin - vecSpot ).Length();
 
@@ -987,11 +988,11 @@ void CPhysExplosion::Explode( CBaseEntity *pActivator, CBaseEntity *pCaller )
 					}
 
 					trace_t tr;
-					UTIL_TraceLine( vecStartPos, 
-						pEntity->BodyTarget( vecStartPos, false ), 
-						MASK_SOLID_BRUSHONLY, 
-						this, 
-						COLLISION_GROUP_NONE, 
+					UTIL_TraceLine( vecStartPos,
+						pEntity->BodyTarget( vecStartPos, false ),
+						MASK_SOLID_BRUSHONLY,
+						this,
+						COLLISION_GROUP_NONE,
 						&tr );
 
 					// Shielded
@@ -1001,7 +1002,7 @@ void CPhysExplosion::Explode( CBaseEntity *pActivator, CBaseEntity *pCaller )
 
 				adjustedDamage =  flDist * falloff;
 				adjustedDamage = m_damage - adjustedDamage;
-		
+
 				if ( adjustedDamage < 1 )
 				{
 					adjustedDamage = 1;
@@ -1009,7 +1010,7 @@ void CPhysExplosion::Explode( CBaseEntity *pActivator, CBaseEntity *pCaller )
 
 				CTakeDamageInfo info( this, this, adjustedDamage, DMG_BLAST );
 				CalculateExplosiveDamageForce( &info, (vecSpot - vecOrigin), vecOrigin );
-	
+
 				if ( HasSpawnFlags( SF_PHYSEXPLOSION_PUSH_PLAYER ) )
 				{
 					if ( pEntity->IsPlayer() )
@@ -1054,7 +1055,7 @@ void CPhysExplosion::Explode( CBaseEntity *pActivator, CBaseEntity *pCaller )
 						continue;
 					}
 				}
-	
+
 				if ( HasSpawnFlags( SF_PHYSEXPLOSION_NODAMAGE ) )
 				{
 					pEntity->VPhysicsTakeDamage( info );
@@ -1072,11 +1073,11 @@ void CPhysExplosion::Explode( CBaseEntity *pActivator, CBaseEntity *pCaller )
 // Purpose: Draw any debug text overlays
 // Output : Current text offset from the top
 //-----------------------------------------------------------------------------
-int CPhysExplosion::DrawDebugTextOverlays( void ) 
+int CPhysExplosion::DrawDebugTextOverlays( void )
 {
 	int text_offset = BaseClass::DrawDebugTextOverlays();
 
-	if (m_debugOverlays & OVERLAY_TEXT_BIT) 
+	if (m_debugOverlays & OVERLAY_TEXT_BIT)
 	{
 		char tempstr[512];
 
@@ -1121,7 +1122,7 @@ END_DATADESC()
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CPhysImpact::Activate( void )
 {
@@ -1129,7 +1130,7 @@ void CPhysImpact::Activate( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CPhysImpact::Spawn( void )
 {
@@ -1145,7 +1146,7 @@ void CPhysImpact::Spawn( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CPhysImpact::PointAtEntity( void )
 {
@@ -1157,11 +1158,11 @@ void CPhysImpact::PointAtEntity( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : *pActivator - 
-//			*pCaller - 
-//			useType - 
-//			value - 
+// Purpose:
+// Input  : *pActivator -
+//			*pCaller -
+//			useType -
+//			value -
 //-----------------------------------------------------------------------------
 void CPhysImpact::InputImpact( inputdata_t &inputdata )
 {
@@ -1175,7 +1176,7 @@ void CPhysImpact::InputImpact( inputdata_t &inputdata )
 	}
 
 	AngleVectors( GetAbsAngles(), &dir );
-	
+
 	//Setup our trace information
 	float	dist	= HasSpawnFlags( bitsPHYSIMPACT_INFINITE_LENGTH ) ? MAX_TRACE_LENGTH : m_distance;
 	Vector	start	= GetAbsOrigin();
@@ -1205,7 +1206,7 @@ void CPhysImpact::InputImpact( inputdata_t &inputdata )
 			trace.plane.normal = -dir;
 		}
 		CBaseEntity	*pEnt = trace.m_pEnt;
-	
+
 		IPhysicsObject *pPhysics = pEnt->VPhysicsGetObject();
 		//If the entity is valid, hit it
 		if ( ( pEnt != NULL  ) && ( pPhysics != NULL ) )
@@ -1221,9 +1222,9 @@ void CPhysImpact::InputImpact( inputdata_t &inputdata )
 			ApplyMultiDamage();
 
 			//Damage falls off unless specified or the ray's length is infinite
-			float	damage = HasSpawnFlags( bitsPHYSIMPACT_NOFALLOFF | bitsPHYSIMPACT_INFINITE_LENGTH ) ? 
+			float	damage = HasSpawnFlags( bitsPHYSIMPACT_NOFALLOFF | bitsPHYSIMPACT_INFINITE_LENGTH ) ?
 								m_damage : (m_damage * (1.0f-trace.fraction));
-			
+
 			if ( HasSpawnFlags( bitsPHYSIMPACT_IGNORE_MASS ) )
 			{
 				damage *= pPhysics->GetMass();
@@ -1238,7 +1239,7 @@ void CPhysImpact::InputImpact( inputdata_t &inputdata )
 			if ( !HasSpawnFlags( bitsPHYSIMPACT_IGNORE_NORMAL ) )
 			{
 				dir = -trace.plane.normal;
-			}				
+			}
 
 			pPhysics->ApplyForceOffset( damage * dir * phys_pushscale.GetFloat(), trace.endpos );
 		}
@@ -1275,7 +1276,7 @@ public:
 	}
 
 	int ObjectCaps()
-	{ 
+	{
 		int caps = BaseClass::ObjectCaps() | FCAP_WCEDIT_POSITION;
 
 		if ( CBasePlayer::CanPickupObject( this, 35, 128 ) )
@@ -1314,11 +1315,11 @@ bool TransferPhysicsObject( CBaseEntity *pFrom, CBaseEntity *pTo, bool wakeUp )
 	pTo->VPhysicsSetObject( pVPhysics );
 	pVPhysics->SetGameData( (void *)pTo );
 	pTo->VPhysicsUpdate( pVPhysics );
-	
+
 	// may have been temporarily disabled by the old object
 	pVPhysics->EnableMotion( true );
 	pVPhysics->EnableGravity( true );
-	
+
 	// Update for the new entity solid type
 	pVPhysics->RecheckCollisionFilter();
 	if ( wakeUp )
@@ -1359,7 +1360,7 @@ static CBaseEntity *CreateSimplePhysicsObject( CBaseEntity *pEntity, bool create
 
 #define SF_CONVERT_ASLEEP		0x0001
 #define SF_CONVERT_AS_DEBRIS	0x0002
-#define SF_CONVERT_NO_PICKUP	0x0004 //TE120
+#define SF_CONVERT_NO_PICKUP	0x0004//TE120
 
 class CPhysConvert : public CLogicalEntity
 {
@@ -1367,7 +1368,7 @@ class CPhysConvert : public CLogicalEntity
 
 public:
 	CPhysConvert( void ) : m_flMassOverride( 0.0f ) {};
-	COutputEvent m_OnConvert;	
+	COutputEvent m_OnConvert;
 
 	// Input handlers
 	void InputConvertTarget( inputdata_t &inputdata );
@@ -1385,7 +1386,7 @@ BEGIN_DATADESC( CPhysConvert )
 
 	DEFINE_KEYFIELD( m_swapModel,		FIELD_STRING,	"swapmodel" ),
 	DEFINE_KEYFIELD( m_flMassOverride,	FIELD_FLOAT,	"massoverride" ),
-	
+
 	// Inputs
 	DEFINE_INPUTFUNC( FIELD_VOID, "ConvertTarget", InputConvertTarget ),
 
@@ -1411,7 +1412,7 @@ void CPhysConvert::InputConvertTarget( inputdata_t &inputdata )
 	CBaseEntity *entlist[512];
 	CBaseEntity *pSwap = gEntList.FindEntityByName( NULL, m_swapModel, NULL, inputdata.pActivator, inputdata.pCaller );
 	CBaseEntity *pEntity = NULL;
-	
+
 	int count = 0;
 	while ( (pEntity = gEntList.FindEntityByName( pEntity, m_target, NULL, inputdata.pActivator, inputdata.pCaller )) != NULL )
 	{
@@ -1452,10 +1453,10 @@ void CPhysConvert::InputConvertTarget( inputdata_t &inputdata )
 		CBaseEntity *pPhys = CreateSimplePhysicsObject( pEntity, createAsleep, createAsDebris );
 		if ( pPhys )
 		{
-//TE120----
+//TE120--
 			if ( createNoPickup )
 				pPhys->AddSpawnFlags( SF_PHYSBOX_NEVER_PICK_UP );
-//TE120----
+//TE120--
 
 			// Override the mass if specified
 			if ( m_flMassOverride > 0 )
@@ -1548,11 +1549,11 @@ IMPLEMENT_SERVERCLASS_ST( CPhysMagnet, DT_PhysMagnet )
 
 	// ROBIN: Disabled because we don't need it anymore
 	/*
-	SendPropArray2( 
+	SendPropArray2(
 		SendProxyArrayLength_MagnetAttachedArray,
-		SendPropInt("magnetattached_array_element", 0, 4, 10, SPROP_UNSIGNED, SendProxy_MagnetAttachedObjectList), 
-		128, 
-		0, 
+		SendPropInt("magnetattached_array_element", 0, 4, 10, SPROP_UNSIGNED, SendProxy_MagnetAttachedObjectList),
+		128,
+		0,
 		"magnetattached_array"
 		)
 	*/
@@ -1560,7 +1561,7 @@ IMPLEMENT_SERVERCLASS_ST( CPhysMagnet, DT_PhysMagnet )
 END_SEND_TABLE()
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 CPhysMagnet::CPhysMagnet( void )
 {
@@ -1569,7 +1570,7 @@ CPhysMagnet::CPhysMagnet( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 CPhysMagnet::~CPhysMagnet( void )
 {
@@ -1577,15 +1578,27 @@ CPhysMagnet::~CPhysMagnet( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CPhysMagnet::Spawn( void )
 {
-	Precache();
-
 	SetMoveType( MOVETYPE_NONE );
 	SetSolid( SOLID_VPHYSICS );
-	SetModel( STRING( GetModelName() ) );
+
+	char *szModel = ( char *) STRING( GetModelName() );
+	if (!szModel || !*szModel)
+	{
+		Warning( "%s at %.0f, %.0f, %0.f missing modelname!\n",
+		GetClassname(),
+		GetAbsOrigin().x,
+		GetAbsOrigin().y,
+		GetAbsOrigin().z );
+		UTIL_Remove( this );
+		return;
+	}
+
+	PrecacheModel( szModel );
+	SetModel( szModel );
 
 	m_takedamage = DAMAGE_EVENTS_ONLY;
 
@@ -1618,7 +1631,7 @@ void CPhysMagnet::Spawn( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CPhysMagnet::Precache( void )
 {
@@ -1627,14 +1640,14 @@ void CPhysMagnet::Precache( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CPhysMagnet::Touch( CBaseEntity *pOther )
 {
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CPhysMagnet::VPhysicsCollision( int index, gamevcollisionevent_t *pEvent )
 {
@@ -1656,7 +1669,7 @@ void CPhysMagnet::VPhysicsCollision( int index, gamevcollisionevent_t *pEvent )
 	if ( m_iMaxObjectsAttached && m_iMaxObjectsAttached <= GetNumAttachedObjects() )
 		return;
 
-	// This is a hack to solve players (Erik) stacking stuff on their jeeps in coast_01 
+	// This is a hack to solve players (Erik) stacking stuff on their jeeps in coast_01
 	// and being screwed when the crane can't pick them up. We need to get rid of the object.
 	if ( HasSpawnFlags( SF_MAGNET_COAST_HACK ) )
 	{
@@ -1764,7 +1777,7 @@ void CPhysMagnet::VPhysicsCollision( int index, gamevcollisionevent_t *pEvent )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CPhysMagnet::DoMagnetSuck( CBaseEntity *pOther )
 {
@@ -1777,7 +1790,7 @@ void CPhysMagnet::DoMagnetSuck( CBaseEntity *pOther )
 	// Don't repeatedly suck
 	if ( m_flNextSuckTime > gpGlobals->curtime )
 		return;
-	
+
 	// Look for physics objects underneath the magnet and suck them onto it
 	Vector vecCheckPos, vecSuckPoint;
 	VectorTransform( Vector(0,0,-96), EntityToWorldTransform(), vecCheckPos );
@@ -1812,7 +1825,7 @@ void CPhysMagnet::DoMagnetSuck( CBaseEntity *pOther )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CPhysMagnet::SetConstraintGroup( IPhysicsConstraintGroup *pGroup )
 {
@@ -1880,7 +1893,7 @@ void CPhysMagnet::ConstraintBroken( IPhysicsConstraint *pConstraint )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CPhysMagnet::DetachAll( void )
 {
@@ -1902,7 +1915,7 @@ void CPhysMagnet::DetachAll( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 int CPhysMagnet::GetNumAttachedObjects( void )
 {
@@ -1910,7 +1923,7 @@ int CPhysMagnet::GetNumAttachedObjects( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 float CPhysMagnet::GetTotalMassAttachedObjects( void )
 {
@@ -1918,7 +1931,7 @@ float CPhysMagnet::GetTotalMassAttachedObjects( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 CBaseEntity *CPhysMagnet::GetAttachedObject( int iIndex )
 {
@@ -1955,7 +1968,7 @@ public:
 
 	virtual void Activate( void );
 	void PushThink( void );
-	
+
 	void	InputEnable( inputdata_t &inputdata );
 	void	InputDisable( inputdata_t &inputdata );
 
@@ -1975,7 +1988,7 @@ LINK_ENTITY_TO_CLASS( point_push, CPointPush );
 BEGIN_DATADESC( CPointPush )
 
 	DEFINE_THINKFUNC( PushThink ),
-	
+
 	DEFINE_KEYFIELD( m_bEnabled,	FIELD_BOOLEAN,	"enabled" ),
 	DEFINE_KEYFIELD( m_flMagnitude, FIELD_FLOAT,	"magnitude" ),
 	DEFINE_KEYFIELD( m_flRadius,	FIELD_FLOAT,	"radius" ),
@@ -1994,7 +2007,7 @@ END_DATADESC();
 #define SF_PUSH_PHYSICS				0x0010
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CPointPush::Activate( void )
 {
@@ -2008,13 +2021,13 @@ void CPointPush::Activate( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : *pTarget - 
+// Purpose:
+// Input  : *pTarget -
 //-----------------------------------------------------------------------------
 void CPointPush::PushEntity( CBaseEntity *pTarget )
 {
 	Vector vecPushDir;
-	
+
 	if ( HasSpawnFlags( SF_PUSH_DIRECTIONAL ) )
 	{
 		GetVectors( &vecPushDir, NULL, NULL );
@@ -2025,9 +2038,9 @@ void CPointPush::PushEntity( CBaseEntity *pTarget )
 	}
 
 	float dist = VectorNormalize( vecPushDir );
-	
+
 	float flFalloff = ( HasSpawnFlags( SF_PUSH_NO_FALLOFF ) ) ? 1.0f : RemapValClamped( dist, m_flRadius, m_flRadius*0.25f, 0.0f, 1.0f );
-	
+
 	switch( pTarget->GetMoveType() )
 	{
 	case MOVETYPE_NONE:
@@ -2051,7 +2064,7 @@ void CPointPush::PushEntity( CBaseEntity *pTarget )
 		{
 			// NPCs cannot be lifted up properly, they need to move in 2D
 			vecPushDir.z = 0.0f;
-			
+
 			// NOTE: Falls through!
 		}
 
@@ -2078,7 +2091,7 @@ void CPointPush::PushEntity( CBaseEntity *pTarget )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CPointPush::PushThink( void )
 {
@@ -2096,10 +2109,10 @@ void CPointPush::PushThink( void )
 			continue;
 
 		// Must be moveable
-		if ( pEnts[i]->GetMoveType() != MOVETYPE_VPHYSICS && 
-			 pEnts[i]->GetMoveType() != MOVETYPE_WALK && 
+		if ( pEnts[i]->GetMoveType() != MOVETYPE_VPHYSICS &&
+			 pEnts[i]->GetMoveType() != MOVETYPE_WALK &&
 			 pEnts[i]->GetMoveType() != MOVETYPE_STEP )
-			continue; 
+			continue;
 
 		// If we don't want to push players, don't
 		if ( pEnts[i]->IsPlayer() && HasSpawnFlags( SF_PUSH_PLAYER ) == false )
@@ -2124,11 +2137,11 @@ void CPointPush::PushThink( void )
 			}
 
 			trace_t tr;
-			UTIL_TraceLine( vecStartPos, 
-							pEnts[i]->BodyTarget( vecStartPos, false ), 
-							MASK_SOLID_BRUSHONLY, 
-							this, 
-							COLLISION_GROUP_NONE, 
+			UTIL_TraceLine( vecStartPos,
+							pEnts[i]->BodyTarget( vecStartPos, false ),
+							MASK_SOLID_BRUSHONLY,
+							this,
+							COLLISION_GROUP_NONE,
 							&tr );
 
 			// Shielded
@@ -2145,7 +2158,7 @@ void CPointPush::PushThink( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CPointPush::InputEnable( inputdata_t &inputdata )
 {
@@ -2155,7 +2168,7 @@ void CPointPush::InputEnable( inputdata_t &inputdata )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CPointPush::InputDisable( inputdata_t &inputdata )
 {

@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $Revision: $
 // $NoKeywords: $
@@ -118,12 +118,12 @@ public:
 	// HPE_BEGIN:
 	// [menglish] Save server information shown to the client in a persistent place
 	//=============================================================================
-	 
+
 	virtual wchar_t* GetServerName() = 0;
 	virtual void SetServerName(wchar_t* name) = 0;
 	virtual wchar_t* GetMapName() = 0;
 	virtual void SetMapName(wchar_t* name) = 0;
-	 
+
 	//=============================================================================
 	// HPE_END
 	//=============================================================================
@@ -137,7 +137,7 @@ public:
 public:
 
 	// Called every frame.
-	virtual void	Update()=0;	
+	virtual void	Update()=0;
 
 	// Returns true if VR mode should black out everything around the UI
 	virtual bool	ShouldBlackoutAroundHUD() = 0;
@@ -148,7 +148,7 @@ public:
 	virtual bool	IsInfoPanelAllowed() = 0;
 	virtual void	InfoPanelDisplayed() = 0;
 	virtual bool	IsHTMLInfoPanelAllowed() = 0;
-};	
+};
 
 extern IClientMode *g_pClientMode;
 

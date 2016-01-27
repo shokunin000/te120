@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 //===========================================================================//
 
@@ -59,10 +59,10 @@
 #include "c_prop_portal.h" //portal surface rendering functions
 #endif
 
-	
+
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
-		  
+
 void ToolFramework_AdjustEngineViewport( int& x, int& y, int& width, int& height );
 bool ToolFramework_SetupEngineView( Vector &origin, QAngle &angles, float &fov );
 bool ToolFramework_SetupEngineMicrophone( Vector &origin, QAngle &angles );
@@ -118,7 +118,7 @@ ConVar mat_viewportscale( "mat_viewportscale", "1.0", FCVAR_ARCHIVE, "Scale down
 ConVar mat_viewportupscale( "mat_viewportupscale", "1", FCVAR_ARCHIVE, "Scale the viewport back up" );
 ConVar cl_leveloverview( "cl_leveloverview", "0", FCVAR_CHEAT );
 
-static ConVar r_mapextents( "r_mapextents", "16384", FCVAR_CHEAT, 
+static ConVar r_mapextents( "r_mapextents", "16384", FCVAR_CHEAT,
 						   "Set the max dimension for the map.  This determines the far clipping plane" );
 
 // UNDONE: Delete this or move to the material system?
@@ -153,7 +153,7 @@ static void CalcDemoViewOverride( Vector &origin, QAngle &angles )
 	AngleVectors( s_DemoAngle, &forward, &right, &up );
 
 	float speed = gpGlobals->absoluteframetime * cl_demoviewoverride.GetFloat() * 320;
-	
+
 	s_DemoView += speed * input->KeyState (&in_forward) * forward  ;
 	s_DemoView -= speed * input->KeyState (&in_back) * forward ;
 
@@ -238,7 +238,7 @@ const QAngle &PrevMainViewAngles()
 //-----------------------------------------------------------------------------
 // Compute the world->camera transform
 //-----------------------------------------------------------------------------
-void ComputeCameraVariables( const Vector &vecOrigin, const QAngle &vecAngles, 
+void ComputeCameraVariables( const Vector &vecOrigin, const QAngle &vecAngles,
 	Vector *pVecForward, Vector *pVecRight, Vector *pVecUp, VMatrix *pMatCamInverse )
 {
 	// Compute view bases
@@ -246,9 +246,9 @@ void ComputeCameraVariables( const Vector &vecOrigin, const QAngle &vecAngles,
 
 	for (int i = 0; i < 3; ++i)
 	{
-		(*pMatCamInverse)[0][i] = (*pVecRight)[i];	
-		(*pMatCamInverse)[1][i] = (*pVecUp)[i];	
-		(*pMatCamInverse)[2][i] = -(*pVecForward)[i];	
+		(*pMatCamInverse)[0][i] = (*pVecRight)[i];
+		(*pMatCamInverse)[1][i] = (*pVecUp)[i];
+		(*pMatCamInverse)[2][i] = -(*pVecForward)[i];
 		(*pMatCamInverse)[3][i] = 0.0F;
 	}
 	(*pMatCamInverse)[0][3] = -DotProduct( *pVecRight, vecOrigin );
@@ -267,13 +267,13 @@ bool R_CullSphere(
 	for(int i=0; i < nPlanes; i++)
 		if(pPlanes[i].DistTo(*pCenter) < -radius)
 			return true;
-	
+
 	return false;
 }
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 static void StartPitchDrift( void )
 {
@@ -303,11 +303,11 @@ void CViewRender::Init( void )
 
 	m_TranslucentSingleColor.Init( "debug/debugtranslucentsinglecolor", TEXTURE_GROUP_OTHER );
 	m_ModulateSingleColor.Init( "engine/modulatesinglecolor", TEXTURE_GROUP_OTHER );
-	
+
 	extern CMaterialReference g_material_WriteZ;
 	g_material_WriteZ.Init( "engine/writez", TEXTURE_GROUP_OTHER );
 
-	// FIXME:  
+	// FIXME:
 	QAngle angles;
 	engine->GetViewAngles( angles );
 	AngleVectors( angles, &m_vecLastFacing );
@@ -385,7 +385,7 @@ void CViewRender::StartPitchDrift (void)
 	if ( m_PitchDrift.laststop == gpGlobals->curtime )
 	{
 		// Something else is blocking the drift.
-		return;		
+		return;
 	}
 
 	if ( m_PitchDrift.nodrift || !m_PitchDrift.pitchvel )
@@ -397,7 +397,7 @@ void CViewRender::StartPitchDrift (void)
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CViewRender::StopPitchDrift (void)
 {
@@ -441,14 +441,14 @@ void CViewRender::DriftPitch (void)
 		{
 			m_PitchDrift.driftmove += gpGlobals->frametime;
 		}
-	
+
 		if ( m_PitchDrift.driftmove > v_centermove.GetFloat() )
 		{
 			StartPitchDrift ();
 		}
 		return;
 	}
-	
+
 	// How far off are we
 	delta = prediction->GetIdealPitch() - player->GetAbsAngles()[ PITCH ];
 	if ( !delta )
@@ -461,7 +461,7 @@ void CViewRender::DriftPitch (void)
 	move = gpGlobals->frametime * m_PitchDrift.pitchvel;
 	// Accelerate
 	m_PitchDrift.pitchvel += gpGlobals->frametime * v_centerspeed.GetFloat();
-	
+
 	// Move predicted pitch appropriately
 	if (delta > 0)
 	{
@@ -539,15 +539,16 @@ void CViewRender::OnRenderStart()
 			if ( localFOV == iDefaultFOV )
 			{
 #ifndef _XBOX
-				//TE120-------------------------------------------
+//TE120--
 				if ( player->m_Local.m_iHideHUD & HIDEHUD_ALL )
 					gHUD.m_flMouseSensitivity = 0.15f;
-				else // reset to saved sensitivity//TE120
-				gHUD.m_flMouseSensitivity = 0;
+				else // reset to saved sensitivity
+					gHUD.m_flMouseSensitivity = 0;
+//TE120--
 #endif
 			}
 			else
-			{  
+			{
 				// Set a new sensitivity that is proportional to the change from the FOV default and scaled
 				//  by a separate compensating factor
 				if ( iDefaultFOV == 0 )
@@ -555,15 +556,16 @@ void CViewRender::OnRenderStart()
 					Assert(0); // would divide by zero, something is broken with iDefatulFOV
 					iDefaultFOV = 1;
 				}
-				gHUD.m_flFOVSensitivityAdjust = 
+				gHUD.m_flFOVSensitivityAdjust =
 					((float)localFOV / (float)iDefaultFOV) * // linear fov downscale
 					zoom_sensitivity_ratio.GetFloat(); // sensitivity scale factor
 #ifndef _XBOX
-				//TE120
+//TE120--
 				if ( player->m_Local.m_iHideHUD & HIDEHUD_ALL )
 					gHUD.m_flMouseSensitivity = 0.15f;
-				else//TE120-----
-				gHUD.m_flMouseSensitivity = gHUD.m_flFOVSensitivityAdjust * sensitivity.GetFloat(); // regular sensitivity
+				else
+					gHUD.m_flMouseSensitivity = gHUD.m_flFOVSensitivityAdjust * sensitivity.GetFloat(); // regular sensitivity
+//TE120--
 #endif
 			}
 		}
@@ -572,7 +574,7 @@ void CViewRender::OnRenderStart()
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 // Output : const CViewSetup
 //-----------------------------------------------------------------------------
 const CViewSetup *CViewRender::GetViewSetup( void ) const
@@ -582,17 +584,17 @@ const CViewSetup *CViewRender::GetViewSetup( void ) const
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 // Output : const CViewSetup
 //-----------------------------------------------------------------------------
 const CViewSetup *CViewRender::GetPlayerViewSetup( void ) const
-{   
+{
     const CViewSetup &view = GetView ( STEREO_EYE_MONO );
     return &view;
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CViewRender::DisableVis( void )
 {
@@ -620,7 +622,7 @@ float CViewRender::GetZFar()
 	{
 		// Use the far Z from the map's parameters.
 		farZ = r_mapextents.GetFloat() * 1.73205080757f;
-		
+
 		C_BasePlayer *pPlayer = C_BasePlayer::GetLocalPlayer();
 		if( pPlayer && pPlayer->GetFogParams() )
 		{
@@ -654,7 +656,7 @@ void CViewRender::SetUpViews()
 
 	view.zFar				= farZ;
 	view.zFarViewmodel	    = farZ;
-	// UNDONE: Make this farther out? 
+	// UNDONE: Make this farther out?
 	//  closest point of approach seems to be view center to top of crouched box
 	view.zNear			    = GetZNear();
 	view.zNearViewmodel	    = 1;
@@ -793,7 +795,7 @@ void CViewRender::SetUpViews()
 
 	// Compute the world->main camera transform
     // This is only done for the main "middle-eye" view, not for the various other views.
-	ComputeCameraVariables( view.origin, view.angles, 
+	ComputeCameraVariables( view.origin, view.angles,
 		&g_vecVForward, &g_vecVRight, &g_vecVUp, &g_matCamInverse );
 
 	// set up the hearing origin...
@@ -833,7 +835,7 @@ void CViewRender::WriteSaveGameScreenshotOfSize( const char *pFilename, int widt
 	CMatRenderContextPtr pRenderContext( materials );
 	pRenderContext->MatrixMode( MATERIAL_PROJECTION );
 	pRenderContext->PushMatrix();
-	
+
 	pRenderContext->MatrixMode( MATERIAL_VIEW );
 	pRenderContext->PushMatrix();
 
@@ -877,7 +879,7 @@ void CViewRender::WriteSaveGameScreenshotOfSize( const char *pFilename, int widt
 		// Allocate
 		int nPaddedImageSize = nPaddedWidth * nPaddedHeight * 3;
 		pPaddedImage = ( unsigned char * )malloc( nPaddedImageSize );
-		
+
 		// Zero out the entire thing
 		V_memset( pPaddedImage, 255, nPaddedImageSize );
 
@@ -925,7 +927,7 @@ void CViewRender::WriteSaveGameScreenshotOfSize( const char *pFilename, int widt
 
 			// Serialize to the buffer
 			bWriteResult = pVTFTexture->Serialize( buffer );
-		
+
 			// Free the VTF texture
 			DestroyVTFTexture( pVTFTexture );
 		}
@@ -948,7 +950,7 @@ void CViewRender::WriteSaveGameScreenshotOfSize( const char *pFilename, int widt
 	{
 		Error( "Couldn't write bitmap data snapshot.\n" );
 	}
-	
+
 	free( pImage );
 	free( pPaddedImage );
 
@@ -960,10 +962,10 @@ void CViewRender::WriteSaveGameScreenshotOfSize( const char *pFilename, int widt
 
 	// restore our previous state
 	pRenderContext->PopRenderTargetAndViewport();
-	
+
 	pRenderContext->MatrixMode( MATERIAL_PROJECTION );
 	pRenderContext->PopMatrix();
-	
+
 	pRenderContext->MatrixMode( MATERIAL_VIEW );
 	pRenderContext->PopMatrix();
 
@@ -1015,7 +1017,7 @@ float ScaleFOVByWidthRatio( float fovDegrees, float ratio )
 
 //-----------------------------------------------------------------------------
 // Purpose: Sets view parameters for level overview mode
-// Input  : *rect - 
+// Input  : *rect -
 //-----------------------------------------------------------------------------
 void CViewRender::SetUpOverView()
 {
@@ -1028,7 +1030,7 @@ void CViewRender::SetUpOverView()
 	float aspect = (float)view.width/(float)view.height;
 
 	int size_y = 1024.0f * cl_leveloverview.GetFloat(); // scale factor, 1024 = OVERVIEW_MAP_SIZE
-	int	size_x = size_y * aspect;	// standard screen aspect 
+	int	size_x = size_y * aspect;	// standard screen aspect
 
 	view.origin.x -= size_x / 2;
 	view.origin.y += size_y / 2;
@@ -1073,10 +1075,10 @@ void CViewRender::Render( vrect_t *rect )
 	CMatStubHandler matStub;
 
 	engine->EngineStats_BeginFrame();
-	
+
 	// Assume normal vis
 	m_bForceNoVis			= false;
-	
+
 	C_BasePlayer *pPlayer = C_BasePlayer::GetLocalPlayer();
 
 
@@ -1230,7 +1232,7 @@ void CViewRender::Render( vrect_t *rect )
 
 	    if ( cl_leveloverview.GetFloat() > 0 )
 	    {
-		    SetUpOverView();		
+		    SetUpOverView();
 		    nClearFlags |= VIEW_CLEAR_COLOR;
 		    drawViewModel = false;
 	    }
@@ -1339,7 +1341,7 @@ CON_COMMAND( spec_pos, "dump position and angles to the console" )
 	Vector vecOrigin;
 	QAngle angles;
 	GetPos( args, vecOrigin, angles );
-	Warning( "spec_goto %.1f %.1f %.1f %.1f %.1f\n", vecOrigin.x, vecOrigin.y, 
+	Warning( "spec_goto %.1f %.1f %.1f %.1f %.1f\n", vecOrigin.x, vecOrigin.y,
 		vecOrigin.z, angles.x, angles.y );
 }
 
@@ -1360,4 +1362,3 @@ CON_COMMAND( getpos, "dump position and angles to the console" )
 	Warning( "%s %f %f %f;", pCommand1, vecOrigin.x, vecOrigin.y, vecOrigin.z );
 	Warning( "%s %f %f %f\n", pCommand2, angles.x, angles.y, angles.z );
 }
-

@@ -1,7 +1,16 @@
-# te120
-##Build instructions (Linux):
-- use runmake.sh (define path to steam runtime sdk inside)
+# Transmissions: Element 120
 
-##Current Bugs on Linux:
+##Build instructions (Windows):
+- run build.bat
+- open games.sln in Visual Studio
+
+##Build instructions (Linux):
+- run build.sh (define path to steam runtime sdk inside)
+
+##Current Bugs:
 - mat_queue_mode -1 or 2 causes crash after opening door in chapter 4, use mat_queue_mode 0 for now
-- shader editor is not working (compiling of .so fails)
+
+##ToDo:
+- more achievements and stats
+- achivement testing
+- performance optimization

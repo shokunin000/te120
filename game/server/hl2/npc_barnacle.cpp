@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose:		barnacle - stationary ceiling mounted 'fishing' monster	
+// Purpose:		barnacle - stationary ceiling mounted 'fishing' monster
 //
 // $Workfile:     $
 // $Date:         $
@@ -108,7 +108,7 @@ const Vector CNPC_Barnacle::m_svPlayerHeldTipOffset(24,0,-8);
 // Purpose: Constructor
 // Input  :
 // Output :
-//-----------------------------------------------------------------------------	
+//-----------------------------------------------------------------------------
 CNPC_Barnacle::CNPC_Barnacle(void)
 {
 	m_flRestUnitsAboveGround = 16.0f;
@@ -120,7 +120,7 @@ CNPC_Barnacle::CNPC_Barnacle(void)
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 CNPC_Barnacle::~CNPC_Barnacle( void )
 {
@@ -135,9 +135,9 @@ CNPC_Barnacle::~CNPC_Barnacle( void )
 /*
 
 	input LetGo(void) : "Let go of anything I am holding."
-	
+
 	output OnGrab(string)    : "When I attach my tongue to something"
-	output OnRelease(string) : "When I let go of something" 
+	output OnRelease(string) : "When I let go of something"
 */
 
 BEGIN_DATADESC( CNPC_Barnacle )
@@ -194,13 +194,13 @@ END_DATADESC()
 IMPLEMENT_SERVERCLASS_ST( CNPC_Barnacle, DT_Barnacle )
 	SendPropFloat(  SENDINFO( m_flAltitude ), 0, SPROP_NOSCALE),
 	SendPropVector( SENDINFO( m_vecRoot ), 0, SPROP_COORD ),
-	SendPropVector( SENDINFO( m_vecTip ), 0, SPROP_COORD ), 
-	SendPropVector( SENDINFO( m_vecTipDrawOffset ), 0, SPROP_NOSCALE ), 
+	SendPropVector( SENDINFO( m_vecTip ), 0, SPROP_COORD ),
+	SendPropVector( SENDINFO( m_vecTipDrawOffset ), 0, SPROP_NOSCALE ),
 END_SEND_TABLE()
 
 
 //=========================================================
-// Classify - indicates this monster's place in the 
+// Classify - indicates this monster's place in the
 // relationship table.
 //=========================================================
 Class_T	CNPC_Barnacle::Classify ( void )
@@ -246,7 +246,7 @@ void CNPC_Barnacle::HandleAnimEvent( animevent_t *pEvent )
 		SpitPrey();
 		return;
 	}
-	
+
 	BaseClass::HandleAnimEvent( pEvent );
 }
 
@@ -334,7 +334,7 @@ void CNPC_Barnacle::DropTongue( void )
 	RemoveSpawnFlags( SF_BARNACLE_AMBUSH );
 }
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CNPC_Barnacle::Activate( void )
 {
@@ -383,7 +383,7 @@ int	CNPC_Barnacle::OnTakeDamage_Alive( const CTakeDamageInfo &inputInfo )
 	{
 		if( FClassnameIs( info.GetAttacker(), "npc_alyx" ) )
 		{
-			// Alyx does double damage to barnacles, so that she can save the 
+			// Alyx does double damage to barnacles, so that she can save the
 			// player's life in a more timely fashion. (sjb)
 			info.ScaleDamage( 2.0f );
 		}
@@ -430,9 +430,9 @@ void CNPC_Barnacle::InitTonguePosition( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 // TODO: The LostPrey(true) at the top of 	if ( m_hRagdoll ) isnt' quite right:
-// it will make the barnacle drop anything that's shot on the way up. This is a 
+// it will make the barnacle drop anything that's shot on the way up. This is a
 // quick fix for the antlions which crashed otherwise (they have somewhat anomalous
 // ragdoll behaivor) but should be revisted.
 //-----------------------------------------------------------------------------
@@ -448,12 +448,12 @@ void CNPC_Barnacle::BarnacleThink ( void )
 	// AI Disabled, don't do anything?
 	if ( CAI_BaseNPC::m_nDebugBits & bits_debugDisableAI )
 		return;
-	
+
 	// Do we have an enemy?
 	if ( m_hRagdoll )
 	{
 		if ( m_bLiftingPrey )
-		{	
+		{
 			if ( GetEnemy() )
 			{
 				LiftPrey();
@@ -510,7 +510,7 @@ void CNPC_Barnacle::BarnacleThink ( void )
 	else if ( GetEnemy()  )
 	{
  		if ( m_bLiftingPrey || m_bSwallowingBomb == true )
-		{	
+		{
 			LiftPrey();
 		}
 		// Stay bloated as we digest
@@ -555,7 +555,7 @@ void CNPC_Barnacle::BarnacleThink ( void )
 	else
 	{
 		// Were we lifting prey?
-		if ( m_bSwallowingPrey || m_bLiftingPrey  ) 
+		if ( m_bSwallowingPrey || m_bLiftingPrey  )
 		{
 			// Something removed our prey.
 			LostPrey( false );
@@ -617,7 +617,7 @@ void CNPC_Barnacle::BarnacleThink ( void )
 					{
 						EmitSound( "NPC_Barnacle.BreakNeck" );
 						AttachTongueToTarget( pTouchEnt, vecGrabPos );
-						
+
 						// Set the local timer to 60 seconds, which starts the lifting phase on
 						// the upshot of the sine wave which right away makes it more obvious
 						// that the player is being lifted.
@@ -635,7 +635,7 @@ void CNPC_Barnacle::BarnacleThink ( void )
 
 			if ( !bGrabbedTarget )
 			{
-				// Restore the hanging spring constant 
+				// Restore the hanging spring constant
 				if ( m_hTongueTip )
 				{
 					m_hTongueTip->m_pSpring->SetSpringConstant( BARNACLE_TONGUE_SPRING_CONSTANT_HANGING );
@@ -671,11 +671,15 @@ bool CNPC_Barnacle::CanPickup( CBaseCombatCharacter *pBCC )
 	if( pBCC->IsPlayer() )
 	{
 		CBasePlayer *pPlayer = dynamic_cast<CBasePlayer*>(pBCC);
-	
+
 		Assert( pPlayer != NULL );
 
 		// Don't pick up a player held by another barnacle
 		if( pPlayer->HasPhysicsFlag(PFLAG_ONBARNACLE) )
+			return false;
+			
+		// Don't pick up a player who has noclip enabled
+		if( pPlayer->GetMoveType() == MOVETYPE_NOCLIP )
 			return false;
 	}
 	else if ( pBCC->IsInAVehicle() )
@@ -714,11 +718,11 @@ bool CNPC_Barnacle::WaitForRagdollToSettle( float flBiteZOffset )
 
 	if ( (vecBitePoint.x - vecCheckPos.x) > flDelta || (vecBitePoint.y - vecCheckPos.y) > flDelta )
 	{
-		// I can't bite this critter because it's not lined up with me on the X/Y plane. If it is 
+		// I can't bite this critter because it's not lined up with me on the X/Y plane. If it is
 		// as close to my mouth as I can get it, I should drop it.
 		if( vecBitePoint.z - vecVictimPos.z < 72.0f )
 		{
-			// A man-sized target has been pulled up to my mouth, but 
+			// A man-sized target has been pulled up to my mouth, but
 			// is not aligned for biting. Drop it.
 			SpitPrey();
 		}
@@ -861,7 +865,7 @@ void CNPC_Barnacle::PullEnemyTorwardsMouth( bool bAdjustEnemyOrigin )
 
 		Msg("<%.3f,%.3f>\n",vToCenter.x,vToCenter.y);
 
-			
+
 		if ( distFromCenter < distToMove )
 		{
 			vecNewPos.x = GetAbsOrigin().x;
@@ -873,8 +877,8 @@ void CNPC_Barnacle::PullEnemyTorwardsMouth( bool bAdjustEnemyOrigin )
 			vecNewPos.x += vToCenter.x;
 			vecNewPos.y += vToCenter.y;
 			// GetEnemy()->Teleport( &vecNewPos, NULL, NULL );
-		}	
-	
+		}
+
 #endif
 		// recentering the player under the barnacle was tried in the code
 		// below, but then disabled for Orange Box ship because the viewmodel
@@ -950,7 +954,7 @@ void CNPC_Barnacle::UpdatePlayerConstraint( void )
 		// Create the new constraint for the standing/ducking player physics object.
 		IPhysicsObject *pPlayerPhys = pPlayer->VPhysicsGetObject();
 		IPhysicsObject *pTonguePhys = m_hTongueTip->VPhysicsGetObject();
-		
+
 		constraint_fixedparams_t fixed;
 		fixed.Defaults();
 		fixed.InitWithCurrentObjectState( pTonguePhys, pPlayerPhys );
@@ -1170,12 +1174,12 @@ void CNPC_Barnacle::LiftPhysicsObject( float flBiteZOffset )
 			// Start the bite animation. The anim event in it will finish the job.
 			SetActivity( (Activity)ACT_BARNACLE_TASTE_SPIT );
 		}
-		
+
 #ifdef HL2_EPISODIC
 		// if the object is a combatclass, send it a chomp interaction in case it wants to respond to that
 		// in some nonstandard way.
 		CBaseCombatCharacter *pBCC = dynamic_cast<CBaseCombatCharacter *>(pVictim);
-		if( pBCC ) 
+		if( pBCC )
 		{
 			Vector tipPos = m_vecTip.Get();
 
@@ -1256,7 +1260,7 @@ CRagdollProp *CNPC_Barnacle::AttachRagdollToTongue( CBaseAnimating *pAnimating )
 	// Find his head bone
 	m_iGrabbedBoneIndex = -1;
 	Vector vecNeckOffset;
-	
+
 	if ( m_hTongueTip )
 	{
 		vecNeckOffset = (pAnimating->EyePosition() - m_hTongueTip->GetAbsOrigin());
@@ -1478,7 +1482,7 @@ void CNPC_Barnacle::AttachTongueToTarget( CBaseEntity *pTouchEnt, Vector vecGrab
 		fixed.Defaults();
 		fixed.InitWithCurrentObjectState( pTonguePhys, pPlayerPhys );
 		fixed.constraint.Defaults();
-		
+
 		/*
 You can use this stanza to try to counterplace the constraint on the player's head so he gets hauled sideways to the right place on the barnacle, but it is better to just move the tongue before attachment.
 		if ( IsEnemyAPlayer() )
@@ -1488,10 +1492,10 @@ You can use this stanza to try to counterplace the constraint on the player's he
 			fixed.attachedRefXform[1][3] -= vToCenter.y ;
 		}
 		*/
-		
+
 		m_pConstraint = physenv->CreateFixedConstraint( pTonguePhys, pPlayerPhys, NULL, fixed );
 
-		// Increase the tongue's spring constant while lifting 
+		// Increase the tongue's spring constant while lifting
 		m_hTongueTip->m_pSpring->SetSpringConstant( BARNACLE_TONGUE_SPRING_CONSTANT_LIFTING );
 		UpdateTongue();
 
@@ -1514,7 +1518,7 @@ You can use this stanza to try to counterplace the constraint on the player's he
 	// Apply the target's current velocity to each of the ragdoll's bones
 	Vector vecVelocity = pAnimating->GetGroundSpeedVelocity() * 0.5;
 	ragdoll_t *pRagdoll = m_hRagdoll->GetRagdoll();
-	
+
 	// barnacle might let go if ragdoll is separated - so increase the separation checking a bit
 	constraint_groupparams_t params;
 	pRagdoll->pGroup->GetErrorParams( &params );
@@ -1535,7 +1539,7 @@ You can use this stanza to try to counterplace the constraint on the player's he
 	// Now hide the actual enemy
 	pTouchEnt->AddEffects( EF_NODRAW );
 
-	// Increase the tongue's spring constant while lifting 
+	// Increase the tongue's spring constant while lifting
 	m_hTongueTip->m_pSpring->SetSpringConstant( BARNACLE_TONGUE_SPRING_CONSTANT_LIFTING );
 	UpdateTongue();
 
@@ -1599,19 +1603,19 @@ void CNPC_Barnacle::BitePrey( void )
 				pTonguePhys->UpdateShadow( m_hTongueTip->GetAbsOrigin(), m_hTongueTip->GetAbsAngles(), false, 0 );
 				m_hTongueTip->SetMoveType( MOVETYPE_NOCLIP );
 				m_hTongueTip->SetAbsVelocity( Vector(0,0,32) );
-				
+
 
 				SetAltitude( (GetAbsOrigin().z - m_hTongueTip->GetAbsOrigin().z) );
 			}
 		}
-		
+
 		return;
 	}
 #endif
-	
+
 	Assert( pVictim );
 	if ( !pVictim )
-	{	
+	{
 		return;
 	}
 
@@ -1621,15 +1625,15 @@ void CNPC_Barnacle::BitePrey( void )
 
 	// Kill the victim instantly
 	int iDamageType = DMG_SLASH | DMG_ALWAYSGIB;
-	int nDamage; 
+	int nDamage;
 	if ( !pVictim->IsPlayer() )
 	{
 		iDamageType |= DMG_ALWAYSGIB;
-		nDamage = pVictim->m_iHealth; 
+		nDamage = pVictim->m_iHealth;
 	}
 	else
 	{
-		nDamage = BARNACLE_BITE_DAMAGE_TO_PLAYER; 
+		nDamage = BARNACLE_BITE_DAMAGE_TO_PLAYER;
 	}
 
 	if ( m_hRagdoll )
@@ -1639,7 +1643,7 @@ void CNPC_Barnacle::BitePrey( void )
 		m_hRagdoll->SetDamageEntity( NULL );
 	}
 
-	
+
 #if HL2_EPISODIC
 	m_bSwallowingPoison = IsPoisonous(pVictim);
 	unsigned int enemyClass = GetEnemy()->Classify();
@@ -1668,7 +1672,7 @@ void CNPC_Barnacle::BitePrey( void )
 		Vector vecBloodPos;
 		CollisionProp()->NormalizedToWorldSpace( Vector( 0.5f, 0.5f, 0.0f ), &vecBloodPos );
 		UTIL_BloodSpray( vecBloodPos, Vector(0,0,-1), GetEnemy()->BloodColor(), 8, FX_BLOODSPRAY_ALL );
-		
+
 		m_flDigestFinish = gpGlobals->curtime + 10.0;
 		return;
 	}
@@ -1677,9 +1681,9 @@ void CNPC_Barnacle::BitePrey( void )
 	// and hide it.
 	if ( enemyClass == CLASS_ANTLION )
 	{
-		
+
 #ifndef _XBOX
-		m_nBloodColor = pVictim->BloodColor(); 
+		m_nBloodColor = pVictim->BloodColor();
 #endif
 		m_flNextBloodTime = 0.0f;
 		SprayBlood();
@@ -1734,10 +1738,10 @@ void CNPC_Barnacle::BitePrey( void )
 
 	// Because the victim is dead, remember the blood color
 	m_flNextBloodTime = 0.0f;
-	
+
 	// NOTE: This was too confusing to people with the more recognizable blood -- jdw
 #ifndef _XBOX
-	m_nBloodColor = pVictim->BloodColor(); 
+	m_nBloodColor = pVictim->BloodColor();
 #endif
 	CollisionProp()->NormalizedToWorldSpace( Vector( 0.5f, 0.5f, 0.0f ), &m_vecBloodPos );
 
@@ -1748,7 +1752,7 @@ void CNPC_Barnacle::BitePrey( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CNPC_Barnacle::SprayBlood()
 {
@@ -1872,7 +1876,7 @@ void CNPC_Barnacle::RemoveRagdoll( bool bDestroyRagdoll )
 //-----------------------------------------------------------------------------
 void CNPC_Barnacle::LostPrey( bool bRemoveRagdoll )
 {
-	
+
 #if HL2_EPISODIC
 	m_OnRelease.Set( GetEnemy(), this, this );
 #endif
@@ -1973,7 +1977,7 @@ void CNPC_Barnacle::UpdateTongue( void )
 
 	// Set the spring's length to that of the tongue's extension
 
-	// Compute the rest length of the tongue based on the spring. 
+	// Compute the rest length of the tongue based on the spring.
 	// This occurs when mg == kx or x = mg/k
 	float flRestStretch = (BARNACLE_TONGUE_TIP_MASS * GetCurrentGravity()) / BARNACLE_TONGUE_SPRING_CONSTANT_HANGING;
 
@@ -1985,7 +1989,7 @@ void CNPC_Barnacle::UpdateTongue( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CNPC_Barnacle::SpawnDeathGibs( void )
 {
@@ -2009,7 +2013,7 @@ void CNPC_Barnacle::SpawnDeathGibs( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CNPC_Barnacle::Event_Killed( const CTakeDamageInfo &info )
 {
@@ -2035,7 +2039,7 @@ void CNPC_Barnacle::Event_Killed( const CTakeDamageInfo &info )
 		m_hRagdoll->SetMoveType( MOVETYPE_VPHYSICS );
 		m_hRagdoll->SetAbsOrigin( m_hTongueTip->GetAbsOrigin() );
 		m_hRagdoll->RemoveSolidFlags( FSOLID_NOT_SOLID );
-		m_hRagdoll->SetCollisionGroup( COLLISION_GROUP_DEBRIS ); 
+		m_hRagdoll->SetCollisionGroup( COLLISION_GROUP_DEBRIS );
 		m_hRagdoll->RecheckCollisionFilter();
 		if ( npc_barnacle_swallow.GetBool() )
 		{
@@ -2072,7 +2076,7 @@ void CNPC_Barnacle::Event_Killed( const CTakeDamageInfo &info )
 	// Put blood on the ground if near enough
 	trace_t bloodTrace;
 	AI_TraceLine( GetAbsOrigin(), GetAbsOrigin() - Vector( 0, 0, 256 ), MASK_SOLID_BRUSHONLY, this, COLLISION_GROUP_NONE, &bloodTrace);
-	
+
 	if ( bloodTrace.fraction < 1.0f )
 	{
 #ifdef _XBOX
@@ -2095,7 +2099,7 @@ void CNPC_Barnacle::Event_Killed( const CTakeDamageInfo &info )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CNPC_Barnacle::WaitTillDead ( void )
 {
@@ -2106,7 +2110,7 @@ void CNPC_Barnacle::WaitTillDead ( void )
 
 	if ( IsActivityFinished() )
 	{
-		// death anim finished. 
+		// death anim finished.
 		StopAnimation();
 	}
 
@@ -2134,11 +2138,11 @@ void CNPC_Barnacle::WaitTillDead ( void )
 	}
 
 	// Keep moving the tongue to its dead position
-	// FIXME: This stupid algorithm is necessary because 
+	// FIXME: This stupid algorithm is necessary because
 	// I can't seem to get reproduceable behavior from springs
 	bool bTongueInPosition = false;
 	float flDist = m_vecRoot.Get().z - m_vecTip.Get().z;
-	if ( fabs(flDist - goalAltitude) > 20.0f )	
+	if ( fabs(flDist - goalAltitude) > 20.0f )
 	{
 		float flNewAltitude;
 		float dt = gpGlobals->curtime - GetLastThink();
@@ -2156,7 +2160,7 @@ void CNPC_Barnacle::WaitTillDead ( void )
 	{
 		// Wait for settling...
 		IPhysicsObject *pTipObject = m_hTongueTip->VPhysicsGetObject();
-		
+
 		Vector vecVelocity;
 		AngularImpulse angVel;
 		pTipObject->GetVelocity( &vecVelocity, &angVel );
@@ -2198,7 +2202,7 @@ void CNPC_Barnacle::WaitTillDead ( void )
 #if HL2_EPISODIC
 //=========================================================
 // Some creatures are poisonous to barnacles, and the barnacle
-// will die after consuming them. This determines if a given 
+// will die after consuming them. This determines if a given
 // entity is one of those things.
 // todo: could be a bit faster
 //=========================================================
@@ -2217,7 +2221,7 @@ bool CNPC_Barnacle::IsPoisonous( CBaseEntity *pVictim )
 		 static_cast<CNPC_Antlion *>(pVictim)->IsWorker()
 		)
 		return true;
-	
+
 	return false;
 }
 
@@ -2276,7 +2280,7 @@ static impactdamagetable_t gBarnacleImpactDamageTable =
 	5,			// never take more than 5 pts of damage from anything under 5kg
 	36*36,		// <5kg objects must go faster than 36 in/s to do damage
 
-	VPHYSICS_LARGE_OBJECT_MASS,		// large mass in kg 
+	VPHYSICS_LARGE_OBJECT_MASS,		// large mass in kg
 	4,			// large mass scale (anything over 500kg does 4X as much energy to read from damage table)
 	5,			// large mass falling scale (emphasize falling/crushing damage over sideways impacts since the stress will kill you anyway)
 	0.0f,		// min vel
@@ -2315,7 +2319,7 @@ void CNPC_Barnacle::Precache()
 	PrecacheModel( "models/props_junk/rock001a.mdl" );
 
 	BaseClass::Precache();
-}	
+}
 
 //=========================================================
 // TongueTouchEnt - does a trace along the barnacle's tongue
@@ -2330,10 +2334,10 @@ public:
 	// This gets called	by the enumeration methods with each element
 	// that passes the test.
 	virtual IterationRetval_t EnumElement( IHandleEntity *pHandleEntity );
-	
+
 	int GetCount() { return m_nCount; }
 	bool AddToList( CBaseEntity *pEntity );
-	
+
 private:
 	CBaseEntity		**m_pList;
 	int				m_nListMax;
@@ -2374,7 +2378,7 @@ class CBarnacleTongueFilter : public CTraceFilterSimple
 	DECLARE_CLASS( CBarnacleTongueFilter, CTraceFilterSimple );
 
 public:
-	CBarnacleTongueFilter( CBaseEntity *pLastEnemy, const IHandleEntity *passedict, int collisionGroup ) : 
+	CBarnacleTongueFilter( CBaseEntity *pLastEnemy, const IHandleEntity *passedict, int collisionGroup ) :
 		CTraceFilterSimple( passedict, collisionGroup )
 	{
 		m_pLastEnemy = pLastEnemy;
@@ -2440,9 +2444,9 @@ CBaseEntity *CNPC_Barnacle::TongueTouchEnt ( float *pflLength )
 
 	// trace once to hit architecture and see if the tongue needs to change position.
 	CBarnacleTongueFilter tongueFilter( m_hLastSpitEnemy, this, COLLISION_GROUP_NONE );
-	AI_TraceLine ( GetAbsOrigin(), GetAbsOrigin() - Vector ( 0 , 0 , 2048 ), 
+	AI_TraceLine ( GetAbsOrigin(), GetAbsOrigin() - Vector ( 0 , 0 , 2048 ),
 		iMask, &tongueFilter, &tr );
-	
+
 	length = fabs( GetAbsOrigin().z - tr.endpos.z );
 	// Pull it up a tad
 	length = MAX(8, length - m_flRestUnitsAboveGround);
@@ -2530,11 +2534,11 @@ CBaseEntity *CNPC_Barnacle::TongueTouchEnt ( float *pflLength )
 			continue;
 
 		// only clients and monsters
-		if ( pTest != this && 
-			 IRelationType( pTest ) == D_HT && 
+		if ( pTest != this &&
+			 IRelationType( pTest ) == D_HT &&
 			 pVictim->m_lifeState != LIFE_DEAD &&
 			 pVictim->m_lifeState != LIFE_DYING &&
-			 !( pVictim->GetFlags() & FL_NOTARGET )	)	
+			 !( pVictim->GetFlags() & FL_NOTARGET )	)
 		{
 
 			// Allow the barnacles to grab stuff while their tongue is lowering
@@ -2591,7 +2595,7 @@ int CBarnacleTongueTip::UpdateTransmitState( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CBarnacleTongueTip::Precache( void )
 {
@@ -2600,7 +2604,7 @@ void CBarnacleTongueTip::Precache( void )
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CBarnacleTongueTip::UpdateOnRemove( )
 {
@@ -2614,7 +2618,7 @@ void CBarnacleTongueTip::UpdateOnRemove( )
 
 
 //-----------------------------------------------------------------------------
-// If the tip changes, we gotta update the barnacle's notion of his tongue 
+// If the tip changes, we gotta update the barnacle's notion of his tongue
 //-----------------------------------------------------------------------------
 void CBarnacleTongueTip::VPhysicsUpdate( IPhysicsObject *pPhysics )
 {
@@ -2678,7 +2682,7 @@ CBarnacleTongueTip *CBarnacleTongueTip::CreateTongueTip( CNPC_Barnacle *pBarnacl
 
 	// turn off all floating / fluid simulation
 	pTipPhys->SetCallbackFlags( pTipPhys->GetCallbackFlags() & (~CALLBACK_DO_FLUID_SIMULATION) );
-	
+
 	return pTip;
 }
 
@@ -2714,7 +2718,7 @@ AI_BEGIN_CUSTOM_NPC( npc_barnacle, CNPC_Barnacle )
 	DECLARE_INTERACTION( g_interactionBarnacleVictimBite )
 
 	// Conditions
-		
+
 	// Tasks
 
 	// Activities
