@@ -1,15 +1,13 @@
-///////////// Copyright, Transmissions - Element 120. All rights reserved. /////////////
+//========= Copyright Goldeneye: Source, All rights reserved. =========//
 //
-// File: ge_screeneffects.h
-// Description:
-// Post process effects for TE120
-//
+// Purpose: Post process effects
 // Created On: 25 Nov 09
 // Created By: Jonathan White <killermonkey>
-/////////////////////////////////////////////////////////////////////////////
+//
+//=============================================================================//
 
-#ifndef GE_SCREENSPACEEFFECTS_H
-#define GE_SCREENSPACEEFFECTS_H
+#ifndef C_ENTGLOWEFFECT_H
+#define C_ENTGLOWEFFECT_H
 #ifdef _WIN32
 #pragma once
 #endif
@@ -62,4 +60,4 @@ private:
 	CMaterialReference	m_BlurY;
 };
 
-#endif
+#endif // C_ENTGLOWEFFECT_H

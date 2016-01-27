@@ -419,8 +419,7 @@ void CNPC_Zombine::GatherGrenadeConditions( void )
 	if ( m_ActBusyBehavior.IsActive() )
 		return;
 //TE120--
-	//CBasePlayer *pPlayer = AI_GetSinglePlayer();
-	CBasePlayer *pPlayer = UTIL_PlayerByIndex(1);
+	CBasePlayer *pPlayer = AI_GetSinglePlayer();
 	float flLengthToEnemy = (GetEnemy()->GetAbsOrigin() - GetAbsOrigin()).Length();
 
 	if ( pPlayer && pPlayer->FInViewCone(this) ) // || flLengthToEnemy < 48

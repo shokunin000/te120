@@ -1631,7 +1631,8 @@ void CMathCounter::UpdateOutValue(CBaseEntity *pActivator, float fNewValue)
 	{
 //TE120--
 		// Fire an output any time the max value is changed
-		if ( m_bHitMax && ( fNewValue < m_flMax ) ) {
+		if ( m_bHitMax && ( fNewValue < m_flMax ) )
+		{
 			m_OnMaxChanged.FireOutput( pActivator, this );
 		}
 //TE120--
@@ -1943,7 +1944,6 @@ LINK_ENTITY_TO_CLASS( logic_math, CLogicMath );
 
 BEGIN_DATADESC( CLogicMath )
 
-
 	// Keys
 	DEFINE_KEYFIELD( m_flCompareValue, FIELD_FLOAT, "CompareValue" ),
 
@@ -1973,7 +1973,7 @@ void CLogicMath::InputCompare( inputdata_t &inputdata )
 		if ( FClassnameIs( pEntity, "math_counter" ) )
 		{
 			CMathCounter *pMath = ( CMathCounter * )pEntity;
-			if (pMath->m_OutValue.Get() == m_flCompareValue )
+			if ( pMath->m_OutValue.Get() == m_flCompareValue )
 			{
 				m_OnEqualTo.Set( pMath->m_OutValue.Get(), inputdata.pActivator, this );
 			}
@@ -1981,7 +1981,7 @@ void CLogicMath::InputCompare( inputdata_t &inputdata )
 			{
 				m_OnNotEqualTo.Set( pMath->m_OutValue.Get(), inputdata.pActivator, this );
 
-				if (pMath->m_OutValue.Get() > m_flCompareValue)
+				if ( pMath->m_OutValue.Get() > m_flCompareValue ) 
 				{
 					m_OnGreaterThan.Set( pMath->m_OutValue.Get(), inputdata.pActivator, this );
 				}

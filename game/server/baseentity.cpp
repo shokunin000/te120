@@ -811,7 +811,7 @@ void CBaseEntity::DrawTimedOverlays(void)
 	if ((m_debugOverlays & OVERLAY_MESSAGE_BIT))
 	{
 		char tempstr[512];
-		Q_snprintf( tempstr, sizeof( tempstr ), "[%s]", GetDebugName() );
+		V_snprintf( tempstr, sizeof( tempstr ), "[%s]", GetDebugName() );
 		EntityText(0,tempstr, 0);
 	}
 
@@ -1000,32 +1000,32 @@ int CBaseEntity::DrawDebugTextOverlays(void)
 	if (m_debugOverlays & OVERLAY_TEXT_BIT)
 	{
 		char tempstr[512];
-		Q_snprintf( tempstr, sizeof(tempstr), "(%d) Name: %s (%s)", entindex(), GetDebugName(), GetClassname() );
+		V_snprintf( tempstr, sizeof(tempstr), "(%d) Name: %s (%s)", entindex(), GetDebugName(), GetClassname() );
 		EntityText(offset,tempstr, 0);
 		offset++;
 
 		if( m_iGlobalname != NULL_STRING )
 		{
-			Q_snprintf( tempstr, sizeof(tempstr), "GLOBALNAME: %s", STRING(m_iGlobalname) );
+			V_snprintf( tempstr, sizeof(tempstr), "GLOBALNAME: %s", STRING(m_iGlobalname) );
 			EntityText(offset,tempstr, 0);
 			offset++;
 		}
 
 		Vector vecOrigin = GetAbsOrigin();
-		Q_snprintf( tempstr, sizeof(tempstr), "Position: %0.1f, %0.1f, %0.1f\n", vecOrigin.x, vecOrigin.y, vecOrigin.z );
+		V_snprintf( tempstr, sizeof(tempstr), "Position: %0.1f, %0.1f, %0.1f\n", vecOrigin.x, vecOrigin.y, vecOrigin.z );
 		EntityText( offset, tempstr, 0 );
 		offset++;
 
 		if( GetModelName() != NULL_STRING || GetBaseAnimating() )
 		{
-			Q_snprintf(tempstr, sizeof(tempstr), "Model:%s", STRING(GetModelName()) );
+			V_snprintf(tempstr, sizeof(tempstr), "Model:%s", STRING(GetModelName()) );
 			EntityText(offset,tempstr,0);
 			offset++;
 		}
 
 		if( m_hDamageFilter.Get() != NULL )
 		{
-			Q_snprintf( tempstr, sizeof(tempstr), "DAMAGE FILTER:%s", m_hDamageFilter->GetDebugName() );
+			V_snprintf( tempstr, sizeof(tempstr), "DAMAGE FILTER:%s", m_hDamageFilter->GetDebugName() );
 			EntityText( offset,tempstr,0 );
 			offset++;
 		}
@@ -3737,15 +3737,15 @@ void CBaseEntity::DrawInputOverlay(const char *szInputName, CBaseEntity *pCaller
 	char bigstring[1024];
 	if ( Value.FieldType() == FIELD_INTEGER )
 	{
-		Q_snprintf( bigstring,sizeof(bigstring), "%3.1f  (%s,%d) <-- (%s)\n", gpGlobals->curtime, szInputName, Value.Int(), pCaller ? pCaller->GetDebugName() : NULL);
+		V_snprintf( bigstring,sizeof(bigstring), "%3.1f  (%s,%d) <-- (%s)\n", gpGlobals->curtime, szInputName, Value.Int(), pCaller ? pCaller->GetDebugName() : NULL);
 	}
 	else if ( Value.FieldType() == FIELD_STRING )
 	{
-		Q_snprintf( bigstring,sizeof(bigstring), "%3.1f  (%s,%s) <-- (%s)\n", gpGlobals->curtime, szInputName, Value.String(), pCaller ? pCaller->GetDebugName() : NULL);
+		V_snprintf( bigstring,sizeof(bigstring), "%3.1f  (%s,%s) <-- (%s)\n", gpGlobals->curtime, szInputName, Value.String(), pCaller ? pCaller->GetDebugName() : NULL);
 	}
 	else
 	{
-		Q_snprintf( bigstring,sizeof(bigstring), "%3.1f  (%s) <-- (%s)\n", gpGlobals->curtime, szInputName, pCaller ? pCaller->GetDebugName() : NULL);
+		V_snprintf( bigstring,sizeof(bigstring), "%3.1f  (%s) <-- (%s)\n", gpGlobals->curtime, szInputName, pCaller ? pCaller->GetDebugName() : NULL);
 	}
 	AddTimedOverlay(bigstring, 10.0);
 
@@ -3772,11 +3772,11 @@ void CBaseEntity::DrawOutputOverlay(CEventAction *ev)
 	char bigstring[1024];
 	if ( ev->m_flDelay )
 	{
-		Q_snprintf( bigstring,sizeof(bigstring), "%3.1f  (%s) --> (%s),%.1f) \n", gpGlobals->curtime, STRING(ev->m_iTargetInput), STRING(ev->m_iTarget), ev->m_flDelay);
+		V_snprintf( bigstring,sizeof(bigstring), "%3.1f  (%s) --> (%s),%.1f) \n", gpGlobals->curtime, STRING(ev->m_iTargetInput), STRING(ev->m_iTarget), ev->m_flDelay);
 	}
 	else
 	{
-		Q_snprintf( bigstring,sizeof(bigstring), "%3.1f  (%s) --> (%s)\n", gpGlobals->curtime,  STRING(ev->m_iTargetInput), STRING(ev->m_iTarget));
+		V_snprintf( bigstring,sizeof(bigstring), "%3.1f  (%s) --> (%s)\n", gpGlobals->curtime,  STRING(ev->m_iTargetInput), STRING(ev->m_iTarget));
 	}
 	AddTimedOverlay(bigstring, 10.0);
 
@@ -3900,11 +3900,11 @@ bool CBaseEntity::AcceptInput( const char *szInputName, CBaseEntity *pActivator,
 					// mapper debug message
 					if (pCaller != NULL)
 					{
-						Q_snprintf( szBuffer, sizeof(szBuffer), "(%0.2f) input %s: %s.%s(%s)\n", gpGlobals->curtime, STRING(pCaller->m_iName), GetDebugName(), szInputName, Value.String() );
+						V_snprintf( szBuffer, sizeof(szBuffer), "(%0.2f) input %s: %s.%s(%s)\n", gpGlobals->curtime, STRING(pCaller->m_iName), GetDebugName(), szInputName, Value.String() );
 					}
 					else
 					{
-						Q_snprintf( szBuffer, sizeof(szBuffer), "(%0.2f) input <NULL>: %s.%s(%s)\n", gpGlobals->curtime, GetDebugName(), szInputName, Value.String() );
+						V_snprintf( szBuffer, sizeof(szBuffer), "(%0.2f) input <NULL>: %s.%s(%s)\n", gpGlobals->curtime, GetDebugName(), szInputName, Value.String() );
 					}
 					DevMsg( 2, "%s", szBuffer );
 					ADD_DEBUG_HISTORY( HISTORY_ENTITY_IO, szBuffer );
@@ -4878,13 +4878,13 @@ void CBaseEntity::PrecacheModelComponents( int nModelIndex )
 									options = "NPC_CombineS";
 								}
 
-								Q_snprintf( soundname, sizeof( soundname ), "%s.RunFootstepLeft", options );
+								V_snprintf( soundname, sizeof( soundname ), "%s.RunFootstepLeft", options );
 								PrecacheSoundHelper( soundname );
-								Q_snprintf( soundname, sizeof( soundname ), "%s.RunFootstepRight", options );
+								V_snprintf( soundname, sizeof( soundname ), "%s.RunFootstepRight", options );
 								PrecacheSoundHelper( soundname );
-								Q_snprintf( soundname, sizeof( soundname ), "%s.FootstepLeft", options );
+								V_snprintf( soundname, sizeof( soundname ), "%s.FootstepLeft", options );
 								PrecacheSoundHelper( soundname );
-								Q_snprintf( soundname, sizeof( soundname ), "%s.FootstepRight", options );
+								V_snprintf( soundname, sizeof( soundname ), "%s.FootstepRight", options );
 								PrecacheSoundHelper( soundname );
 							}
 							break;
@@ -5287,18 +5287,18 @@ void CC_Ent_Dump( const CCommand& args )
 							break;
 						case FIELD_INTEGER:
 							if ( var.Int() )
-								Q_snprintf( buf,sizeof(buf), "%d", var.Int() );
+								V_snprintf( buf,sizeof(buf), "%d", var.Int() );
 							break;
 						case FIELD_FLOAT:
 							if ( var.Float() )
-								Q_snprintf( buf,sizeof(buf), "%.2f", var.Float() );
+								V_snprintf( buf,sizeof(buf), "%.2f", var.Float() );
 							break;
 						case FIELD_EHANDLE:
 							{
 								// get the entities name
 								if ( var.Entity() )
 								{
-									Q_snprintf( buf,sizeof(buf), "%s", STRING(var.Entity()->GetEntityName()) );
+									V_snprintf( buf,sizeof(buf), "%s", STRING(var.Entity()->GetEntityName()) );
 								}
 							}
 							break;
@@ -6380,7 +6380,7 @@ void CBaseEntity::AppendContextToCriteria( AI_CriteriaSet& set, const char *pref
 		const char *name = GetContextName( i );
 		const char *value = GetContextValue( i );
 
-		Q_snprintf( sz, sizeof( sz ), "%s%s", prefix, name );
+		V_snprintf( sz, sizeof( sz ), "%s%s", prefix, name );
 
 		set.AppendCriteria( sz, value );
 	}

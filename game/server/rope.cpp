@@ -564,7 +564,7 @@ void CRopeKeyframe::InputBreak( inputdata_t &inputdata )
 void CRopeKeyframe::InputUpdateRope( inputdata_t &inputdata )
 {
 	CRopeKeyframe *pRet = (CRopeKeyframe*)CreateEntityByName( "keyframe_rope" );
-	if( pRet )
+	if ( pRet )
 	{
 		pRet->SetAbsOrigin( GetAbsOrigin() );
 

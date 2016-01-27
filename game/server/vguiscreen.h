@@ -20,7 +20,7 @@ class CVGuiScreen : public CBaseEntity
 {
 public:
 	DECLARE_CLASS( CVGuiScreen, CBaseEntity );
-	
+
 	DECLARE_SERVERCLASS();
 	DECLARE_DATADESC();
 
@@ -67,9 +67,9 @@ private:
 
 	string_t m_strOverlayMaterial;
 
-	CNetworkVar( float, m_flWidth ); 
+	CNetworkVar( float, m_flWidth );
 	CNetworkVar( float, m_flHeight );
-	CNetworkVar( int, m_nPanelName );	// The name of the panel 
+	CNetworkVar( int, m_nPanelName );	// The name of the panel
 	CNetworkVar( int, m_nAttachmentIndex );
 	CNetworkVar( int, m_nOverlayMaterial );
 	CNetworkVar( int, m_fScreenFlags );

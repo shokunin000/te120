@@ -72,12 +72,12 @@ private:
 	float			m_savedRotDamping[VPHYSICS_MAX_OBJECT_LIST_COUNT];
 	float			m_savedMass[VPHYSICS_MAX_OBJECT_LIST_COUNT];
 	EHANDLE		m_attachedEntity;
-	QAngle			m_vecPreferredCarryAngles;
+	QAngle		m_vecPreferredCarryAngles;
 	bool			m_bHasPreferredCarryAngles;
 	float			m_flDistanceOffset;
 
-	QAngle			m_attachedAnglesPlayerSpace;
-	Vector			m_attachedPositionObjectSpace;
+	QAngle		m_attachedAnglesPlayerSpace;
+	Vector		m_attachedPositionObjectSpace;
 
 	IPhysicsMotionController *m_controller;
 

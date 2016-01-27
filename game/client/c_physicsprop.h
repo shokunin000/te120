@@ -11,7 +11,7 @@
 #endif
 
 #include "c_breakableprop.h"
-#include "ge_screeneffects.h"//TE120
+#include "c_entgloweffect.h"//TE120
 
 //-----------------------------------------------------------------------------
 // Purpose:

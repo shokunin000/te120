@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //=====================================================================================//
@@ -58,7 +58,7 @@ IMPLEMENT_CLIENTCLASS_DT_NOBASE( C_RopeKeyframe, DT_RopeKeyframe, CRopeKeyframe 
 	RecvPropFloat( RECVINFO(m_flScrollSpeed) ),
 	RecvPropVector( RECVINFO_NAME( m_vecNetworkOrigin, m_vecOrigin ) ),
 	RecvPropInt( RECVINFO_NAME(m_hNetworkMoveParent, moveparent), 0, RecvProxy_IntToMoveParent ),
-	
+
 	RecvPropInt( RECVINFO( m_iParentAttachment ) ),
 END_RECV_TABLE()
 
@@ -193,7 +193,7 @@ public:
 		if( pReturn == NULL )
 		{
 			int iMaxSize = m_QueuedRopeMemory[m_nCurrentStack].GetMaxSize();
-			Warning( "Overflowed rope queued rendering memory stack. Needed %d, have %d/%d\n", bytes, iMaxSize - m_QueuedRopeMemory[m_nCurrentStack].GetUsed(), iMaxSize );
+			Warning( "Overflowed rope queued rendering memory stack. Needed %zu, have %d/%d\n", bytes, iMaxSize - m_QueuedRopeMemory[m_nCurrentStack].GetUsed(), iMaxSize );
 			pReturn = malloc( bytes );
 			m_DeleteOnSwitch[m_nCurrentStack].AddToTail( pReturn );
 		}
@@ -237,19 +237,19 @@ public:
 	void SetHolidayLightMode( bool bHoliday ) { m_bDrawHolidayLights = bHoliday; }
 	bool IsHolidayLightMode( void );
 	int GetHolidayLightStyle( void );
-	
+
 private:
 	struct RopeRenderData_t;
 public:
 	void DrawRenderCache_NonQueued( bool bShadowDepth, RopeRenderData_t *pRenderCache, int nRenderCacheCount, const Vector &vCurrentViewForward, const Vector &vCurrentViewOrigin, C_RopeKeyframe::BuildRopeQueuedData_t *pBuildRopeQueuedData );
-	
+
 	void			ResetSegmentCache( int nMaxSegments );
 	RopeSegData_t	*GetNextSegmentFromCache( void );
 
 	enum { MAX_ROPE_RENDERCACHE	= 128 };
 
 	void RemoveRopeFromQueuedRenderCaches( C_RopeKeyframe *pRope );
-	
+
 private:
 
 	void RenderNonSolidRopes( IMatRenderContext *pRenderContext, IMaterial *pMaterial, int nVertCount, int nIndexCount );
@@ -269,7 +269,7 @@ private:
 	int								m_nSegmentCacheCount;
 	CUtlVector<RopeSegData_t>		m_aSegmentCache;
 	CThreadFastMutex				m_RenderCacheMutex; //there's only any contention during the switch from r_queued_ropes on to off
-	
+
 	//in queued material system mode we need to store off data for later use.
 	CQueuedRopeMemoryManager		m_QueuedModeMemory;
 
@@ -361,7 +361,7 @@ void CRopeManager::AddToRenderCache( C_RopeKeyframe *pRope )
 	{
 		return;
 	}
-	
+
 	// Find the current rope list.
 	int iRenderCache = 0;
 	int nRenderCacheCount = m_aRenderCache.Count();
@@ -429,14 +429,14 @@ void CRopeManager::DrawRenderCache_NonQueued( bool bShadowDepth, RopeRenderData_
 	CMatRenderContextPtr pRenderContext( materials );
 
 	C_RopeKeyframe::BuildRopeQueuedData_t stackQueuedData;
-	Vector vStackPredictedPositions[MAX_ROPE_SEGMENTS];	
-	
+	Vector vStackPredictedPositions[MAX_ROPE_SEGMENTS];
+
 	for ( int iRenderCache = 0; iRenderCache < nRenderCacheCount; ++iRenderCache )
 	{
 		int nCacheCount = pRenderCache[iRenderCache].m_nCacheCount;
 
 		if ( nCacheCount == 0 )
-			continue;		
+			continue;
 
 		ResetSegmentCache( nCacheCount );
 
@@ -446,7 +446,7 @@ void CRopeManager::DrawRenderCache_NonQueued( bool bShadowDepth, RopeRenderData_
 			if ( pRope )
 			{
 				RopeSegData_t *pRopeSegment = GetNextSegmentFromCache();
-				
+
 				if( pBuildRopeQueuedData )
 				{
 					pRope->BuildRope( pRopeSegment, vCurrentViewForward, vCurrentViewOrigin, pBuildRopeQueuedData, true );
@@ -466,7 +466,7 @@ void CRopeManager::DrawRenderCache_NonQueued( bool bShadowDepth, RopeRenderData_
 					{
 						vStackPredictedPositions[i] = pRope->m_RopePhysics.GetNode( i )->m_vPredicted;
 					}
-					
+
 					pRope->BuildRope( pRopeSegment, vCurrentViewForward, vCurrentViewOrigin, &stackQueuedData, false );
 				}
 			}
@@ -538,7 +538,7 @@ void CRopeManager::DrawRenderCache( bool bShadowDepth )
 		//material queue available and desired
 		CRopeManager::RopeRenderData_t *pRenderCache = m_aRenderCache.Base();
 		AUTO_LOCK( m_RenderCacheMutex );
-		
+
 		int iRopeCount = 0;
 		int iNodeCount = 0;
 		for( int i = 0; i != iRenderCacheCount; ++i )
@@ -559,7 +559,7 @@ void CRopeManager::DrawRenderCache( bool bShadowDepth )
 		if( iRopeCount == 0 )
 			return; //nothing to draw
 
-		size_t iMemoryNeeded = (iRenderCacheCount * sizeof(CRopeManager::RopeRenderData_t)) + 
+		size_t iMemoryNeeded = (iRenderCacheCount * sizeof(CRopeManager::RopeRenderData_t)) +
 								(iRopeCount * sizeof(C_RopeKeyframe::BuildRopeQueuedData_t)) +
 								(iNodeCount * (sizeof(Vector) * 2));
 
@@ -568,14 +568,14 @@ void CRopeManager::DrawRenderCache( bool bShadowDepth )
 		CRopeManager::RopeRenderData_t *pRenderCachesStart = (CRopeManager::RopeRenderData_t *)pMemory;
 		C_RopeKeyframe::BuildRopeQueuedData_t *pBuildRopeQueuedDataStart = (C_RopeKeyframe::BuildRopeQueuedData_t *)(pRenderCachesStart + iRenderCacheCount);
 		Vector *pVectorDataStart = (Vector *)(pBuildRopeQueuedDataStart + iRopeCount);
-		
+
 		//memcpy( pRenderCachesStart, m_aRenderCache.Base(), iRenderCacheCount * sizeof( CRopeManager::RopeRenderData_t ) );
 
 		RopeQueuedRenderCache_t cache;
 		cache.pCaches = pRenderCachesStart;
 		cache.iCacheCount = iRenderCacheCount;
 		m_RopeQueuedRenderCaches.AddToTail( cache );
-		
+
 		C_RopeKeyframe::BuildRopeQueuedData_t *pWriteRopeQueuedData = pBuildRopeQueuedDataStart;
 		Vector *pVectorWrite = (Vector *)pVectorDataStart;
 
@@ -610,7 +610,7 @@ void CRopeManager::DrawRenderCache( bool bShadowDepth )
 
 				//make two arrays, one of predicted positions followed immediately by light values
 				for( int k = 0; k != iNodes; ++k )
-				{					
+				{
 					pVectorWrite[0] = pRope->m_RopePhysics.GetNode( k )->m_vPredicted;
 					pVectorWrite[iNodes] = pRope->m_LightValues[k];
 					++pVectorWrite;
@@ -618,7 +618,7 @@ void CRopeManager::DrawRenderCache( bool bShadowDepth )
 				pVectorWrite += iNodes; //so we don't overwrite the light values with the next rope's predicted positions
 			}
 		}
-		Assert( ((void *)pVectorWrite == (void *)(((uint8 *)pMemory) + iMemoryNeeded)) && ((void *)pWriteRopeQueuedData == (void *)pVectorDataStart));		
+		Assert( ((void *)pVectorWrite == (void *)(((uint8 *)pMemory) + iMemoryNeeded)) && ((void *)pWriteRopeQueuedData == (void *)pVectorDataStart));
 		pCallQueue->QueueCall( this, &CRopeManager::DrawRenderCache_NonQueued, bShadowDepth, pRenderCachesStart, iRenderCacheCount, vForward, vOrigin, pBuildRopeQueuedDataStart );
 
 		if ( IsHolidayLightMode() )
@@ -695,7 +695,7 @@ void CRopeManager::RenderNonSolidRopes( IMatRenderContext *pRenderContext, IMate
 		beamSegment.End();
 		nVerts += ( m_aSegmentCache[iSegmentCache].m_nSegmentCount * 2 );
 	}
-	
+
 	meshBuilder.End();
 	pMesh->Draw();
 }
@@ -718,7 +718,7 @@ void CRopeManager::RenderSolidRopes( IMatRenderContext *pRenderContext, IMateria
 		for ( int iSegmentCache = 0; iSegmentCache < m_nSegmentCacheCount; ++iSegmentCache )
 		{
 			RopeSegData_t *pSegData = &m_aSegmentCache[iSegmentCache];
-			
+
 			// If it's all going to be 0 alpha, then just skip drawing this one.
 			if ( rope_solid_minalpha.GetFloat() == 0.0 && pSegData->m_flMaxBackWidth <= rope_solid_minwidth.GetFloat() )
 				continue;
@@ -732,14 +732,14 @@ void CRopeManager::RenderSolidRopes( IMatRenderContext *pRenderContext, IMateria
 
 				// To avoid aliasing, the "solid" version of the rope on xbox is just "more solid",
 				// and it has its own values controlling its alpha.
-				pSeg->m_flAlpha = RemapVal( pSeg->m_flWidth, 
+				pSeg->m_flAlpha = RemapVal( pSeg->m_flWidth,
 					rope_solid_minwidth.GetFloat(),
 					rope_solid_maxwidth.GetFloat(),
 					rope_solid_minalpha.GetFloat(),
 					rope_solid_maxalpha.GetFloat() );
-				
+
 				pSeg->m_flAlpha = clamp( pSeg->m_flAlpha, 0.0f, 1.0f );
-				
+
 				beamSegment.NextSeg( &m_aSegmentCache[iSegmentCache].m_Segments[iSegment] );
 			}
 			beamSegment.End();
@@ -799,7 +799,7 @@ RopeSegData_t *CRopeManager::GetNextSegmentFromCache( void )
 
 void CRopeManager::RemoveRopeFromQueuedRenderCaches( C_RopeKeyframe *pRope )
 {
-	//remove this rope from queued render caches	
+	//remove this rope from queued render caches
 	AUTO_LOCK( m_RenderCacheMutex );
 	int index = m_RopeQueuedRenderCaches.Head();
 	while( m_RopeQueuedRenderCaches.IsValidIndex( index ) )
@@ -818,7 +818,7 @@ void CRopeManager::RemoveRopeFromQueuedRenderCaches( C_RopeKeyframe *pRope )
 		}
 
 		index = m_RopeQueuedRenderCaches.Next( index );
-	}	
+	}
 }
 
 //=============================================================================
@@ -850,7 +850,7 @@ void ShakeRopesCallback( const CEffectData &data )
 	FOR_EACH_LL( g_Ropes, i )
 	{
 		C_RopeKeyframe *pRope = g_Ropes[i];
-	
+
 		pRope->ShakeRope( vCenter, flRadius, flMagnitude );
 	}
 }
@@ -907,13 +907,13 @@ void C_RopeKeyframe::CPhysicsDelegate::GetNodeForces( CSimplePhysics::CNode *pNo
 }
 
 
-void LockNodeDirection( 
-	CSimplePhysics::CNode *pNodes, 
-	int parity, 
+void LockNodeDirection(
+	CSimplePhysics::CNode *pNodes,
+	int parity,
 	int nFalloffNodes,
 	float flLockAmount,
 	float flLockFalloff,
-	const Vector &vIdealDir ) 
+	const Vector &vIdealDir )
 {
 	for ( int i=0; i < nFalloffNodes; i++ )
 	{
@@ -943,8 +943,8 @@ void C_RopeKeyframe::CPhysicsDelegate::ApplyConstraints( CSimplePhysics::CNode *
 	CTraceFilterWorldOnly traceFilter;
 
 	// Collide with the world.
-	if( ((m_pKeyframe->m_RopeFlags & ROPE_COLLIDE) && 
-		rope_collide.GetInt()) || 
+	if( ((m_pKeyframe->m_RopeFlags & ROPE_COLLIDE) &&
+		rope_collide.GetInt()) ||
 		(rope_collide.GetInt() == 2) )
 	{
 		CTimeAdder adder( &g_RopeCollideTicks );
@@ -958,7 +958,7 @@ void C_RopeKeyframe::CPhysicsDelegate::ApplyConstraints( CSimplePhysics::CNode *
 			for( iIteration=0; iIteration < nIterations; iIteration++ )
 			{
 				trace_t trace;
-				UTIL_TraceHull( pNode->m_vPrevPos, pNode->m_vPos, 
+				UTIL_TraceHull( pNode->m_vPrevPos, pNode->m_vPos,
 					Vector(-2,-2,-2), Vector(2,2,2), MASK_SOLID_BRUSHONLY, &traceFilter, &trace );
 
 				if( trace.fraction == 1 )
@@ -1009,7 +1009,7 @@ void C_RopeKeyframe::CPhysicsDelegate::ApplyConstraints( CSimplePhysics::CNode *
 		{
 			Vector forward;
 			AngleVectors( angles, &forward );
-			
+
 			int parity = -1;
 			int nFalloffNodes = MIN( 2, nNodes - 2 );
 			LockNodeDirection( &pNodes[nNodes-1], parity, nFalloffNodes, g_flLockAmount, g_flLockFalloff, forward );
@@ -1036,10 +1036,10 @@ C_RopeKeyframe::C_RopeKeyframe()
 	m_vColorMod.Init( 1, 1, 1 );
 	m_nLinksTouchingSomething = 0;
 	m_Subdiv = 255; // default to using the cvar
-	
+
 	m_fLockedPoints = 0;
 	m_fPrevLockedPoints = 0;
-	
+
 	m_iForcePointMoveCounter = 0;
 	m_flCurScroll = m_flScrollSpeed = 0;
 	m_TextureScale = 4;	// 4:1
@@ -1051,7 +1051,7 @@ C_RopeKeyframe::C_RopeKeyframe()
 
 C_RopeKeyframe::~C_RopeKeyframe()
 {
-	s_RopeManager.RemoveRopeFromQueuedRenderCaches( this );	
+	s_RopeManager.RemoveRopeFromQueuedRenderCaches( this );
 	g_Ropes.FindAndRemove( this );
 
 	if ( m_pBackMaterial )
@@ -1076,7 +1076,7 @@ C_RopeKeyframe* C_RopeKeyframe::Create(
 	C_RopeKeyframe *pRope = new C_RopeKeyframe;
 
 	pRope->InitializeAsClientEntity( NULL, RENDER_GROUP_OPAQUE_ENTITY );
-	
+
 	if ( pStartEnt )
 	{
 		pRope->m_hStartPoint = pStartEnt;
@@ -1102,7 +1102,7 @@ C_RopeKeyframe* C_RopeKeyframe::Create(
 
 C_RopeKeyframe* C_RopeKeyframe::CreateFromKeyValues( C_BaseAnimating *pEnt, KeyValues *pValues )
 {
-	C_RopeKeyframe *pRope = C_RopeKeyframe::Create( 
+	C_RopeKeyframe *pRope = C_RopeKeyframe::Create(
 		pEnt,
 		pEnt,
 		pEnt->LookupAttachment( pValues->GetString( "StartAttachment" ) ),
@@ -1133,12 +1133,12 @@ int C_RopeKeyframe::GetRopesIntersectingAABB( C_RopeKeyframe **pRopes, int nMaxR
 {
 	if ( nMaxRopes == 0 )
 		return 0;
-	
+
 	int nRopes = 0;
 	FOR_EACH_LL( g_Ropes, i )
 	{
 		C_RopeKeyframe *pRope = g_Ropes[i];
-	
+
 		Vector v1, v2;
 		if ( pRope->GetEndPointPos( 0, v1 ) && pRope->GetEndPointPos( 1, v2 ) )
 		{
@@ -1168,7 +1168,7 @@ void C_RopeKeyframe::SetRopeFlags( int flags )
 	UpdateVisibility();
 }
 
-	
+
 int C_RopeKeyframe::GetRopeFlags() const
 {
 	return m_RopeFlags;
@@ -1187,7 +1187,7 @@ void C_RopeKeyframe::SetupHangDistance( float flHangDist )
 	// Calculate starting conditions so we can force it to hang down N inches.
 	Vector v1 = pEnt1->GetAbsOrigin();
 	pEnt1->GetAttachment( m_iStartAttachment, v1, dummyAngles );
-		
+
 	Vector v2 = pEnt2->GetAbsOrigin();
 	pEnt2->GetAttachment( m_iEndAttachment, v2, dummyAngles );
 
@@ -1253,7 +1253,7 @@ void C_RopeKeyframe::ShakeRope( const Vector &vCenter, float flRadius, float flM
 		CSimplePhysics::CNode *pNode = m_RopePhysics.GetNode( i );
 
 		float flDist = (pNode->m_vPos - vCenter).Length();
-	
+
 		float flShakeAmount = 1.0f - flDist / flRadius;
 		if ( flShakeAmount >= 0 )
 		{
@@ -1288,14 +1288,14 @@ void C_RopeKeyframe::OnDataChanged( DataUpdateType_t updateType )
 	{
 		Q_strncpy( str, "asdf", sizeof( str ) );
 	}
-	
+
 	FinishInit( str );
 }
 
 
 void C_RopeKeyframe::FinishInit( const char *pMaterialName )
 {
-	// Get the material from the material system.	
+	// Get the material from the material system.
 	m_pMaterial = materials->FindMaterial( pMaterialName, TEXTURE_GROUP_OTHER );
 	if( m_pMaterial )
 		m_TextureHeight = m_pMaterial->GetMappingHeight();
@@ -1304,7 +1304,7 @@ void C_RopeKeyframe::FinishInit( const char *pMaterialName )
 
 	char backName[512];
 	Q_snprintf( backName, sizeof( backName ), "%s_back", pMaterialName );
-	
+
 	m_pBackMaterial = materials->FindMaterial( backName, TEXTURE_GROUP_OTHER, false );
 	if ( IsErrorMaterial( m_pBackMaterial ) )
 		m_pBackMaterial = NULL;
@@ -1314,7 +1314,7 @@ void C_RopeKeyframe::FinishInit( const char *pMaterialName )
 		m_pBackMaterial->IncrementReferenceCount();
 		m_pBackMaterial->GetMappingWidth();
 	}
-	
+
 	// Init rope physics.
 	m_nSegments = clamp( m_nSegments, 2, ROPE_MAX_SEGMENTS );
 	m_RopePhysics.SetNumNodes( m_nSegments );
@@ -1385,7 +1385,7 @@ void C_RopeKeyframe::ClientThink()
 	// Only recalculate the endpoint attachments once per frame.
 	m_bEndPointAttachmentPositionsDirty = true;
 	m_bEndPointAttachmentAnglesDirty = true;
-	
+
 	if( !r_drawropes.GetBool() )
 		return;
 
@@ -1396,7 +1396,7 @@ void C_RopeKeyframe::ClientThink()
 	{
 		// Update the simulation.
 		CTimeAdder adder( &g_RopeSimulateTicks );
-		
+
 		RunRopeSimulation( gpGlobals->frametime );
 
 		g_nRopePointsSimulated += m_RopePhysics.NumNodes();
@@ -1414,7 +1414,7 @@ void C_RopeKeyframe::ClientThink()
 			static float basicScale = 50;
 			m_vWindDir *= basicScale;
 			m_vWindDir *= RandomFloat( -1.0f, 1.0f );
-			
+
 			m_flCurrentGustTimer = 0;
 			m_flCurrentGustLifetime = RandomFloat( 2.0f, 3.0f );
 
@@ -1457,7 +1457,7 @@ int C_RopeKeyframe::DrawModel( int flags )
 
 bool C_RopeKeyframe::ShouldDraw()
 {
-	if( !r_ropetranslucent.GetBool() ) 
+	if( !r_ropetranslucent.GetBool() )
 		return false;
 
 	if( !(m_RopeFlags & ROPE_SIMULATE) )
@@ -1539,7 +1539,7 @@ bool C_RopeKeyframe::GetAttachment( int number, Vector &origin, QAngle &angles )
 
 		return true;
 	}
-	
+
 	return false;
 }
 
@@ -1570,7 +1570,7 @@ inline bool C_RopeKeyframe::DidEndPointMove( int iPt )
 	Vector vOld = m_vPrevEndPointPos[iPt];
 
 	m_bPrevEndPointPos[iPt] = GetEndPointPos( iPt, m_vPrevEndPointPos[iPt] );
-	
+
 	// If it wasn't and isn't attached to anything, don't register a change.
 	if( !bOld && !m_bPrevEndPointPos[iPt] )
 		return true;
@@ -1591,7 +1591,7 @@ bool C_RopeKeyframe::DetectRestingState( bool &bApplyWind )
 	{
 		// Force it to move the points for some number of frames when they get detached or
 		// after we get new data. This allows them to accelerate from gravity.
-		m_iForcePointMoveCounter = 10; 
+		m_iForcePointMoveCounter = 10;
 		m_fPrevLockedPoints = m_fLockedPoints;
 		return false;
 	}
@@ -1610,7 +1610,7 @@ bool C_RopeKeyframe::DetectRestingState( bool &bApplyWind )
 	// See how close we are to the line.
 	Vector &vEnd1 = m_RopePhysics.GetFirstNode()->m_vPos;
 	Vector &vEnd2 = m_RopePhysics.GetLastNode()->m_vPos;
-	
+
 	if ( !( m_RopeFlags & ROPE_NO_WIND ) )
 	{
 		// Don't apply wind if more than half of the nodes are touching something.
@@ -1716,7 +1716,7 @@ void C_RopeKeyframe::BuildRope( RopeSegData_t *pSegmentData, const Vector &vCurr
 
 			Vector vecColorInc = subdivScale * ( ( pLightValues[iNode+1] - pLightValues[iNode] ) * vColorMod );
 			// precompute spline basis
-			Catmull_Rom_Spline_Matrix( pPredictedPositions[iPrevNode], pPredictedPositions[iNode], 
+			Catmull_Rom_Spline_Matrix( pPredictedPositions[iPrevNode], pPredictedPositions[iNode],
 				pPredictedPositions[iNext], pPredictedPositions[iNextNext], spline );
 			for( int iSubdiv = 0; iSubdiv < nSubdivCount; ++iSubdiv )
 			{
@@ -1762,16 +1762,16 @@ void C_RopeKeyframe::BuildRope( RopeSegData_t *pSegmentData, const Vector &vCurr
 
 		float flMinScreenSpaceWidth = rope_smooth_minwidth.GetFloat();
 		float flMaxAlphaScreenSpaceWidth = rope_smooth_maxalphawidth.GetFloat();
-		
+
 		float flTexCoord = m_flCurScroll;
 		for ( int iSegment = 0; iSegment < nSegmentCount; ++iSegment )
 		{
-			pSegmentData->m_Segments[iSegment].m_flTexCoord = flTexCoord;			
+			pSegmentData->m_Segments[iSegment].m_flTexCoord = flTexCoord;
 
 			// Right here, we need to specify a width that will be 1 pixel larger in screen space.
 			float zCoord = vCurrentViewForward.Dot( pSegmentData->m_Segments[iSegment].m_vPos - vCurrentViewOrigin );
 			zCoord = MAX( zCoord, 0.1f );
-							
+
 			float flScreenSpaceWidth = m_Width * flHalfScreenWidth / zCoord;
 			if ( flScreenSpaceWidth < flMinScreenSpaceWidth )
 			{
@@ -1839,7 +1839,7 @@ void C_RopeKeyframe::UpdateBBox()
 		const Vector &vPos = m_RopePhysics.GetNode(i)->m_vPos;
 		AddPointToBounds( vPos, mins, maxs );
 	}
-	
+
 	mins -= GetAbsOrigin();
 	maxs -= GetAbsOrigin();
 	SetCollisionBounds( mins, maxs );
@@ -1878,7 +1878,7 @@ bool C_RopeKeyframe::InitRopePhysics()
 	{
 		CSimplePhysics::CNode *pNode = m_RopePhysics.GetNode( i );
 		float t = (float)i / (m_RopePhysics.NumNodes() - 1);
-		
+
 		VectorLerp( vStart, vAttached, t, pNode->m_vPos );
 		pNode->m_vPrevPos = pNode->m_vPos;
 	}
@@ -1896,7 +1896,7 @@ bool C_RopeKeyframe::InitRopePhysics()
 
 	m_flTimeToNextGust = RandomFloat( 1.0f, 3.0f );
 	m_bPhysicsInitted = true;
-	
+
 	return true;
 }
 

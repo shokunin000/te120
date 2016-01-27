@@ -52,7 +52,7 @@ $Configuration
 	$Compiler
 	{
 		$AdditionalIncludeDirectories	".\;$BASE;$SRCDIR\vgui2\include;$SRCDIR\vgui2\controls;$SRCDIR\game\shared;.\game_controls;$SRCDIR\thirdparty\sixensesdk\include"
-		$PreprocessorDefinitions		"$BASE;NO_STRING_T;CLIENT_DLL;VECTOR;VERSION_SAFE_STEAM_API_INTERFACES;PROTECTED_THINGS_ENABLE;strncpy=use_Q_strncpy_instead;_snprintf=use_Q_snprintf_instead" 
+		$PreprocessorDefinitions		"$BASE;NO_STRING_T;CLIENT_DLL;VECTOR;VERSION_SAFE_STEAM_API_INTERFACES;PROTECTED_THINGS_ENABLE;strncpy=use_Q_strncpy_instead;_snprintf=use_Q_snprintf_instead"
 		$PreprocessorDefinitions		"$BASE;ENABLE_CHROMEHTMLWINDOW;fopen=dont_use_fopen" [$WIN32]
 		$PreprocessorDefinitions		"$BASE;ENABLE_CHROMEHTMLWINDOW;" [$OSXALL]
 		$PreprocessorDefinitions		"$BASE;ENABLE_CHROMEHTMLWINDOW;USE_WEBM_FOR_REPLAY;" [$LINUXALL]
@@ -81,7 +81,7 @@ $Project
 		$File	"replay/replaycamera.h"
 		$File	"replay/cdll_replay.cpp"
 		$File	"replay/cdll_replay.h"
-		
+
 		$File	"replay/gamedefs.h"	[$BUILD_REPLAY]
 		$File	"replay/gamedefs.cpp"	[$BUILD_REPLAY]
 		$File	"replay/replay_ragdoll.cpp"	[$BUILD_REPLAY]
@@ -94,13 +94,13 @@ $Project
 		$File	"replay/replayrenderer.h"	[$BUILD_REPLAY]
 		$File	"replay/replayvideo.cpp"	[$BUILD_REPLAY]
 		$File	"replay/replayvideo.h"	[$BUILD_REPLAY]
-		
+
 		$File	"replay/genericclassbased_replay.cpp"	[$BUILD_REPLAY]
 		$File	"replay/genericclassbased_replay.h"	[$BUILD_REPLAY]
-		
+
 		$File	"$SRCDIR\game\shared\replay_gamestats_shared.cpp"	[$BUILD_REPLAY]
 		$File	"$SRCDIR\game\shared\replay_gamestats_shared.h"	[$BUILD_REPLAY]
-		
+
 		$File	"$SRCDIR\game\client\youtubeapi.h"	[$BUILD_REPLAY]
 		$File	"$SRCDIR\game\client\youtubeapi.cpp"	[$BUILD_REPLAY]
 		{
@@ -112,7 +112,7 @@ $Project
 				}
 			}
 		}
-		
+
 		$Folder "UI"	[$BUILD_REPLAY]
 		{
 			$File	"replay\vgui\replaybrowserbasepage.cpp"
@@ -153,10 +153,10 @@ $Project
 			$File	"replay\replayyoutubeapi.h"
 			$File	"replay\replayyoutubeapi_key.cpp" [!$SOURCESDK]
 			$File	"replay\replayyoutubeapi_key_sdk.cpp" [$SOURCESDK]
-			
+
 			$File	"game_controls\slideshowpanel.cpp"
 			$File	"game_controls\slideshowpanel.h"
-			
+
 			$File	"$SRCDIR\common\movieobjects\timeutils.cpp"
 			{
 				$Configuration
@@ -170,7 +170,7 @@ $Project
 			$File	"$SRCDIR\public\movieobjects\timeutils.h"
 		}
 	}
-		
+
 	$Folder	"Source Files"
 	{
 		$File	"hl2\C_Func_Monitor.cpp"
@@ -496,7 +496,6 @@ $Project
 		$File	"weapon_selection.cpp"
 		$File	"weapons_resource.cpp"
 		$File	"WorldDimsProxy.cpp"
-		$File	"worldlight.cpp"
 		$File	"vgui_video.cpp"
 		$File   "vgui_video_player.cpp"
 		$File	"$SRCDIR\game\shared\mp_shareddefs.cpp"
@@ -515,7 +514,7 @@ $Project
 			$File	"$SRCDIR\game\shared\sixense\sixense_convars.cpp"
 			$File	"$SRCDIR\game\shared\sixense\sixense_convars_extern.h"
 		}
-		
+
 		// Files not using precompiled header cbase.h
 
 		$File	"$SRCDIR\public\bone_setup.cpp"						\
@@ -548,7 +547,7 @@ $Project
 				"in_mouse.cpp"										\
 				"mumble.cpp"						\
 				"$SRCDIR\public\renamed_recvtable_compat.cpp"		\
-				"rendertexture.cpp"									
+				"rendertexture.cpp"
 				{
 					$Configuration
 					{
@@ -665,7 +664,7 @@ $Project
 		$File	"mp3player.cpp"
 		$File	"mp3player.h"
 	}
-	
+
 	$Folder	"Tool Framework"
 	{
 		$File	"$SRCDIR\public\tools\bonelist.cpp"
@@ -874,9 +873,8 @@ $Project
 		$File	"viewrender.h"
 		$File	"weapon_selection.h"
 		$File	"weapons_resource.h"
-		$File	"worldlight.h"
 		$File	"vgui_video.h"
-		$File   "vgui_video_player.h"
+		$File "vgui_video_player.h"
 	}
 
 	$Folder	"Public Header Files"
@@ -1239,7 +1237,7 @@ $Project
 		$File	"game_controls\vguitextwindow.h"
 		$File	"game_controls\IconPanel.h"
 	}
-	
+
 	$Folder	"Link Libraries"
 	{
 		$Lib		bitmap
@@ -1254,7 +1252,7 @@ $Project
 		$Lib		vgui_controls
 		$Lib		vtf
 		$ImpLib		steam_api
-		
+
 		$Lib $LIBCOMMON/libcrypto [$POSIX]
 
 		$ImpLib	"$LIBCOMMON\curl"	  [$OSXALL]

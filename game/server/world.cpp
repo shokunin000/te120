@@ -195,21 +195,16 @@ bool CDecal::KeyValue( const char *szKeyName, const char *szValue )
 //-----------------------------------------------------------------------------
 // Purpose: Projects a decal against a prop
 //-----------------------------------------------------------------------------
-class CProjectedDecal : public CServerOnlyEntity//TE120
+class CProjectedDecal : public CServerOnlyPointEntity//TE120
 {
 public:
-	DECLARE_CLASS( CProjectedDecal, CServerOnlyEntity );//TE120
+	DECLARE_CLASS( CProjectedDecal, CServerOnlyPointEntity );//TE120
 
 	void	Spawn( void );
 	bool	KeyValue( const char *szKeyName, const char *szValue );
 
 	// Need to apply static decals here to get them into the signon buffer for the server appropriately
 	virtual void Activate();
-
-	void	TriggerDecal( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value );
-
-	// Input handlers.
-	void	InputActivate( inputdata_t &inputdata );
 
 	DECLARE_DATADESC();
 
@@ -231,9 +226,6 @@ BEGIN_DATADESC( CProjectedDecal )
 
 	// Function pointers
 	DEFINE_FUNCTION( StaticDecal ),
-	DEFINE_FUNCTION( TriggerDecal ),
-
-	DEFINE_INPUTFUNC( FIELD_VOID, "Activate", InputActivate ),
 
 END_DATADESC()
 
@@ -262,29 +254,13 @@ void CProjectedDecal::Activate()
 	{
 		// if there IS a targetname, the decal sprays itself on when it is triggered.
 		SetThink ( &CProjectedDecal::SUB_DoNothing );
-		SetUse(&CProjectedDecal::TriggerDecal);
 	}
-}
-
-void CProjectedDecal::InputActivate( inputdata_t &inputdata )
-{
-	TriggerDecal( inputdata.pActivator, inputdata.pCaller, USE_ON, 0 );
 }
 
 void CProjectedDecal::ProjectDecal( CRecipientFilter& filter )
 {
 	te->ProjectDecal( filter, 0.0,
 		&GetAbsOrigin(), &GetAbsAngles(), m_flDistance, m_nTexture );
-}
-
-void CProjectedDecal::TriggerDecal ( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value )
-{
-	CBroadcastRecipientFilter filter;
-
-	ProjectDecal( filter );
-
-	SetThink( &CProjectedDecal::SUB_Remove );
-	SetNextThink( gpGlobals->curtime + 0.1f );
 }
 
 void CProjectedDecal::StaticDecal( void )

@@ -86,7 +86,7 @@ void CLight::Spawn( void )
 //TE120--
 void CLight::Activate( void )
 {
-	if (!GetEntityName())
+	if ( !GetEntityName() )
 	{
 		BaseClass::Activate();
 	}

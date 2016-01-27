@@ -18,9 +18,9 @@ DLL_EXT=.so
 SYM_EXT=.dbg
 FORCEINCLUDES= 
 ifeq "$(CFG)" "debug"
-DEFINES += -DVPC -DRAD_TELEMETRY_DISABLED -DDEBUG -D_DEBUG -DGNUC -DPOSIX -DCOMPILER_GCC -D_DLL_EXT=.so -D_LINUX -DLINUX -DPOSIX -D_POSIX -DDLLNAME=client -DBINK_VIDEO -DGL_GLEXT_PROTOTYPES -DDX_TO_GL_ABSTRACTION -DUSE_SDL -DDEV_BUILD -DFRAME_POINTER_OMISSION_DISABLED -DNO_STRING_T -DCLIENT_DLL -DVECTOR -DVERSION_SAFE_STEAM_API_INTERFACES -DPROTECTED_THINGS_ENABLE -Dstrncpy=use_Q_strncpy_instead -D_snprintf=use_Q_snprintf_instead -DENABLE_CHROMEHTMLWINDOW -DUSE_WEBM_FOR_REPLAY -DHL2_CLIENT_DLL -DHL2_EPISODIC -D_EXTERNAL_DLL_EXT=.so -DVPCGAMECAPS=EPISODIC -DPROJECTDIR=/media/vincent/dbcbf69d-8162-4768-976c-c7c5b5ace72b/sourceengine/Transmissions_Element_120_Source/src/game/client -D_DLL_EXT=.so -DSOURCE1=1 -DVPCGAME=episodic -D_LINUX=1 -D_POSIX=1 -DLINUX=1 -DPOSIX=1 
+DEFINES += -DVPC -DRAD_TELEMETRY_DISABLED -DDEBUG -D_DEBUG -DGNUC -DPOSIX -DCOMPILER_GCC -D_DLL_EXT=.so -D_LINUX -DLINUX -DPOSIX -D_POSIX -DDLLNAME=client -DBINK_VIDEO -DGL_GLEXT_PROTOTYPES -DDX_TO_GL_ABSTRACTION -DUSE_SDL -DDEV_BUILD -DFRAME_POINTER_OMISSION_DISABLED -DNO_STRING_T -DCLIENT_DLL -DVECTOR -DVERSION_SAFE_STEAM_API_INTERFACES -DPROTECTED_THINGS_ENABLE -Dstrncpy=use_Q_strncpy_instead -D_snprintf=use_Q_snprintf_instead -DENABLE_CHROMEHTMLWINDOW -DUSE_WEBM_FOR_REPLAY -DHL2_CLIENT_DLL -DHL2_EPISODIC -DSOURCE_2013 -D_EXTERNAL_DLL_EXT=.so -DVPCGAMECAPS=EPISODIC -DPROJECTDIR=/media/vincent/dbcbf69d-8162-4768-976c-c7c5b5ace72b/sourceengine/Transmissions_Element_120_Source/te120/game/client -D_DLL_EXT=.so -DSOURCE1=1 -DVPCGAME=episodic -D_LINUX=1 -D_POSIX=1 -DLINUX=1 -DPOSIX=1 
 else
-DEFINES += -DVPC -DRAD_TELEMETRY_DISABLED -DNDEBUG -DGNUC -DPOSIX -DCOMPILER_GCC -D_DLL_EXT=.so -D_LINUX -DLINUX -DPOSIX -D_POSIX -DDLLNAME=client -DBINK_VIDEO -DGL_GLEXT_PROTOTYPES -DDX_TO_GL_ABSTRACTION -DUSE_SDL -DDEV_BUILD -DFRAME_POINTER_OMISSION_DISABLED -DNO_STRING_T -DCLIENT_DLL -DVECTOR -DVERSION_SAFE_STEAM_API_INTERFACES -DPROTECTED_THINGS_ENABLE -Dstrncpy=use_Q_strncpy_instead -D_snprintf=use_Q_snprintf_instead -DENABLE_CHROMEHTMLWINDOW -DUSE_WEBM_FOR_REPLAY -DHL2_CLIENT_DLL -DHL2_EPISODIC -D_EXTERNAL_DLL_EXT=.so -DVPCGAMECAPS=EPISODIC -DPROJECTDIR=/media/vincent/dbcbf69d-8162-4768-976c-c7c5b5ace72b/sourceengine/Transmissions_Element_120_Source/src/game/client -D_DLL_EXT=.so -DSOURCE1=1 -DVPCGAME=episodic -D_LINUX=1 -D_POSIX=1 -DLINUX=1 -DPOSIX=1 
+DEFINES += -DVPC -DRAD_TELEMETRY_DISABLED -DNDEBUG -DGNUC -DPOSIX -DCOMPILER_GCC -D_DLL_EXT=.so -D_LINUX -DLINUX -DPOSIX -D_POSIX -DDLLNAME=client -DBINK_VIDEO -DGL_GLEXT_PROTOTYPES -DDX_TO_GL_ABSTRACTION -DUSE_SDL -DDEV_BUILD -DFRAME_POINTER_OMISSION_DISABLED -DNO_STRING_T -DCLIENT_DLL -DVECTOR -DVERSION_SAFE_STEAM_API_INTERFACES -DPROTECTED_THINGS_ENABLE -Dstrncpy=use_Q_strncpy_instead -D_snprintf=use_Q_snprintf_instead -DENABLE_CHROMEHTMLWINDOW -DUSE_WEBM_FOR_REPLAY -DHL2_CLIENT_DLL -DHL2_EPISODIC -DSOURCE_2013 -D_EXTERNAL_DLL_EXT=.so -DVPCGAMECAPS=EPISODIC -DPROJECTDIR=/media/vincent/dbcbf69d-8162-4768-976c-c7c5b5ace72b/sourceengine/Transmissions_Element_120_Source/te120/game/client -D_DLL_EXT=.so -DSOURCE1=1 -DVPCGAME=episodic -D_LINUX=1 -D_POSIX=1 -DLINUX=1 -DPOSIX=1 
 endif
 INCLUDEDIRS += ./hl2 ./hl2/elements ../../game/shared/hl2 ../../game/shared/episodic ../../public ./ ../../common ../../public ../../public/tier0 ../../public/tier1 ../../thirdparty/SDL2 ../../game/client/generated_proto_mod_episodic ../../thirdparty/protobuf-2.3.0/src ../../vgui2/include ../../vgui2/controls ../../game/shared ./game_controls ../../thirdparty/sixensesdk/include 
 CONFTYPE=dll
@@ -38,6 +38,8 @@ CPPFILES= \
     ../../common/language.cpp \
     ../../common/randoverride.cpp \
     ../../game/client/c_vote_controller.cpp \
+    ../../game/client/shadereditor/sedit_modelrender.cpp \
+    ../../game/client/shadereditor/shadereditorsystem.cpp \
     ../../game/shared/achievementmgr.cpp \
     ../../game/shared/achievements_hlx.cpp \
     ../../game/shared/achievement_saverestore.cpp \
@@ -69,6 +71,7 @@ CPPFILES= \
     ../../game/shared/episodic/achievements_ep1.cpp \
     ../../game/shared/episodic/achievements_ep2.cpp \
     ../../game/shared/episodic/achievements_epx.cpp \
+    ../../game/shared/episodic/achievements_te120.cpp \
     ../../game/shared/eventlist.cpp \
     ../../game/shared/func_ladder.cpp \
     ../../game/shared/gamemovement.cpp \
@@ -205,6 +208,7 @@ CPPFILES= \
     c_colorcorrectionvolume.cpp \
     c_dynamiclight.cpp \
     c_effects.cpp \
+    c_entgloweffect.cpp \
     c_entitydissolve.cpp \
     c_entityparticletrail.cpp \
     c_env_fog_controller.cpp \
@@ -261,6 +265,7 @@ CPPFILES= \
     c_stickybolt.cpp \
     c_sun.cpp \
     c_te.cpp \
+    c_te120_stats.cpp \
     c_team.cpp \
     c_team_objectiveresource.cpp \
     c_tesla.cpp \
@@ -362,7 +367,6 @@ CPPFILES= \
     game_controls/teammenu.cpp \
     game_controls/vguitextwindow.cpp \
     geiger.cpp \
-    ge_screeneffects.cpp \
     glow_outline_effect.cpp \
     glow_overlay.cpp \
     history_resource.cpp \
@@ -642,6 +646,22 @@ $(OBJ_DIR)/c_vote_controller.o : $(PWD)/../../game/client/c_vote_controller.cpp 
 	$(COMPILE_FILE) $(POST_COMPILE_FILE)
 
 ifneq (clean, $(findstring clean, $(MAKECMDGOALS)))
+-include $(OBJ_DIR)/sedit_modelrender.P
+endif
+
+$(OBJ_DIR)/sedit_modelrender.o : $(PWD)/../../game/client/shadereditor/sedit_modelrender.cpp $(PWD)/client_linux32_episodic.mak $(SRCROOT)/devtools/makefile_base_posix.mak
+	$(PRE_COMPILE_FILE)
+	$(COMPILE_FILE) $(POST_COMPILE_FILE)
+
+ifneq (clean, $(findstring clean, $(MAKECMDGOALS)))
+-include $(OBJ_DIR)/shadereditorsystem.P
+endif
+
+$(OBJ_DIR)/shadereditorsystem.o : $(PWD)/../../game/client/shadereditor/shadereditorsystem.cpp $(PWD)/client_linux32_episodic.mak $(SRCROOT)/devtools/makefile_base_posix.mak
+	$(PRE_COMPILE_FILE)
+	$(COMPILE_FILE) $(POST_COMPILE_FILE)
+
+ifneq (clean, $(findstring clean, $(MAKECMDGOALS)))
 -include $(OBJ_DIR)/achievementmgr.P
 endif
 
@@ -886,6 +906,14 @@ ifneq (clean, $(findstring clean, $(MAKECMDGOALS)))
 endif
 
 $(OBJ_DIR)/achievements_epx.o : $(PWD)/../../game/shared/episodic/achievements_epx.cpp $(PWD)/client_linux32_episodic.mak $(SRCROOT)/devtools/makefile_base_posix.mak
+	$(PRE_COMPILE_FILE)
+	$(COMPILE_FILE) $(POST_COMPILE_FILE)
+
+ifneq (clean, $(findstring clean, $(MAKECMDGOALS)))
+-include $(OBJ_DIR)/achievements_te120.P
+endif
+
+$(OBJ_DIR)/achievements_te120.o : $(PWD)/../../game/shared/episodic/achievements_te120.cpp $(PWD)/client_linux32_episodic.mak $(SRCROOT)/devtools/makefile_base_posix.mak
 	$(PRE_COMPILE_FILE)
 	$(COMPILE_FILE) $(POST_COMPILE_FILE)
 
@@ -1978,6 +2006,14 @@ $(OBJ_DIR)/c_effects.o : $(PWD)/c_effects.cpp $(PWD)/client_linux32_episodic.mak
 	$(COMPILE_FILE) $(POST_COMPILE_FILE)
 
 ifneq (clean, $(findstring clean, $(MAKECMDGOALS)))
+-include $(OBJ_DIR)/c_entgloweffect.P
+endif
+
+$(OBJ_DIR)/c_entgloweffect.o : $(PWD)/c_entgloweffect.cpp $(PWD)/client_linux32_episodic.mak $(SRCROOT)/devtools/makefile_base_posix.mak
+	$(PRE_COMPILE_FILE)
+	$(COMPILE_FILE) $(POST_COMPILE_FILE)
+
+ifneq (clean, $(findstring clean, $(MAKECMDGOALS)))
 -include $(OBJ_DIR)/c_entitydissolve.P
 endif
 
@@ -2422,6 +2458,14 @@ ifneq (clean, $(findstring clean, $(MAKECMDGOALS)))
 endif
 
 $(OBJ_DIR)/c_te.o : $(PWD)/c_te.cpp $(PWD)/client_linux32_episodic.mak $(SRCROOT)/devtools/makefile_base_posix.mak
+	$(PRE_COMPILE_FILE)
+	$(COMPILE_FILE) $(POST_COMPILE_FILE)
+
+ifneq (clean, $(findstring clean, $(MAKECMDGOALS)))
+-include $(OBJ_DIR)/c_te120_stats.P
+endif
+
+$(OBJ_DIR)/c_te120_stats.o : $(PWD)/c_te120_stats.cpp $(PWD)/client_linux32_episodic.mak $(SRCROOT)/devtools/makefile_base_posix.mak
 	$(PRE_COMPILE_FILE)
 	$(COMPILE_FILE) $(POST_COMPILE_FILE)
 
@@ -3230,14 +3274,6 @@ ifneq (clean, $(findstring clean, $(MAKECMDGOALS)))
 endif
 
 $(OBJ_DIR)/geiger.o : $(PWD)/geiger.cpp $(PWD)/client_linux32_episodic.mak $(SRCROOT)/devtools/makefile_base_posix.mak
-	$(PRE_COMPILE_FILE)
-	$(COMPILE_FILE) $(POST_COMPILE_FILE)
-
-ifneq (clean, $(findstring clean, $(MAKECMDGOALS)))
--include $(OBJ_DIR)/ge_screeneffects.P
-endif
-
-$(OBJ_DIR)/ge_screeneffects.o : $(PWD)/ge_screeneffects.cpp $(PWD)/client_linux32_episodic.mak $(SRCROOT)/devtools/makefile_base_posix.mak
 	$(PRE_COMPILE_FILE)
 	$(COMPILE_FILE) $(POST_COMPILE_FILE)
 

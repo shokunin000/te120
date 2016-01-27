@@ -21,9 +21,7 @@
 #include "proxyentity.h"
 //TE120--
 #include "c_te_effect_dispatch.h"
-#ifdef _WIN32 //Disabled on Linux
 #include "shadereditor/ivshadereditor.h"
-#endif
 //TE120--
 
 // memdbgon must be the last include file in a .cpp file!!!
@@ -2225,6 +2223,11 @@ static ConVar mat_postprocess_y( "mat_postprocess_y", "1" );
 float g_DesiredDrunkValue = -1.0f;
 float g_ActualDrunkValue = 0.0f;
 float g_NextDrunkUpdateTime = 0.0f;
+
+float g_DesiredDirtyValue = -1.0f;
+float g_ActualDirtyValue = 1.0f;
+bool  g_ReturnToDefault = false;
+float g_NextDirtyUpdateTime = 0.0f;
 //TE120--
 
 void DoEnginePostProcessing( int x, int y, int w, int h, bool bFlashlightIsOn, bool bPostVGui )
@@ -2646,7 +2649,7 @@ void DoEnginePostProcessing( int x, int y, int w, int h, bool bFlashlightIsOn, b
 	pRenderContext->PopVertexShaderGPRAllocation();
 #endif
 //TE120--
-#ifdef _WIN32 //Disabled on Linux
+	// Here happens the SE specific stuff:
 	static IMaterial *pMat = materials->FindMaterial( "drunk", TEXTURE_GROUP_OTHER );
 	if ( pMat )
 	{
@@ -2709,10 +2712,67 @@ void DoEnginePostProcessing( int x, int y, int w, int h, bool bFlashlightIsOn, b
 			}
 		}
 	}
-#endif
+
+	if (shaderEdit)
+	{
+		ShaderEditVarToken ivar_tmp = SHADEREDIT_MVAR_TOKEN_INVALID;
+		IMaterialVar *pMutableVar = shaderEdit->GetPPEMaterialVarFast( ivar_tmp, "ppe_combined_lens", "combinedlens", "$MUTABLE_01" );
+
+		if ( pMutableVar )
+		{
+			g_ActualDirtyValue = pMutableVar->GetFloatValue();
+
+			if ( g_ActualDirtyValue != g_DesiredDirtyValue )
+			{
+				// If the map is just starting make sure this is reset back to 1
+				if ( g_DesiredDirtyValue == -1 )
+				{
+					g_NextDirtyUpdateTime = gpGlobals->curtime + 0.05f;
+					g_ActualDirtyValue = 1;
+					g_DesiredDirtyValue = 1;
+				}
+
+				if ( gpGlobals->curtime >= g_NextDirtyUpdateTime )
+				{
+					if ( g_DesiredDirtyValue < g_ActualDirtyValue )
+					{
+						g_ActualDirtyValue -= 0.2;
+
+						if ( g_ActualDirtyValue <= 0.0 )
+						{
+							g_ActualDirtyValue = 0.0;
+
+							if (g_ReturnToDefault)
+							{
+								g_DesiredDirtyValue = 1.0;
+								g_ReturnToDefault = false;
+								g_NextDirtyUpdateTime = gpGlobals->curtime + 2.0f;
+							}
+							else
+								g_NextDirtyUpdateTime = gpGlobals->curtime + 0.05f;
+						}
+						else
+							g_NextDirtyUpdateTime = gpGlobals->curtime + 0.05f;
+					}
+					else
+					{
+						g_ActualDirtyValue += 0.015;
+
+						if ( g_ActualDirtyValue >= 1.0 )
+							g_ActualDirtyValue = 1.0;
+
+						g_NextDirtyUpdateTime = gpGlobals->curtime + 0.05f;
+					}
+				}
+
+				pMutableVar->SetFloatValue( g_ActualDirtyValue );
+			}
+		}
+	}
+//TE120--
 }
 
-#ifdef _WIN32 //Disabled on Linux
+//TE120--
 void GravityBallFadeConcCallback( const CEffectData &data )
 {
 	g_DesiredDrunkValue = data.m_flScale;
@@ -2720,23 +2780,23 @@ void GravityBallFadeConcCallback( const CEffectData &data )
 }
 
 DECLARE_CLIENT_EFFECT( "CE_GravityBallFadeConcOn", GravityBallFadeConcCallback );
-#endif
 
-#ifdef _WIN32 //Disabled on Linux
 void DisableDirtyLens( const CEffectData &data )
 {
-	if (shaderEdit) {
-		int numPPEI = shaderEdit->GetPPEIndex( "ppe_dirty_lens" );
-
-		if (numPPEI != -1)
-		{
-			shaderEdit->SetPPEEnabled( numPPEI, false );
-		}
-	}
+	g_DesiredDirtyValue = data.m_flScale;
+	g_NextDirtyUpdateTime = gpGlobals->curtime + 0.05f;
 }
 
 DECLARE_CLIENT_EFFECT( "CE_DisableDirtyLens", DisableDirtyLens );
-#endif
+
+void DisableDirtyLensFade( const CEffectData &data )
+{
+	g_DesiredDirtyValue = data.m_flScale;
+	g_ReturnToDefault = true;
+	g_NextDirtyUpdateTime = gpGlobals->curtime + 0.05f;
+}
+
+DECLARE_CLIENT_EFFECT( "CE_DisableDirtyLensFade", DisableDirtyLensFade );
 //TE120--
 
 // Motion Blur Material Proxy =========================================================================================

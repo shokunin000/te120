@@ -3048,7 +3048,7 @@ void CTriggerCamera::Enable( void )
 //TE120--
 	// if the player was already under control of a similar trigger, disable the previous trigger.
 	CBaseEntity *pPrevViewControl = pPlayer->GetViewEntity();
-	if (pPrevViewControl && pPrevViewControl != pPlayer)
+	if ( pPrevViewControl && pPrevViewControl != pPlayer )
 	{
 		CTriggerCamera *pOtherCamera = dynamic_cast<CTriggerCamera *>(pPrevViewControl);
 		if ( pOtherCamera )
@@ -3068,7 +3068,6 @@ void CTriggerCamera::Enable( void )
 //TE120--
 
 	m_nPlayerButtons = pPlayer->m_nButtons;
-
 
 	// Make the player invulnerable while under control of the camera.  This will prevent situations where the player dies while under camera control but cannot restart their game due to disabled player inputs.
 	m_nOldTakeDamage = m_hPlayer->m_takedamage;
@@ -3139,7 +3138,14 @@ void CTriggerCamera::Enable( void )
 		if ( m_pPath->m_flSpeed != 0 )
 			m_targetSpeed = m_pPath->m_flSpeed;
 
-		m_flStopTime += m_pPath->GetDelay();
+		// Compute the distance to the next path already:
+		m_vecMoveDir = m_pPath->GetLocalOrigin() - GetLocalOrigin();
+		m_moveDistance = VectorNormalize( m_vecMoveDir );
+		m_flStopTime = gpGlobals->curtime + m_pPath->GetDelay();
+	}
+	else
+	{
+		m_moveDistance = 0.0f;
 	}
 
 
@@ -3150,7 +3156,7 @@ void CTriggerCamera::Enable( void )
 	{
 		// initialize the values we'll spline between
 //TE120--
-		if (pPrevViewControl && pPrevViewControl != pPlayer)
+		if ( pPrevViewControl && pPrevViewControl != pPlayer )
 		{
 			m_vStartPos = pPrevViewControl->GetAbsOrigin();
 			// Msg( "Previous camera found: %s.\n", pPrevViewControl->GetEntityName() );
@@ -3227,16 +3233,19 @@ void CTriggerCamera::Enable( void )
 
 	pPlayer->SetViewEntity( this );
 
+	// Hide the player's viewmodel
+ 	if ( pPlayer->GetActiveWeapon() )
+ 	{
+ 		pPlayer->GetActiveWeapon()->AddEffects( EF_NODRAW );
+  }
+
 	// Only track if we have a target
-	if ( m_hTarget )
+	if ( m_hTarget || (m_moveDistance > 0 && m_pPath) || HasSpawnFlags( SF_CAMERA_PLAYER_INTERRUPT ) )
 	{
 		// follow the player down
 		SetThink( &CTriggerCamera::FollowTarget );
 		SetNextThink( gpGlobals->curtime );
 	}
-
-	m_moveDistance = 0;
-	Move();
 
 	DispatchUpdateTransmitState();
 }
@@ -3298,13 +3307,7 @@ void CTriggerCamera::FollowTarget( )
 	if (m_hPlayer == NULL)
 		return;
 
-	if ( m_hTarget == NULL )
-	{
-		Disable();
-		return;
-	}
-
-	if ( !HasSpawnFlags(SF_CAMERA_PLAYER_INFINITE_WAIT) && (!m_hTarget || m_flReturnTime < gpGlobals->curtime) )
+	if ( (!HasSpawnFlags(SF_CAMERA_PLAYER_INFINITE_WAIT) && (m_flReturnTime < gpGlobals->curtime)) || (!m_hTarget && !m_pPath) )
 	{
 		Disable();
 		return;
@@ -3376,9 +3379,9 @@ void CTriggerCamera::FollowTarget( )
 		}
 	}
 
-	SetNextThink( gpGlobals->curtime );
-
 	Move();
+
+	SetNextThink( gpGlobals->curtime );
 }
 
 void CTriggerCamera::Move()

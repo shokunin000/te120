@@ -89,7 +89,7 @@ public:
 
 	virtual void	PreDataUpdate( DataUpdateType_t updateType );
 	virtual void	PostDataUpdate( DataUpdateType_t updateType );
-	
+
 	virtual void	ReceiveMessage( int classID, bf_read &msg );
 
 	virtual void	OnRestore();
@@ -111,7 +111,7 @@ public:
 	// View model prediction setup
 	virtual void		CalcView( Vector &eyeOrigin, QAngle &eyeAngles, float &zNear, float &zFar, float &fov );
 	virtual void		CalcViewModelView( const Vector& eyeOrigin, const QAngle& eyeAngles);
-	
+
 
 	// Handle view smoothing when going up stairs
 	void				SmoothViewOnStairs( Vector& eyeOrigin );
@@ -132,7 +132,7 @@ public:
 	// Input handling
 	virtual bool	CreateMove( float flInputSampleTime, CUserCmd *pCmd );
 	virtual void	AvoidPhysicsProps( CUserCmd *pCmd );
-	
+
 	virtual void	PlayerUse( void );
 	virtual bool	FindAnyUsable( void );//TE120
 	CBaseEntity		*FindUseEntity( void );
@@ -166,8 +166,8 @@ public:
 	virtual const QAngle &EyeAngles();		// Direction of eyes
 	void				 EyePositionAndVectors( Vector *pPosition, Vector *pForward, Vector *pRight, Vector *pUp );
 	virtual const QAngle &LocalEyeAngles();		// Direction of eyes
-	
-	// This can be overridden to return something other than m_pRagdoll if the mod uses separate 
+
+	// This can be overridden to return something other than m_pRagdoll if the mod uses separate
 	// entities for ragdolls.
 	virtual IRagdoll* GetRepresentativeRagdoll() const;
 
@@ -192,7 +192,7 @@ public:
 	virtual bool				IsAllowedToSwitchWeapons( void ) { return !IsObserver(); }
 	virtual C_BaseCombatWeapon	*GetActiveWeaponForSelection( void );
 
-	// Returns the view model if this is the local player. If you're in third person or 
+	// Returns the view model if this is the local player. If you're in third person or
 	// this is a remote player, it returns the active weapon
 	// (and its appropriate left/right weapon if this is TF2).
 	virtual C_BaseAnimating*	GetRenderedWeaponModel();
@@ -267,7 +267,7 @@ public:
 
 	virtual void				UpdateClientData( void );
 
-	virtual float				GetFOV( void );	
+	virtual float				GetFOV( void );
 	int							GetDefaultFOV( void ) const;
 	virtual bool				IsZoomed( void )	{ return false; }
 	bool						SetFOV( CBaseEntity *pRequester, int FOV, float zoomRate = 0.0f, int iZoomStart = 0 );
@@ -357,9 +357,9 @@ public:
 	// vDelta is the line from where the client had predicted the player to at the usercmd in question,
 	// to where the server says the client should be at said usercmd.
 	void NotePredictionError( const Vector &vDelta );
-	
+
 	// Called by the renderer to apply the prediction error smoothing.
-	void GetPredictionErrorSmoothingVector( Vector &vOffset ); 
+	void GetPredictionErrorSmoothingVector( Vector &vOffset );
 
 	virtual void ExitLadder() {}
 	surfacedata_t *GetLadderSurface( const Vector &origin );
@@ -385,7 +385,7 @@ public:
 	float					GetFOVTime( void ){ return m_flFOVTime; }
 
 	virtual void			OnAchievementAchieved( int iAchievement ) {}
-	
+
 	bool					ShouldAnnounceAchievement( void ){ return m_flNextAchievementAnnounceTime < gpGlobals->curtime; }
 	void					SetNextAchievementAnnounceTime( float flTime ){ m_flNextAchievementAnnounceTime = flTime; }
 
@@ -400,14 +400,14 @@ public:
 	void					SetFiredWeapon( bool bFlag ) { m_bFiredWeapon = bFlag; }
 
 	virtual bool			CanUseFirstPersonCommand( void ){ return true; }
-	
+
 protected:
 	fogparams_t				m_CurrentFog;
 	EHANDLE					m_hOldFogController;
 
 public:
 	int m_StuckLast;
-	
+
 	// Data for only the local player
 	CNetworkVarEmbedded( CPlayerLocalData, m_Local );
 
@@ -429,7 +429,7 @@ public:
 	// For weapon prediction
 	bool			m_fOnTarget;		//Is the crosshair on a target?
 	bool			m_fOnUsable;		//Is the crosshair on a usable?//TE120
-	
+
 	char			m_szAnimExtension[32];
 
 	int				m_afButtonLast;
@@ -470,7 +470,7 @@ protected:
 	virtual void SetLocalViewAngles( const QAngle &viewAngles );
 	virtual void SetViewAngles( const QAngle& ang );
 
-	// used by client side player footsteps 
+	// used by client side player footsteps
 	surfacedata_t* GetGroundSurface();
 
 	virtual void	FireGameEvent( IGameEvent *event );
@@ -486,7 +486,7 @@ protected:
 	Vector			m_vecFreezeFrameStart;
 	float			m_flFreezeFrameStartTime;	// Time at which we entered freeze frame observer mode
 	float			m_flFreezeFrameDistance;
-	bool			m_bWasFreezeFraming; 
+	bool			m_bWasFreezeFraming;
 	float			m_flDeathTime;		// last time player died
 
 	float			m_flStepSoundTime;
@@ -501,7 +501,7 @@ private:
 	EHANDLE			m_hVehicle;
 	EHANDLE			m_hOldVehicle;
 	EHANDLE			m_hUseEntity;
-	
+
 	float			m_flMaxspeed;
 
 	int				m_iBonusProgress;
@@ -516,7 +516,7 @@ private:
 
 	float			m_flSwimSoundTime;
 	Vector			m_vecLadderNormal;
-	
+
 	QAngle			m_vecOldViewAngles;
 
 	bool			m_bWasFrozen;
@@ -541,11 +541,11 @@ private:
 #endif
 
 	// players own view models, left & right hand
-	CHandle< C_BaseViewModel >	m_hViewModel[ MAX_VIEWMODELS ];		
-	
+	CHandle< C_BaseViewModel >	m_hViewModel[ MAX_VIEWMODELS ];
+
 	float					m_flOldPlayerZ;
 	float					m_flOldPlayerViewOffsetZ;
-	
+
 	Vector	m_vecVehicleViewOrigin;		// Used to store the calculated view of the player while riding in a vehicle
 	QAngle	m_vecVehicleViewAngles;		// Vehicle angles
 	float	m_flVehicleViewFOV;
@@ -575,7 +575,7 @@ private:
 	friend class CHL2GameMovement;
 	friend class CDODGameMovement;
 	friend class CPortalGameMovement;
-	
+
 	// Accessors for gamemovement
 	float GetStepSize( void ) const { return m_Local.m_flStepSize; }
 
@@ -598,7 +598,7 @@ protected:
 	// the errors not be so jerky.
 	Vector m_vecPredictionError;
 	float m_flPredictionErrorTime;
-	
+
 	Vector m_vecPreviouslyPredictedOrigin; // Used to determine if non-gamemovement game code has teleported, or tweaked the player's origin
 
 	char m_szLastPlaceName[MAX_PLACE_NAME_LENGTH];	// received from the server
@@ -659,26 +659,26 @@ inline C_BasePlayer *ToBasePlayer( C_BaseEntity *pEntity )
 	return static_cast<C_BasePlayer *>( pEntity );
 }
 
-inline C_BaseEntity *C_BasePlayer::GetUseEntity() 
-{ 
+inline C_BaseEntity *C_BasePlayer::GetUseEntity()
+{
 	return m_hUseEntity;
 }
 
 
-inline IClientVehicle *C_BasePlayer::GetVehicle() 
-{ 
+inline IClientVehicle *C_BasePlayer::GetVehicle()
+{
 	C_BaseEntity *pVehicleEnt = m_hVehicle.Get();
 	return pVehicleEnt ? pVehicleEnt->GetClientVehicle() : NULL;
 }
 
-inline bool C_BasePlayer::IsObserver() const 
-{ 
-	return (GetObserverMode() != OBS_MODE_NONE); 
+inline bool C_BasePlayer::IsObserver() const
+{
+	return (GetObserverMode() != OBS_MODE_NONE);
 }
 
-inline int C_BasePlayer::GetImpulse( void ) const 
-{ 
-	return m_nImpulse; 
+inline int C_BasePlayer::GetImpulse( void ) const
+{
+	return m_nImpulse;
 }
 
 

@@ -144,7 +144,7 @@ void CHudCredits::PrepareCredits( const char *pKeyName )
 	Clear();
 
 	KeyValues *pKV= new KeyValues( "CreditsFile" );
-	if ( !pKV->LoadFromFile( filesystem, CREDITS_FILE, "MOD" ) )
+	if ( !pKV->LoadFromFile( filesystem, CREDITS_FILE, NULL ) )
 	{
 		pKV->deleteThis();
 
@@ -473,7 +473,7 @@ void CHudCredits::DrawLogo( void )
 			surface()->DrawSetTextPos( ( iWidth / 2 ) - ( iStringWidth / 2 ), ( iTall / 2 ) + ( iFontTall / 2 ));
 			surface()->DrawUnicodeString( unicode );
 		}
-}
+	}
 //TE120--
 }
 

@@ -40,8 +40,10 @@
 #include "ai_interactions.h"
 #include "rumble_shared.h"
 #include "gamestats.h"
+//TE120--
 #include "prop_gravity_ball.h"
 #include "prop_combine_ball.h"
+//TE120--
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -80,7 +82,7 @@ extern ConVar hl2_walkspeed;
 #define PHYSCANNON_ENDCAP_SPRITE "sprites/orangeflare1.vmt"
 #define PHYSCANNON_CENTER_GLOW "sprites/orangecore1.vmt"
 #define PHYSCANNON_BLAST_SPRITE "sprites/orangecore2.vmt"
- 
+
 #define MEGACANNON_BEAM_SPRITE "sprites/lgtning_noz.vmt"
 #define MEGACANNON_GLOW_SPRITE "sprites/blueflare1_noz.vmt"
 #define MEGACANNON_ENDCAP_SPRITE "sprites/blueflare1_noz.vmt"
@@ -196,7 +198,7 @@ protected:
 };
 
 //-----------------------------------------------------------------------------
-// this will hit skip the pass entity, but not anything it owns 
+// this will hit skip the pass entity, but not anything it owns
 // (lets player grab own grenades)
 class CTraceFilterNoOwnerTest : public CTraceFilterSimple
 {
@@ -366,7 +368,7 @@ IPhysicsObject *GetConcussionRagdollChildAtPosition( CBaseEntity *pTarget, const
 	// Get the root
 	IPhysicsObject *pList[VPHYSICS_MAX_OBJECT_LIST_COUNT];
 	int count = pTarget->VPhysicsGetObjectList( pList, ARRAYSIZE( pList ) );
-	
+
 	IPhysicsObject *pBestChild = NULL;
 	float			flBestDist = 99999999.0f;
 	float			flDist;
@@ -376,7 +378,7 @@ IPhysicsObject *GetConcussionRagdollChildAtPosition( CBaseEntity *pTarget, const
 	for ( int i = 0; i < count; i++ )
 	{
 		pList[i]->GetPosition( &vPos, NULL );
-		
+
 		flDist = ( position - vPos ).LengthSqr();
 
 		if ( flDist < flBestDist )
@@ -417,7 +419,7 @@ static void ComputePlayerMatrix( CBasePlayer *pPlayer, matrix3x4_t &out )
 
 	QAngle angles = pPlayer->EyeAngles();
 	Vector origin = pPlayer->EyePosition();
-	
+
 	// 0-360 / -180-180
 	//angles.x = init ? 0 : AngleDistance( angles.x, 0 );
 	//angles.x = clamp( angles.x, -PLAYER_LOOK_PITCH_RANGE, PLAYER_LOOK_PITCH_RANGE );
@@ -442,12 +444,12 @@ static void ComputePlayerMatrix( CBasePlayer *pPlayer, matrix3x4_t &out )
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 // derive from this so we can add save/load data to it
 
 BEGIN_SIMPLE_DATADESC( game_shadowcontrol_conc_params_t )
-	
+
 	DEFINE_FIELD( targetPosition,		FIELD_POSITION_VECTOR ),
 	DEFINE_FIELD( targetRotation,		FIELD_VECTOR ),
 	DEFINE_FIELD( maxAngular, FIELD_FLOAT ),
@@ -532,7 +534,7 @@ void CGrabControllerConcussion::SetTargetPosition( const Vector &target, const Q
 	if ( pAttached )
 	{
 		IPhysicsObject *pObj = pAttached->VPhysicsGetObject();
-		
+
 		if ( pObj != NULL )
 		{
 			pObj->Wake();
@@ -545,7 +547,7 @@ void CGrabControllerConcussion::SetTargetPosition( const Vector &target, const Q
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 // Output : float
 //-----------------------------------------------------------------------------
 float CGrabControllerConcussion::ComputeError()
@@ -558,9 +560,9 @@ float CGrabControllerConcussion::ComputeError()
 	{
 		Vector pos;
 		IPhysicsObject *pObj = pAttached->VPhysicsGetObject();
-		
+
 		if ( pObj )
-		{	
+		{
 			pObj->GetShadowPosition( &pos, NULL );
 
 			float error = (m_shadow.targetPosition - pos).Length();
@@ -585,7 +587,7 @@ float CGrabControllerConcussion::ComputeError()
 			return 9999; // force detach
 		}
 	}
-	
+
 	if ( pAttached->IsEFlagSet( EFL_IS_BEING_LIFTED_BY_BARNACLE ) )
 	{
 		m_error *= 3.0f;
@@ -676,7 +678,7 @@ void CGrabControllerConcussion::AttachEntity( CBasePlayer *pPlayer, CBaseEntity 
 	if ( bUseGrabPosition )
 	{
 		IPhysicsObject *pChild = GetConcussionRagdollChildAtPosition( pEntity, vGrabPosition );
-		
+
 		if ( pChild )
 		{
 			pPhys = pChild;
@@ -840,7 +842,7 @@ IMotionEvent::simresult_e CGrabControllerConcussion::Simulate( IPhysicsMotionCon
 	}
 	shadowParams.maxAngular = m_shadow.maxAngular * m_contactAmount * m_contactAmount * m_contactAmount;
 	m_timeToArrive = pObject->ComputeShadowControl( shadowParams, m_timeToArrive, deltaTime );
-	
+
 	// Slide along the current contact points to fix bouncing problems
 	Vector velocity;
 	AngularImpulse angVel;
@@ -881,7 +883,7 @@ float CGrabControllerConcussion::GetSavedMass( IPhysicsObject *pObject )
 //-----------------------------------------------------------------------------
 bool CGrabControllerConcussion::IsObjectAllowedOverhead( CBaseEntity *pEntity )
 {
-	// Allow combine balls overhead 
+	// Allow combine balls overhead
 	if( UTIL_IsCombineBallDefinite(pEntity) )
 		return true;
 
@@ -940,13 +942,13 @@ BEGIN_DATADESC( CPlayerPickupControllerConcussion )
 	DEFINE_PHYSPTR( m_grabController.m_controller ),
 
 	DEFINE_FIELD( m_pPlayer,		FIELD_CLASSPTR ),
-	
+
 END_DATADESC()
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : *pPlayer - 
-//			*pObject - 
+// Purpose:
+// Input  : *pPlayer -
+//			*pObject -
 //-----------------------------------------------------------------------------
 void CPlayerPickupControllerConcussion::Init( CBasePlayer *pPlayer, CBaseEntity *pObject )
 {
@@ -979,9 +981,9 @@ void CPlayerPickupControllerConcussion::Init( CBasePlayer *pPlayer, CBaseEntity 
 	m_grabController.SetAngleAlignment( DOT_30DEGREE );
 	m_pPlayer = pPlayer;
 	IPhysicsObject *pPhysics = pObject->VPhysicsGetObject();
-	
+
 	Pickup_OnPhysGunPickup( pObject, m_pPlayer, PICKED_UP_BY_PLAYER );
-	
+
 	m_grabController.AttachEntity( pPlayer, pObject, pPhysics, false, vec3_origin, false );
 
 	m_pPlayer->m_Local.m_iHideHUD |= HIDEHUD_WEAPONSELECTION;
@@ -990,8 +992,8 @@ void CPlayerPickupControllerConcussion::Init( CBasePlayer *pPlayer, CBaseEntity 
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : bool - 
+// Purpose:
+// Input  : bool -
 //-----------------------------------------------------------------------------
 void CPlayerPickupControllerConcussion::Shutdown( bool bThrown )
 {
@@ -1049,7 +1051,7 @@ void CPlayerPickupControllerConcussion::Use( CBaseEntity *pActivator, CBaseEntit
 			Shutdown();
 			return;
 		}
-		
+
 		//Adrian: Oops, our object became motion disabled, let go!
 		IPhysicsObject *pPhys = pAttached->VPhysicsGetObject();
 		if ( pPhys && pPhys->IsMoveable() == false )
@@ -1093,8 +1095,8 @@ void CPlayerPickupControllerConcussion::Use( CBaseEntity *pActivator, CBaseEntit
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : *pEnt - 
+// Purpose:
+// Input  : *pEnt -
 // Output : Returns true on success, false on failure.
 //-----------------------------------------------------------------------------
 bool CPlayerPickupControllerConcussion::IsHoldingEntity( CBaseEntity *pEnt )
@@ -1109,7 +1111,7 @@ void PlayerPickupConcObject( CBasePlayer *pPlayer, CBaseEntity *pObject )
 		 return;
 
 	CPlayerPickupControllerConcussion *pController = (CPlayerPickupControllerConcussion *)CBaseEntity::Create( "player_pickup", pObject->GetAbsOrigin(), vec3_angle, pPlayer );
-	
+
 	if ( !pController )
 		return;
 
@@ -1258,7 +1260,7 @@ void CWeaponPhysConcussion::Precache( void )
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CWeaponPhysConcussion::Spawn( void )
 {
@@ -1317,7 +1319,7 @@ inline float CWeaponPhysConcussion::SpriteScaleFactor()
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 // Output : Returns true on success, false on failure.
 //-----------------------------------------------------------------------------
 bool CWeaponPhysConcussion::Deploy( void )
@@ -1368,7 +1370,7 @@ void CWeaponPhysConcussion::CalcClip()
 	}
 }
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CWeaponPhysConcussion::SetViewModel( void )
 {
@@ -1403,7 +1405,7 @@ void CWeaponPhysConcussion::ForceDrop( void )
 
 //-----------------------------------------------------------------------------
 // Purpose: Drops its held entity if it matches the entity passed in
-// Input  : *pTarget - 
+// Input  : *pTarget -
 // Output : Returns true on success, false on failure.
 //-----------------------------------------------------------------------------
 bool CWeaponPhysConcussion::DropIfEntityHeld( CBaseEntity *pTarget )
@@ -1412,7 +1414,7 @@ bool CWeaponPhysConcussion::DropIfEntityHeld( CBaseEntity *pTarget )
 		return false;
 
 	CBaseEntity *pHeld = m_grabController.GetAttached();
-	
+
 	if ( pHeld == NULL )
 		return false;
 
@@ -1426,7 +1428,7 @@ bool CWeaponPhysConcussion::DropIfEntityHeld( CBaseEntity *pTarget )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CWeaponPhysConcussion::Drop( const Vector &vecVelocity )
 {
@@ -1435,10 +1437,10 @@ void CWeaponPhysConcussion::Drop( const Vector &vecVelocity )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 bool CWeaponPhysConcussion::CanHolster( void )
-{ 
+{
 	//Don't holster this weapon if we're holding onto something
 	if ( m_bActive )
 		return false;
@@ -1447,7 +1449,7 @@ bool CWeaponPhysConcussion::CanHolster( void )
 };
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 // Output : Returns true on success, false on failure.
 //-----------------------------------------------------------------------------
 bool CWeaponPhysConcussion::Holster( CBaseCombatWeapon *pSwitchingTo )
@@ -1456,10 +1458,10 @@ bool CWeaponPhysConcussion::Holster( CBaseCombatWeapon *pSwitchingTo )
 	if ( m_bActive )
 	{
 		if ( !pSwitchingTo ||
-			( m_grabController.GetAttached() == pSwitchingTo && 
+			( m_grabController.GetAttached() == pSwitchingTo &&
 			GetOwner()->Weapon_OwnsThisType( pSwitchingTo->GetClassname(), pSwitchingTo->GetSubType()) ) )
 		{
-		
+
 		}
 		else
 		{
@@ -1479,7 +1481,7 @@ bool CWeaponPhysConcussion::Holster( CBaseCombatWeapon *pSwitchingTo )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CWeaponPhysConcussion::DryFire( void )
 {
@@ -1494,7 +1496,7 @@ void CWeaponPhysConcussion::DryFire( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CWeaponPhysConcussion::HandleFireOnEmpty()
 {
@@ -1510,12 +1512,12 @@ void CWeaponPhysConcussion::HandleFireOnEmpty()
 void CWeaponPhysConcussion::PrimaryFireEffect( void )
 {
 	CBasePlayer *pOwner = ToBasePlayer( GetOwner() );
-	
+
 	if ( pOwner == NULL )
 		return;
 
 	pOwner->ViewPunch( QAngle(-6, random->RandomInt(-2,2) ,0) );
-	
+
 	color32 white = { 245, 245, 255, 32 };
 	UTIL_ScreenFade( pOwner, white, 0.1f, 0.0f, FFADE_IN );
 
@@ -1621,7 +1623,7 @@ void CWeaponPhysConcussion::PuntNonVPhysics( CBaseEntity *pEntity, const Vector 
 
 
 //-----------------------------------------------------------------------------
-// What happens when the physgun picks up something 
+// What happens when the physgun picks up something
 //-----------------------------------------------------------------------------
 void CWeaponPhysConcussion::Physgun_OnPhysGunPickup( CBaseEntity *pEntity, CBasePlayer *pOwner, PhysGunPickup_t reason )
 {
@@ -1693,13 +1695,13 @@ void CWeaponPhysConcussion::PuntVPhysics( CBaseEntity *pEntity, const Vector &ve
 			DryFire();
 			return;
 		}
-				
+
 		if( forward.z < 0 )
 		{
 			//reflect, but flatten the trajectory out a bit so it's easier to hit standing targets
 			forward.z *= -0.65f;
 		}
-		
+
 		// NOTE: Do this first to enable motion (if disabled) - so forces will work
 		// Tell the object it's been punted
 		if ( !FClassnameIs( pEntity, "npc_manhack" ) )
@@ -1785,16 +1787,16 @@ void CWeaponPhysConcussion::PuntVPhysics( CBaseEntity *pEntity, const Vector &ve
 // Purpose: Applies velocity-based forces to throw the entity. This code is
 //			called from both punt and launch carried code.
 //			ASSUMES: that pEntity is a vphysics entity.
-// Input  : - 
+// Input  : -
 //-----------------------------------------------------------------------------
 void CWeaponPhysConcussion::ApplyVelocityBasedForce( CBaseEntity *pEntity, const Vector &forward, const Vector &vecHitPos, PhysGunForce_t reason )
 {
 	// Get the launch velocity
 	Vector vVel = Pickup_PhysGunLaunchVelocity( pEntity, forward, reason );
-	
+
 	// Get the launch angular impulse
 	AngularImpulse aVel = Pickup_PhysGunLaunchAngularImpulse( pEntity, reason );
-		
+
 	// Get the physics object (MUST have one)
 	IPhysicsObject *pPhysicsObject = pEntity->VPhysicsGetObject();
 	if ( pPhysicsObject == NULL )
@@ -1834,7 +1836,7 @@ void CWeaponPhysConcussion::ApplyVelocityBasedForce( CBaseEntity *pEntity, const
 		ragdoll_t *pRagdollPhys = pRagdoll->GetRagdoll( );
 		for ( int j = 0; j < pRagdollPhys->listCount; ++j )
 		{
-			pRagdollPhys->list[j].pObject->AddVelocity( &vVel, &aVel ); 
+			pRagdollPhys->list[j].pObject->AddVelocity( &vVel, &aVel );
 		}
 	}
 }
@@ -1867,7 +1869,7 @@ void CWeaponPhysConcussion::PuntRagdoll( CBaseEntity *pEntity, const Vector &vec
 			//reflect, but flatten the trajectory out a bit so it's easier to hit standing targets
 			forward.z *= -0.65f;
 		}
-		
+
 		/*
 		Vector			vVel = forward * 700;
 		AngularImpulse	aVel;
@@ -1954,7 +1956,7 @@ float CWeaponPhysConcussion::TraceLength()
 	{
 		return physconcussion_tracelength.GetFloat();
 	}
-	
+
 	return physconcussion_mega_tracelength.GetFloat();
 }
 
@@ -2000,7 +2002,7 @@ bool CWeaponPhysConcussion::EntityAllowsPunts( CBaseEntity *pEntity )
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //
 // Primary fire shoots an impulse creating a gravitational shock 192 in radius
 // at the impact position.
@@ -2025,7 +2027,7 @@ void CWeaponPhysConcussion::PrimaryAttack( void )
 	m_iPrimaryAttacks++; //not used
 
 	CBasePlayer *pOwner = ToBasePlayer( GetOwner() );
-	
+
 	if ( pOwner == NULL )
 		return;
 
@@ -2139,7 +2141,7 @@ void CWeaponPhysConcussion::SecondaryAttack( void )
 		return;
 
 	CBasePlayer *pOwner = ToBasePlayer( GetOwner() );
-	
+
 	if ( pOwner == NULL )
 		return;
 
@@ -2183,11 +2185,11 @@ void CWeaponPhysConcussion::SecondaryAttack( void )
 
 		DoEffect( EFFECT_HOLDING );
 	}
-}	
+}
 */
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CWeaponPhysConcussion::WeaponIdle( void )
 {
@@ -2207,8 +2209,8 @@ void CWeaponPhysConcussion::WeaponIdle( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : *pObject - 
+// Purpose:
+// Input  : *pObject -
 //-----------------------------------------------------------------------------
 bool CWeaponPhysConcussion::AttachObject( CBaseEntity *pObject, const Vector &vPosition )
 {
@@ -2346,11 +2348,11 @@ void CWeaponPhysConcussion::FindObjectTrace( CBasePlayer *pPlayer, trace_t *pTra
 CWeaponPhysConcussion::FindObjectResult_t CWeaponPhysConcussion::FindObject( void )
 {
 	CBasePlayer *pPlayer = ToBasePlayer( GetOwner() );
-	
+
 	Assert( pPlayer );
 	if ( pPlayer == NULL )
 		return OBJECT_NOT_FOUND;
-	
+
 	trace_t tr;
 	FindObjectTrace( pPlayer, &tr );
 	CBaseEntity *pEntity = tr.m_pEnt ? tr.m_pEnt->GetRootMoveParent() : NULL;
@@ -2370,7 +2372,7 @@ CWeaponPhysConcussion::FindObjectResult_t CWeaponPhysConcussion::FindObject( voi
 			bPull = true;
 		}
 	}
-	
+
 	Vector forward;
 	pPlayer->EyeVectors( &forward );
 
@@ -2451,7 +2453,7 @@ CWeaponPhysConcussion::FindObjectResult_t CWeaponPhysConcussion::FindObject( voi
 	Vector	pullDir = start - pEntity->WorldSpaceCenter();
 	VectorNormalize( pullDir );
 	pullDir *= IsMegaPhysConcussion() ? physconcussion_mega_pullforce.GetFloat() : physconcussion_pullforce.GetFloat();
-	
+
 	float mass = PhysGetEntityMass( pEntity );
 	if ( mass < 50.0f )
 	{
@@ -2607,7 +2609,7 @@ bool CGrabControllerConcussion::UpdateObject( CBasePlayer *pPlayer, float flErro
 		if ( flDot <= 0.35f )
 			return false;
 	}
-	
+
 	float pitch = AngleDistance(playerAngles.x,0);
 
 	if( !m_bAllowObjectOverhead )
@@ -2619,8 +2621,8 @@ bool CGrabControllerConcussion::UpdateObject( CBasePlayer *pPlayer, float flErro
 		playerAngles.x = clamp( pitch, -90, 75 );
 	}
 
-	
-	
+
+
 	// Now clamp a sphere of object radius at end to the player's bbox
 	Vector radial = physcollision->CollideGetExtent( pPhys->GetCollide(), vec3_origin, pEntity->GetAbsAngles(), -forward );
 	Vector player2d = pPlayer->CollisionProp()->OBBMaxs();
@@ -2678,7 +2680,7 @@ bool CGrabControllerConcussion::UpdateObject( CBasePlayer *pPlayer, float flErro
 	}
 
 	QAngle angles = TransformAnglesFromPlayerSpace( m_attachedAnglesPlayerSpace, pPlayer );
-	
+
 	// If it has a preferred orientation, update to ensure we're still oriented correctly.
 	Pickup_GetPreferredCarryAngles( pEntity, pPlayer, pPlayer->EntityToWorldTransform(), angles );
 
@@ -2725,7 +2727,7 @@ void CWeaponPhysConcussion::DetachObject( bool playSound, bool wasLaunched )
 	{
 		pOwner->EnableSprint( true );
 		pOwner->SetMaxSpeed( hl2_normspeed.GetFloat() );
-		
+
 		if( wasLaunched )
 		{
 			pOwner->RumbleEffect( RUMBLE_357, 0, RUMBLE_FLAG_RESTART );
@@ -2787,6 +2789,11 @@ void CWeaponPhysConcussion::ItemPreFrame()
 	if ( (pOwner->GetFlags() & FL_ONGROUND) && m_airBorneShotSpent )
 	{
 		m_airBorneShotSpent = false;
+		// Fire event for achievement: E120_MY_FIRST_GRAVITY_JUMP
+		IGameEvent *event = gameeventmanager->CreateEvent( "first_gravity_jump" );
+		if ( event )
+			gameeventmanager->FireEvent( event );
+			//DevMsg("Event: first_gravity_jump\n");
 	}
 
 	// If the prongs are fully closed from firing then open them
@@ -2810,7 +2817,7 @@ void CWeaponPhysConcussion::ItemPreFrame()
 		m_flElementPosition = UTIL_Approach( m_flElementDestination, m_flElementPosition, 0.1f );
 
 	CBaseViewModel *vm = pOwner->GetViewModel();
-	
+
 	if ( vm != NULL )
 	{
 		// This has to happen here because of how the SetModel interacts with the caching at startup
@@ -2838,7 +2845,7 @@ void CWeaponPhysConcussion::ItemPreFrame()
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CWeaponPhysConcussion::CheckForTarget( void )
 {
@@ -2893,7 +2900,7 @@ void CWeaponPhysConcussion::BeginUpgrade()
 {
 	if ( IsMegaPhysConcussion() )
 		return;
-	
+
 	if ( m_bIsCurrentlyUpgrading )
 		return;
 
@@ -2958,7 +2965,7 @@ void CWeaponPhysConcussion::WaitForUpgradeThink()
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CWeaponPhysConcussion::DoEffectIdle( void )
 {
@@ -2969,7 +2976,7 @@ void CWeaponPhysConcussion::DoEffectIdle( void )
 	}
 
 	CBasePlayer *pOwner = ToBasePlayer( GetOwner() );
-	
+
 	if ( pOwner == NULL )
 		return;
 
@@ -3002,7 +3009,7 @@ void CWeaponPhysConcussion::DoEffectIdle( void )
 				return;
 
 			CBaseAnimating *pBeamEnt = pOwner->GetViewModel();
-			
+
 			if ( pBeamEnt )
 			{
 				int iAttachment = pBeamEnt->LookupAttachment( "muzzle" );
@@ -3023,7 +3030,7 @@ void CWeaponPhysConcussion::DoEffectIdle( void )
 
 				variant_t variant;
 				variant.SetFloat( 1.0f );
-		
+
 				g_EventQueue.AddEvent( pCore, "StartDischarge", 0, pOwner, pOwner );
 				g_EventQueue.AddEvent( pCore, "Stop", variant, 1, pOwner, pOwner );
 
@@ -3102,11 +3109,11 @@ void CWeaponPhysConcussion::DoEffectIdle( void )
 			pBeam->SetBrightness( mega_fx_brightness.GetInt() );
 			pBeam->SetWidth( 1 );
 			pBeam->SetEndWidth( random->RandomFloat( 2, 8 ) );
-			
+
 			float lifetime = random->RandomFloat( 0.2f, 0.4f );
 
 			pBeam->LiveForTime( lifetime );
-			
+
 			if ( m_hEndSprites[sprite] != NULL )
 			{
 				// Turn on the sprite for awhile
@@ -3129,7 +3136,7 @@ void CWeaponPhysConcussion::DoEffectIdle( void )
 				m_hCenterSprite->SetScale( random->RandomFloat( 0.125, 0.15 ) * flScaleFactor );
 			}
 		}
-		
+
 		if ( m_hBlastSprite != NULL )
 		{
 			if ( m_EffectState == EFFECT_HOLDING )
@@ -3200,13 +3207,13 @@ void CWeaponPhysConcussion::LaunchObject( const Vector &vecDir, float flForce )
 			CSoundEnt::InsertSound( SOUND_PHYSICS_DANGER, vecSpot, PHYSCONCUSSION_DANGER_SOUND_RADIUS, 0.5, pObject );
 			vecSpot = vecSpot + ( vecDir * PHYSCONCUSSION_DANGER_SOUND_RADIUS );
 		}
-				
+
 		// Launch
 		ApplyVelocityBasedForce( pObject, vecDir, tr.endpos, PHYSGUN_FORCE_LAUNCHED );
 
 		// Don't allow the gun to regrab a thrown object!!
 		m_flNextSecondaryAttack = m_flNextPrimaryAttack = gpGlobals->curtime + 0.5;
-		
+
 		Vector	center = pObject->WorldSpaceCenter();
 
 		//Do repulse effect
@@ -3228,8 +3235,8 @@ void CWeaponPhysConcussion::LaunchObject( const Vector &vecDir, float flForce )
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : *pTarget - 
+// Purpose:
+// Input  : *pTarget -
 // Output : Returns true on success, false on failure.
 //-----------------------------------------------------------------------------
 bool CWeaponPhysConcussion::CanPickupObject( CBaseEntity *pTarget )
@@ -3290,7 +3297,7 @@ bool CWeaponPhysConcussion::CanPickupObject( CBaseEntity *pTarget )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CWeaponPhysConcussion::OpenElements( void )
 {
@@ -3306,7 +3313,7 @@ void CWeaponPhysConcussion::OpenElements( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CWeaponPhysConcussion::CloseElements( void )
 {
@@ -3329,7 +3336,7 @@ void CWeaponPhysConcussion::CloseElements( void )
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 // Output : float
 //-----------------------------------------------------------------------------
 float CWeaponPhysConcussion::GetLoadPercentage( void )
@@ -3342,7 +3349,7 @@ float CWeaponPhysConcussion::GetLoadPercentage( void )
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 // Output : CSoundPatch
 //-----------------------------------------------------------------------------
 CSoundPatch *CWeaponPhysConcussion::GetMotorSound( void )
@@ -3350,7 +3357,7 @@ CSoundPatch *CWeaponPhysConcussion::GetMotorSound( void )
 	if ( m_sndMotor == NULL )
 	{
 		CPASAttenuationFilter filter( this );
-		
+
 		if ( IsMegaPhysConcussion() )
 		{
 			m_sndMotor = (CSoundEnvelopeController::GetController()).SoundCreate( filter, entindex(), CHAN_STATIC, "Weapon_MegaPhysCannon.HoldSound", ATTN_NORM );
@@ -3381,7 +3388,7 @@ void CWeaponPhysConcussion::StopLoopingSounds()
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CWeaponPhysConcussion::DestroyEffects( void )
 {
@@ -3430,7 +3437,7 @@ void CWeaponPhysConcussion::DestroyEffects( void )
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CWeaponPhysConcussion::StopEffects( bool stopSound )
 {
@@ -3483,7 +3490,7 @@ void CWeaponPhysConcussion::StopEffects( bool stopSound )
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CWeaponPhysConcussion::StartEffects( void )
 {
@@ -3539,7 +3546,7 @@ void CWeaponPhysConcussion::StartEffects( void )
 		if ( m_hGlowSprites[i] )
 			continue;
 
-		const char *attachNames[] = 
+		const char *attachNames[] =
 		{
 			"fork1b",
 			"fork1m",
@@ -3556,7 +3563,7 @@ void CWeaponPhysConcussion::StartEffects( void )
 		m_hGlowSprites[i]->SetAsTemporary();
 
 		m_hGlowSprites[i]->SetAttachment( pOwner->GetViewModel(), LookupAttachment( attachNames[i] ) );
-		
+
 		if ( bIsMegaConcussion )
 		{
 			m_hGlowSprites[i]->SetTransparency( kRenderTransAdd,
@@ -3580,7 +3587,7 @@ void CWeaponPhysConcussion::StartEffects( void )
 	{
 		if ( m_hEndSprites[i] == NULL )
 		{
-			const char *attachNames[] = 
+			const char *attachNames[] =
 			{
 				"fork1t",
 				"fork2t"
@@ -3606,8 +3613,8 @@ void CWeaponPhysConcussion::StartEffects( void )
 	//Create the center glow
 	if ( m_hCenterSprite == NULL )
 	{
-		m_hCenterSprite = CSprite::SpriteCreate( 
-			bIsMegaConcussion ? MEGACANNON_CENTER_GLOW : PHYSCANNON_CENTER_GLOW, 
+		m_hCenterSprite = CSprite::SpriteCreate(
+			bIsMegaConcussion ? MEGACANNON_CENTER_GLOW : PHYSCANNON_CENTER_GLOW,
 			GetAbsOrigin(), false );
 
 		m_hCenterSprite->SetAsTemporary();
@@ -3625,8 +3632,8 @@ void CWeaponPhysConcussion::StartEffects( void )
 	//Create the blast sprite
 	if ( m_hBlastSprite == NULL )
 	{
-		m_hBlastSprite = CSprite::SpriteCreate( 
-			bIsMegaConcussion ? MEGACANNON_BLAST_SPRITE : PHYSCANNON_BLAST_SPRITE, 
+		m_hBlastSprite = CSprite::SpriteCreate(
+			bIsMegaConcussion ? MEGACANNON_BLAST_SPRITE : PHYSCANNON_BLAST_SPRITE,
 			GetAbsOrigin(), false );
 
 		m_hBlastSprite->SetAsTemporary();
@@ -3686,7 +3693,7 @@ void CWeaponPhysConcussion::DoEffectClosed( void )
 			m_hGlowSprites[i]->SetScale( 0.3f * flScaleFactor, 0.2f );
 		}
 	}
-	
+
 	// Prepare for scale down
 	if ( m_hBlastSprite != NULL )
 	{
@@ -3739,7 +3746,7 @@ void CWeaponPhysConcussion::DoMegaEffectClosed( void )
 			m_hGlowSprites[i]->SetScale( 0.3f * flScaleFactor, 0.2f );
 		}
 	}
-	
+
 	// Prepare for scale down
 	if ( m_hBlastSprite != NULL )
 	{
@@ -3895,7 +3902,7 @@ void CWeaponPhysConcussion::DoEffectLaunch( Vector *pos )
 	//FIXME: Probably too big
 	CPVSFilter filter( endpos );
 	te->GaussExplosion( filter, 0.0f, endpos - ( shotDir * 4.0f ), RandomVector(-1.0f, 1.0f), 0 );
-	
+
 	if ( m_hBlastSprite != NULL )
 	{
 		m_hBlastSprite->TurnOn();
@@ -3905,8 +3912,8 @@ void CWeaponPhysConcussion::DoEffectLaunch( Vector *pos )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : *pos - 
+// Purpose:
+// Input  : *pos -
 //-----------------------------------------------------------------------------
 void CWeaponPhysConcussion::DoMegaEffectLaunch( Vector *pos )
 {
@@ -3922,7 +3929,7 @@ void CWeaponPhysConcussion::DoMegaEffectLaunch( Vector *pos )
 
 	// Check to store off our view model index
 	CBaseViewModel *vm = pOwner->GetViewModel();
-	
+
 	int numBeams = random->RandomInt( 1, 2 );
 
 	CBeam *pBeam = CBeam::BeamCreate( IsMegaPhysConcussion() ? MEGACANNON_BEAM_SPRITE : PHYSCANNON_BEAM_SPRITE, 0.8 );
@@ -3957,7 +3964,7 @@ void CWeaponPhysConcussion::DoMegaEffectLaunch( Vector *pos )
 			pBeam->SetNoise( random->RandomInt( 8, 12 ) );
 		}
 	}
-	
+
 	Vector	shotDir = ( endpos - pOwner->Weapon_ShootPosition() );
 	VectorNormalize( shotDir );
 
@@ -4069,13 +4076,13 @@ void CWeaponPhysConcussion::DoEffectNone( void )
 	{
 		// Become small
 		m_hBlastSprite->SetScale( 0.001f );
-	}	
+	}
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : effectType - 
-//			*pos - 
+// Purpose:
+// Input  : effectType -
+//			*pos -
 //-----------------------------------------------------------------------------
 void CWeaponPhysConcussion::DoMegaEffect( int effectType, Vector *pos )
 {
@@ -4104,8 +4111,8 @@ void CWeaponPhysConcussion::DoMegaEffect( int effectType, Vector *pos )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : effectType - 
+// Purpose:
+// Input  : effectType -
 //-----------------------------------------------------------------------------
 void CWeaponPhysConcussion::DoEffect( int effectType, Vector *pos )
 {
@@ -4147,8 +4154,8 @@ void CWeaponPhysConcussion::DoEffect( int effectType, Vector *pos )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : iIndex - 
+// Purpose:
+// Input  : iIndex -
 // Output : const char
 //-----------------------------------------------------------------------------
 const char *CWeaponPhysConcussion::GetShootSound( int iIndex ) const
@@ -4185,9 +4192,9 @@ const char *CWeaponPhysConcussion::GetShootSound( int iIndex ) const
 
 //-----------------------------------------------------------------------------
 // Purpose: Adds the specified object to the list of objects that have been
-//			propelled by this physgun, along with a timestamp of when the 
+//			propelled by this physgun, along with a timestamp of when the
 //			object was added to the list. This list is checked when a physics
-//			object strikes another entity, to resolve whether the player is 
+//			object strikes another entity, to resolve whether the player is
 //			accountable for the impact.
 //
 // Input  : pObject - pointer to the object being thrown by the physconcussion.

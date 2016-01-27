@@ -7,7 +7,6 @@
 
 #ifndef AI_STRIDERFINALE_H
 #define AI_STRIDERFINALE_H
-
 #if defined( _WIN32 )
 #pragma once
 #endif
@@ -96,11 +95,11 @@ LINK_ENTITY_TO_CLASS( ai_strider_finale, CAI_StriderFinale );
 BEGIN_DATADESC( CAI_StriderFinale )
 			DEFINE_KEYFIELD( m_bActive, FIELD_BOOLEAN, "Active" ),
       DEFINE_KEYFIELD( m_iszStrider1, FIELD_STRING, "Strider1" ),
-      DEFINE_KEYFIELD( m_iszStrider2, FIELD_STRING,  "Strider2" ),
+      DEFINE_KEYFIELD( m_iszStrider2, FIELD_STRING, "Strider2" ),
       DEFINE_KEYFIELD( m_iszStrider3, FIELD_STRING, "Strider3" ),
       // Inputs
       DEFINE_INPUTFUNC( FIELD_VOID, "Update", InputActivate ),
-      DEFINE_INPUTFUNC( FIELD_VOID, "CombatOver",	 InputDeactivate ),
+      DEFINE_INPUTFUNC( FIELD_VOID, "CombatOver", InputDeactivate ),
       DEFINE_INPUTFUNC( FIELD_STRING, "SetPatrolPath", InputSetPatrolPath ),
       DEFINE_INPUTFUNC( FIELD_STRING, "SetGuardPath", InputSetGuardPath ),
       DEFINE_THINKFUNC( MovementThink ),

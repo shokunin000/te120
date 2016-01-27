@@ -77,9 +77,7 @@
 // Projective textures
 #include "C_Env_Projected_Texture.h"
 //TE120--
-#ifdef _WIN32 //Disabled on Linux
 #include "shadereditor/shadereditorsystem.h"
-#endif
 //TE120--
 
 // memdbgon must be the last include file in a .cpp file!!!
@@ -943,17 +941,6 @@ CViewRender::CViewRender()
 	m_pCurrentlyDrawingEntity = NULL;
 }
 
-
-//-----------------------------------------------------------------------------
-// Purpose:
-// Output : Returns true on success, false on failure.
-//-----------------------------------------------------------------------------
-inline bool CViewRender::ShouldDrawEntities( void )
-{
-	return ( !m_pDrawEntities || (m_pDrawEntities->GetInt() != 0) );
-}
-
-
 //-----------------------------------------------------------------------------
 // Purpose: Check all conditions which would prevent drawing the view model
 // Input  : drawViewmodel -
@@ -979,7 +966,6 @@ bool CViewRender::ShouldDrawViewModel( bool bDrawViewmodel )
 
 	return true;
 }
-
 
 //-----------------------------------------------------------------------------
 // Purpose:
@@ -1366,13 +1352,11 @@ void CViewRender::ViewDrawScene( bool bDrew3dSkybox, SkyboxVisibility_t nSkyboxV
 	DrawWorldAndEntities( drawSkybox, view, nClearFlags, pCustomVisibility );
 
 //TE120--
-#ifdef _WIN32 //Disabled on Linux
 	VisibleFogVolumeInfo_t fogVolumeInfo;
 	render->GetVisibleFogVolume( view.origin, &fogVolumeInfo );
 	WaterRenderInfo_t info;
 	DetermineWaterRenderInfo( fogVolumeInfo, info );
 	g_ShaderEditorSystem->CustomViewRender( &g_CurrentViewID, fogVolumeInfo, info );
-#endif
 //TE120--
 
 	// Disable fog for the rest of the stuff
@@ -2002,9 +1986,7 @@ void CViewRender::RenderView( const CViewSetup &view, int nClearFlags, int whatT
 		{
 			AddViewToScene( pSkyView );
 //TE120--
-#ifdef _WIN32 //Disabled on Linux
 			g_ShaderEditorSystem->UpdateSkymask( false, view.x, view.y, view.width, view.height );
-#endif
 //TE120--
 		}
 
@@ -2064,9 +2046,7 @@ void CViewRender::RenderView( const CViewSetup &view, int nClearFlags, int whatT
 		// Now actually draw the viewmodel
 		DrawViewModels( view, whatToDraw & RENDERVIEW_DRAWVIEWMODEL );
 //TE120--
-#ifdef _WIN32 //Disabled on Linux
 		g_ShaderEditorSystem->UpdateSkymask( bDrew3dSkybox, view.x, view.y, view.width, view.height );
-#endif
 //TE120--
 
 		DrawUnderwaterOverlay();
@@ -2106,9 +2086,7 @@ void CViewRender::RenderView( const CViewSetup &view, int nClearFlags, int whatT
 			pRenderContext.SafeRelease();
 		}
 //TE120--
-#ifdef _WIN32 //Disabled on Linux
 		g_ShaderEditorSystem->CustomPostRender();
-#endif
 //TE120--
 
 		// And here are the screen-space effects
@@ -5020,7 +4998,7 @@ void CShadowDepthView::Draw()
 	}
 
 	pRenderContext.GetFrom( materials );
-	pRenderContext->PushRenderTargetAndViewport (m_pRenderTarget, m_pDepthTexture, 0, 0, m_pDepthTexture->GetMappingWidth(), m_pDepthTexture->GetMappingWidth() );
+	pRenderContext->PushRenderTargetAndViewport(m_pRenderTarget, m_pDepthTexture, 0, 0, m_pDepthTexture->GetMappingWidth(), m_pDepthTexture->GetMappingWidth() );
 	pRenderContext.SafeRelease();
 
 	SetupCurrentView( origin, angles, VIEW_SHADOW_DEPTH_TEXTURE );

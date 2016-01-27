@@ -412,7 +412,7 @@ private:
 
 protected:
 	CNetworkVar( bool, m_bAwake );
-	//CNetworkVar( bool, m_bEnableGlow );//TE120
+	CNetworkVar( bool, m_bEnableGlow );//TE120
 };
 
 

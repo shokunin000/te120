@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $Workfile:     $
 // $Date:         $
@@ -31,16 +31,16 @@ class Panel;
 // HPE_BEGIN:
 // [tj] Moved this from the .cpp file so derived classes could access it
 //=============================================================================
- 
+
 #define ACHIEVEMENT_ANNOUNCEMENT_MIN_TIME 10
- 
+
 //=============================================================================
 // HPE_END
 //=============================================================================
 
 class CReplayReminderPanel;
 
-#define USERID2PLAYER(i) ToBasePlayer( ClientEntityList().GetEnt( engine->GetPlayerForUserID( i ) ) )	
+#define USERID2PLAYER(i) ToBasePlayer( ClientEntityList().GetEnt( engine->GetPlayerForUserID( i ) ) )
 
 extern IClientMode *GetClientModeNormal(); // must be implemented
 
@@ -53,7 +53,7 @@ public:
 
 					ClientModeShared();
 	virtual			~ClientModeShared();
-	
+
 	virtual void	Init();
 	virtual void	InitViewport();
 	virtual void	VGui_Shutdown();
@@ -96,13 +96,13 @@ public:
 
 	// The mode can choose to not draw fog
 	virtual bool	ShouldDrawFog( void );
-	
+
 	virtual float	GetViewModelFOV( void );
 	virtual vgui::Panel* GetViewport() { return m_pViewport; }
 	// Gets at the viewports vgui panel animation controller, if there is one...
 	virtual vgui::AnimationController *GetViewportAnimationController()
 		{ return m_pViewport->GetAnimationController(); }
-	
+
 	virtual void FireGameEvent( IGameEvent *event );
 
 	virtual bool CanRecordDemo( char *errorMsg, int length ) const { return true; }
@@ -115,12 +115,12 @@ public:
 	// HPE_BEGIN:
 	// [menglish] Save server information shown to the client in a persistent place
 	//=============================================================================
-	 
+
 	virtual wchar_t* GetServerName() { return NULL; }
 	virtual void SetServerName(wchar_t* name) {};
 	virtual wchar_t* GetMapName() { return NULL; }
 	virtual void SetMapName(wchar_t* name) {};
-	 
+
 	//=============================================================================
 	// HPE_END
 	//=============================================================================
@@ -159,4 +159,3 @@ private:
 };
 
 #endif // CLIENTMODE_NORMAL_H
-

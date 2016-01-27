@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $Workfile:     $
 // $NoKeywords: $
@@ -28,7 +28,7 @@ public:
 	virtual void		OnDataChanged( DataUpdateType_t updateType );
 
 	void				Weapon_DropPrimary( void );
-		
+
 	float				GetFOV();
 	void				Zoom( float FOVOffset, float time );
 	float				GetZoom( void );
@@ -44,7 +44,7 @@ public:
 	LadderMove_t		*GetLadderMove() { return &m_HL2Local.m_LadderMove; }
 	virtual void		ExitLadder();
 	bool				IsSprinting() const { return m_fIsSprinting; }
-	
+
 	// Input handling
 	virtual bool	CreateMove( float flInputSampleTime, CUserCmd *pCmd );
 	void			PerformClientSideObstacleAvoidance( float flFrameTime, CUserCmd *pCmd );
@@ -61,7 +61,7 @@ public:
 
 private:
 	C_BaseHLPlayer( const C_BaseHLPlayer & ); // not defined, not accessible
-	
+
 	bool				TestMove( const Vector &pos, float fVertDist, float radius, const Vector &objPos, const Vector &objDir );
 
 	float				m_flZoomStart;

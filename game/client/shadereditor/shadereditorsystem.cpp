@@ -23,10 +23,13 @@
 #include "rendertexture.h"
 #include "c_rope.h"
 #include "model_types.h"
+#include "filesystem.h"
 #ifdef SWARM_DLL
 #include "modelrendersystem.h"
 #endif
 
+// memdbgon must be the last include file in a .cpp file!!!
+#include "tier0/memdbgon.h"
 
 #if SWARM_DLL
 #define Editor_MainViewOrigin MainViewOrigin( 0 )
@@ -81,13 +84,13 @@ bool ShaderEditorHandler::Init()
 
 	char modulePath[MAX_PATH*4];
 #ifdef SWARM_DLL
-	Q_snprintf( modulePath, sizeof( modulePath ), "%s/bin/shadereditor_swarm.dll\n", engine->GetGameDirectory() );
+	Q_snprintf( modulePath, sizeof( modulePath ), "%s/bin/shadereditor_swarm.dll", engine->GetGameDirectory() );
 #elif SOURCE_2006
-	Q_snprintf( modulePath, sizeof( modulePath ), "%s/bin/shadereditor_2006.dll\n", engine->GetGameDirectory() );
+	Q_snprintf( modulePath, sizeof( modulePath ), "%s/bin/shadereditor_2006.dll", engine->GetGameDirectory() );
 #elif SOURCE_2013
-	Q_snprintf( modulePath, sizeof( modulePath ), "%s/bin/shadereditor_2013.dll\n", engine->GetGameDirectory() );
+	Q_snprintf( modulePath, sizeof( modulePath ), "%s/bin/shadereditor_2013.dll", engine->GetGameDirectory() );
 #else
-	Q_snprintf( modulePath, sizeof( modulePath ), "%s/bin/shadereditor_2007.dll\n", engine->GetGameDirectory() );
+	Q_snprintf( modulePath, sizeof( modulePath ), "%s/bin/shadereditor_2007.dll", engine->GetGameDirectory() );
 #endif
 	shaderEditorModule = Sys_LoadModule( modulePath );
 	if ( shaderEditorModule )
@@ -157,16 +160,17 @@ void ShaderEditorHandler::Update( float frametime )
 
 CThreadMutex m_Lock;
 
-void ShaderEditorHandler::PreRender()
+void ShaderEditorHandler::InitialPreRender()
 {
 	if ( IsReady() && view )
 	{
+		m_Lock.Lock();
+
 		// make sure the class matches
 		const CViewSetup *v = view->GetPlayerViewSetup();
 		CViewSetup_SEdit_Shared stableVSetup( *v );
 		shaderEdit->OnPreRender( &stableVSetup );
 
-		m_Lock.Lock();
 		PrepareCallbackData();
 		m_Lock.Unlock();
 	}
@@ -319,11 +323,8 @@ void ShaderEditorHandler::RegisterCallbacks()
 }
 
 #ifdef SOURCE_2006
-
 void ShaderEditorHandler::RegisterViewRenderCallbacks(){}
-
 #else
-
 extern bool DoesViewPlaneIntersectWater( float waterZ, int leafWaterDataID );
 
 // copy pasta from baseworldview
@@ -344,11 +345,6 @@ protected:
 	};
 
 	virtual bool ShouldDrawParticles()
-	{
-		return true;
-	};
-
-	virtual bool ShouldDrawEntities()
 	{
 		return true;
 	};
@@ -513,11 +509,8 @@ protected:
 
 	void DrawOpaqueRenderables_Custom( bool bShadowDepth )
 	{
-		//if( !r_drawopaquerenderables.GetBool() )
-		//	return;
-
-		if( !m_pMainView->ShouldDrawEntities() )
-			return;
+		if ( !m_pMainView->ShouldDrawEntities() )
+		  return;
 
 		render->SetBlend( 1 );
 
@@ -1012,7 +1005,6 @@ public:
 		bool bClearObeyStencil;
 		bool bFogOverride;
 		bool bFogEnabled;
-		bool bDrawEntities;
 
 		int iClearColorR;
 		int iClearColorG;
@@ -1246,12 +1238,6 @@ public:
 		return settings.bDrawParticles;
 	};
 
-
-	virtual bool ShouldDrawEntities()
-	{
-		return settings.bDrawEntities;
-	};
-
 	virtual bool ShouldDrawRopes()
 	{
 		return settings.bDrawRopes;
@@ -1407,7 +1393,6 @@ pFnVrCallback_Declare( VrCallback_General )
 	settings.bClearObeyStencil = pbOptions[14];
 	settings.bFogOverride = pbOptions[15];
 	settings.bFogEnabled = pbOptions[16];
-	settings.bDrawEntities = pbOptions[17];
 
 	settings.iClearColorR = piOptions[0];
 	settings.iClearColorG = piOptions[1];

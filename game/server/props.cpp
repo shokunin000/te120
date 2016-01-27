@@ -2445,11 +2445,11 @@ BEGIN_DATADESC( CPhysicsProp )
 	DEFINE_INPUTFUNC( FIELD_VOID, "DisableFloating", InputDisableFloating ),
 //TE120--
 	DEFINE_INPUTFUNC( FIELD_VOID, "ConvertToDebris", InputConvertToDebris ),
-	//DEFINE_INPUTFUNC( FIELD_VOID, "ToggleGlow", InputToggleGlow ),
+	DEFINE_INPUTFUNC( FIELD_VOID, "ToggleGlow", InputToggleGlow ),
 //TE120--
 
 	DEFINE_FIELD( m_bAwake, FIELD_BOOLEAN ),
-	//DEFINE_FIELD( m_bEnableGlow, FIELD_BOOLEAN ),//TE120
+	DEFINE_FIELD( m_bEnableGlow, FIELD_BOOLEAN ),//TE120
 
 	DEFINE_KEYFIELD( m_massScale, FIELD_FLOAT, "massscale" ),
 	DEFINE_KEYFIELD( m_inertiaScale, FIELD_FLOAT, "inertiascale" ),
@@ -2479,7 +2479,7 @@ END_DATADESC()
 
 IMPLEMENT_SERVERCLASS_ST( CPhysicsProp, DT_PhysicsProp )
 	SendPropBool( SENDINFO( m_bAwake ) ),
-	//SendPropBool( SENDINFO(m_bEnableGlow) ),//TE120
+	SendPropBool( SENDINFO(m_bEnableGlow) ),//TE120
 END_SEND_TABLE()
 
 // external function to tell if this entity is a gib physics prop
@@ -2500,7 +2500,7 @@ CPhysicsProp::~CPhysicsProp()
 		g_ActiveGibCount--;
 	}
 
-	//m_bEnableGlow = false;//TE120
+	m_bEnableGlow = false;//TE120
 }
 
 bool CPhysicsProp::IsGib()
@@ -2776,10 +2776,10 @@ void CPhysicsProp::InputConvertToDebris( inputdata_t &inputdata )
 //-----------------------------------------------------------------------------
 // Purpose:
 //-----------------------------------------------------------------------------
-/*void CPhysicsProp::InputToggleGlow( inputdata_t &inputdata )
+void CPhysicsProp::InputToggleGlow( inputdata_t &inputdata )
 {
 	m_bEnableGlow = !m_bEnableGlow;
-}*/
+}
 //TE120--
 
 //-----------------------------------------------------------------------------

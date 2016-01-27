@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //=============================================================================//
@@ -24,6 +24,7 @@
 #define LC_ANGLES_CHANGED	(1<<9)
 #define LC_SIZE_CHANGED		(1<<10)
 #define LC_ANIMATION_CHANGED (1<<11)
+#define LC_POSE_PARAMS_CHANGED (1<<12)
 
 static ConVar sv_lagcompensation_teleport_dist( "sv_lagcompensation_teleport_dist", "64", FCVAR_DEVELOPMENTONLY | FCVAR_CHEAT, "How far a player got moved by game code before we can't lag compensate their position back" );
 #define LAG_COMPENSATION_EPS_SQR ( 0.1f * 0.1f )
@@ -38,9 +39,10 @@ ConVar sv_showlagcompensation( "sv_showlagcompensation", "0", FCVAR_CHEAT, "Show
 ConVar sv_unlag_fixstuck( "sv_unlag_fixstuck", "0", FCVAR_DEVELOPMENTONLY, "Disallow backtracking a player for lag compensation if it will cause them to become stuck" );
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 #define MAX_LAYER_RECORDS (CBaseAnimatingOverlay::MAX_OVERLAYS)
+#define MAX_POSE_PARAMETERS (CBaseAnimating::NUM_POSEPAREMETERS)
 
 struct LayerRecord
 {
@@ -106,19 +108,20 @@ public:
 	Vector					m_vecMinsPreScaled;
 	Vector					m_vecMaxsPreScaled;
 
-	float					m_flSimulationTime;	
-	
+	float					m_flSimulationTime;
+
 	// Player animation details, so we can get the legs in the right spot.
 	LayerRecord				m_layerRecords[MAX_LAYER_RECORDS];
 	int						m_masterSequence;
 	float					m_masterCycle;
+	float					m_poseParameters[MAX_POSE_PARAMETERS];
 };
 
 
 //
 // Try to take the player from his current origin to vWantedPos.
 // If it can't get there, leave the player where he is.
-// 
+//
 
 ConVar sv_unlag_debug( "sv_unlag_debug", "0", FCVAR_GAMEDLL | FCVAR_DEVELOPMENTONLY );
 
@@ -165,7 +168,7 @@ static void RestorePlayerTo( CBasePlayer *pPlayer, const Vector &vWantedPos )
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 class CLagCompensationManager : public CAutoGameSystemPerFrame, public ILagCompensationManager
 {
@@ -209,7 +212,7 @@ private:
 	// Scratchpad for determining what needs to be restored
 	CBitVec<MAX_PLAYERS>	m_RestorePlayer;
 	bool					m_bNeedToRestore;
-	
+
 	LagRecord				m_RestoreData[ MAX_PLAYERS ];	// player data before we moved him back
 	LagRecord				m_ChangeData[ MAX_PLAYERS ];	// player data where we moved him back
 
@@ -232,7 +235,7 @@ void CLagCompensationManager::FrameUpdatePostEntityThink()
 		ClearHistory();
 		return;
 	}
-	
+
 	m_flTeleportDistanceSqr = sv_lagcompensation_teleport_dist.GetFloat() * sv_lagcompensation_teleport_dist.GetFloat();
 
 	VPROF_BUDGET( "FrameUpdatePostEntityThink", "CLagCompensationManager" );
@@ -268,7 +271,7 @@ void CLagCompensationManager::FrameUpdatePostEntityThink()
 			// if tail is within limits, stop
 			if ( tail.m_flSimulationTime >= flDeadtime )
 				break;
-			
+
 			// remove tail, get new tail
 			track->Remove( tailIndex );
 			tailIndex = track->Tail();
@@ -313,6 +316,15 @@ void CLagCompensationManager::FrameUpdatePostEntityThink()
 		}
 		record.m_masterSequence = pPlayer->GetSequence();
 		record.m_masterCycle = pPlayer->GetCycle();
+
+		CStudioHdr *hdr = pPlayer->GetModelPtr();
+		if( hdr )
+		{
+			for( int paramIndex = 0; paramIndex < hdr->GetNumPoseParameters(); paramIndex++ )
+			{
+				record.m_poseParameters[paramIndex] = pPlayer->GetPoseParameter( paramIndex );
+			}
+		}
 	}
 
 	//Clear the current player.
@@ -336,7 +348,7 @@ void CLagCompensationManager::StartLagCompensation( CBasePlayer *player, CUserCm
 	m_bNeedToRestore = false;
 
 	m_pCurrentPlayer = player;
-	
+
 	if ( !player->m_bLagCompensation		// Player not wanting lag compensation
 		 || (gpGlobals->maxClients <= 1)	// no lag compensation in single player
 		 || !sv_unlag.GetBool()				// disabled by server admin
@@ -355,7 +367,7 @@ void CLagCompensationManager::StartLagCompensation( CBasePlayer *player, CUserCm
 	// correct is the amout of time we have to correct game time
 	float correct = 0.0f;
 
-	INetChannelInfo *nci = engine->GetPlayerNetInfo( player->entindex() ); 
+	INetChannelInfo *nci = engine->GetPlayerNetInfo( player->entindex() );
 
 	if ( nci )
 	{
@@ -368,11 +380,11 @@ void CLagCompensationManager::StartLagCompensation( CBasePlayer *player, CUserCm
 
 	// add view interpolation latency see C_BaseEntity::GetInterpolationAmount()
 	correct += TICKS_TO_TIME( lerpTicks );
-	
+
 	// check bouns [0,sv_maxunlag]
 	correct = clamp( correct, 0.0f, sv_maxunlag.GetFloat() );
 
-	// correct tick send by player 
+	// correct tick send by player
 	int targettick = cmd->tick_count - lerpTicks;
 
 	// calc difference between tick send by player and our latency based tick
@@ -384,7 +396,7 @@ void CLagCompensationManager::StartLagCompensation( CBasePlayer *player, CUserCm
 		// DevMsg("StartLagCompensation: delta too big (%.3f)\n", deltaTime );
 		targettick = gpGlobals->tickcount - TIME_TO_TICKS( correct );
 	}
-	
+
 	// Iterate all active players
 	const CBitVec<MAX_EDICTS> *pEntityTransmitBits = engine->GetEntityTransmitBitsForClient( player->entindex() - 1 );
 	for ( int i = 1; i <= gpGlobals->maxClients; i++ )
@@ -434,7 +446,7 @@ void CLagCompensationManager::BacktrackPlayer( CBasePlayer *pPlayer, float flTar
 	LagRecord *record = NULL;
 
 	Vector prevOrg = pPlayer->GetLocalOrigin();
-	
+
 	// Walk context looking for any invalidating event
 	while( track->IsValidIndex(curr) )
 	{
@@ -454,7 +466,7 @@ void CLagCompensationManager::BacktrackPlayer( CBasePlayer *pPlayer, float flTar
 		if ( delta.Length2DSqr() > m_flTeleportDistanceSqr )
 		{
 			// lost track, too much difference
-			return; 
+			return;
 		}
 
 		// did we find a context smaller than target time ?
@@ -480,7 +492,7 @@ void CLagCompensationManager::BacktrackPlayer( CBasePlayer *pPlayer, float flTar
 	}
 
 	float frac = 0.0f;
-	if ( prevRecord && 
+	if ( prevRecord &&
 		 (record->m_flSimulationTime < flTargetTime) &&
 		 (record->m_flSimulationTime < prevRecord->m_flSimulationTime) )
 	{
@@ -491,7 +503,7 @@ void CLagCompensationManager::BacktrackPlayer( CBasePlayer *pPlayer, float flTar
 		Assert( flTargetTime < prevRecord->m_flSimulationTime );
 
 		// calc fraction between both records
-		frac = ( flTargetTime - record->m_flSimulationTime ) / 
+		frac = ( flTargetTime - record->m_flSimulationTime ) /
 			( prevRecord->m_flSimulationTime - record->m_flSimulationTime );
 
 		Assert( frac > 0 && frac < 1 ); // should never extrapolate
@@ -525,7 +537,7 @@ void CLagCompensationManager::BacktrackPlayer( CBasePlayer *pPlayer, float flTar
 			CBasePlayer *pHitPlayer = dynamic_cast<CBasePlayer *>( tr.m_pEnt );
 
 			// don't lag compensate the current player
-			if ( pHitPlayer && ( pHitPlayer != m_pCurrentPlayer ) )	
+			if ( pHitPlayer && ( pHitPlayer != m_pCurrentPlayer ) )
 			{
 				// If we haven't backtracked this player, do it now
 				// this deliberately ignores WantsLagCompensationOnEntity.
@@ -542,7 +554,7 @@ void CLagCompensationManager::BacktrackPlayer( CBasePlayer *pPlayer, float flTar
 
 					// Remove the temp flag
 					m_RestorePlayer.Clear( pl_index );
-				}				
+				}
 			}
 
 			// now trace us back as far as we can go
@@ -560,7 +572,7 @@ void CLagCompensationManager::BacktrackPlayer( CBasePlayer *pPlayer, float flTar
 				// We can get to a valid place, but not all the way to the target
 				Vector vPos;
 				VectorLerp( pPlayer->GetLocalOrigin(), org, tr.fraction * g_flFractionScale, vPos );
-				
+
 				// This is as close as we're going to get
 				org = vPos;
 
@@ -569,7 +581,7 @@ void CLagCompensationManager::BacktrackPlayer( CBasePlayer *pPlayer, float flTar
 			}
 		}
 	}
-	
+
 	// See if this represents a change for the player
 	int flags = 0;
 	LagRecord *restore = &m_RestoreData[ pl_index ];
@@ -596,9 +608,9 @@ void CLagCompensationManager::BacktrackPlayer( CBasePlayer *pPlayer, float flTar
 
 		restore->m_vecMinsPreScaled = pPlayer->CollisionProp()->OBBMinsPreScaled();
 		restore->m_vecMaxsPreScaled = pPlayer->CollisionProp()->OBBMaxsPreScaled();
-		
+
 		pPlayer->SetSize( minsPreScaled, maxsPreScaled );
-		
+
 		change->m_vecMinsPreScaled = minsPreScaled;
 		change->m_vecMaxsPreScaled = maxsPreScaled;
 	}
@@ -625,7 +637,7 @@ void CLagCompensationManager::BacktrackPlayer( CBasePlayer *pPlayer, float flTar
 		// If the master state changes, all layers will be invalid too, so don't interp (ya know, interp barely ever happens anyway)
 		interpolationAllowed = true;
 	}
-	
+
 	////////////////////////
 	// First do the master settings
 	bool interpolatedMasters = false;
@@ -703,7 +715,28 @@ void CLagCompensationManager::BacktrackPlayer( CBasePlayer *pPlayer, float flTar
 			}
 		}
 	}
-	
+
+	// Now do pose parameters
+	CStudioHdr *hdr = pPlayer->GetModelPtr();
+	if( hdr )
+	{
+		for( int paramIndex = 0; paramIndex < hdr->GetNumPoseParameters(); paramIndex++ )
+		{
+			float poseParameter = record->m_poseParameters[paramIndex];
+			if( (frac > 0.0f)  &&  interpolationAllowed )
+			{
+				// These could wrap like cycles, but there's no way to know. In the most common case
+				// (move_x/move_y) it's correct to just lerp. Interpolation almost never happens anyways.
+				float prevPoseParameter = prevRecord->m_poseParameters[paramIndex];
+				pPlayer->SetPoseParameter( paramIndex, Lerp( frac, poseParameter, prevPoseParameter ) );
+			}
+			else
+			{
+				pPlayer->SetPoseParameter( paramIndex, poseParameter );
+			}
+		}
+	}
+
 	if ( !flags )
 		return; // we didn't change anything
 
@@ -740,7 +773,7 @@ void CLagCompensationManager::FinishLagCompensation( CBasePlayer *player )
 	for ( int i = 1; i <= gpGlobals->maxClients; i++ )
 	{
 		int pl_index = i - 1;
-		
+
 		if ( !m_RestorePlayer.Get( pl_index ) )
 		{
 			// player wasn't changed by lag compensation
@@ -761,7 +794,7 @@ void CLagCompensationManager::FinishLagCompensation( CBasePlayer *player )
 		if ( restore->m_fFlags & LC_SIZE_CHANGED )
 		{
 			restoreSimulationTime = true;
-	
+
 			// see if simulation made any changes, if no, then do the restore, otherwise,
 			//  leave new values in
 			if ( pPlayer->CollisionProp()->OBBMinsPreScaled() == change->m_vecMinsPreScaled &&
@@ -779,7 +812,7 @@ void CLagCompensationManager::FinishLagCompensation( CBasePlayer *player )
 		}
 
 		if ( restore->m_fFlags & LC_ANGLES_CHANGED )
-		{		   
+		{
 			restoreSimulationTime = true;
 
 			if ( pPlayer->GetLocalAngles() == change->m_vecAngles )
@@ -794,7 +827,7 @@ void CLagCompensationManager::FinishLagCompensation( CBasePlayer *player )
 
 			// Okay, let's see if we can do something reasonable with the change
 			Vector delta = pPlayer->GetLocalOrigin() - change->m_vecOrigin;
-			
+
 			// If it moved really far, just leave the player in the new spot!!!
 			if ( delta.Length2DSqr() < m_flTeleportDistanceSqr )
 			{
@@ -823,11 +856,23 @@ void CLagCompensationManager::FinishLagCompensation( CBasePlayer *player )
 			}
 		}
 
+		if( restore->m_fFlags & LC_POSE_PARAMS_CHANGED )
+		{
+			restoreSimulationTime = true;
+
+			CStudioHdr *hdr = pPlayer->GetModelPtr();
+			if( hdr )
+			{
+				for( int paramIndex = 0; paramIndex < hdr->GetNumPoseParameters(); paramIndex++ )
+				{
+					pPlayer->SetPoseParameter( paramIndex, restore->m_poseParameters[paramIndex] );
+				}
+			}
+		}
+
 		if ( restoreSimulationTime )
 		{
 			pPlayer->SetSimulationTime( restore->m_flSimulationTime );
 		}
 	}
 }
-
-

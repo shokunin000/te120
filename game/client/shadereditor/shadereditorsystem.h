@@ -20,7 +20,7 @@ public:
 	virtual void Shutdown();
 
 	virtual void Update( float frametime );
-	virtual void PreRender();
+	virtual void InitialPreRender();
 	virtual void PostRender();
 
 #ifdef SOURCE_2006

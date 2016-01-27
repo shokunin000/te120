@@ -869,6 +869,7 @@ int CNPC_BaseZombie::OnTakeDamage_Alive( const CTakeDamageInfo &inputInfo )
 		if( bChopped )
 		{
 			EmitSound( "E3_Phystown.Slicer" );
+			DevMsg("Chopped Headcrab!\n");//TE120
 		}
 
 		DieChopped( info );
@@ -894,6 +895,15 @@ int CNPC_BaseZombie::OnTakeDamage_Alive( const CTakeDamageInfo &inputInfo )
 				Vector vecForce = inputInfo.GetDamageForce() * 0.1;
 				vecForce += Vector( 0, 0, 2000.0 );
 				ReleaseHeadcrab( EyePosition(), vecForce, true, false, true );
+				DevMsg("Sliced Headcrab of!\n");//TE120
+
+//TE120--
+				// Fire event for achievement: E120_SLICER
+ 				IGameEvent *event = gameeventmanager->CreateEvent( "sliced_zombie" );
+ 				if ( event )
+					gameeventmanager->FireEvent( event );
+					DevMsg("Event: sliced_zombie\n");
+//TE120--
 			}
 			break;
 
@@ -2087,7 +2097,7 @@ void CNPC_BaseZombie::PrescheduleThink( void )
 	}
 //TE120--
 	// If we're being illuminated by the flashlight send output
-	CBasePlayer *pPlayer = UTIL_GetLocalPlayer();
+	CBasePlayer *pPlayer = AI_GetSinglePlayer();
  	if ( pPlayer )
 	{
 		if ( pPlayer->IsIlluminatedByFlashlight( this, NULL ) )
@@ -2098,7 +2108,7 @@ void CNPC_BaseZombie::PrescheduleThink( void )
 
 				// Send output that I am illuminated
 				m_OnIlluminated.FireOutput( this, this );
-				//Msg( "I am illuminated!\n" ); //Debug
+				//DevMsg( "I am illuminated!\n" ); //Debug
 			}
     }
 		else if ( m_fIsIlluminated )
@@ -2107,7 +2117,7 @@ void CNPC_BaseZombie::PrescheduleThink( void )
 
 			// Send out that I am no longer illuminated
 			m_OnNotIlluminated.FireOutput(this, this);
-			//Msg( "I am no longer illuminated!\n" ); //Debug
+			//DevMsg( "I am no longer illuminated!\n" ); //Debug
 		}
 	}
 }
@@ -2540,8 +2550,9 @@ void CNPC_BaseZombie::ReleaseHeadcrab( const Vector &vecOrigin, const Vector &ve
 		}
 //TE120--
 		// Duplicate relationship to player
-		CBasePlayer *pPlayer = UTIL_GetLocalPlayer();
- 		if ( pPlayer )
+		CBasePlayer *pPlayer = AI_GetSinglePlayer();
+
+		if ( pPlayer )
 		{
 			int iDisposition = this->IRelationType( pPlayer );
 			int iRank = this->IRelationPriority( pPlayer );
@@ -2550,6 +2561,7 @@ void CNPC_BaseZombie::ReleaseHeadcrab( const Vector &vecOrigin, const Vector &ve
 			// Setting the crab name to the same one used by the zombie will keep
 			// custom relationships in sync in chapter_1
 			pCrab->SetName( this->GetEntityName() );
+			DevMsg("Duplicated relationship to player!\n");
 		}
 //TE120--
 

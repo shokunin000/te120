@@ -116,6 +116,7 @@ class CPhysExplosion : public CServerOnlyPointEntity//TE120
 public:
 	DECLARE_CLASS( CPhysExplosion, CServerOnlyPointEntity );//TE120
 
+
 	void	Spawn ( void );
 	void	Explode( CBaseEntity *pActivator, CBaseEntity *pCaller );
 

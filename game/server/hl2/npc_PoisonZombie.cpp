@@ -715,7 +715,7 @@ void CNPC_PoisonZombie::HandleAnimEvent( animevent_t *pEvent )
 		}
 //TE120--
 		// Duplicate relationship to player
-		CBasePlayer *pPlayer = UTIL_GetLocalPlayer();
+		CBasePlayer *pPlayer = AI_GetSinglePlayer();
 		if ( pPlayer )
 		{
 			int iDisposition = this->IRelationType( pPlayer );

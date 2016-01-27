@@ -244,8 +244,7 @@ public:
 					pkvCamera = pkvCamera->GetNextKey();
 				}
 			}
-
-			pkvMapCameras->deleteThis();//TE120
+			pkvMapCameras->deleteThis();
 
 			if ( !g_iDevShotCameraCount )
 			{

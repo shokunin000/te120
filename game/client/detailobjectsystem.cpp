@@ -620,7 +620,6 @@ void CDetailModel::GetRenderBoundsWorldspace( Vector& mins, Vector& maxs )
 bool CDetailModel::ShouldReceiveProjectedTextures( int flags )
 {
 	return false;
-	//return true; //Cast dynamic shadows
 }
 
 bool CDetailModel::UsesPowerOfTwoFrameBufferTexture()

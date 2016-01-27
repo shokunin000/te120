@@ -338,6 +338,9 @@ struct rotatingpushmove_t;
 #define CREATE_PREDICTED_ENTITY( className )	\
 	CBaseEntity::CreatePredictedEntityByName( className, __FILE__, __LINE__ );
 
+void SendProxy_Origin( const SendProp *pProp, const void *pStruct, const void *pData, DVariant *pOut, int iElement, int objectID );
+void SendProxy_Angles( const SendProp *pProp, const void *pStruct, const void *pData, DVariant *pOut, int iElement, int objectID );
+
 //
 // Base Entity.  All entity types derive from this
 //

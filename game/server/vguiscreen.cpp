@@ -36,7 +36,6 @@ PRECACHE_REGISTER( vgui_screen );
 // Save/load
 //-----------------------------------------------------------------------------
 BEGIN_DATADESC( CVGuiScreen )
-
 	DEFINE_CUSTOM_FIELD( m_nPanelName, &g_VguiScreenStringOps ),
 	DEFINE_FIELD( m_nAttachmentIndex, FIELD_INTEGER ),
 //	DEFINE_FIELD( m_nOverlayMaterial, FIELD_INTEGER ),
@@ -65,7 +64,7 @@ CVGuiScreen::CVGuiScreen()
 //-----------------------------------------------------------------------------
 // Read in worldcraft data...
 //-----------------------------------------------------------------------------
-bool CVGuiScreen::KeyValue( const char *szKeyName, const char *szValue ) 
+bool CVGuiScreen::KeyValue( const char *szKeyName, const char *szValue )
 {
 	//!! temp hack, until worldcraft is fixed
 	// strip the # tokens from (duplicate) key names
@@ -177,9 +176,9 @@ void CVGuiScreen::SetOverlayMaterial( const char *pMaterial )
 	}
 }
 
-bool CVGuiScreen::IsActive() const 
-{ 
-	return (m_fScreenFlags & VGUI_SCREEN_ACTIVE) != 0; 
+bool CVGuiScreen::IsActive() const
+{
+	return (m_fScreenFlags & VGUI_SCREEN_ACTIVE) != 0;
 }
 
 void CVGuiScreen::SetActive( bool bActive )
@@ -198,17 +197,17 @@ void CVGuiScreen::SetActive( bool bActive )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 // Output : Returns true on success, false on failure.
 //-----------------------------------------------------------------------------
 bool CVGuiScreen::IsAttachedToViewModel() const
 {
-	return (m_fScreenFlags & VGUI_SCREEN_ATTACHED_TO_VIEWMODEL) != 0; 
+	return (m_fScreenFlags & VGUI_SCREEN_ATTACHED_TO_VIEWMODEL) != 0;
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : bAttached - 
+// Purpose:
+// Input  : bAttached -
 //-----------------------------------------------------------------------------
 void CVGuiScreen::SetAttachedToViewModel( bool bAttached )
 {
@@ -244,7 +243,7 @@ void CVGuiScreen::SetTransparency( bool bTransparent )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CVGuiScreen::InputSetActive( inputdata_t &inputdata )
 {
@@ -252,16 +251,16 @@ void CVGuiScreen::InputSetActive( inputdata_t &inputdata )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CVGuiScreen::InputSetInactive( inputdata_t &inputdata )
 {
 	SetActive( false );
 }
 
-bool CVGuiScreen::IsVisibleOnlyToTeammates() const 
-{ 
-	return (m_fScreenFlags & VGUI_SCREEN_VISIBLE_TO_TEAMMATES) != 0; 
+bool CVGuiScreen::IsVisibleOnlyToTeammates() const
+{
+	return (m_fScreenFlags & VGUI_SCREEN_VISIBLE_TO_TEAMMATES) != 0;
 }
 
 void CVGuiScreen::MakeVisibleOnlyToTeammates( bool bActive )
@@ -290,15 +289,15 @@ bool CVGuiScreen::IsVisibleToTeam( int nTeam )
 		if ( pOwner && (nTeam != pOwner->GetTeamNumber()) )
 			return false;
 	}
-	
+
 	return true;
 }
 
 //-----------------------------------------------------------------------------
 // Purpose: Screens attached to view models only go to client if viewmodel is being sent, too.
-// Input  : *recipient - 
-//			*pvs - 
-//			clientArea - 
+// Input  : *recipient -
+//			*pvs -
+//			clientArea -
 // Output : Returns true on success, false on failure.
 //-----------------------------------------------------------------------------
 int CVGuiScreen::UpdateTransmitState()
@@ -372,7 +371,7 @@ void CVGuiScreen::SetActualSize( float flWidth, float flHeight )
 }
 
 //-----------------------------------------------------------------------------
-// 
+//
 //-----------------------------------------------------------------------------
 void CVGuiScreen::SetPlayerOwner( CBasePlayer *pPlayer, bool bOwnerOnlyInput /* = false */ )
 {

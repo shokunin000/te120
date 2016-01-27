@@ -627,7 +627,7 @@ void C_BaseHLPlayer::PerformClientSideNPCSpeedModifiers( float flFrameTime, CUse
 bool C_BaseHLPlayer::CreateMove( float flInputSampleTime, CUserCmd *pCmd )
 {
 	bool bResult = BaseClass::CreateMove( flInputSampleTime, pCmd );
-
+	
 	if ( !IsInAVehicle() )
 	{
 		PerformClientSideObstacleAvoidance( TICK_INTERVAL, pCmd );

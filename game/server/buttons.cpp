@@ -1094,7 +1094,7 @@ void CMomentaryRotButton::Spawn( void )
 	m_bDisabled = false;
 //TE120--
 	// get door button sounds, for doors which require buttons to open
-	if (m_bLockedSound)
+	if ( m_bLockedSound )
 	{
 		char tmp[1024];
 		Q_snprintf( tmp, sizeof(tmp), "Doors.CombineGate_citizen_stop1" );
@@ -1102,7 +1102,7 @@ void CMomentaryRotButton::Spawn( void )
 		m_ls.sLockedSound = AllocPooledString(tmp);
 		PrecacheScriptSound(m_ls.sLockedSound.ToCStr());
 	}
-	
+
 	if ( m_sNoise != NULL_STRING )
 	{
 		PrecacheScriptSound( STRING( m_sNoise ) );

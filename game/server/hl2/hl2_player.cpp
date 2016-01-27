@@ -463,7 +463,14 @@ void CHL2_Player::Precache( void )
 	PrecacheScriptSound( "HL2Player.TrainUse" );
 	PrecacheScriptSound( "HL2Player.Use" );
 	PrecacheScriptSound( "HL2Player.BurnPain" );
-	PrecacheScriptSound( "JNK_Radar_Ping_Friendly" );//TE120
+//TE120
+	PrecacheScriptSound( "JNK_Radar_Ping_Friendly" );
+
+	// Reset drunk post process
+	CEffectData	data;
+	data.m_flScale = -1;
+	DispatchEffect( "CE_GravityBallFadeConcOn", data );
+//TE120
 }
 
 //-----------------------------------------------------------------------------
@@ -2366,7 +2373,7 @@ ConVar locator_range_end_p( "locator_range_end_p", "1500" ); // 90 feet
 
 void CHL2_Player::UpdateLocator( bool forceUpdate )
 {
-	CBasePlayer *pPlayer = AI_GetSinglePlayer();
+	CBasePlayer *pPlayer = UTIL_GetLocalPlayer();
 
 	if ( !pPlayer || !pPlayer->IsSuitEquipped() )
 		return;

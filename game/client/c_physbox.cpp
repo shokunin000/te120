@@ -10,7 +10,7 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
-ConVar fpb_TransitionDist("fpb_TransitionDist", "800");//TE120
+ConVar fpb_TransitionDist("fpb_TransitionDist", "800.0f");//TE120
 
 IMPLEMENT_CLIENTCLASS_DT(C_PhysBox, DT_PhysBox, CPhysBox)
 	RecvPropFloat(RECVINFO(m_mass), 0), // Test..

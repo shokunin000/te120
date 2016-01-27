@@ -412,14 +412,14 @@ void CAmbientGeneric::InputFadeOut( inputdata_t &inputdata )
 	{
 		m_dpv.fadeout = inputdata.value.Float();
 
-	if (m_dpv.fadeout > 100)
-		m_dpv.fadeout = 100;
+		if (m_dpv.fadeout > 100)
+			m_dpv.fadeout = 100;
 
-	if (m_dpv.fadeout < 0)
-		m_dpv.fadeout = 0;
+		if (m_dpv.fadeout < 0)
+			m_dpv.fadeout = 0;
 
-	if (m_dpv.fadeout > 0)
-		m_dpv.fadeout = ( 100 << 8 ) / ( m_dpv.fadeout * AMBIENT_GENERIC_UPDATE_RATE );
+		if (m_dpv.fadeout > 0)
+			m_dpv.fadeout = ( 100 << 8 ) / ( m_dpv.fadeout * AMBIENT_GENERIC_UPDATE_RATE );
 	}
 //TE120--
 

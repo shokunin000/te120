@@ -1677,14 +1677,6 @@ void CHLClient::LevelShutdown( void )
 
 	g_bLevelInitialized = false;
 
-/*//TE120--
-	static ConVar *pCVcl_unloadedlightmaps = NULL;
-	pCVcl_unloadedlightmaps = ( ConVar * )cvar->FindVar( "r_unloadlightmaps" );
-
-	if (pCVcl_unloadedlightmaps && ( pCVcl_unloadedlightmaps->GetFloat() > 0 ) )
-		engine->ClientCmd( "r_unloadlightmaps 0" );
-//TE120--*/
-
 	// Disable abs recomputations when everything is shutting down
 	CBaseEntity::EnableAbsRecomputations( false );
 

@@ -967,7 +967,7 @@ public:
 	void					PhysicsCheckForEntityUntouch( void );
 
 	// Creates the shadow (if it doesn't already exist) based on shadow cast type
-	void 					CreateShadow();
+	virtual void 	CreateShadow();
 
 	// Destroys the shadow; causes its type to be recomputed if the entity doesn't go away immediately.
 	void					DestroyShadow();

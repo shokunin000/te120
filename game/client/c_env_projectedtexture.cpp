@@ -16,6 +16,7 @@
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
+
 //TE120--
 static ConVar mat_slopescaledepthbias_shadowmap( "mat_slopescaledepthbias_shadowmap", "4", FCVAR_CHEAT );
 static ConVar mat_depthbias_shadowmap( "mat_depthbias_shadowmap", "0.00001", FCVAR_CHEAT );
@@ -34,7 +35,7 @@ public:
 	void	ShutDownLightHandle( void );
 
 	virtual void Simulate();
-	void CreateShadow();
+	virtual void CreateShadow();
 
 	void	UpdateLight( bool bForceUpdate );
 
@@ -201,8 +202,8 @@ void C_EnvProjectedTexture::UpdateLight( bool bForceUpdate )
 	state.m_NearZ = m_flNearZ;
 	state.m_FarZ = m_flFarZ;
 	//TE120--
-	state.m_flShadowSlopeScaleDepthBias = mat_slopescaledepthbias_shadowmap.GetFloat();
-	state.m_flShadowDepthBias = mat_depthbias_shadowmap.GetFloat();
+	//state.m_flShadowSlopeScaleDepthBias = mat_slopescaledepthbias_shadowmap.GetFloat();
+	//state.m_flShadowDepthBias = mat_depthbias_shadowmap.GetFloat();
 	//TE120--
 	state.m_bEnableShadows = m_bEnableShadows;
 	state.m_pSpotlightTexture = materials->FindTexture( m_SpotlightTextureName, TEXTURE_GROUP_OTHER, false );
@@ -233,7 +234,7 @@ void C_EnvProjectedTexture::UpdateLight( bool bForceUpdate )
 
 	g_pClientShadowMgr->SetFlashlightLightWorld( m_LightHandle, m_bLightWorld );
 
-		g_pClientShadowMgr->UpdateProjectedTexture( m_LightHandle, true );
+	g_pClientShadowMgr->UpdateProjectedTexture( m_LightHandle, true );
 }
 
 void C_EnvProjectedTexture::Simulate( void )

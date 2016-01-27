@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 //=============================================================================//
 
@@ -129,7 +129,7 @@ END_DATADESC()
 void CFilterMultiple::Activate( void )
 {
 	BaseClass::Activate();
-	
+
 	// We may reject an entity specified in the array of names, but we want the array of valid filters to be contiguous!
 	int nNextFilter = 0;
 
@@ -372,7 +372,7 @@ protected:
 
 	bool PassesDamageFilterImpl(const CTakeDamageInfo &info)
 	{
-	 	return info.GetDamageType() == m_iDamageType;
+	 	return ( (info.GetDamageType() & m_iDamageType ) ? true : false );
 	}
 
 	int m_iDamageType;
@@ -396,7 +396,7 @@ END_DATADESC()
 class CFilterEnemy : public CBaseFilter
 {
 	DECLARE_CLASS( CFilterEnemy, CBaseFilter );
-		// NOT SAVED	
+		// NOT SAVED
 		// m_iszPlayerName
 	DECLARE_DATADESC();
 
@@ -419,7 +419,7 @@ private:
 };
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 bool CFilterEnemy::PassesFilterImpl( CBaseEntity *pCaller, CBaseEntity *pEntity )
 {
@@ -450,7 +450,7 @@ bool CFilterEnemy::PassesFilterImpl( CBaseEntity *pCaller, CBaseEntity *pEntity 
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 bool CFilterEnemy::PassesDamageFilterImpl( const CTakeDamageInfo &info )
 {
@@ -539,7 +539,7 @@ bool CFilterEnemy::PassesProximityFilter( CBaseEntity *pCaller, CBaseEntity *pEn
 		::V_swap( flLargerRadius, flSmallerRadius );
 	}
 
-	float flDist;	
+	float flDist;
 	if ( bAlreadyEnemy )
 	{
 		flDist = ( m_bNegated ) ? flSmallerRadius : flLargerRadius;
@@ -558,7 +558,7 @@ bool CFilterEnemy::PassesProximityFilter( CBaseEntity *pCaller, CBaseEntity *pEn
 
 		return true;
 	}
-	
+
 	// We wanted to succeed but didn't
 	if ( m_bNegated == false )
 		return false;
@@ -585,7 +585,7 @@ bool CFilterEnemy::PassesMobbedFilter( CBaseEntity *pCaller, CBaseEntity *pEnemy
 
 	AISquadIter_t iter;
 	int nNumMatchingSquadmates = 0;
-	
+
 	// Look through our squad members to see how many of them are already mobbing this entity
 	for ( CAI_BaseNPC *pSquadMember = pNPC->GetSquad()->GetFirstMember( &iter ); pSquadMember != NULL; pSquadMember = pNPC->GetSquad()->GetNextMember( &iter ) )
 	{
@@ -604,7 +604,7 @@ bool CFilterEnemy::PassesMobbedFilter( CBaseEntity *pCaller, CBaseEntity *pEnemy
 				// We wanted to find more than allowed and we did
 				if ( m_bNegated )
 					return true;
-				
+
 				// We wanted to be less but we're not
 				return false;
 			}
@@ -621,7 +621,7 @@ bool CFilterEnemy::PassesMobbedFilter( CBaseEntity *pCaller, CBaseEntity *pEnemy
 LINK_ENTITY_TO_CLASS( filter_enemy, CFilterEnemy );
 
 BEGIN_DATADESC( CFilterEnemy )
-	
+
 	DEFINE_KEYFIELD( m_iszEnemyName, FIELD_STRING, "filtername" ),
 	DEFINE_KEYFIELD( m_flRadius, FIELD_FLOAT, "filter_radius" ),
 	DEFINE_KEYFIELD( m_flOuterRadius, FIELD_FLOAT, "filter_outer_radius" ),

@@ -50,11 +50,11 @@
 #include "te_effect_dispatch.h"
 #include "beam_flags.h"
 #include "prop_combine_ball.h"
-#include "prop_gravity_ball.h"//TE120
 #include "explode.h"
 #include "filters.h"
 #include "saverestore_utlvector.h"
 #include "eventqueue.h"
+#include "prop_gravity_ball.h"//TE120
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -1821,7 +1821,7 @@ void CNPC_Strider::Explode( void )
 	AngularImpulse	angVelocity = RandomAngularImpulse( -150, 150 );
 
 	// Break into pieces
-	breakablepropparams_t params( EyePosition() + Vector( 0 ,0 , 64 ), GetAbsAngles(), velocity, angVelocity );//TE120
+	breakablepropparams_t params( EyePosition() + Vector( 0 , 0 , 64 ), GetAbsAngles(), velocity, angVelocity );//TE120
 	params.impactEnergyScale = 1.0f;
 	params.defBurstScale = 300.0f;//TE120
 	params.defCollisionGroup = COLLISION_GROUP_NPC;
@@ -1876,7 +1876,7 @@ void CNPC_Strider::HandleAnimEvent( animevent_t *pEvent )
 		{
 //TE120--
 			// Don't shoot unless player is looking.
-			CBasePlayer *pPlayer = UTIL_GetLocalPlayer();
+			CBasePlayer *pPlayer = AI_GetSinglePlayer();
 			// if( !pPlayer->FInViewCone(this) )
 			if ( pPlayer->FVisible(this) )
 			{
@@ -1910,16 +1910,15 @@ void CNPC_Strider::HandleAnimEvent( animevent_t *pEvent )
 		break;
 
 	case STRIDER_AE_SHOOTMINIGUN:
-	{
-		CBaseEntity *pTarget = gEntList.FindEntityGeneric( NULL, pEvent->options, this, this );
-		if ( pTarget )
 		{
-			Vector vecTarget = pTarget->CollisionProp()->WorldSpaceCenter();
-			ShootMinigun( &vecTarget, 0 );
+			CBaseEntity *pTarget = gEntList.FindEntityGeneric( NULL, pEvent->options, this, this );
+			if ( pTarget )
+			{
+				Vector vecTarget = pTarget->CollisionProp()->WorldSpaceCenter();
+				ShootMinigun( &vecTarget, 0 );
+			}
 		}
 		break;
-	}
-
 	case STRIDER_AE_STOMPHITL:
 		StompHit( STRIDER_LEFT_LEG_FOLLOWER_INDEX );
 		break;
@@ -2355,7 +2354,7 @@ void CNPC_Strider::InputDisableMoveToLOS( inputdata_t &inputdata )
 void CNPC_Strider::InputExplode( inputdata_t &inputdata )
 {
 	CTakeDamageInfo killInfo;
-	killInfo.SetAttacker( UTIL_GetLocalPlayer() );//TE120
+	killInfo.SetAttacker( AI_GetSinglePlayer() );//TE120
 	killInfo.SetInflictor( this );
 	killInfo.SetDamage( GetHealth() );
 	TakeDamage( killInfo );
@@ -3136,7 +3135,7 @@ int CNPC_Strider::OnTakeDamage_Alive( const CTakeDamageInfo &info )
 			{
 				// See if the person that injured me is an NPC.
 				CAI_BaseNPC *pAttacker = dynamic_cast<CAI_BaseNPC *>( info.GetAttacker() );
-				CBasePlayer *pPlayer = UTIL_GetLocalPlayer();
+				CBasePlayer *pPlayer = AI_GetSinglePlayer();
 
 				if( pAttacker && pAttacker->IsAlive() && pPlayer )
 				{
@@ -3201,13 +3200,13 @@ int CNPC_Strider::TakeDamageFromCombineBall( const CTakeDamageInfo &info )
 		if ( UTIL_IsGravityBall( info.GetInflictor() ) )
 			damage = 0;
 		else
-		damage = strider_ar2_altfire_dmg.GetFloat();
+			damage = strider_ar2_altfire_dmg.GetFloat();
 	}
 	else
 	{
 		// Always start smoking when we're struck by a normal combine ball
 		if ( !UTIL_IsGravityBall( info.GetInflictor() ) )
-		StartSmoking();
+			StartSmoking();
 //TES changed-----------
 	}
 

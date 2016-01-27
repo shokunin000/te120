@@ -1,6 +1,6 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright, Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 //=============================================================================//
 
@@ -63,7 +63,7 @@ private:
 	CLocatorContact	m_locatorContacts[LOCATOR_MAX_CONTACTS];
 	int				m_iNumlocatorContacts;
 	// float			flNextPaintTime;
-};	
+};
 
 extern CHudLocator *GetHudLocator();
 

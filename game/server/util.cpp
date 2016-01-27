@@ -112,7 +112,7 @@ static ConCommand dumpentityfactories( "dumpentityfactories", DumpEntityFactorie
 
 
 //-----------------------------------------------------------------------------
-// 
+//
 //-----------------------------------------------------------------------------
 CON_COMMAND( dump_entity_sizes, "Print sizeof(entclass)" )
 {
@@ -171,7 +171,7 @@ IServerNetworkable *CEntityFactoryDictionary::Create( const char *pClassName )
 }
 
 //-----------------------------------------------------------------------------
-// 
+//
 //-----------------------------------------------------------------------------
 const char *CEntityFactoryDictionary::GetCannonicalName( const char *pClassName )
 {
@@ -194,13 +194,13 @@ void CEntityFactoryDictionary::Destroy( const char *pClassName, IServerNetworkab
 }
 
 //-----------------------------------------------------------------------------
-// 
+//
 //-----------------------------------------------------------------------------
 void CEntityFactoryDictionary::ReportEntitySizes()
 {
 	for ( int i = m_Factories.First(); i != m_Factories.InvalidIndex(); i = m_Factories.Next( i ) )
 	{
-		Msg( " %s: %d", m_Factories.GetElementName( i ), m_Factories[i]->GetEntitySize() );
+		Msg( " %s: %zu", m_Factories.GetElementName( i ), m_Factories[i]->GetEntitySize() );
 	}
 }
 
@@ -246,7 +246,7 @@ IterationRetval_t CFlaggedEntitiesEnum::EnumElement( IHandleEntity *pHandleEntit
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 int UTIL_PrecacheDecal( const char *name, bool preload )
 {
@@ -265,7 +265,7 @@ int UTIL_PrecacheDecal( const char *name, bool preload )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 float UTIL_GetSimulationInterval()
 {
@@ -275,7 +275,7 @@ float UTIL_GetSimulationInterval()
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 int UTIL_EntitiesInBox( const Vector &mins, const Vector &maxs, CFlaggedEntitiesEnum *pEnum )
 {
@@ -409,28 +409,28 @@ bool UTIL_CheckBottom( CBaseEntity *pEntity, ITraceFilter *pTraceFilter, float f
 realcheck:
 	// check it for real...
 	start[2] = mins[2] + flStepSize; // seems to help going up/down slopes.
-	
+
 	// the midpoint must be within 16 of the bottom
 	start[0] = stop[0] = (mins[0] + maxs[0])*0.5;
 	start[1] = stop[1] = (mins[1] + maxs[1])*0.5;
 	stop[2] = start[2] - 2*flStepSize;
-	
+
 	UTIL_TraceLine( start, stop, mask, pTraceFilter, &trace );
 
 	if (trace.fraction == 1.0)
 		return false;
 	mid = bottom = trace.endpos[2];
 
-	// the corners must be within 16 of the midpoint	
+	// the corners must be within 16 of the midpoint
 	for	(x=0 ; x<=1 ; x++)
 	{
 		for	(y=0 ; y<=1 ; y++)
 		{
 			start[0] = stop[0] = x ? maxs[0] : mins[0];
 			start[1] = stop[1] = y ? maxs[1] : mins[1];
-			
+
 			UTIL_TraceLine( start, stop, mask, pTraceFilter, &trace );
-			
+
 			if (trace.fraction != 1.0 && trace.endpos[2] > bottom)
 				bottom = trace.endpos[2];
 			if (trace.fraction == 1.0 || mid - trace.endpos[2] > flStepSize)
@@ -460,15 +460,15 @@ void UTIL_Remove( IServerNetworkable *oldObj )
 		// This assert means that someone is deleting an entity inside a callback.  That isn't supported so
 		// this code will defer the deletion of that object until the end of the current physics simulation frame
 		// Since this is hidden from the calling code it's preferred to call PhysCallbackRemove() directly from the caller
-		// in case the deferred delete will have unwanted results (like continuing to receive callbacks).  That will make it 
-		// obvious why the unwanted results are happening so the caller can handle them appropriately. (some callbacks can be masked 
+		// in case the deferred delete will have unwanted results (like continuing to receive callbacks).  That will make it
+		// obvious why the unwanted results are happening so the caller can handle them appropriately. (some callbacks can be masked
 		// or the calling entity can be flagged to filter them in most cases)
 		Assert(0);
 		PhysCallbackRemove(oldObj);
 		return;
 	}
 
-	// mark it for deletion	
+	// mark it for deletion
 	pProp->MarkForDeletion( );
 
 	CBaseEntity *pBaseEnt = oldObj->GetBaseEntity();
@@ -564,7 +564,7 @@ CBasePlayer	*UTIL_PlayerByIndex( int playerIndex )
 			pPlayer = (CBasePlayer*)GetContainingEntity( pPlayerEdict );
 		}
 	}
-	
+
 	return pPlayer;
 }
 
@@ -576,7 +576,7 @@ CBasePlayer* UTIL_PlayerByName( const char *name )
 	for (int i = 1; i<=gpGlobals->maxClients; i++ )
 	{
 		CBasePlayer *pPlayer = UTIL_PlayerByIndex( i );
-		
+
 		if ( !pPlayer )
 			continue;
 
@@ -588,7 +588,7 @@ CBasePlayer* UTIL_PlayerByName( const char *name )
 			return pPlayer;
 		}
 	}
-	
+
 	return NULL;
 }
 
@@ -597,7 +597,7 @@ CBasePlayer* UTIL_PlayerByUserId( int userID )
 	for (int i = 1; i<=gpGlobals->maxClients; i++ )
 	{
 		CBasePlayer *pPlayer = UTIL_PlayerByIndex( i );
-		
+
 		if ( !pPlayer )
 			continue;
 
@@ -609,14 +609,14 @@ CBasePlayer* UTIL_PlayerByUserId( int userID )
 			return pPlayer;
 		}
 	}
-	
+
 	return NULL;
 }
 
 //
 // Return the local player.
 // If this is a multiplayer game, return NULL.
-// 
+//
 CBasePlayer *UTIL_GetLocalPlayer( void )
 {
 	if ( gpGlobals->maxClients > 1 )
@@ -624,7 +624,7 @@ CBasePlayer *UTIL_GetLocalPlayer( void )
 		if ( developer.GetBool() )
 		{
 			Assert( !"UTIL_GetLocalPlayer" );
-			
+
 #ifdef	DEBUG
 			Warning( "UTIL_GetLocalPlayer() called in multiplayer game.\n" );
 #endif
@@ -638,7 +638,7 @@ CBasePlayer *UTIL_GetLocalPlayer( void )
 
 //
 // Get the local player on a listen server - this is for multiplayer use only
-// 
+//
 CBasePlayer *UTIL_GetListenServerHost( void )
 {
 	// no "local player" if this is a dedicated server or a single player game
@@ -703,7 +703,7 @@ CBaseEntity	*UTIL_EntityByIndex( int entityIndex )
 			entity = GetContainingEntity( edict );
 		}
 	}
-	
+
 	return entity;
 }
 
@@ -718,10 +718,10 @@ int ENTINDEX( CBaseEntity *pEnt )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : playerIndex - 
-//			ping - 
-//			packetloss - 
+// Purpose:
+// Input  : playerIndex -
+//			ping -
+//			packetloss -
 //-----------------------------------------------------------------------------
 void UTIL_GetPlayerConnectionInfo( int playerIndex, int& ping, int &packetloss )
 {
@@ -732,11 +732,11 @@ void UTIL_GetPlayerConnectionInfo( int playerIndex, int& ping, int &packetloss )
 	if ( nci && player && !player->IsBot() )
 	{
 		float latency = nci->GetAvgLatency( FLOW_OUTGOING ); // in seconds
-		
-		// that should be the correct latency, we assume that cmdrate is higher 
+
+		// that should be the correct latency, we assume that cmdrate is higher
 		// then updaterate, what is the case for default settings
 		const char * szCmdRate = engine->GetClientConVarValue( playerIndex, "cl_cmdrate" );
-		
+
 		int nCmdRate = MAX( 1, Q_atoi( szCmdRate ) );
 		latency -= (0.5f/nCmdRate) + TICKS_TO_TIME( 1.0f ); // correct latency
 
@@ -746,7 +746,7 @@ void UTIL_GetPlayerConnectionInfo( int playerIndex, int& ping, int &packetloss )
 
 		ping = latency * 1000.0f; // as msecs
 		ping = clamp( ping, 5, 1000 ); // set bounds, dont show pings under 5 msecs
-		
+
 		packetloss = 100.0f * nci->GetAvgLoss( FLOW_INCOMING ); // loss in percentage
 		packetloss = clamp( packetloss, 0, 100 );
 	}
@@ -774,7 +774,7 @@ static unsigned short FixedUnsigned16( float value, float scale )
 //-----------------------------------------------------------------------------
 // Compute shake amplitude
 //-----------------------------------------------------------------------------
-inline float ComputeShakeAmplitude( const Vector &center, const Vector &shakePt, float amplitude, float radius ) 
+inline float ComputeShakeAmplitude( const Vector &center, const Vector &shakePt, float amplitude, float radius )
 {
 	if ( radius <= 0 )
 		return amplitude;
@@ -822,7 +822,7 @@ inline void TransmitShakeEvent( CBasePlayer *pPlayer, float localAmplitude, floa
 // UNDONE: Affect user controls?
 // Input  : center - Center of screen shake, radius is measured from here.
 //			amplitude - Amplitude of shake
-//			frequency - 
+//			frequency -
 //			duration - duration of shake in seconds.
 //			radius - Radius of effect, 0 shakes all clients.
 //			command - One of the following values:
@@ -858,7 +858,7 @@ void UTIL_ScreenShake( const Vector &center, float amplitude, float frequency, f
 
 		localAmplitude = ComputeShakeAmplitude( center, pPlayer->WorldSpaceCenter(), amplitude, radius );
 
-		// This happens if the player is outside the radius, in which case we should ignore 
+		// This happens if the player is outside the radius, in which case we should ignore
 		// all commands
 		if (localAmplitude < 0)
 			continue;
@@ -912,7 +912,7 @@ void UTIL_ScreenShakeObject( CBaseEntity *pEnt, const Vector &center, float ampl
 				localAmplitude = amplitude;
 			}
 
-			// This happens if the player is outside the radius, 
+			// This happens if the player is outside the radius,
 			// in which case we should ignore all commands
 			if (localAmplitude < 0)
 				continue;
@@ -962,7 +962,7 @@ void UTIL_ViewPunch( const Vector &center, QAngle angPunch, float radius, bool b
 				continue;
 			}
 		}
-		
+
 		pPlayer->ViewPunch( angTemp );
 	}
 }
@@ -1011,7 +1011,7 @@ void UTIL_ScreenFadeAll( const color32 &color, float fadeTime, float fadeHold, i
 	for ( i = 1; i <= gpGlobals->maxClients; i++ )
 	{
 		CBaseEntity *pPlayer = UTIL_PlayerByIndex( i );
-	
+
 		UTIL_ScreenFadeWrite( fade, pPlayer );
 	}
 }
@@ -1029,7 +1029,7 @@ void UTIL_ScreenFade( CBaseEntity *pEntity, const color32 &color, float fadeTime
 void UTIL_HudMessage( CBasePlayer *pToPlayer, const hudtextparms_t &textparms, const char *pMessage )
 {
 	CRecipientFilter filter;
-	
+
 	if( pToPlayer )
 	{
 		filter.AddRecipient( pToPlayer );
@@ -1108,7 +1108,7 @@ void UTIL_ClientPrintFilter( IRecipientFilter& filter, int msg_dest, const char 
 
 	MessageEnd();
 }
-					 
+
 void UTIL_ClientPrintAll( int msg_dest, const char *msg_name, const char *param1, const char *param2, const char *param3, const char *param4 )
 {
 	CReliableBroadcastRecipientFilter filter;
@@ -1130,7 +1130,7 @@ void ClientPrint( CBasePlayer *player, int msg_dest, const char *msg_name, const
 void UTIL_SayTextFilter( IRecipientFilter& filter, const char *pText, CBasePlayer *pPlayer, bool bChat )
 {
 	UserMessageBegin( filter, "SayText" );
-		if ( pPlayer ) 
+		if ( pPlayer )
 		{
 			WRITE_BYTE( pPlayer->entindex() );
 		}
@@ -1211,7 +1211,7 @@ void UTIL_ShowMessage( const char *pString, CBasePlayer *pPlayer )
 	{
 		filter.AddAllPlayers();
 	}
-	
+
 	filter.MakeReliable();
 
 	UserMessageBegin( filter, "HudText" );
@@ -1228,7 +1228,7 @@ void UTIL_ShowMessageAll( const char *pString )
 // So we always return a valid surface
 static csurface_t	g_NullSurface = { "**empty**", 0 };
 
-void UTIL_SetTrace(trace_t& trace, const Ray_t &ray, edict_t *ent, float fraction, 
+void UTIL_SetTrace(trace_t& trace, const Ray_t &ray, edict_t *ent, float fraction,
 				   int hitgroup, unsigned int contents, const Vector& normal, float intercept )
 {
 	trace.startsolid = (fraction == 0.0f);
@@ -1251,7 +1251,7 @@ void UTIL_ClearTrace( trace_t &trace )
 	trace.surface = g_NullSurface;
 }
 
-	
+
 
 //-----------------------------------------------------------------------------
 // Sets the entity size
@@ -1280,7 +1280,7 @@ void UTIL_SetSize( CBaseEntity *pEnt, const Vector &vecMin, const Vector &vecMax
 	SetMinMaxSize (pEnt, vecMin, vecMax);
 }
 
-	
+
 //-----------------------------------------------------------------------------
 // Sets the model to be associated with an entity
 //-----------------------------------------------------------------------------
@@ -1288,7 +1288,7 @@ void UTIL_SetModel( CBaseEntity *pEntity, const char *pModelName )
 {
 	// check to see if model was properly precached
 	int i = modelinfo->GetModelIndex( pModelName );
-	if ( i == -1 )	
+	if ( i == -1 )
 	{
 		Error("%i/%s - %s:  UTIL_SetModel:  not precached: %s\n", pEntity->entindex(),
 			STRING( pEntity->GetEntityName() ),
@@ -1307,7 +1307,7 @@ void UTIL_SetModel( CBaseEntity *pEntity, const char *pModelName )
 	pEntity->SetCollisionBoundsFromModel();
 }
 
-	
+
 void UTIL_SetOrigin( CBaseEntity *entity, const Vector &vecOrigin, bool bFireTriggers )
 {
 	entity->SetLocalOrigin( vecOrigin );
@@ -1352,12 +1352,12 @@ char *UTIL_VarArgs( const char *format, ... )
 {
 	va_list		argptr;
 	static char		string[1024];
-	
+
 	va_start (argptr, format);
 	Q_vsnprintf(string, sizeof(string), format,argptr);
 	va_end (argptr);
 
-	return string;	
+	return string;
 }
 
 bool UTIL_IsMasterTriggered(string_t sMaster, CBaseEntity *pActivator)
@@ -1365,7 +1365,7 @@ bool UTIL_IsMasterTriggered(string_t sMaster, CBaseEntity *pActivator)
 	if (sMaster != NULL_STRING)
 	{
 		CBaseEntity *pMaster = gEntList.FindEntityByName( NULL, sMaster, NULL, pActivator );
-	
+
 		if ( pMaster && (pMaster->ObjectCaps() & FCAP_MASTER) )
 		{
 			return pMaster->IsTriggered( pActivator );
@@ -1388,7 +1388,7 @@ void UTIL_BloodStream( const Vector &origin, const Vector &direction, int color,
 
 	CPVSFilter filter( origin );
 	te->BloodStream( filter, 0.0, &origin, &direction, 247, 63, 14, 255, MIN( amount, 255 ) );
-}				
+}
 
 
 Vector UTIL_RandomBloodVector( void )
@@ -1656,19 +1656,19 @@ void UTIL_BubbleTrail( const Vector& from, const Vector& to, int count )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : Start - 
-//			End - 
-//			ModelIndex - 
-//			FrameStart - 
-//			FrameRate - 
-//			Life - 
-//			Width - 
-//			Noise - 
-//			Red - 
-//			Green - 
-//			Brightness - 
-//			Speed - 
+// Purpose:
+// Input  : Start -
+//			End -
+//			ModelIndex -
+//			FrameStart -
+//			FrameRate -
+//			Life -
+//			Width -
+//			Noise -
+//			Red -
+//			Green -
+//			Brightness -
+//			Speed -
 //-----------------------------------------------------------------------------
 void UTIL_Beam( Vector &Start, Vector &End, int nModelIndex, int nHaloIndex, unsigned char FrameStart, unsigned char FrameRate,
 				float Life, unsigned char Width, unsigned char EndWidth, unsigned char FadeLength, unsigned char Noise, unsigned char Red, unsigned char Green,
@@ -1677,12 +1677,12 @@ void UTIL_Beam( Vector &Start, Vector &End, int nModelIndex, int nHaloIndex, uns
 	CBroadcastRecipientFilter filter;
 
 	te->BeamPoints( filter, 0.0,
-		&Start, 
-		&End, 
-		nModelIndex, 
-		nHaloIndex, 
+		&Start,
+		&End,
+		nModelIndex,
+		nHaloIndex,
 		FrameStart,
-		FrameRate, 
+		FrameRate,
 		Life,
 		Width,
 		EndWidth,
@@ -1736,7 +1736,7 @@ void CPrecacheOtherList::LevelShutdownPostEntity()
 
 //-----------------------------------------------------------------------------
 // Purpose: mark or add
-// Input  : *pEntity - 
+// Input  : *pEntity -
 // Output : Returns true on success, false on failure.
 //-----------------------------------------------------------------------------
 bool CPrecacheOtherList::AddOrMarkPrecached( const char *pClassname )
@@ -1753,9 +1753,9 @@ CPrecacheOtherList g_PrecacheOtherList( "CPrecacheOtherList" );
 #endif
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : *szClassname - 
-//			*modelName - 
+// Purpose:
+// Input  : *szClassname -
+//			*modelName -
 //-----------------------------------------------------------------------------
 void UTIL_PrecacheOther( const char *szClassname, const char *modelName )
 {
@@ -1777,7 +1777,7 @@ void UTIL_PrecacheOther( const char *szClassname, const char *modelName )
 	{
 		pEntity->SetModelName( AllocPooledString( modelName ) );
 	}
-	
+
 	if (pEntity)
 		pEntity->Precache( );
 
@@ -1792,7 +1792,7 @@ void UTIL_LogPrintf( const char *fmt, ... )
 {
 	va_list		argptr;
 	char		tempString[1024];
-	
+
 	va_start ( argptr, fmt );
 	Q_vsnprintf( tempString, sizeof(tempString), fmt, argptr );
 	va_end   ( argptr );
@@ -1842,13 +1842,13 @@ float UTIL_ScaleForGravity( float desiredGravity )
 
 //-----------------------------------------------------------------------------
 // Purpose: Implemented for mathlib.c error handling
-// Input  : *error - 
+// Input  : *error -
 //-----------------------------------------------------------------------------
 extern "C" void Sys_Error( char *error, ... )
 {
 	va_list	argptr;
 	char	string[1024];
-	
+
 	va_start( argptr, error );
 	Q_vsnprintf( string, sizeof(string), error, argptr );
 	va_end( argptr );
@@ -1918,7 +1918,7 @@ int DispatchSpawn( CBaseEntity *pEntity )
 		if ( pEntSafe == NULL || pEntity->IsMarkedForDeletion() )
 			return -1;
 
-		if ( pEntity->m_iGlobalname != NULL_STRING ) 
+		if ( pEntity->m_iGlobalname != NULL_STRING )
 		{
 			// Handle global stuff here
 			int globalIndex = GlobalEntity_GetIndex( pEntity->m_iGlobalname );
@@ -1973,7 +1973,7 @@ int UTIL_EntityInSolid( CBaseEntity *ent )
 
 //-----------------------------------------------------------------------------
 // Purpose: Initialize the matrix from an entity
-// Input  : *pEntity - 
+// Input  : *pEntity -
 //-----------------------------------------------------------------------------
 void EntityMatrix::InitFromEntity( CBaseEntity *pEntity, int iAttachment )
 {
@@ -2014,15 +2014,15 @@ void EntityMatrix::InitFromEntityLocal( CBaseEntity *entity )
 }
 
 //==================================================
-// Purpose: 
-// Input: 
-// Output: 
+// Purpose:
+// Input:
+// Output:
 //==================================================
 
 void UTIL_ValidateSoundName( string_t &name, const char *defaultStr )
 {
-	if ( ( !name || 
-		   strlen( (char*) STRING( name ) ) < 1 ) || 
+	if ( ( !name ||
+		   strlen( (char*) STRING( name ) ) < 1 ) ||
 		   !Q_stricmp( (char *)STRING(name), "0" ) )
 	{
 		name = AllocPooledString( defaultStr );
@@ -2135,7 +2135,7 @@ static int UTIL_GetNewCheckClient( int check )
 
 		// Looped but didn't find anything else
 		if ( i == check )
-			break;	
+			break;
 
 		if ( !ent->GetUnknown() )
 			continue;
@@ -2173,7 +2173,7 @@ static int UTIL_GetNewCheckClient( int check )
 			engine->GetPVSForCluster( clusterIndex, sizeof(g_CheckClient.m_checkPVS), g_CheckClient.m_checkPVS );
 		}
 	}
-	
+
 	return i;
 }
 
@@ -2193,7 +2193,7 @@ static edict_t *UTIL_GetCurrentCheckClient()
 		g_CheckClient.m_lastchecktime = gpGlobals->curtime;
 	}
 
-	// return check if it might be visible	
+	// return check if it might be visible
 	ent = engine->PEntityOfEntIndex( g_CheckClient.m_lastcheck );
 
 	// Allow dead clients -- JAY
@@ -2256,7 +2256,7 @@ bool UTIL_ClientPVSIsExpanded()
 // Purpose: Returns a client (or object that has a client enemy) that would be a valid target.
 //  If there are more than one valid options, they are cycled each frame
 //  If (self.origin + self.viewofs) is not in the PVS of the current target, it is not returned at all.
-// Input  : *pEdict - 
+// Input  : *pEdict -
 // Output : edict_t*
 //-----------------------------------------------------------------------------
 CBaseEntity *UTIL_FindClientInPVS( const Vector &vecBoxMins, const Vector &vecBoxMaxs )
@@ -2280,7 +2280,7 @@ CBaseEntity *UTIL_FindClientInPVS( const Vector &vecBoxMins, const Vector &vecBo
 // Purpose: Returns a client (or object that has a client enemy) that would be a valid target.
 //  If there are more than one valid options, they are cycled each frame
 //  If (self.origin + self.viewofs) is not in the PVS of the current target, it is not returned at all.
-// Input  : *pEdict - 
+// Input  : *pEdict -
 // Output : edict_t*
 //-----------------------------------------------------------------------------
 ConVar sv_strict_notarget( "sv_strict_notarget", "0", 0, "If set, notarget will cause entities to never think they are in the pvs" );
@@ -2307,7 +2307,7 @@ static edict_t *UTIL_FindClientInPVSGuts(edict_t *pEdict, unsigned char *pvs, un
 	if ( pe )
 	{
 		view = pe->EyePosition();
-		
+
 		if ( !engine->CheckOriginInPVS( view, pvs, pvssize ) )
 		{
 			return NULL;
@@ -2341,8 +2341,8 @@ edict_t *UTIL_FindClientInVisibilityPVS( edict_t *pEdict )
 // Purpose: Returns a chain of entities within the PVS of another entity (client)
 //  starting_ent is the ent currently at in the list
 //  a starting_ent of NULL signifies the beginning of a search
-// Input  : *pplayer - 
-//			*starting_ent - 
+// Input  : *pplayer -
+//			*starting_ent -
 // Output : edict_t
 //-----------------------------------------------------------------------------
 CBaseEntity *UTIL_EntitiesInPVS( CBaseEntity *pPVSEntity, CBaseEntity *pStartingEntity )
@@ -2442,7 +2442,7 @@ void UTIL_PredictedPosition( CBaseEntity *pTarget, float flTimeDelta, Vector *ve
 			else
 			{
 				// Otherwise we're a vanilla entity
-				vecPredictedVel = pTarget->GetSmoothedVelocity();				
+				vecPredictedVel = pTarget->GetSmoothedVelocity();
 			}
 		}
 	}
@@ -2506,7 +2506,7 @@ bool UTIL_TransferPoseParameters( CBaseEntity *pSourceEntity, CBaseEntity *pDest
 	{
 		pDestBaseAnimating->SetPoseParameter( iPose, pSourceBaseAnimating->GetPoseParameter( iPose ) );
 	}
-	
+
 	return true;
 }
 
@@ -2526,7 +2526,7 @@ void UTIL_MuzzleFlash( const Vector &origin, const QAngle &angles, int scale, in
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 // Input  : vStartPos - start of the line
 //			vEndPos - end of the line
 //			vPoint - point to find nearest point to on specified line
@@ -2540,13 +2540,13 @@ Vector UTIL_PointOnLineNearestPoint(const Vector& vStartPos, const Vector& vEndP
 	float	fNumerator		= DotProduct(vEndToStart,vOrgToStart);
 	float	fDenominator	= vEndToStart.Length() * vOrgToStart.Length();
 	float	fIntersectDist	= vOrgToStart.Length()*(fNumerator/fDenominator);
-	float	flLineLength	= VectorNormalize( vEndToStart ); 
-	
+	float	flLineLength	= VectorNormalize( vEndToStart );
+
 	if ( clampEnds )
 	{
 		fIntersectDist = clamp( fIntersectDist, 0.0f, flLineLength );
 	}
-	
+
 	Vector	vIntersectPos	= vStartPos + vEndToStart * fIntersectDist;
 
 	return vIntersectPos;
@@ -2565,9 +2565,9 @@ AngularImpulse WorldToLocalRotation( const VMatrix &localToWorld, const Vector &
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : *filename - 
-//			*pLength - 
+// Purpose:
+// Input  : *filename -
+//			*pLength -
 // Output : byte
 //-----------------------------------------------------------------------------
 byte *UTIL_LoadFileForMe( const char *filename, int *pLength )
@@ -2585,8 +2585,8 @@ byte *UTIL_LoadFileForMe( const char *filename, int *pLength )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : *buffer - 
+// Purpose:
+// Input  : *buffer -
 //-----------------------------------------------------------------------------
 void UTIL_FreeFile( byte *buffer )
 {
@@ -2598,7 +2598,7 @@ void UTIL_FreeFile( byte *buffer )
 // Input  : *pEntity - entity which is the "viewer"
 //			vecPosition - position to test against
 //			flTolerance - tolerance (as dot-product)
-//			*pflDot - if not NULL, holds the 
+//			*pflDot - if not NULL, holds the
 // Output : Returns true on success, false on failure.
 //-----------------------------------------------------------------------------
 bool UTIL_IsFacingWithinTolerance( CBaseEntity *pViewer, const Vector &vecPosition, float flDotTolerance, float *pflDot /*= NULL*/ )
@@ -2639,7 +2639,7 @@ bool UTIL_IsFacingWithinTolerance( CBaseEntity *pViewer, const Vector &vecPositi
 // Input  : *pEntity - entity which is the "viewer"
 //			*pTarget - entity to test against
 //			flTolerance - tolerance (as dot-product)
-//			*pflDot - if not NULL, holds the 
+//			*pflDot - if not NULL, holds the
 // Output : Returns true on success, false on failure.
 //-----------------------------------------------------------------------------
 bool UTIL_IsFacingWithinTolerance( CBaseEntity *pViewer, CBaseEntity *pTarget, float flDotTolerance, float *pflDot /*= NULL*/ )
@@ -2714,7 +2714,7 @@ bool UTIL_LoadAndSpawnEntitiesFromScript( CUtlVector <CBaseEntity*> &entities, c
 	KeyValues *pkvFile = new KeyValues( pBlock );
 
 	if ( pkvFile->LoadFromFile( filesystem, pScriptFile, "MOD" ) )
-	{	
+	{
 		// Load each block, and spawn the entities
 		KeyValues *pkvNode = pkvFile->GetFirstSubKey();
 		while ( pkvNode )
@@ -2789,7 +2789,7 @@ void UTIL_ParentToWorldSpace( CBaseEntity *pEntity, Vector &vecPosition, QAngle 
 	// concatenate with our parent's transform
 	matrix3x4_t matScratch, matResult;
 	matrix3x4_t matParentToWorld;
-	
+
 	if ( pEntity->GetParent() != NULL )
 	{
 		matParentToWorld = pEntity->GetParentToWorldTransform( matScratch );
@@ -2839,7 +2839,7 @@ void UTIL_WorldToParentSpace( CBaseEntity *pEntity, Vector &vecPosition, QAngle 
 	// concatenate with our parent's transform
 	matrix3x4_t matScratch, matResult;
 	matrix3x4_t matWorldToParent;
-	
+
 	if ( pEntity->GetParent() != NULL )
 	{
 		matScratch = pEntity->GetParentToWorldTransform( matScratch );
@@ -2874,7 +2874,7 @@ void UTIL_WorldToParentSpace( CBaseEntity *pEntity, Vector &vecPosition, Quatern
 
 //-----------------------------------------------------------------------------
 // Purpose: Given a vector, clamps the scalar axes to MAX_COORD_FLOAT ranges from worldsize.h
-// Input  : *pVecPos - 
+// Input  : *pVecPos -
 //-----------------------------------------------------------------------------
 void UTIL_BoundToWorldSize( Vector *pVecPos )
 {
@@ -2935,7 +2935,7 @@ void CC_KDTreeTest( const CCommand &args )
 			vecTargets[i].x = flRadius * ct * sp;
 			vecTargets[i].y = flRadius * st * sp;
 			vecTargets[i].z = flRadius * cp;
-			
+
 			// Make the trace 1024 units long.
 			Vector vecDir = vecTargets[i] - vecStart;
 			VectorNormalize( vecDir );
@@ -2964,7 +2964,7 @@ void CC_KDTreeTest( const CCommand &args )
 	{
 	case 0:
 		{
-			VPROF( "TraceTotal" );			
+			VPROF( "TraceTotal" );
 
 			trace_t trace;
 			for ( int iTest = 0; iTest < NUM_KDTREE_TESTS; ++iTest )
@@ -3057,7 +3057,7 @@ void CC_KDTreeTest( const CCommand &args )
 	g_VProfCurrentProfile.Pause();
 	g_VProfCurrentProfile.OutputReport( VPRT_FULL );
 #endif
-	
+
 	vtune( false );
 }
 
@@ -3111,17 +3111,17 @@ void CC_VoxelTreeBox( const CCommand &args )
 	vecPoints[5].Init( vecMin.x, vecMax.y, vecMax.z );
 	vecPoints[6].Init( vecMax.x, vecMax.y, vecMax.z );
 	vecPoints[7].Init( vecMax.x, vecMin.y, vecMax.z );
-	
+
 	debugoverlay->AddLineOverlay( vecPoints[0], vecPoints[1], 255, 0, 0, true, flTime );
 	debugoverlay->AddLineOverlay( vecPoints[1], vecPoints[2], 255, 0, 0, true, flTime );
 	debugoverlay->AddLineOverlay( vecPoints[2], vecPoints[3], 255, 0, 0, true, flTime );
 	debugoverlay->AddLineOverlay( vecPoints[3], vecPoints[0], 255, 0, 0, true, flTime );
-	
+
 	debugoverlay->AddLineOverlay( vecPoints[4], vecPoints[5], 255, 0, 0, true, flTime );
 	debugoverlay->AddLineOverlay( vecPoints[5], vecPoints[6], 255, 0, 0, true, flTime );
 	debugoverlay->AddLineOverlay( vecPoints[6], vecPoints[7], 255, 0, 0, true, flTime );
 	debugoverlay->AddLineOverlay( vecPoints[7], vecPoints[4], 255, 0, 0, true, flTime );
-	
+
 	debugoverlay->AddLineOverlay( vecPoints[0], vecPoints[4], 255, 0, 0, true, flTime );
 	debugoverlay->AddLineOverlay( vecPoints[3], vecPoints[7], 255, 0, 0, true, flTime );
 	debugoverlay->AddLineOverlay( vecPoints[1], vecPoints[5], 255, 0, 0, true, flTime );
@@ -3165,17 +3165,17 @@ void CC_VoxelTreeSphere( const CCommand &args )
 	vecPoints[5].Init( vecMin.x, vecMax.y, vecMax.z );
 	vecPoints[6].Init( vecMax.x, vecMax.y, vecMax.z );
 	vecPoints[7].Init( vecMax.x, vecMin.y, vecMax.z );
-	
+
 	debugoverlay->AddLineOverlay( vecPoints[0], vecPoints[1], 255, 0, 0, true, flTime );
 	debugoverlay->AddLineOverlay( vecPoints[1], vecPoints[2], 255, 0, 0, true, flTime );
 	debugoverlay->AddLineOverlay( vecPoints[2], vecPoints[3], 255, 0, 0, true, flTime );
 	debugoverlay->AddLineOverlay( vecPoints[3], vecPoints[0], 255, 0, 0, true, flTime );
-	
+
 	debugoverlay->AddLineOverlay( vecPoints[4], vecPoints[5], 255, 0, 0, true, flTime );
 	debugoverlay->AddLineOverlay( vecPoints[5], vecPoints[6], 255, 0, 0, true, flTime );
 	debugoverlay->AddLineOverlay( vecPoints[6], vecPoints[7], 255, 0, 0, true, flTime );
 	debugoverlay->AddLineOverlay( vecPoints[7], vecPoints[4], 255, 0, 0, true, flTime );
-	
+
 	debugoverlay->AddLineOverlay( vecPoints[0], vecPoints[4], 255, 0, 0, true, flTime );
 	debugoverlay->AddLineOverlay( vecPoints[3], vecPoints[7], 255, 0, 0, true, flTime );
 	debugoverlay->AddLineOverlay( vecPoints[1], vecPoints[5], 255, 0, 0, true, flTime );
@@ -3217,7 +3217,7 @@ void CC_CollisionTest( const CCommand &args )
 			theta = fabs(fmod(theta, DEG2RAD(360)));
 			phi += NUM_COLLISION_TESTS * 1997.99;
 			phi = fabs(fmod(phi, DEG2RAD(180)));
-			
+
 			float st, ct, sp, cp;
 			SinCos( theta, &st, &ct );
 			SinCos( phi, &sp, &cp );
@@ -3225,7 +3225,7 @@ void CC_CollisionTest( const CCommand &args )
 			targets[i].x = radius * ct * sp;
 			targets[i].y = radius * st * sp;
 			targets[i].z = radius * cp;
-			
+
 			// make the trace 1024 units long
 			Vector dir = targets[i] - start;
 			VectorNormalize(dir);
@@ -3293,7 +3293,3 @@ void CC_CollisionTest( const CCommand &args )
 #endif
 }
 static ConCommand collision_test("collision_test", CC_CollisionTest, "Tests collision system", FCVAR_CHEAT );
-
-
-
-

@@ -5405,7 +5405,7 @@ void CBasePlayer::VelocityPunch( const Vector &vecForce )
 				vecResult.z = -1 * physconcussion_maxverticalforce.GetFloat();
 			}
 
-			//Msg("Final Player Push: %f %f %f\n", vecResult.x, vecResult.y, vecResult.z ); //Debug
+			//DevMsg("Final Player Push: %f %f %f\n", vecResult.x, vecResult.y, vecResult.z ); //Debug
 			SetAbsVelocity( vecResult );
 		}
 	}
@@ -6212,7 +6212,10 @@ void CBasePlayer::CheatImpulseCommands( int iImpulse )
 		GiveNamedItem( "weapon_pistol" );
 		GiveNamedItem( "weapon_ar2" );
 		GiveNamedItem( "weapon_shotgun" );
-		GiveNamedItem( "weapon_physcannon" );
+//TE120--
+		//GiveNamedItem( "weapon_physcannon" );
+		GiveNamedItem( "weapon_physconcussion" );
+//TE120--
 		GiveNamedItem( "weapon_bugbait" );
 		GiveNamedItem( "weapon_rpg" );
 		GiveNamedItem( "weapon_357" );
@@ -6225,7 +6228,7 @@ void CBasePlayer::CheatImpulseCommands( int iImpulse )
 			TakeHealth( 25, DMG_GENERIC );
 		}
 
-		gEvilImpulse101		= false;
+		gEvilImpulse101 = false;
 
 		break;
 
@@ -6531,7 +6534,6 @@ bool CBasePlayer::ClientCommand( const CCommand &args )
 
 		return true;
 	}
-
 	else if ( stricmp( cmd, "spec_player" ) == 0 ) // chase next player
 	{
 		if ( GetObserverMode() > OBS_MODE_FIXED && args.ArgC() == 2 )
@@ -6557,7 +6559,6 @@ bool CBasePlayer::ClientCommand( const CCommand &args )
 
 		return true;
 	}
-
 	else if ( stricmp( cmd, "spec_goto" ) == 0 ) // chase next player
 	{
 		if ( ( GetObserverMode() == OBS_MODE_FIXED ||
@@ -7612,7 +7613,7 @@ void CBasePlayer::CheckUsable( void )
 		// More expensive search to verify item is usable with traces/collision checks/etc.
 		if ( useEnt )
 		{
-			Msg( "%s\n",  STRING( useEnt->GetEntityName() ) );
+			DevMsg( "%s\n", STRING( useEnt->GetEntityName() ) );
 			SetOnUsable(true);
 		}
 		else

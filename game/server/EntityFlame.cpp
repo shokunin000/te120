@@ -28,7 +28,7 @@ BEGIN_DATADESC( CEntityFlame )
 	DEFINE_FIELD( m_iNumHitboxFires, FIELD_INTEGER ),
 	DEFINE_FIELD( m_flHitboxFireScale, FIELD_FLOAT ),
 	// DEFINE_FIELD( m_bPlayingSound, FIELD_BOOLEAN ),
-	
+
 	DEFINE_FUNCTION( FlameThink ),
 
 	DEFINE_INPUTFUNC( FIELD_VOID, "Ignite", InputIgnite ),
@@ -45,7 +45,7 @@ LINK_ENTITY_TO_CLASS( env_entity_igniter, CEntityFlame );
 PRECACHE_REGISTER(entityflame);
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 CEntityFlame::CEntityFlame( void )
 {
@@ -79,8 +79,8 @@ void CEntityFlame::Precache()
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : inputdata - 
+// Purpose:
+// Input  : inputdata -
 //-----------------------------------------------------------------------------
 void CEntityFlame::InputIgnite( inputdata_t &inputdata )
 {
@@ -112,7 +112,7 @@ void CEntityFlame::InputIgnite( inputdata_t &inputdata )
 
 //-----------------------------------------------------------------------------
 // Purpose: Creates a flame and attaches it to a target entity.
-// Input  : pTarget - 
+// Input  : pTarget -
 //-----------------------------------------------------------------------------
 CEntityFlame *CEntityFlame::Create( CBaseEntity *pTarget, bool useHitboxes )
 {
@@ -125,7 +125,7 @@ CEntityFlame *CEntityFlame::Create( CBaseEntity *pTarget, bool useHitboxes )
 	float ySize = pTarget->CollisionProp()->OBBMaxs().y - pTarget->CollisionProp()->OBBMins().y;
 
 	float size = ( xSize + ySize ) * 0.5f;
-	
+
 	if ( size < 16.0f )
 	{
 		size = 16.0f;
@@ -175,8 +175,8 @@ void CEntityFlame::AttachToEntity( CBaseEntity *pTarget )
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : lifetime - 
+// Purpose:
+// Input  : lifetime -
 //-----------------------------------------------------------------------------
 void CEntityFlame::SetLifetime( float lifetime )
 {
@@ -184,8 +184,8 @@ void CEntityFlame::SetLifetime( float lifetime )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : use - 
+// Purpose:
+// Input  : use -
 //-----------------------------------------------------------------------------
 void CEntityFlame::SetUseHitboxes( bool use )
 {
@@ -193,8 +193,8 @@ void CEntityFlame::SetUseHitboxes( bool use )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : iNumHitBoxFires - 
+// Purpose:
+// Input  : iNumHitBoxFires -
 //-----------------------------------------------------------------------------
 void CEntityFlame::SetNumHitboxFires( int iNumHitboxFires )
 {
@@ -202,8 +202,8 @@ void CEntityFlame::SetNumHitboxFires( int iNumHitboxFires )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : flHitboxFireScale - 
+// Purpose:
+// Input  : flHitboxFireScale -
 //-----------------------------------------------------------------------------
 void CEntityFlame::SetHitboxFireScale( float flHitboxFireScale )
 {
@@ -240,7 +240,7 @@ void CEntityFlame::FlameThink( void )
 			SetRenderColorA( 0 );
 			return;
 		}
-	
+
 		CAI_BaseNPC *pNPC = m_hEntAttached->MyNPCPointer();
 		if ( pNPC && !pNPC->IsAlive() )
 		{
@@ -260,7 +260,7 @@ void CEntityFlame::FlameThink( void )
 			maxs.z = m_hEntAttached->WorldSpaceCenter().z;
 			maxs.x += 32;
 			maxs.y += 32;
-			
+
 			mins.z -= 32;
 			mins.x -= 32;
 			mins.y -= 32;
@@ -285,7 +285,9 @@ void CEntityFlame::FlameThink( void )
 		// Notify anything we're attached to
 		if ( m_hEntAttached )
 		{
-			CBaseCombatCharacter *pAttachedCC = m_hEntAttached->MyCombatCharacterPointer();
+			//Cannot directly cast networked variables
+			CBaseEntity *temp = m_hEntAttached;
+			CBaseCombatCharacter *pAttachedCC = (CBaseCombatCharacter *)temp;
 
 			if( pAttachedCC )
 			{
@@ -322,12 +324,12 @@ void CEntityFlame::FlameThink( void )
 
 	FireSystem_AddHeatInRadius( GetAbsOrigin(), m_flSize/2, 2.0f );
 
-}  
+}
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : pEnt -	
+// Purpose:
+// Input  : pEnt -
 //-----------------------------------------------------------------------------
 void CreateEntityFlame(CBaseEntity *pEnt)
 {

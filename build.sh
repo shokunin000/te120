@@ -59,21 +59,21 @@ export PATH="${STEAM_RUNTIME_ROOT}/bin:$PATH"
 echo
 
 # Cleanup
-echo "Cleanup..."
-make -f games.mak clean
-rm -f ../game/mod_episodic/bin/*.so
-rm -f ../game/mod_episodic/bin/*.so.dbg
+#echo "Cleanup..."
+#make -f games.mak clean
+#rm -f ../game/mod_episodic/bin/*.so
+#rm -f ../game/mod_episodic/bin/*.so.dbg
 
-echo
+#echo
 
 # Create Game Projects
 echo "Create Game Projects..."
 pushd `dirname $0`
 devtools/bin/vpc /2013
 #devtools/bin/vpc /hl2 /episodic +everything /mksln everything
-#devtools/bin/vpc /episodic +game /mksln games
+devtools/bin/vpc /episodic +game /mksln games
 #devtools/bin/vpc /episodic +game_shader_dx9 +game +everything /mksln games
-devtools/bin/vpc /episodic +game_shader_dx9 +game /mksln games
+#devtools/bin/vpc /episodic +game_shader_dx9 +game /mksln games
 #devtools/bin/vpc /hl2 /episodic +game /mksln games
 #devtools/bin/vpc /hl2 /episodic +game_shader_dx9 +game /mksln games
 popd

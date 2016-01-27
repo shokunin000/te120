@@ -13,11 +13,12 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
-#ifdef _WIN32
+//TE120--
 CLIENTEFFECT_REGISTER_BEGIN( PrecacheMyPostProcessingEffects )
 	CLIENTEFFECT_MATERIAL( "drunk" )
+	CLIENTEFFECT_MATERIAL( "combinedlens" )
 CLIENTEFFECT_REGISTER_END()
-#endif
+//TE120--
 
 //Global singelton accessor
 CClientEffectPrecacheSystem	*ClientEffectPrecacheSystem( void )

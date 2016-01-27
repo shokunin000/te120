@@ -436,7 +436,7 @@ void CHudLocator::AddLocatorContact( EHANDLE hEnt, int iType )
 		return;
 	}
 
-	if (!hEnt)
+	if ( !hEnt )
 	{
 		return;
 	}

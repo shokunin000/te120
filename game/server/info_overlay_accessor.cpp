@@ -14,11 +14,11 @@
 // An entity used to access overlays (and change their texture)
 // -------------------------------------------------------------------------------- //
 
-class CInfoOverlayAccessor : public CServerOnlyEntity//TE120
+class CInfoOverlayAccessor : public CServerOnlyPointEntity//TE120
 {
 public:
 
-	DECLARE_CLASS( CInfoOverlayAccessor, CServerOnlyEntity );//TE120
+	DECLARE_CLASS( CInfoOverlayAccessor, CServerOnlyPointEntity );//TE120
 
 	DECLARE_DATADESC();
 

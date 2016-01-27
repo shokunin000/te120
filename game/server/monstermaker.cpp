@@ -669,7 +669,7 @@ CNPCSpawnDestination *CTemplateNPCMaker::FindSpawnDestination()
 //TE120--
 				bool fVisible = (pPlayer->FInViewCone( vecTest ) || pPlayer->FInViewCone( vecTest + vecTopOfHull ) );
 
-				if (fVisible )
+				if ( fVisible )
 				{
 					fVisible = ( pPlayer->FVisible( vecTest, MASK_VISIBLE ) || pPlayer->FVisible( vecTest + vecTopOfHull, MASK_VISIBLE ) );
 				}
@@ -717,7 +717,7 @@ CNPCSpawnDestination *CTemplateNPCMaker::FindSpawnDestination()
 		pEnt = gEntList.FindEntityByName( pEnt, m_iszDestinationGroup );
 	}
 //TE120--
-	if( count < 1 )
+	if ( count < 1 )
 	{
 		DevMsg( 1, "(%s) No valid spawner found\n", STRING( GetEntityName() ) );
 		return NULL;
@@ -740,7 +740,7 @@ CNPCSpawnDestination *CTemplateNPCMaker::FindSpawnDestination()
 			}
 		}
 //TE120--
-		DevMsg( 2, "Couldn't find any valid spawns where AI will fit.\n", STRING( GetEntityName() ) );
+		DevMsg( 2, "(%s) Couldn't find any valid spawns where AI will fit.\n", STRING( GetEntityName() ) );
 //TE120--
 		return NULL;
 	}

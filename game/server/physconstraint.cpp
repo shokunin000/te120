@@ -1049,6 +1049,18 @@ public:
 		for ( int i = 0; i < 2; i++ )
 		{
 			info.pObjects[i]->WorldToLocal( &ballsocket.constraintPosition[i], GetAbsOrigin() );
+			// HACKHACK - the mapper forgot to put in some sane physics damping
+      float damping, adamping;
+      info.pObjects[i]->GetDamping(&damping, &adamping);
+      if ( damping < .2f )
+			{
+      	damping = .2f;
+      }
+			if ( adamping < .2f )
+			{
+        adamping = .2f;
+      }
+      info.pObjects[i]->SetDamping(&damping, &damping);
 		}
 		GetBreakParams( ballsocket.constraint, info );
 		ballsocket.constraint.torqueLimit = 0;

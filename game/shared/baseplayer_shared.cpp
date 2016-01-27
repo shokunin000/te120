@@ -1102,6 +1102,235 @@ bool CBasePlayer::FindAnyUsable()
 	return false;
 }
 //TE120--
+
+
+static float EstimatedDistanceSquared(const Vector &point, const CBaseEntity *pEntity)
+{
+	Vector nearestPoint;
+	pEntity->CollisionProp()->CalcNearestPoint( point, &nearestPoint );
+	return (nearestPoint - point).LengthSqr();
+}
+
+CBaseEntity *CBasePlayer::FindUseEntity()
+{
+	Vector forward;
+	EyeVectors( &forward, NULL, NULL );
+	Vector searchCenter = EyePosition();
+
+	// Some debris objects are +usable, and clip brushes can be made into
+	// +usable entities.
+	int usableContents = MASK_SOLID | CONTENTS_DEBRIS | CONTENTS_PLAYERCLIP;
+
+	// However, we occasionally need to ignore clip brushes so that objects
+	// inside of or beyond them can be +used.
+	const int usableContentsIgnoreClip = usableContents & ~CONTENTS_PLAYERCLIP;
+
+#ifdef CSTRIKE_DLL
+	usableContents = MASK_NPCSOLID_BRUSHONLY | MASK_OPAQUE_AND_NPCS;
+#endif
+
+#ifdef HL1_DLL
+	usableContents = MASK_SOLID;
+#endif
+
+	// First, try to hit an entity directly in front of the player.
+	trace_t directTrace;
+	UTIL_TraceLine( searchCenter, searchCenter + PLAYER_USE_RADIUS * forward, usableContents, this, COLLISION_GROUP_NONE, &directTrace );
+
+	CBaseEntity *pNearest = NULL;
+	CBaseEntity *pObject = directTrace.m_pEnt;
+	bool bUsable = IsUseableEntity( pObject, 0 );
+
+	if ( !bUsable && (directTrace.contents & CONTENTS_PLAYERCLIP) )
+	{
+		// We hit a non-usable clip brush. Try tracing again, ignoring clip
+		// brushes, so that objects inside of or beyond them can be +used.
+
+		// NOTE: If a usable clip brush is behind a non-usable clip brush,
+		// then we won't be able to +use it, unfortunately. This is difficult
+		// to workaround. For example, the non-usable clip brush cannot be added
+		// to a list of ignored entities, because it is part of the worldspawn,
+		// and we cannot ignore that.
+		UTIL_TraceLine( searchCenter, searchCenter + PLAYER_USE_RADIUS * forward, usableContentsIgnoreClip, this, COLLISION_GROUP_NONE, &directTrace );
+
+		pObject = directTrace.m_pEnt;
+		bUsable = IsUseableEntity( pObject, 0 );
+	}
+
+	// If the object is not usable, determine if a move ancestor is.
+	while ( pObject && !bUsable && pObject->GetMoveParent() )
+	{
+		pObject = pObject->GetMoveParent();
+		bUsable = IsUseableEntity( pObject, 0 );
+	}
+
+	if ( bUsable )
+	{
+		pNearest = pObject;
+
+		if ( sv_debug_player_use.GetBool() )
+		{
+			const float distSquared = EstimatedDistanceSquared( searchCenter, pNearest );
+			Msg( "Line trace found usable entity: %s, distance: %.2f\n", pNearest->GetDebugName(), sqrt( distSquared ) );
+		}
+	}
+	else
+	{
+		// Any objects directly in front of us weren't usable and close enough.
+		// Next, determine if the ground entity is usable.
+		float nearestDistSquared = FLT_MAX;
+
+		if ( GetGroundEntity() && IsUseableEntity( GetGroundEntity(), FCAP_USE_ONGROUND ) )
+		{
+			pNearest = GetGroundEntity();
+			nearestDistSquared = EstimatedDistanceSquared( searchCenter, pNearest );
+
+			if ( sv_debug_player_use.GetBool() )
+			{
+				Msg( "Ground query found usable entity: %s, distance: %.2f\n", pNearest->GetDebugName(), sqrt( nearestDistSquared ) );
+			}
+		}
+
+		// Next, determine which of the reachable and usable objects in the cone
+		// volume directly in front of player is closest, and whether or not any
+		// is closer than the ground entity.
+		for ( CEntitySphereQuery sphere( searchCenter, PLAYER_USE_RADIUS ); ( pObject = sphere.GetCurrentEntity() ) != NULL; sphere.NextEntity() )
+		{
+			if ( !IsUseableEntity( pObject, 0 ) )
+				continue;
+
+			// Determine if the object is nearer than the previous nearest object.
+			Vector nearestPoint;
+			pObject->CollisionProp()->CalcNearestPoint( searchCenter, &nearestPoint );
+
+			Vector dir = nearestPoint - searchCenter;
+			VectorNormalize(dir);
+
+			// Need to be looking at the object more or less.
+			// NOTE: If the closest point on the object happens to be off to the
+			// side, even though the object is predominantly if front of the player,
+			// then it will be rejected, unfortunately.
+			if ( DotProduct( dir, forward ) < 0.8 )
+				continue;
+
+			const float distSquared = (nearestPoint - searchCenter).LengthSqr();
+
+			if ( sv_debug_player_use.GetBool() )
+			{
+				Msg( "Cone query found usable entity: %s, distance: %.2f\n", pObject->GetDebugName(), sqrt( distSquared ) );
+			}
+
+			if ( distSquared < nearestDistSquared )
+			{
+				// The object is inside the cone, but it may be blocked by another
+				// object. Verify that we can trace to the object directly.
+
+				// NOTE: this traces to a particular point on the object's collision
+				// prop. If the trace to that point happens to be blocked by another
+				// object, even though other nearby visible points aren't, then we
+				// won't be able to +use the object, unfortunately.
+
+				// We ignore clip brushes here so that objects in or behind clip
+				// brushes can be +used. If the current object itself is a usable
+				// clip brush, this trace will fail to hit it, but unless it is
+				// blocked, the trace fraction will typically be 1.0 anyway, and
+				// pNearest will be set to the usable clip brush object.
+				trace_t tr;
+				UTIL_TraceLine( searchCenter, nearestPoint, usableContentsIgnoreClip, this, COLLISION_GROUP_NONE, &tr );
+
+				if ( tr.fraction == 1.0 || tr.m_pEnt == pObject )
+				{
+					/*
+					pNearest = pObject;
+					nearestDistSquared = distSquared;
+					*/
+//TE120--
+					if ( IsUseableEntity( pObject, 0 ) )
+					{
+						pNearest = pObject;
+						nearestDistSquared = distSquared;
+					}
+//TE120--
+				}
+			}
+		}
+
+	}
+
+#ifndef CLIENT_DLL
+	if ( !pNearest )
+	{
+		// If we haven't found an object that the player can use yet,
+		// allow a player to use an NPC through 'see-through' volumes
+		// (rails, fenches, windows, grates, etc.).
+		UTIL_TraceLine( searchCenter, searchCenter + PLAYER_USE_RADIUS * forward, MASK_OPAQUE_AND_NPCS, this, COLLISION_GROUP_NONE, &directTrace );
+		pObject = directTrace.m_pEnt;
+
+		if ( pObject && IsUseableEntity( pObject, 0 ) && pObject->MyNPCPointer() && pObject->MyNPCPointer()->IsPlayerAlly( this ) )
+		{
+			// This is an NPC, take it!
+			pNearest = pObject;
+
+			if ( sv_debug_player_use.GetBool() )
+			{
+				const float distSquared = EstimatedDistanceSquared( searchCenter, pNearest );
+				Msg( "Line trace found usable entity: %s, distance: %.2f\n", pNearest->GetDebugName(), sqrt( distSquared ) );
+			}
+		}
+	}
+
+	if ( pNearest == directTrace.m_pEnt && pNearest && pNearest->MyNPCPointer() && pNearest->MyNPCPointer()->IsPlayerAlly( this ) )
+	{
+		// If about to select an NPC with a line trace, do a more thorough
+		// check to ensure that we're selecting the right one from a group.
+		// Lengthen trace slightly to account for the fact that we're
+		// tracing for hitboxes, which are usually farther away than OBBs.
+		trace_t tr;
+		UTIL_TraceLine( searchCenter, searchCenter + 1.1 * PLAYER_USE_RADIUS * forward, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
+		pObject = tr.m_pEnt;
+
+		if ( pObject != pNearest && pObject && pObject->MyNPCPointer() && pObject->MyNPCPointer()->IsPlayerAlly( this ) )
+		{
+			// Player is selecting a different NPC through some negative space
+			// in the first NPC's hitboxes (between legs, over shoulder, etc).
+			pNearest = tr.m_pEnt;
+			directTrace = tr;
+
+			if ( sv_debug_player_use.GetBool() )
+			{
+				const float distSquared = EstimatedDistanceSquared( searchCenter, pNearest );
+				Msg( "Hitbox line trace found usable entity: %s, distance: %.2f\n", pNearest->GetDebugName(), sqrt( distSquared ) );
+			}
+		}
+	}
+#endif
+
+	// Draw debug overlays and print debug messages.
+	if ( sv_debug_player_use.GetBool() )
+	{
+#ifndef CLIENT_DLL
+		if ( !pNearest )
+		{
+			NDebugOverlay::Line( searchCenter, directTrace.endpos, 255, 0, 0, true, 30 );
+			NDebugOverlay::Cross3D( directTrace.endpos, 16, 255, 0, 0, true, 30 );
+		}
+		else if ( pNearest == directTrace.m_pEnt )
+		{
+			NDebugOverlay::Line( searchCenter, directTrace.endpos, 0, 255, 0, true, 30 );
+			NDebugOverlay::Cross3D( directTrace.endpos, 16, 0, 255, 0, true, 30 );
+		}
+		else
+		{
+			NDebugOverlay::Box( pNearest->WorldSpaceCenter(), Vector(-8, -8, -8), Vector(8, 8, 8), 0, 255, 0, true, 30 );
+		}
+#endif
+		Msg( "Using: %s\n", pNearest ? pNearest->GetDebugName() : "no usable entity found" );
+	}
+
+	return pNearest;
+}
+
+/*
 CBaseEntity *CBasePlayer::FindUseEntity()
 {
 	Vector forward, up;
@@ -1310,6 +1539,7 @@ CBaseEntity *CBasePlayer::FindUseEntity()
 
 	return pNearest;
 }
+*/
 
 //-----------------------------------------------------------------------------
 // Purpose: Handles USE keypress

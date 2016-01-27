@@ -6,12 +6,12 @@
 
 #include "cbase.h"
 #include "player.h"
-#include "hl2_player.h"//TE120
 #include "gamerules.h"
 #include "items.h"
 #include "ammodef.h"
 #include "eventlist.h"
 #include "npcevent.h"
+#include "hl2_player.h"//TE120
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -601,17 +601,17 @@ public:
 
 	void Precache( void )
 	{
-		PrecacheModel ("models/items/battery.mdl");
+		PrecacheModel( "models/items/battery.mdl" );
 		PrecacheScriptSound( "NPC_Advisor.Shieldup" );
 		PrecacheScriptSound( "ItemBattery.Touch" );
 	}
 
 	void Spawn( void )
 	{
-		Precache( );
-		SetModel( "models/items/battery.mdl");
+		Precache();
+		SetModel( "models/items/battery.mdl" );
 		m_nSkin = 1;
-		BaseClass::Spawn( );
+		BaseClass::Spawn();
 	}
 
 	bool MyTouch( CBasePlayer *pPlayer )
@@ -622,7 +622,7 @@ public:
 			pHL2Player->ApplyBattery();
 		}
 
-		if (ITEM_GiveAmmo( pPlayer, SIZE_AMMO_GC_ENERGY, "GC_Energy", true))
+		if ( ITEM_GiveAmmo( pPlayer, SIZE_AMMO_GC_ENERGY, "GC_Energy", true ) )
 		{
 			CPASAttenuationFilter filterB( this, "NPC_Advisor.Shieldup" );
 			EmitSound( filterB, entindex(), "NPC_Advisor.Shieldup" );

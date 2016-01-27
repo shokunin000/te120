@@ -25,6 +25,10 @@
 *.suo
 *.sdf
 *.user
+*.ipch
+*.sh
+*.o
+*.P
 devtools/bin/linux/ccache
 devtools/bin/osx32/ccache
 devtools/bin/osx32/protoc
@@ -36,12 +40,14 @@ devtools/gendbg.sh
 devtools/makefile_base_posix.mak
 devtools/sourcesdk_def.mak
 devtools/version_script.linux.txt
-*.ipch
+game/client/obj_client_episodic_linux32
+game/server/obj_server_episodic_linux32
 /materialsystem
 /lib
 /fgdlib
 gcsdk/bin/linux/protoc
-/mathlib
+/mathlib/*
+!/mathlib/sse.cpp
 /raytrace
 /thirdparty
 /tier1
@@ -53,3 +59,5 @@ tier0/tier0_exclude.vpc
 createallprojects
 creategameprojects
 games.opensdf
+!build.bat
+!build.sh

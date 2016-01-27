@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 //=============================================================================
 
@@ -21,12 +21,12 @@
 
 class CAchievementHLXKillWithPhysicsObjects : public CBaseAchievement
 {
-	void Init() 
+	void Init()
 	{
 		SetFlags( ACH_LISTEN_PLAYER_KILL_ENEMY_EVENTS | ACH_SAVE_WITH_GAME );
 		SetInflictorFilter( "prop_physics" );
 		SetGoal( 30 );
-		
+
 		if ( IsPC() )
 		{
 			// only in Ep2 for PC. (Shared across HLX for X360.)
@@ -38,10 +38,10 @@ class CAchievementHLXKillWithPhysicsObjects : public CBaseAchievement
 	{
 		int iDamageBits = event->GetInt( "damagebits" );
 		// was victim killed with crushing damage?
-		if ( iDamageBits & DMG_CRUSH ) 
+		if ( iDamageBits & DMG_CRUSH )
 		{
 			IncrementCount();
-		}		
+		}
 	}
 
 };
@@ -49,7 +49,7 @@ DECLARE_ACHIEVEMENT( CAchievementHLXKillWithPhysicsObjects, ACHIEVEMENT_HLX_KILL
 
 class CAchievementHLXKillWithHopper : public CBaseAchievement
 {
-	void Init() 
+	void Init()
 	{
 		SetFlags( ACH_LISTEN_KILL_ENEMY_EVENTS | ACH_SAVE_WITH_GAME );
 		SetAttackerFilter( "combine_mine" );
@@ -76,7 +76,7 @@ DECLARE_ACHIEVEMENT( CAchievementHLXKillWithHopper, ACHIEVEMENT_HLX_KILL_ENEMY_W
 
 class CAchievementHLXKillWithManhack : public CBaseAchievement
 {
-	void Init() 
+	void Init()
 	{
 		SetFlags( ACH_LISTEN_PLAYER_KILL_ENEMY_EVENTS | ACH_SAVE_WITH_GAME );
 		SetInflictorFilter( "npc_manhack" );
@@ -94,7 +94,7 @@ class CAchievementHLXKillWithManhack : public CBaseAchievement
 		// We've already filtered to only get called when a player enemy gets killed with a manhack.  Now just check for the
 		// case of player smashing manhack into something, in which case the manhack is both the victim and inflictor.
 		// If that's not the case, this is a player kill w/manhack.
-		if ( pVictim != pInflictor )	
+		if ( pVictim != pInflictor )
 		{
 			IncrementCount();
 		}
@@ -105,7 +105,7 @@ DECLARE_ACHIEVEMENT( CAchievementHLXKillWithManhack, ACHIEVEMENT_HLX_KILL_ENEMIE
 class CAchievementHLXKillSoldierWithOwnGrenade : public CBaseAchievement
 {
 protected:
-	void Init() 
+	void Init()
 	{
 		SetFlags( ACH_LISTEN_KILL_ENEMY_EVENTS | ACH_SAVE_WITH_GAME );
 		SetInflictorFilter( "npc_grenade_frag" );
@@ -119,7 +119,7 @@ protected:
 		}
 	}
 
-	virtual void Event_EntityKilled( CBaseEntity *pVictim, CBaseEntity *pAttacker, CBaseEntity *pInflictor, IGameEvent *event ) 
+	virtual void Event_EntityKilled( CBaseEntity *pVictim, CBaseEntity *pAttacker, CBaseEntity *pInflictor, IGameEvent *event )
 	{
 		CBaseGrenade *pGrenade = dynamic_cast<CBaseGrenade *>( pInflictor );
 		if ( pGrenade )
@@ -131,8 +131,8 @@ protected:
 			if ( ( pPlayer == pThrower ) && ( pOriginalThrower == pVictim ) )
 			{
 				IncrementCount();
-			}				
-		}			
+			}
+		}
 	}
 };
 DECLARE_ACHIEVEMENT( CAchievementHLXKillSoldierWithOwnGrenade, ACHIEVEMENT_HLX_KILL_SOLDIER_WITHHISGRENADE, "HLX_KILL_SOLDIER_WITHHISGRENADE", 10 );
@@ -155,7 +155,7 @@ protected:
 		}
 	}
 
-	virtual void Event_EntityKilled( CBaseEntity *pVictim, CBaseEntity *pAttacker, CBaseEntity *pInflictor, IGameEvent *event ) 
+	virtual void Event_EntityKilled( CBaseEntity *pVictim, CBaseEntity *pAttacker, CBaseEntity *pInflictor, IGameEvent *event )
 	{
 		// to count # of kills with same energy ball, keep track of previous inflictor
 		if ( m_pLastInflictor != NULL && pInflictor != m_pLastInflictor )
@@ -197,7 +197,7 @@ protected:
 		}
 	}
 
-	virtual void Event_EntityKilled( CBaseEntity *pVictim, CBaseEntity *pAttacker, CBaseEntity *pInflictor, IGameEvent *event ) 
+	virtual void Event_EntityKilled( CBaseEntity *pVictim, CBaseEntity *pAttacker, CBaseEntity *pInflictor, IGameEvent *event )
 	{
 		CPropCombineBall *pBall = dynamic_cast<CPropCombineBall *>( pInflictor );
 		if ( pBall )
@@ -206,7 +206,7 @@ protected:
 			CBaseEntity *pOriginalOwner = pBall->GetOriginalOwner();
 			// see if original owner is the victim
 			if ( pOriginalOwner && ( pOriginalOwner == pVictim ) )
-			{				
+			{
 				IncrementCount();
 			}
 		}
