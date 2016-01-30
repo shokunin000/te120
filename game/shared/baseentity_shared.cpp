@@ -1191,12 +1191,16 @@ void CBaseEntity::VPhysicsUpdate( IPhysicsObject *pPhysics )
 					Vector	vecSpot;
 					Vector  vecDir;
 					AngularImpulse angTemp;
+
 					pPhysics->GetVelocity( &vecDir, &angTemp );
+
 					int iLength;
+
 					UTIL_TraceLine( vecStart, vecStart + vecDir, MASK_SHOT, this, COLLISION_GROUP_NONE, &tr );
 					// DebugDrawLine( tr.startpos, tr.endpos, 255, 0, 0, true, 2.0 );
 					iLength = ( tr.startpos - tr.endpos ).Length();
 					vecSpot = vecStart + vecDir;
+
 					// Every 128 units spawn a warning sound
 					for ( int i = 0; i < iLength; i += 128 )
 					{

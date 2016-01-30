@@ -80,6 +80,7 @@ bool IsReflectiveGlassInView( const CViewSetup& view, cplane_t &plane )
 	if ( bLowEnd )
 		return false;
 //TE120--
+
 	// Early out if no cameras
 	C_FuncReflectiveGlass *pReflectiveGlass = GetReflectiveGlassList();
 	if ( !pReflectiveGlass )

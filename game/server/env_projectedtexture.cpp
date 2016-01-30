@@ -220,6 +220,7 @@ void CEnvProjectedTexture::InputSetEnableShadows( inputdata_t &inputdata )
 {
 	m_bEnableShadows = inputdata.value.Bool();
 }
+
 //TE120--
 void CEnvProjectedTexture::InputSetLightColor( inputdata_t &inputdata )
 {
@@ -229,6 +230,7 @@ void CEnvProjectedTexture::InputSetLightColor( inputdata_t &inputdata )
 	m_LinearFloatLightColor = tmp;
 }
 //TE120--
+
 void CEnvProjectedTexture::InputSetAmbient( inputdata_t &inputdata )
 {
 	m_flAmbient = inputdata.value.Float();
@@ -238,6 +240,7 @@ void CEnvProjectedTexture::InputSetSpotlightTexture( inputdata_t &inputdata )
 {
 	Q_strcpy( m_SpotlightTextureName.GetForModify(), inputdata.value.String() );
 }
+
 //TE120--
 void CEnvProjectedTexture::Spawn( void )
 {
@@ -263,9 +266,11 @@ void CEnvProjectedTexture::InitialThink( void )
 {
 	if ( m_hTargetEntity == NULL && m_target != NULL_STRING )
 		m_hTargetEntity = gEntList.FindEntityByName( NULL, m_target );
+
 	if ( m_hTargetEntity == NULL )
 		return;
-	if (m_bFlicker)
+
+	if ( m_bFlicker )
 	{
 		m_LinearFloatLightColorCopy = m_LinearFloatLightColor;
 		SetThink( &CEnvProjectedTexture::FlickerThink );
@@ -286,18 +291,18 @@ void CEnvProjectedTexture::FlickerThink( void )
 	float flNoise = 0.75 + ( 0.25 * ( cosf( gpGlobals->curtime * 7.0f ) * sinf( gpGlobals->curtime * 25.0f ) ) );
 	m_LinearFloatLightColor = m_LinearFloatLightColorCopy * flNoise  ;
 
-	if (m_bFlicker)
+	if ( m_bFlicker )
 	{
 		SetThink( &CEnvProjectedTexture::FlickerThink );
 		SetNextThink( gpGlobals->curtime + 0.05f );
 	}
 }
 //TE120--
+
 int CEnvProjectedTexture::UpdateTransmitState()
 {
 	return SetTransmitState( FL_EDICT_ALWAYS );
 }
-
 
 // Console command for creating env_projectedtexture entities
 void CC_CreateFlashlight( const CCommand &args )

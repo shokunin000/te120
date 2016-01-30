@@ -1667,9 +1667,7 @@ bool CRagdollConstraint::ActivateConstraint( void )
 	m_pConstraint->SetGameData( (void *)this );
 
 	if ( pGroup )
-	{
 		pGroup->Activate();
-	}
 
 	OnConstraintSetup(info);
 

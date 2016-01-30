@@ -869,7 +869,14 @@ int CNPC_BaseZombie::OnTakeDamage_Alive( const CTakeDamageInfo &inputInfo )
 		if( bChopped )
 		{
 			EmitSound( "E3_Phystown.Slicer" );
-			DevMsg("Chopped Headcrab!\n");//TE120
+//TE120--
+			DevMsg("Chopped Headcrab!\n");
+			// Fire event for achievement: E120_SLICER
+			IGameEvent *event = gameeventmanager->CreateEvent( "sliced_zombie" );
+			if ( event )
+				gameeventmanager->FireEvent( event );
+				DevMsg("Event: sliced_zombie\n");
+//TE120--
 		}
 
 		DieChopped( info );
@@ -895,14 +902,19 @@ int CNPC_BaseZombie::OnTakeDamage_Alive( const CTakeDamageInfo &inputInfo )
 				Vector vecForce = inputInfo.GetDamageForce() * 0.1;
 				vecForce += Vector( 0, 0, 2000.0 );
 				ReleaseHeadcrab( EyePosition(), vecForce, true, false, true );
+				DevMsg("Sliced Headcrab of!\n");//TE120
+
 //TE120--
+// TODO: Verify, never managed to trigger RELEASE_RAGDOLL_SLICED_OFF
+/*
 				DevMsg("Sliced Headcrab of!\n");
-				
+
 				// Fire event for achievement: E120_SLICER
  				IGameEvent *event = gameeventmanager->CreateEvent( "sliced_zombie" );
  				if ( event )
 					gameeventmanager->FireEvent( event );
 					DevMsg("Event: sliced_zombie\n");
+*/
 //TE120--
 			}
 			break;

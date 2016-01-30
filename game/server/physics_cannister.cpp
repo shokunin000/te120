@@ -361,6 +361,7 @@ void CPhysicsCannister::Explode( CBaseEntity *pAttacker )
 	Vector velocity;
 	AngularImpulse angVelocity;
 	IPhysicsObject *pPhysics = VPhysicsGetObject();
+
 //TE120--
 	if ( pPhysics )
 	{
@@ -424,6 +425,7 @@ void CPhysicsCannister::ShutdownJet( void )
 //TE120--
 
 	SetNextThink( TICK_NEVER_THINK );
+
 //TE120--
 	// Explode when done
 	if ( m_hLauncher )
@@ -433,7 +435,8 @@ void CPhysicsCannister::ShutdownJet( void )
 	else
 	{
 		CBasePlayer *cbp_temp = CBaseEntity::GetPredictionPlayer();
-		if (cbp_temp)
+
+		if ( cbp_temp )
 			Explode(cbp_temp);
 	}
 //TE120--

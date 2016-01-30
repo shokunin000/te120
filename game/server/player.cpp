@@ -6177,14 +6177,15 @@ void CBasePlayer::CheatImpulseCommands( int iImpulse )
 		GiveNamedItem( "weapon_cubemap" );
 		break;
 
+//TE120--
 	case 82:
 		// Cheat to create a jeep in front of the player
-		CreateJeep( this );
+		//CreateJeep( this );
 		break;
 
 	case 83:
 		// Cheat to create a airboat in front of the player
-		CreateAirboat( this );
+		//CreateAirboat( this );
 		break;
 
 	case 101:
@@ -6202,27 +6203,20 @@ void CBasePlayer::CheatImpulseCommands( int iImpulse )
 		GiveAmmo( 3,	"rpg_round");
 		GiveAmmo( 5,	"grenade");
 		GiveAmmo( 32,	"357" );
-		GiveAmmo( 16,	"XBowBolt" );
-#ifdef HL2_EPISODIC
-		GiveAmmo( 5,	"Hopwire" );
-#endif
+		//GiveAmmo( 16,	"XBowBolt" );
+
 		GiveNamedItem( "weapon_smg1" );
 		GiveNamedItem( "weapon_frag" );
 		GiveNamedItem( "weapon_crowbar" );
 		GiveNamedItem( "weapon_pistol" );
 		GiveNamedItem( "weapon_ar2" );
 		GiveNamedItem( "weapon_shotgun" );
-//TE120--
-		//GiveNamedItem( "weapon_physcannon" );
 		GiveNamedItem( "weapon_physconcussion" );
-//TE120--
-		GiveNamedItem( "weapon_bugbait" );
+
 		GiveNamedItem( "weapon_rpg" );
 		GiveNamedItem( "weapon_357" );
-		GiveNamedItem( "weapon_crossbow" );
-#ifdef HL2_EPISODIC
-		// GiveNamedItem( "weapon_magnade" );
-#endif
+		//GiveNamedItem( "weapon_crossbow" );//TE120
+
 		if ( GetHealth() < 100 )
 		{
 			TakeHealth( 25, DMG_GENERIC );
@@ -6231,6 +6225,7 @@ void CBasePlayer::CheatImpulseCommands( int iImpulse )
 		gEvilImpulse101 = false;
 
 		break;
+//TE120--
 
 	case 102:
 		// Gibbage!!!

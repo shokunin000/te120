@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: Physics concussion
+// Purpose: TE120 Physcussion gun
 //
 //=============================================================================//
 
@@ -40,10 +40,8 @@
 #include "ai_interactions.h"
 #include "rumble_shared.h"
 #include "gamestats.h"
-//TE120--
 #include "prop_gravity_ball.h"
 #include "prop_combine_ball.h"
-//TE120--
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"

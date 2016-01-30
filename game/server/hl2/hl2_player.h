@@ -295,6 +295,7 @@ public:
 
 	CSoundPatch *m_sndLeeches;
 	CSoundPatch *m_sndWaterSplashes;
+
 //TE120--
 	// For GC overheat mechanic
 	float	m_flNextCoolDown;	// Time to wait before cooling down
@@ -304,6 +305,7 @@ public:
 	float	m_flRecoveryRateScale;	// For exponential recovery
 	float	m_flRecoveryRate;	// Standard recovery rate
 //TE120--
+
 protected:
 	virtual void		PreThink( void );
 	virtual	void		PostThink( void );

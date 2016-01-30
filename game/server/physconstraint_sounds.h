@@ -18,19 +18,19 @@
 
 /** \brief Class to store a sampled history of velocity for an object -- used for certain sound calculations
 
-Although this contains only one sample for now, it exists as an interface 
-so as to make simpler the possibility of moving to a ring buffer 
-implementation in the future. 
+Although this contains only one sample for now, it exists as an interface
+so as to make simpler the possibility of moving to a ring buffer
+implementation in the future.
 
-The "sample rate" variable is not nominal: it should be used to specify 
-the ClientThink() interval. 
+The "sample rate" variable is not nominal: it should be used to specify
+the ClientThink() interval.
 
-Be sure to use the beginSampling() function for the first sample, and 
+Be sure to use the beginSampling() function for the first sample, and
 addSample() thereafter: this will be relevant and necessary for a ring
 buffer implementation (which will have to perform certain initialization).
 */
 class VelocitySampler
-{	
+{
 public:
 	/*
 	enum
@@ -41,7 +41,7 @@ public:
 	*/
 
 	/// Return the internally stored sample rate.
-	inline float getSampleRate() 
+	inline float getSampleRate()
 	{
 		return m_fIdealSampleRate;
 	}
@@ -89,12 +89,12 @@ struct SimpleConstraintSoundProfile
 
 	float m_keyPoints[kHIGHWATER];
 
-	/// Number of entries in the reversal sound array 
+	/// Number of entries in the reversal sound array
 	enum { kREVERSAL_SOUND_ARRAY_SIZE = 3 };
 
 	/// Acceleration threshold for playing the hard-reverse sound. Divided into sections.
 	/// Below the 0th threshold no sound will play.
-	float m_reversalSoundThresholds[kREVERSAL_SOUND_ARRAY_SIZE]; 
+	float m_reversalSoundThresholds[kREVERSAL_SOUND_ARRAY_SIZE];
 
 	/// Get volume for given velocity [0..1]
 	float GetVolume(float inVel);
@@ -181,7 +181,7 @@ protected:
 
 
 /////////////// INLINE FUNCTIONS
-	
+
 
 /// compute the relative velocity between an object and its parent. Just a convenience.
 Vector VelocitySampler::GetRelativeVelocity( IPhysicsObject *pObj, IPhysicsObject *pReferenceFrame )
@@ -196,9 +196,9 @@ Vector VelocitySampler::GetRelativeVelocity( IPhysicsObject *pObj, IPhysicsObjec
 
 Vector VelocitySampler::GetRelativeAngularVelocity( IPhysicsObject *pObj, IPhysicsObject *pReferenceFrame )
 {
-//TE120----	
-	if (!pObj)
-		return Vector(0,0,0);
+//TE120----
+	if ( !pObj )
+		return Vector(0, 0, 0);
 //TE120----
 
 	Assert(pObj);
@@ -224,7 +224,7 @@ Vector VelocitySampler::GetRelativeAngularVelocity( IPhysicsObject *pObj, IPhysi
 }
 
 /************************************************************************/
-// This function is nominal -- it's here as an interface because in the 
+// This function is nominal -- it's here as an interface because in the
 // future there will need to be special initialization for the first entry
 // in a ring buffer. (I made a test implementation of this, then reverted it
 // later; this is not an arbitrary assumption.)
@@ -247,7 +247,7 @@ void VelocitySampler::AddSample(const Vector &relativeVelocity)
 /* // abandoned -- too complicated, no way to set from keyfields
 #pragma warning(push)
 #pragma warning( disable:4201 ) // C4201: nonstandard extension used: nameless struct/union
-/// Stores information used for playing sounds based on 
+/// Stores information used for playing sounds based on
 /// constraint movement
 class ConstraintSoundProfile
 {
@@ -266,12 +266,12 @@ fltx4 m_as4;
 };
 
 inline SoundInfoTuple(float _minVelocity, float _volume1, float _pitch1, float _volume2, float _pitch2) :
-minVelocity(_minVelocity), volume1(_volume1), pitch1(_pitch1), volume2(_volume2), pitch2(_pitch2) 
+minVelocity(_minVelocity), volume1(_volume1), pitch1(_pitch1), volume2(_volume2), pitch2(_pitch2)
 {}
 };
 
-ConstraintSoundProfile(const SoundInfoTuple *soundTable, unsigned int tableSize) 
-: m_pSoundInfos(soundTable), m_numSoundInfos(tableSize) 
+ConstraintSoundProfile(const SoundInfoTuple *soundTable, unsigned int tableSize)
+: m_pSoundInfos(soundTable), m_numSoundInfos(tableSize)
 {}
 
 

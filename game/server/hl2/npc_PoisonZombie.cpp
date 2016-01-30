@@ -725,6 +725,7 @@ void CNPC_PoisonZombie::HandleAnimEvent( animevent_t *pEvent )
 			// Setting the crab name to the same one used by the zombie will keep
 			// custom relationships in sync in chapter_1
 			pCrab->SetName( this->GetEntityName() );
+			DevMsg("PoisonZombie: Duplicated relationship to player!\n");
 		}
 //TE120--
 		if (m_nCrabCount == 0)

@@ -1,4 +1,4 @@
-//========= Copyright , CSProMod Team, All rights reserved. =========//
+//========= Copyright, CSProMod Team, All rights reserved. =========//
 //
 // Purpose: provide world light related functions to the client
 //
@@ -201,14 +201,14 @@ bool CWorldLights::GetBrightestLightSource(const Vector &vecPosition, Vector &ve
 	g_pEngineServer->GetPVSForCluster(nCluster, nPVSSize, pvs);
 
 	// Iterate through all the worldlights
-	for( int i = 0; i < m_nWorldLights; ++i )
+	for ( int i = 0; i < m_nWorldLights; ++i )
 	{
 		dworldlight_t *light = &m_pWorldLights[i];
 
 		// Skip skyambient
 		if ( light->type == emit_skyambient )
 		{
-			//engine->Con_NPrintf(i, "%d: skyambient", i);
+			//DevMsg("CWorldLights: skyambient %d\n", i);
 			continue;
 		}
 
@@ -216,7 +216,7 @@ bool CWorldLights::GetBrightestLightSource(const Vector &vecPosition, Vector &ve
 		if ( light->type == emit_skylight )
 		{
 			// Calculate sun position
-			Vector vecAbsStart = vecPosition + Vector(0,0,30);
+			Vector vecAbsStart = vecPosition + Vector(0, 0, 30);
 			Vector vecAbsEnd = vecAbsStart - (light->normal * MAX_TRACE_LENGTH);
 
 			trace_t tr;
@@ -225,7 +225,7 @@ bool CWorldLights::GetBrightestLightSource(const Vector &vecPosition, Vector &ve
 			// If we didn't hit anything then we have a problem
 			if(!tr.DidHit())
 			{
-				//engine->Con_NPrintf(i, "%d: skylight: couldn't touch sky", i);
+				//DevMsg("CWorldLights: skylight %d couldn't touch sky\n", i);
 				continue;
 			}
 
@@ -233,7 +233,7 @@ bool CWorldLights::GetBrightestLightSource(const Vector &vecPosition, Vector &ve
 			// this worldlight
 			if ( !(tr.surface.flags & SURF_SKY) && !(tr.surface.flags & SURF_SKY2D) )
 			{
-				//engine->Con_NPrintf(i, "%d: skylight: no sight to sun", i);
+				//DevMsg("CWorldLights: skylight %d no sight to sun\n", i);
 				continue;
 			}
 
@@ -254,14 +254,14 @@ bool CWorldLights::GetBrightestLightSource(const Vector &vecPosition, Vector &ve
 		// Skip lights that are out of our radius
 		if ( flRadiusSqr > 0 && flDistSqr >= flRadiusSqr )
 		{
-			//engine->Con_NPrintf(i, "%d: out-of-radius (dist: %d, radius: %d)", i, sqrt(flDistSqr), light->radius);
+			//DevMsg("CWorldLights: %d out-of-radius (dist: %d, radius: %d)\n", i, sqrt(flDistSqr), light->radius);
 			continue;
 		}
 
 		// Is it out of our PVS?
 		if ( !g_pEngineServer->CheckOriginInPVS(light->origin, pvs, nPVSSize) )
 		{
-			//engine->Con_NPrintf(i, "%d: out of PVS", i);
+			//DevMsg("CWorldLights: %d out of PVS\n", i);
 			continue;
 		}
 
@@ -272,29 +272,29 @@ bool CWorldLights::GetBrightestLightSource(const Vector &vecPosition, Vector &ve
 		// Is this light more intense than the one we already found?
 		if ( vecIntensity.LengthSqr() <= vecLightBrightness.LengthSqr() )
 		{
-			//engine->Con_NPrintf(i, "%d: too dim", i);
+			//DevMsg("CWorldLights: %d too dim\n", i);
 			continue;
 		}
 
 		// Can we see the light?
 		trace_t tr;
-		Vector vecAbsStart = vecPosition + Vector(0,0,30);
+		Vector vecAbsStart = vecPosition + Vector(0, 0, 30);
 		UTIL_TraceLine(vecAbsStart, light->origin, MASK_OPAQUE, NULL, COLLISION_GROUP_NONE, &tr);
 
 		if ( tr.DidHit() )
 		{
-			//engine->Con_NPrintf(i, "%d: trace failed", i);
+			//DevMsg("CWorldLights: %d trace failed\n", i);
 			continue;
 		}
 
 		vecLightPos = light->origin;
 		vecLightBrightness = vecIntensity;
 
-		//engine->Con_NPrintf(i, "%d: set (%.2f)", i, vecIntensity.Length());
+		//DevMsg("CWorldLights: %d set (%.2f)\n", i, vecIntensity.Length());
 	}
 
 	delete[] pvs;
-
-	//engine->Con_NPrintf(m_nWorldLights, "result: %d", !vecLightBrightness.IsZero());
+	
+	//DevMsg("CWorldLights: result %d\n", !vecLightBrightness.IsZero());
 	return !vecLightBrightness.IsZero();
 }

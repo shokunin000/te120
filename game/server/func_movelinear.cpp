@@ -308,8 +308,8 @@ void CFuncMoveLinear::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TY
 	if ( m_hPosition2 == NULL || m_hPosition1 == NULL )
 		return;
 //TE120--
-	if ( value > 1.0 )
-		value = 1.0;
+	if ( value > 1.0f )
+		value = 1.0f;
 //TE120--
 	Vector move = m_hPosition1->GetLocalOrigin() + ( value * ( m_hPosition2->GetLocalOrigin() - m_hPosition1->GetLocalOrigin() ) );
 //TE120--

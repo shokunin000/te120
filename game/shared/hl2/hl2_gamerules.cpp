@@ -1866,7 +1866,7 @@ CAmmoDef *GetAmmoDef()
 #ifdef HL2_EPISODIC
 		def.AddAmmoType("StriderMinigun",	DMG_BULLET,					TRACER_LINE,			2, 3, 15, 1.0 * 750 * 12, AMMO_FORCE_DROP_IF_CARRIED ); // hit like a 1.0kg weight at 750 ft/s //TE120
 #else
-		def.AddAmmoType("StriderMinigun",	DMG_BULLET,					TRACER_LINE,			2, 3,15, 1.0 * 750 * 12, AMMO_FORCE_DROP_IF_CARRIED ); // hit like a 1.0kg weight at 750 ft/s //TE120
+		def.AddAmmoType("StriderMinigun",	DMG_BULLET,					TRACER_LINE,			2, 3, 15, 1.0 * 750 * 12, AMMO_FORCE_DROP_IF_CARRIED ); // hit like a 1.0kg weight at 750 ft/s //TE120
 #endif//HL2_EPISODIC
 
 		def.AddAmmoType("StriderMinigunDirect",	DMG_BULLET,				TRACER_LINE,			3, 4, 15, 1.0 * 750 * 12, AMMO_FORCE_DROP_IF_CARRIED ); // hit like a 1.0kg weight at 750 ft/s //TE120

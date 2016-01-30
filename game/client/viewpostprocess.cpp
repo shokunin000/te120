@@ -2230,11 +2230,6 @@ bool  g_ReturnToDefault = false;
 float g_NextDirtyUpdateTime = 0.0f;
 //TE120--
 
-float g_DesiredDirtyValue = -1.0f;//TE120
-float g_ActualDirtyValue = 1.0f;//TE120
-bool  g_ReturnToDefault = false;//TE120
-float g_NextDirtyUpdateTime = 0.0f;//TE120
-
 void DoEnginePostProcessing( int x, int y, int w, int h, bool bFlashlightIsOn, bool bPostVGui )
 {
 	tmZone( TELEMETRY_LEVEL0, TMZF_NONE, "%s", __FUNCTION__ );

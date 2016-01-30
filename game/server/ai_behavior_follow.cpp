@@ -833,11 +833,13 @@ bool CAI_FollowBehavior::ShouldFollow()
 	}
 
 	m_bFollowNavFailed = false;
+
 //TE120--
 	// Let AI reload or they might get stuck in endless loop trying to reload & move
 	if ( HasCondition ( COND_NO_PRIMARY_AMMO ) )
 		return false;
 //TE120--
+
 	return true;
 }
 

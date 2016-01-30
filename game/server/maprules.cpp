@@ -647,27 +647,16 @@ void CGamePlayerEquip::Touch( CBaseEntity *pOther )
 
 void CGamePlayerEquip::EquipPlayer( CBaseEntity *pEntity )
 {
-//TE120--
-	//CBasePlayer *pPlayer = ToBasePlayer(pEntity);
+// Allow game_player_equip with logic_auto --
 	CBasePlayer *pPlayer = NULL;
 
-	if (pEntity && !pEntity->IsPlayer() )
-	{
-		pEntity = NULL;
-	}
-
+	// If no entity found use player (sp only)
 	if ( pEntity == NULL )
 		pEntity = UTIL_GetLocalPlayer();
 
 	if (pEntity && pEntity->IsPlayer() )
-	{
 		pPlayer = (CBasePlayer *)pEntity;
-		//Msg("pPlayer is: %s\n", pPlayer->GetEntityName() ); //Debug
-	}
-//TE120--
-
-	if ( !pPlayer )
-		return;
+//--
 
 	for ( int i = 0; i < MAX_EQUIP; i++ )
 	{

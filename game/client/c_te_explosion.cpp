@@ -30,13 +30,14 @@ CRagdollExplosionEnumerator::CRagdollExplosionEnumerator( Vector origin, float r
 	m_flRadius		= radius;
 	m_bDirectPush	= false;//TE120
 }
+
 //TE120--
 // Enumator class for ragdolls being affected by explosive forces
 CRagdollExplosionEnumerator::CRagdollExplosionEnumerator( Vector origin, float radius, float magnitude, bool direct )
 {
-	m_vecOrigin	= origin;
+	m_vecOrigin		= origin;
 	m_flMagnitude	= magnitude;
-	m_flRadius	= radius;
+	m_flRadius		= radius;
 	m_bDirectPush	= direct;
 }
 //TE120--
@@ -69,7 +70,7 @@ CRagdollExplosionEnumerator::~CRagdollExplosionEnumerator()
 //TE120--
 		if ( m_bDirectPush == true )
 		{
-			//Msg( pEnt->GetClassname(), "\n" );
+			//DevMsg("DirectPush: Entity %s\n", pEnt->GetClassname() );
 			C_ClientRagdoll *pModel = dynamic_cast< C_ClientRagdoll * >( pEnt );
 			if (pModel)
 			{
@@ -107,6 +108,7 @@ CRagdollExplosionEnumerator::~CRagdollExplosionEnumerator()
 
 			// tricky, adjust tr.start so end-start->= force
 			tr.startpos = tr.endpos - dir;
+
 			// move explosion center a bit down, so things fly higher
 			tr.startpos.z -= 32.0f;
 

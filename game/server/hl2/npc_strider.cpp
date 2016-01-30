@@ -1877,7 +1877,7 @@ void CNPC_Strider::HandleAnimEvent( animevent_t *pEvent )
 //TE120--
 			// Don't shoot unless player is looking.
 			CBasePlayer *pPlayer = AI_GetSinglePlayer();
-			// if( !pPlayer->FInViewCone(this) )
+			
 			if ( pPlayer->FVisible(this) )
 			{
 				AimCannonAt( GetCannonTarget(), 0.1 );

@@ -553,7 +553,7 @@ void CNPC_FloorTurret::OnPhysGunDrop( CBasePlayer *pPhysGunUser, PhysGunDrop_t R
 	if ( IRelationType( pPhysGunUser ) != D_HT )
 	{
 		m_flPlayerDropTime = gpGlobals->curtime + 2.0;
-		Msg( "Setting new drop time.\n" );//TE120
+		DevMsg( "Setting new drop time.\n" );//TE120
 	}
 
 	// Restore our mass to the original value

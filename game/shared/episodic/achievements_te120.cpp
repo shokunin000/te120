@@ -10,7 +10,6 @@
 
 #include "achievementmgr.h"
 #include "baseachievement.h"
-
 // for CalcPlayerAttacks
 #include "baseplayer_shared.h"
 #include "basehlcombatweapon_shared.h"
@@ -23,7 +22,7 @@ CAchievementMgr AchievementMgr;	//create achievement manager object
 
 // resets the achievements, debug only, disable in release!
 //#define RESETSTATS
-//int CalcPlayerAttacks( bool bBulletOnly );
+int CalcPlayerAttacks( bool bBulletOnly );
 
 class CAchievementE120MyFirstGravityJump : public CBaseAchievement
 {

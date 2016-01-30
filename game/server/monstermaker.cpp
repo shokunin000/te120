@@ -678,9 +678,9 @@ CNPCSpawnDestination *CTemplateNPCMaker::FindSpawnDestination()
 					DevMsg( 1, "(%s) Spawner not visible.\n", STRING( GetEntityName() ) );
 				}
 //TE120--
-				if( m_CriterionVisibility == TS_YN_YES )
+				if ( m_CriterionVisibility == TS_YN_YES )
 				{
-					if( !fVisible )
+					if ( !fVisible )
 						fValid = false;
 				}
 				else

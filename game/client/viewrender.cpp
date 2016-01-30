@@ -798,7 +798,11 @@ CLIENTEFFECT_REGISTER_BEGIN( PrecachePostProcessingEffects )
 	CLIENTEFFECT_MATERIAL( "dev/engine_post" )
 	CLIENTEFFECT_MATERIAL( "dev/motion_blur" )
 	CLIENTEFFECT_MATERIAL( "dev/upscale" )
-
+//TE120--
+	// TE120 Postprocess Effects
+	CLIENTEFFECT_MATERIAL( "drunk" )
+	CLIENTEFFECT_MATERIAL( "combinedlens" )
+//TE120--
 #ifdef TF_CLIENT_DLL
 	CLIENTEFFECT_MATERIAL( "dev/pyro_blur_filter_y" )
 	CLIENTEFFECT_MATERIAL( "dev/pyro_blur_filter_x" )

@@ -83,6 +83,7 @@ void CLight::Spawn( void )
 			engine->LightStyle(m_iStyle, "m");
 	}
 }
+
 //TE120--
 void CLight::Activate( void )
 {
@@ -231,6 +232,7 @@ void CLight::InputSetPattern( inputdata_t &inputdata )
 	// Light is on if pattern is set
 	CLEARBITS(m_spawnflags, SF_LIGHT_START_OFF);
 }
+
 //TE120--
 //-----------------------------------------------------------------------------
 // Purpose: Input handler for fading a light

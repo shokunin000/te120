@@ -407,6 +407,10 @@ C_BasePlayer::C_BasePlayer() : m_iv_vecViewOffset( "C_BasePlayer::m_iv_vecViewOf
 {
 	AddVar( &m_vecViewOffset, &m_iv_vecViewOffset, LATCH_SIMULATION_VAR );
 
+	// Prevent clip with dynamic lights
+ 	ConVarRef r_flashlightscissor( "r_flashlightscissor" );
+ 	r_flashlightscissor.SetValue( "0" );
+
 #ifdef _DEBUG
 	m_vecLadderNormal.Init();
 	m_vecOldViewAngles.Init();
@@ -440,9 +444,6 @@ C_BasePlayer::C_BasePlayer() : m_iv_vecViewOffset( "C_BasePlayer::m_iv_vecViewOf
 	m_nForceVisionFilterFlags = 0;
 
 	ListenForGameEvent( "base_player_teleported" );
-
-	ConVarRef scissor( "r_flashlightscissor" );
-	scissor.SetValue( "0" );
 }
 
 //-----------------------------------------------------------------------------

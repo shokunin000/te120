@@ -385,21 +385,24 @@ void C_ClientRagdoll::GCPush( Vector *start, float radius )
 	Vector forward;
 
 	forward.x = end.x - start->x;
+
 	if ( forward.x != 0 )
 		forward.x /= 128.0f;
 
 	forward.y = end.y - start->y;
+
 	if ( forward.y != 0 )
 		forward.y /= 128.0f;
 
-
 	forward.z = end.z - start->z;
+
 	// Skew the z direction upward
 	forward.z += 44.0f;
+
 	if ( forward.z != 0 )
 		forward.z /= 128.0f;
 
-	if( forward.z < 0 )
+	if ( forward.z < 0 )
 	{
 		//reflect, but flatten the trajectory out a bit so it's easier to hit standing targets
 		forward.z *= -0.65f;
@@ -414,6 +417,7 @@ void C_ClientRagdoll::GCPush( Vector *start, float radius )
 
 	Vector *vVel = &forward;
 	AngularImpulse aVel;
+
 	aVel.x = 3200.0f + random->RandomFloat(0.0f, 3200.0f);
 	aVel.y = 3200.0f + random->RandomFloat(0.0f, 3200.0f);
 	aVel.z = 3200.0f + random->RandomFloat(0.0f, 3200.0f);
@@ -429,7 +433,7 @@ void C_ClientRagdoll::GCPush( Vector *start, float radius )
 
 	//debugoverlay->AddLineOverlay( *start, end, 0, 255, 0, true, 18.0 );
 
-	for (int j = 0; j < pRagdollPhys->listCount; ++j )
+	for ( int j = 0; j < pRagdollPhys->listCount; ++j )
 	{
 		pRagdollPhys->list[j].pObject->AddVelocity( vVel, &aVel );
 	}
@@ -3381,9 +3385,9 @@ void C_BaseAnimating::ProcessMuzzleFlashEvent()
 
 			dlight_t *dl = effects->CL_AllocDlight ( index );
 			dl->origin = vAttachment;
-			dl->color.r = 231;
-			dl->color.g = 219;
-			dl->color.b = 14;
+			dl->color.r = 252;
+			dl->color.g = 238;
+			dl->color.b = 128;
 			dl->die = gpGlobals->curtime + 0.05f;
 			dl->radius = random->RandomFloat( 245.0f, 256.0f );
 			dl->decay = 512.0f;

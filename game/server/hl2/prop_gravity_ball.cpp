@@ -1,7 +1,7 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: combine ball -	can be held by the super physcannon and launched
-//							by the AR2's alt-fire
+// Purpose: TE120 combine ball - launched by physconcussion
+//
 //
 //=============================================================================//
 
@@ -33,6 +33,9 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
+#define PROP_GRAVITY_BALL_MODEL	"models/effects/combineball_b.mdl"
+#define PROP_GRAVITY_BALL_SPRITE_TRAIL "sprites/combineball_trail_black_1.vmt"
+
 ConVar gravityball_tracelength( "gravityball_tracelength", "96" );
 ConVar gravityball_magnitude( "gravityball_magnitude", "9000" );
 
@@ -40,8 +43,13 @@ ConVar gravityball_magnitude( "gravityball_magnitude", "9000" );
 int s_nExplosionGBTexture = -1;
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : radius - 
+// Context think
+//-----------------------------------------------------------------------------
+static const char *s_pRemoveContext = "RemoveContext";
+
+//-----------------------------------------------------------------------------
+// Purpose:
+// Input  : radius -
 // Output : CBaseEntity
 //-----------------------------------------------------------------------------
 CBaseEntity *CreateGravityBall( const Vector &origin, const Vector &velocity, float radius, float mass, float lifetime, CBaseEntity *pOwner, CWeaponPhysConcussion *pWeapon )
@@ -93,7 +101,7 @@ bool UTIL_IsGravityBall( CBaseEntity *pEntity )
 
 //-----------------------------------------------------------------------------
 // Purpose: Determines whether a physics object is an AR2 combine ball or not
-// Input  : *pEntity - 
+// Input  : *pEntity -
 // Output : Returns true on success, false on failure.
 //-----------------------------------------------------------------------------
 bool UTIL_IsAR2GravityBall( CBaseEntity *pEntity )
@@ -116,7 +124,7 @@ bool UTIL_IsAR2GravityBall( CBaseEntity *pEntity )
 //			in UTIL_IsCombineBall() can never identify a combine ball held by
 //			the physcannon because the physcannon changes the held entity's
 //			collision group.
-// Input  : *pEntity - Entity to check 
+// Input  : *pEntity - Entity to check
 // Output : Returns true on success, false on failure.
 //-----------------------------------------------------------------------------
 bool UTIL_IsGravityBallDefinite( CBaseEntity *pEntity )
@@ -132,7 +140,7 @@ bool UTIL_IsGravityBallDefinite( CBaseEntity *pEntity )
 LINK_ENTITY_TO_CLASS( prop_gravity_ball, CPropGravityBall );
 
 //-----------------------------------------------------------------------------
-// Save/load: 
+// Save/load:
 //-----------------------------------------------------------------------------
 BEGIN_DATADESC( CPropGravityBall )
 
@@ -156,8 +164,8 @@ BEGIN_DATADESC( CPropGravityBall )
 	DEFINE_FIELD( m_nBounceCount,	FIELD_INTEGER ),
 	DEFINE_FIELD( m_nMaxBounces,	FIELD_INTEGER ),
 	DEFINE_FIELD( m_bBounceDie,	FIELD_BOOLEAN ),
-	
-	
+
+
 	DEFINE_FIELD( m_hSpawner, FIELD_EHANDLE ),
 
 	DEFINE_THINKFUNC( ExplodeThink ),
@@ -183,22 +191,34 @@ IMPLEMENT_SERVERCLASS_ST( CPropGravityBall, DT_PropGravityBall )
 END_SEND_TABLE()
 
 //-----------------------------------------------------------------------------
-// Precache 
+// Precache
 //-----------------------------------------------------------------------------
 void CPropGravityBall::Precache( void )
 {
-	s_nExplosionGBTexture = PrecacheModel( "sprites/lgtning.vmt" );
+	// NOTENOTE: We don't call into the base class because it chains multiple
+	//					 precaches we don't need to incur
+
 	PrecacheModel( PROP_GRAVITY_BALL_MODEL );
+	PrecacheModel( PROP_GRAVITY_BALL_SPRITE_TRAIL);
+
+	s_nExplosionGBTexture = PrecacheModel( "sprites/lgtning.vmt" );
 
 	PrecacheScriptSound( "NPC_GravityBall.Launch" );
 	PrecacheScriptSound( "NPC_GravityBall.Explosion" );
 	PrecacheScriptSound( "NPC_GravityBall.WhizFlyby" );
 
-	CPropCombineBall::Precache();
+	if ( hl2_episodic.GetBool() )
+	{
+		PrecacheScriptSound( "NPC_CombineBall_Episodic.Impact" );
+	}
+	else
+	{
+		PrecacheScriptSound( "NPC_CombineBall.Impact" );
+	}
 }
 
 //-----------------------------------------------------------------------------
-// Spawn: 
+// Spawn:
 //-----------------------------------------------------------------------------
 void CPropGravityBall::Spawn( void )
 {
@@ -231,7 +251,7 @@ void CPropGravityBall::Spawn( void )
 	AddEffects( EF_NOSHADOW );
 
 	// Start up the eye trail
-	CSpriteTrail *pGlowTrail = CSpriteTrail::SpriteTrailCreate( PROP_COMBINE_BALL_SPRITE_TRAIL, GetAbsOrigin(), false );
+	CSpriteTrail *pGlowTrail = CSpriteTrail::SpriteTrailCreate( PROP_GRAVITY_BALL_SPRITE_TRAIL, GetAbsOrigin(), false );
 	SetGlowTrail( pGlowTrail );
 
 	if ( pGlowTrail != NULL )
@@ -289,14 +309,14 @@ bool CPropGravityBall::CreateVPhysics()
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CPropGravityBall::DoImpactEffect( const Vector &preVelocity, int index, gamevcollisionevent_t *pEvent )
 {
 	// Do that crazy impact effect!
 	trace_t tr;
 	CollisionEventToTrace( !index, pEvent, tr );
-	
+
 	CBaseEntity *pTraceEntity = pEvent->pEntities[index];
 	UTIL_TraceLine( tr.startpos - preVelocity * 2.0f, tr.startpos + preVelocity * 2.0f, MASK_SOLID, pTraceEntity, COLLISION_GROUP_NONE, &tr );
 
@@ -421,7 +441,7 @@ void CPropGravityBall::DoExplosion( )
 	AddSolidFlags( FSOLID_NOT_SOLID );
 
 	SetEmitState( false );
-	
+
 	CHL2_Player *pPlayer = dynamic_cast<CHL2_Player *>( GetOwnerEntity() );
 
 	if( !m_bStruckEntity && hl2_episodic.GetBool() && GetOwnerEntity() != NULL )
@@ -457,27 +477,29 @@ void CPropGravityBall::DoExplosion( )
 		// Make sure its a gravity touchable entity
 		if ( (pEntity->IsEFlagSet( EFL_NO_PHYSCANNON_INTERACTION ) || pEntity->GetMoveType() != MOVETYPE_VPHYSICS) && ( pEntity->m_takedamage == DAMAGE_NO ) )
 		{
-			// Msg("Found invalid gravity entity %s \n", pEntity->GetClassname() );
+			//DevMsg("Found invalid gravity entity %s\n", pEntity->GetClassname() );
 			continue;
-		} else {
-			// Msg("Found valid gravity entity %s \n", pEntity->GetClassname() );
+		}
+		else
+		{
+			//DevMsg("Found valid gravity entity %s\n", pEntity->GetClassname() );
 
 			// If anything changes here remember to duplciate in c_baseanimating.cpp
 			start = GetAbsOrigin();
 			end = pEntity->GetAbsOrigin();
 
 			forward.x = end.x - start.x;
-			if (forward.x != 0)
+			if ( forward.x != 0 )
 				forward.x /= gravityball_tracelength.GetFloat();
 
 			forward.y = end.y - start.y;
-			if (forward.y != 0)
+			if ( forward.y != 0 )
 				forward.y /= gravityball_tracelength.GetFloat();
 
 			forward.z = end.z - start.z;
 			// Skew the z direction upward
 			forward.z += 44.0f;
-			if (forward.z != 0)
+			if ( forward.z != 0 )
 				forward.z /= gravityball_tracelength.GetFloat();
 
 			trace_t tr;
@@ -501,10 +523,10 @@ void CPropGravityBall::DoExplosion( )
 					CTakeDamageInfo ragdollInfo( pPlayer, pPlayer, 10000.0, DMG_PHYSGUN | DMG_REMOVENORAGDOLL );
 					pEntity->TakeDamage( ragdollInfo );
 
-					if (m_pWeaponPC)
+					if ( m_pWeaponPC )
 						m_pWeaponPC->PuntRagdoll( pRagdoll, forward, tr );
 				}
-				else if (m_pWeaponPC)
+				else if ( m_pWeaponPC )
 				{
 					m_pWeaponPC->PuntNonVPhysics( pEntity, forward, tr );
 				}
@@ -520,10 +542,10 @@ void CPropGravityBall::DoExplosion( )
 				{
 					// Amplify the height of the push
 					forward.z *= 1.4f;
-					if (m_pWeaponPC)
+					if ( m_pWeaponPC )
 						m_pWeaponPC->PuntRagdoll( pEntity, forward, tr );
 				}
-				else if (m_pWeaponPC)
+				else if ( m_pWeaponPC )
 				{
 						m_pWeaponPC->PuntVPhysics( pEntity, forward, tr );
 				}
@@ -533,7 +555,7 @@ void CPropGravityBall::DoExplosion( )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 bool CPropGravityBall::IsHittableEntity( CBaseEntity *pHitEntity )
 {
@@ -541,7 +563,7 @@ bool CPropGravityBall::IsHittableEntity( CBaseEntity *pHitEntity )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CPropGravityBall::OnHitEntity( CBaseEntity *pHitEntity, float flSpeed, int index, gamevcollisionevent_t *pEvent )
 {
@@ -549,7 +571,7 @@ void CPropGravityBall::OnHitEntity( CBaseEntity *pHitEntity, float flSpeed, int 
 }
 
 //-----------------------------------------------------------------------------
-// Deflects the ball toward enemies in case of a collision 
+// Deflects the ball toward enemies in case of a collision
 //-----------------------------------------------------------------------------
 void CPropGravityBall::DeflectTowardEnemy( float flSpeed, int index, gamevcollisionevent_t *pEvent )
 {
@@ -557,7 +579,7 @@ void CPropGravityBall::DeflectTowardEnemy( float flSpeed, int index, gamevcollis
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CPropGravityBall::VPhysicsCollision( int index, gamevcollisionevent_t *pEvent )
 {

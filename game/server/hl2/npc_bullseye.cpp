@@ -474,6 +474,7 @@ void CNPC_Bullseye::InputReleased( inputdata_t &inputdata )
 {
 	m_OnReleased.FireOutput( inputdata.pActivator, inputdata.pCaller, 0 );
 }
+
 //TE120--
 void CNPC_Bullseye::InputPlayerFormation( inputdata_t &inputdata )
 {
@@ -482,7 +483,7 @@ void CNPC_Bullseye::InputPlayerFormation( inputdata_t &inputdata )
 
 	CBasePlayer* pPlayer = UTIL_GetLocalPlayer();
 
-	if( pPlayer )
+	if ( pPlayer )
 	{
 		Vector vPlayerPos = pPlayer->GetAbsOrigin();
 

@@ -204,6 +204,7 @@ void CFuncLadder::SearchForDismountPoints()
 	}
 #endif
 }
+
 //TE120--
 void CFuncLadder::OffsetTop( inputdata_t &inputdata )
 {
@@ -214,6 +215,7 @@ void CFuncLadder::OffsetTop( inputdata_t &inputdata )
 #endif
 }
 //TE120--
+
 void CFuncLadder::SetEndPoints( const Vector& p1, const Vector& p2 )
 {
 	m_vecPlayerMountPositionTop = p1;

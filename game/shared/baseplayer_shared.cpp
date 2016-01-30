@@ -1103,7 +1103,6 @@ bool CBasePlayer::FindAnyUsable()
 }
 //TE120--
 
-
 static float EstimatedDistanceSquared(const Vector &point, const CBaseEntity *pEntity)
 {
 	Vector nearestPoint;

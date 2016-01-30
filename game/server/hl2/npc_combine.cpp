@@ -310,9 +310,7 @@ void CNPC_Combine::Spawn( void )
 	AddSolidFlags( FSOLID_NOT_STANDABLE );
 	SetMoveType( MOVETYPE_STEP );
 	SetBloodColor( BLOOD_COLOR_RED );
-//TE120--
-	m_flFieldOfView		= VIEW_FIELD_NARROW; // -0.2 indicates the width of this NPC's forward view cone ( as a dotproduct result )
-//TE120--
+	m_flFieldOfView		= VIEW_FIELD_NARROW; //TE120 -0.2 indicates the width of this NPC's forward view cone ( as a dotproduct result )
 	m_NPCState				= NPC_STATE_NONE;
 	m_flNextGrenadeCheck	= gpGlobals->curtime + 1;
 	m_flNextPainSoundTime	= 0;
@@ -1397,9 +1395,7 @@ void CNPC_Combine::AnnounceAssault(void)
 		return;
 
 	// Make sure we are in view cone of player
-//TE120--
-		m_Sentences.Speak( "COMBINE_ASSAULT" );
-//TE120--
+	m_Sentences.Speak( "COMBINE_ASSAULT" );//TE120
 }
 
 

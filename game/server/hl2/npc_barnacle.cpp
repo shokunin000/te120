@@ -373,6 +373,12 @@ int	CNPC_Barnacle::OnTakeDamage_Alive( const CTakeDamageInfo &inputInfo )
 	{
 		info.SetDamage( m_iHealth );
 	}
+//TE120--
+	else if ( info.GetDamageType() & DMG_PHYSGUN ) // Kill barnacles with physconcussion
+	{
+		info.SetDamage( m_iHealth );
+	}
+//TE120--
 
 	if ( GetActivity() == ACT_IDLE )
 	{
@@ -677,7 +683,7 @@ bool CNPC_Barnacle::CanPickup( CBaseCombatCharacter *pBCC )
 		// Don't pick up a player held by another barnacle
 		if( pPlayer->HasPhysicsFlag(PFLAG_ONBARNACLE) )
 			return false;
-			
+
 		// Don't pick up a player who has noclip enabled
 		if( pPlayer->GetMoveType() == MOVETYPE_NOCLIP )
 			return false;
@@ -1508,7 +1514,7 @@ You can use this stanza to try to counterplace the constraint on the player's he
 	// Make a ragdoll for the guy, and hide him.
 	pTouchEnt->AddSolidFlags( FSOLID_NOT_SOLID );
 
-  	m_hRagdoll = AttachRagdollToTongue( pAnimating );
+  m_hRagdoll = AttachRagdollToTongue( pAnimating );
 	m_hRagdoll->SetDamageEntity( pAnimating );
 
 	// Make it try to blend out of ragdoll on the client on deletion

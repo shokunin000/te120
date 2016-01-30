@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose: TE120 combine ball - launched by physconcussion
 //
 //=============================================================================//
 
@@ -17,8 +17,9 @@
 #include "player_pickup.h"	// for combine ball inheritance
 #include "prop_combine_ball.h"
 
-#define PROP_GRAVITY_BALL_MODEL	"models/effects/combineball_b.mdl"
-
+//-----------------------------------------------------------------------------
+// Forward declarations
+//-----------------------------------------------------------------------------
 class CWeaponPhysConcussion;
 
 //-----------------------------------------------------------------------------

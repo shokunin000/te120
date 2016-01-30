@@ -137,8 +137,10 @@ public:
 	virtual bool	FindAnyUsable( void );//TE120
 	CBaseEntity		*FindUseEntity( void );
 	virtual bool	IsUseableEntity( CBaseEntity *pEntity, unsigned int requiredCaps );
-	virtual void	CheckUsable( void );//TE120
-	void	SetOnUsable( bool bOnUsable ) { m_fOnUsable = bOnUsable; }//TE120
+	//TE120--
+	virtual void	CheckUsable( void );
+	void	SetOnUsable( bool bOnUsable ) { m_fOnUsable = bOnUsable; }
+	//TE120--
 
 	// Data handlers
 	virtual bool	IsPlayer( void ) const { return true; }

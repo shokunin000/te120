@@ -127,9 +127,9 @@ void CGrenadeBeam::Spawn( void )
 	Precache( );
 	SetSolid( SOLID_BBOX );
 	SetMoveType( MOVETYPE_FLYGRAVITY, MOVECOLLIDE_FLY_BOUNCE );
-	
+
 	//UNDONE/HACK: this model is never used but one is needed
-	SetModel( "Models/weapons/shell.mdl" );//TE120
+	SetModel( "Models/weapons/flare.mdl" );
 	AddEffects( EF_NODRAW );
 
 	SetTouch( &CGrenadeBeam::GrenadeBeamTouch );
@@ -257,7 +257,7 @@ void CGrenadeBeam::GrenadeBeamTouch( CBaseEntity *pOther )
 	{
 		UTIL_Bubbles(GetAbsOrigin()-Vector(3,3,3),GetAbsOrigin()+Vector(3,3,3),10);
 	}
-	else 
+	else
 	{
 		UTIL_Smoke(GetAbsOrigin(), random->RandomInt(5, 10), 10);
 	}
@@ -271,7 +271,7 @@ void CGrenadeBeam::GrenadeBeamTouch( CBaseEntity *pOther )
 		KillBeam();
 		return;
 	}
-	
+
 	EmitSound( "GrenadeBeam.HitSound" );
 
 	trace_t tr;
@@ -316,7 +316,7 @@ void CGrenadeBeam::GetChaserTargetPos(Vector *vPosition)
 	// -----------------------------
 	//  Launch chaser after a delay
 	// -----------------------------
-	if (gpGlobals->curtime - m_flLaunchTime < m_flBeamLag) 
+	if (gpGlobals->curtime - m_flLaunchTime < m_flBeamLag)
 	{
 		*vPosition = m_vLaunchPos;
 	}
@@ -365,7 +365,7 @@ void CGrenadeBeam::DebugBeams(void)
 	{
 		NDebugOverlay::Line(GetLocalOrigin(), m_hBeamChaser->GetLocalOrigin(), 255,255,25, true, 0.1);
 	}
-	
+
 	for (int i=0;i<m_nNumHits;i++)
 	{
 		NDebugOverlay::Cross3D(m_pHitLocation[i],	Vector(-8,-8,-8),Vector(8,8,8),0,255,0,true,0.1);
@@ -426,7 +426,7 @@ void CGrenadeBeam::Precache( void )
 	PrecacheModel("sprites/laser.vmt");
 
 	//UNDONE/HACK: this model is never used but one is needed
-	PrecacheModel( "Models/weapons/shell.mdl" );//TE120
+	PrecacheModel("Models/weapons/flare.mdl");
 
 	PrecacheScriptSound( "GrenadeBeam.HitSound" );
 }
@@ -440,4 +440,3 @@ int CGrenadeBeam::UpdateTransmitState(void)
 {
 	return SetTransmitState( FL_EDICT_PVSCHECK );
 }
-

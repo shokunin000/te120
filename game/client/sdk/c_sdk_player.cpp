@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 //=============================================================================//
 
@@ -33,7 +33,7 @@ public:
 		if ( pPlayer && !pPlayer->IsDormant() )
 		{
 			pPlayer->DoAnimationEvent( (PlayerAnimEvent_t)m_iEvent.Get(), m_nData );
-		}	
+		}
 	}
 
 public:
@@ -65,7 +65,7 @@ END_RECV_TABLE()
 
 BEGIN_PREDICTION_DATA( C_SDKPlayer )
 	DEFINE_PRED_FIELD( m_flCycle, FIELD_FLOAT, FTYPEDESC_OVERRIDE | FTYPEDESC_PRIVATE | FTYPEDESC_NOERRORCHECK ),
-	DEFINE_PRED_FIELD( m_iShotsFired, FIELD_INTEGER, FTYPEDESC_INSENDTABLE ),   
+	DEFINE_PRED_FIELD( m_iShotsFired, FIELD_INTEGER, FTYPEDESC_INSENDTABLE ),
 END_PREDICTION_DATA()
 
 class C_SDKRagdoll : public C_BaseAnimatingOverlay
@@ -124,10 +124,10 @@ void C_SDKRagdoll::Interp_Copy( C_BaseAnimatingOverlay *pSourceEntity )
 {
 	if ( !pSourceEntity )
 		return;
-	
+
 	VarMapping_t *pSrc = pSourceEntity->GetVarMapping();
 	VarMapping_t *pDest = GetVarMapping();
-    	
+
 	// Find all the VarMapEntry_t's that represent the same variable.
 	for ( int i = 0; i < pDest->m_Entries.Count(); i++ )
 	{
@@ -163,7 +163,7 @@ void C_SDKRagdoll::ImpactTrace( trace_t *pTrace, int iDamageType, const char *pC
 	}
 	else
 	{
-		Vector hitpos;  
+		Vector hitpos;
 
 		VectorMA( pTrace->startpos, pTrace->fraction, dir, hitpos );
 		VectorNormalize( dir );
@@ -171,7 +171,7 @@ void C_SDKRagdoll::ImpactTrace( trace_t *pTrace, int iDamageType, const char *pC
 		dir *= 4000;  // adjust impact strenght
 
 		// apply force where we hit it
-		pPhysicsObject->ApplyForceOffset( dir, hitpos );	
+		pPhysicsObject->ApplyForceOffset( dir, hitpos );
 	}
 
 	m_pRagdoll->ResetRagdollSleepAfterTime();
@@ -193,7 +193,7 @@ void C_SDKRagdoll::CreateRagdoll()
 
 		// Copy all the interpolated vars from the player entity.
 		// The entity uses the interpolated history to get bone velocity.
-		bool bRemotePlayer = (pPlayer != C_BasePlayer::GetLocalPlayer());			
+		bool bRemotePlayer = (pPlayer != C_BasePlayer::GetLocalPlayer());
 		if ( bRemotePlayer )
 		{
 			Interp_Copy( pPlayer );
@@ -226,7 +226,7 @@ void C_SDKRagdoll::CreateRagdoll()
 			SetCycle( 0.0 );
 
 			Interp_Reset( varMap );
-		}		
+		}
 	}
 	else
 	{
@@ -303,7 +303,7 @@ IRagdoll* C_SDKPlayer::GetRepresentativeRagdoll() const
 
 
 
-C_SDKPlayer::C_SDKPlayer() : 
+C_SDKPlayer::C_SDKPlayer() :
 	m_iv_angEyeAngles( "C_SDKPlayer::m_iv_angEyeAngles" )
 {
 	m_PlayerAnimState = CreatePlayerAnimState( this, this, LEGANIM_9WAY, true );
@@ -356,7 +356,7 @@ void C_SDKPlayer::PostDataUpdate( DataUpdateType_t updateType )
 	// C_BaseEntity assumes we're networking the entity's angles, so pretend that it
 	// networked the same value we already have.
 	SetNetworkAngles( GetLocalAngles() );
-	
+
 	BaseClass::PostDataUpdate( updateType );
 }
 
@@ -380,7 +380,7 @@ void C_SDKPlayer::DoAnimationEvent( PlayerAnimEvent_t event, int nData )
 		// Let the server handle this event. It will update m_iThrowGrenadeCounter and the client will
 		// pick up the event in CCSPlayerAnimState.
 	}
-	else	
+	else
 	{
 		m_PlayerAnimState->DoAnimationEvent( event, nData );
 	}

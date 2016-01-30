@@ -617,7 +617,7 @@ public:
 	bool MyTouch( CBasePlayer *pPlayer )
 	{
 		CHL2_Player *pHL2Player = dynamic_cast<CHL2_Player *>( pPlayer );
-		if( pHL2Player )
+		if ( pHL2Player )
 		{
 			pHL2Player->ApplyBattery();
 		}
@@ -636,7 +636,7 @@ public:
 		return false;
 	}
 };
-LINK_ENTITY_TO_CLASS(item_gc_energy, CItem_GC_Energy);
+LINK_ENTITY_TO_CLASS( item_gc_energy, CItem_GC_Energy );
 //TE120--
 
 // ==================================================================

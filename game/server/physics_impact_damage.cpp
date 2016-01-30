@@ -391,6 +391,7 @@ float CalculatePhysicsImpactDamage( int index, gamevcollisionevent_t *pEvent, co
 
 	float damage = 0;
 	bool bDebug = false;//(&table == &gDefaultPlayerImpactDamageTable);
+
 //TE120--
 	// don't ever take spin damage from slowly spinning objects unless they're huge
 	if ( otherAngSqr > table.minRotSpeedSqr || ( otherMass > 250 && otherAngSqr > 0 ) )
@@ -406,6 +407,7 @@ float CalculatePhysicsImpactDamage( int index, gamevcollisionevent_t *pEvent, co
 			damage = ReadDamageTable( table.angularTable, table.angularCount, angularMom * energyScale, bDebug );
 		}
 //TE120--
+
 		if ( damage > 0 )
 		{
 //			Msg("Spin : %.1f, Damage %.0f\n", FastSqrt(angularMom), damage );
@@ -467,6 +469,7 @@ float CalculatePhysicsImpactDamage( int index, gamevcollisionevent_t *pEvent, co
 	}
 
 	eliminatedEnergy *= invMass * energyScale;
+
 //TE120--
 	// If the object is massive scale up energy loss calculation
 	if ( ( eliminatedEnergy < table.linearTable[0].impulse ) && otherMass > 250 )
@@ -475,12 +478,14 @@ float CalculatePhysicsImpactDamage( int index, gamevcollisionevent_t *pEvent, co
 			eliminatedEnergy = log( eliminatedEnergy + 1 ) * phys_largemass_energyscale.GetFloat();
 	}
 //TE120--
+
 	damage += ReadDamageTable( table.linearTable, table.linearCount, eliminatedEnergy, bDebug );
 
 	if ( !pEvent->pObjects[otherIndex]->IsStatic() && otherMass < table.smallMassMax && table.smallMassCap > 0 )
 	{
 		damage = clamp( damage, 0.f, table.smallMassCap );
 	}
+
 //TE120--
 	if ( pEvent->pEntities[index]->IsPlayer() || pEvent->pEntities[otherIndex]->IsPlayer() )
 	{
