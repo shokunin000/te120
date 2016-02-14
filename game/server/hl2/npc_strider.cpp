@@ -1838,6 +1838,11 @@ void CNPC_Strider::Explode( void )
 	StopSmoking();
 
 	m_BoneFollowerManager.DestroyBoneFollowers();
+
+	// Fire event for achievement: E120_STRIDER_SMASHER
+	IGameEvent *event = gameeventmanager->CreateEvent( "strider_smasher" );
+	if ( event )
+		gameeventmanager->FireEvent( event );
 }
 
 //-----------------------------------------------------------------------------
@@ -2354,7 +2359,7 @@ void CNPC_Strider::InputDisableMoveToLOS( inputdata_t &inputdata )
 void CNPC_Strider::InputExplode( inputdata_t &inputdata )
 {
 	CTakeDamageInfo killInfo;
-	killInfo.SetAttacker( AI_GetSinglePlayer() );//TE120
+	killInfo.SetAttacker( UTIL_GetLocalPlayer() ); //TE120 changed
 	killInfo.SetInflictor( this );
 	killInfo.SetDamage( GetHealth() );
 	TakeDamage( killInfo );
@@ -3135,7 +3140,7 @@ int CNPC_Strider::OnTakeDamage_Alive( const CTakeDamageInfo &info )
 			{
 				// See if the person that injured me is an NPC.
 				CAI_BaseNPC *pAttacker = dynamic_cast<CAI_BaseNPC *>( info.GetAttacker() );
-				CBasePlayer *pPlayer = AI_GetSinglePlayer();
+				CBasePlayer *pPlayer = UTIL_GetLocalPlayer();
 
 				if( pAttacker && pAttacker->IsAlive() && pPlayer )
 				{

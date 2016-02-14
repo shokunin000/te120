@@ -1,4 +1,4 @@
-//========= Copyright Valve Corporation, All rights reserved. ============//
+//=============================================================================//
 //
 // Purpose: TE120 Physconcussion gun
 //
