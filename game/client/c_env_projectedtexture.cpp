@@ -17,8 +17,10 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
-static ConVar mat_slopescaledepthbias_shadowmap( "mat_slopescaledepthbias_shadowmap", "4", FCVAR_CHEAT );
-static ConVar mat_depthbias_shadowmap( "mat_depthbias_shadowmap", "0.00001", FCVAR_CHEAT );
+// Changed to alt due to multiple definitions of these cvars. Making changes via console had no effect here.
+// Also note the values changed from 4 to 16, and 0.00001 to 0.00005. Changes detail & blur on shadows.
+static ConVar mat_slopescaledepthbias_shadowmap_alt( "mat_slopescaledepthbias_shadowmap", "16", FCVAR_CHEAT );
+static ConVar mat_depthbias_shadowmap_alt( "mat_depthbias_shadowmap", "0.00005", FCVAR_CHEAT );
 
 //-----------------------------------------------------------------------------
 // Purpose:
@@ -197,8 +199,8 @@ void C_EnvProjectedTexture::UpdateLight( bool bForceUpdate )
 	state.m_Color[3] = 0.0f; // fixme: need to make ambient work m_flAmbient;
 	state.m_NearZ = m_flNearZ;
 	state.m_FarZ = m_flFarZ;
-	state.m_flShadowSlopeScaleDepthBias = mat_slopescaledepthbias_shadowmap.GetFloat();
-	state.m_flShadowDepthBias = mat_depthbias_shadowmap.GetFloat();
+	state.m_flShadowSlopeScaleDepthBias = mat_slopescaledepthbias_shadowmap_alt.GetFloat();
+	state.m_flShadowDepthBias = mat_depthbias_shadowmap_alt.GetFloat();
 	state.m_bEnableShadows = m_bEnableShadows;
 	state.m_pSpotlightTexture = materials->FindTexture( m_SpotlightTextureName, TEXTURE_GROUP_OTHER, false );
 	state.m_nSpotlightTextureFrame = m_nSpotlightTextureFrame;
