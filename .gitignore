@@ -71,3 +71,5 @@ creategameprojects
 /tier0
 *.lib
 *.pdb
+*.vpc_crc
+*.sentinel
