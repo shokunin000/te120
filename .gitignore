@@ -69,3 +69,5 @@ creategameprojects
 /vpc_scripts
 /vstdlib
 /tier0
+*.lib
+*.pdb
