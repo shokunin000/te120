@@ -37,9 +37,6 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
-// Removed in te120 to help reduce maxedicts & max models in chapter 4
-// #define INSIGNIA_MODEL "models/chefhat.mdl"
-
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
 
@@ -393,9 +390,6 @@ void CNPC_Citizen::Precache()
 
 	if ( NameMatches( "matt" ) )
 		PrecacheModel( "models/props_canal/mattpipe.mdl" );
-
-	// Removed in te120 to help reduce maxedicts & max models in chapter 4
-	// PrecacheModel( INSIGNIA_MODEL );
 
 	PrecacheScriptSound( "NPC_Citizen.FootstepLeft" );
 	PrecacheScriptSound( "NPC_Citizen.FootstepRight" );
@@ -4242,7 +4236,6 @@ void CSquadInsignia::Spawn()
 		}
 	}
 
-	// SetModel( INSIGNIA_MODEL );
 	SetSolid( SOLID_NONE );
 }
 

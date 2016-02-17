@@ -2653,7 +2653,7 @@ void DoEnginePostProcessing( int x, int y, int w, int h, bool bFlashlightIsOn, b
 	static IMaterial *pMat = materials->FindMaterial( "drunk", TEXTURE_GROUP_OTHER );
 	if ( pMat )
 	{
-		unsigned int ivar_tmp;
+		static unsigned int ivar_tmp = 0;
 		IMaterialVar *pMutableVar = pMat->FindVarFast( "$MUTABLE_01", &ivar_tmp );
 
 		if ( pMutableVar )

@@ -3339,7 +3339,7 @@ void CTriggerCamera::FollowTarget( )
 		SetAbsAngles( vecGoal );
 		m_bSnapToGoal = false;
 	}
-#if HL2_EPISODIC
+#ifdef HL2_EPISODIC
 	else if ( !m_bInterpolatePosition )//TE120
 	{
 		// UNDONE: Can't we just use UTIL_AngleDiff here?
@@ -3358,11 +3358,13 @@ void CTriggerCamera::FollowTarget( )
 
 		if (dx < -180)
 			dx += 360;
+
 		if (dx > 180)
 			dx = dx - 360;
 
 		if (dy < -180)
 			dy += 360;
+			
 		if (dy > 180)
 			dy = dy - 360;
 

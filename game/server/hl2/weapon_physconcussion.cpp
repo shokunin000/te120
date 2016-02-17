@@ -1,6 +1,6 @@
-//=============================================================================//
+//========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: TE120 Physconcussion gun
+// Purpose: TE120 Physcussion gun
 //
 //=============================================================================//
 
@@ -1888,14 +1888,14 @@ void CWeaponPhysConcussion::PuntRagdoll( CBaseEntity *pEntity, const Vector &vec
 		CRagdollProp *pRagdoll = dynamic_cast<CRagdollProp*>( pEntity );
 		ragdoll_t *pRagdollPhys = pRagdoll->GetRagdoll( );
 
-		int j;
+		//int j;
 		// for ( j = 0; j < pRagdollPhys->listCount; ++j )
 		// {
 		// 	pRagdollPhys->list[j].pObject->AddVelocity(  &vVel, &aVel );
 		// }
 
 		float totalMass = 0;
-		for ( j = 0; j < pRagdollPhys->listCount; j++ )
+		for ( int j = 0; j < pRagdollPhys->listCount; ++j )
 		{
 			totalMass += pRagdollPhys->list[j].pObject->GetMass();
 		}
@@ -1914,12 +1914,12 @@ void CWeaponPhysConcussion::PuntRagdoll( CBaseEntity *pEntity, const Vector &vec
 		float mass = min(totalMass, maxMass); // max 250kg of additional force
 
 		// Put some spin on the object
-		for ( j = 0; j < pRagdollPhys->listCount; j++ )
+		for ( int j = 0; j < pRagdollPhys->listCount; ++j )
 		{
 			const float hitObjectFactor = 0.5f;
 			const float otherObjectFactor = 1.0f - hitObjectFactor;
 
-  			// Must be light enough
+  		// Must be light enough
 			float ratio = pRagdollPhys->list[j].pObject->GetMass() / totalMass;
 			if ( pRagdollPhys->list[j].pObject == pEntity->VPhysicsGetObject() )
 			{

@@ -2381,6 +2381,7 @@ void CHL2_Player::UpdateLocator( bool forceUpdate )
 #ifdef HL2_EPISODIC
 	m_HL2Local.m_iNumLocatorContacts = 0;
 #endif
+
 	CBaseEntity *pEnt = gEntList.FirstEnt();
 	string_t iszStriderName = FindPooledString( "npc_strider" );
 	string_t iszHealthName = FindPooledString( "item_healthkit" );

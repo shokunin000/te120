@@ -1051,7 +1051,7 @@ bool CServerGameDLL::LevelInit( const char *pMapName, char const *pMapEntities, 
 	//  to be parsed (the above code has loaded all point_template entities)
 	PrecachePointTemplates();
 
-//TE120
+//TE120--
 	// Ensure that mat_queue_mode is zero
  	static ConVarRef mat_queue_mode( "mat_queue_mode" );
  	if ( mat_queue_mode.GetInt() != 0 )
@@ -1059,7 +1059,7 @@ bool CServerGameDLL::LevelInit( const char *pMapName, char const *pMapEntities, 
  		DevMsg( "Error: mat_queue_mode must be 0 to avoid crash in chapter_4\n" );
  		mat_queue_mode.SetValue( 0 );
 	}
-//TE120
+//TE120--
 
 	// load MOTD from file into stringtable
 	LoadMessageOfTheDay();

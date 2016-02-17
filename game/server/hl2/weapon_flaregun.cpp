@@ -151,8 +151,7 @@ CFlare::~CFlare()
 //-----------------------------------------------------------------------------
 void CFlare::Precache( void )
 {
-	// Since this is never used changed to shell to reduce max models error in ch4
-	PrecacheModel("models/weapons/shell.mdl" );
+	PrecacheModel("models/weapons/shell" );//TE120: prevent max models error
 
 	PrecacheScriptSound( "Weapon_FlareGun.Burn" );
 
@@ -189,8 +188,7 @@ void CFlare::Spawn( void )
 {
 	Precache();
 
-	// Since this is never used changed to shell to reduce max models error in ch4
-	SetModel( "models/weapons/shell.mdl" );
+	SetModel( "models/weapons/shell" );//TE120: prevent max models error
 
 	UTIL_SetSize( this, Vector( -2, -2, -2 ), Vector( 2, 2, 2 ) );
 

@@ -1,4 +1,4 @@
-//========= Copyright Vincent, All rights reserved. ============//
+//========= Copyright Valve Corporation, All rights reserved. ============//
 //
 // Purpose: handles all TE120 achievements
 //
@@ -30,8 +30,11 @@ protected:
 
   void Init()
   {
-  	SetFlags( ACH_SAVE_GLOBAL );
+  	//SetFlags(ACH_LISTEN_MAP_EVENTS | ACH_SAVE_WITH_GAME);
+    //SetFlags(ACH_SAVE_WITH_GAME);
+    SetFlags( ACH_SAVE_GLOBAL );
   	SetGoal( 1 );
+    SetMapNameFilter( "chapter_2" );
     m_bStoreProgressInSteam = true;
   #ifdef RESETSTATS
     DevMsg("Reset all stats!\n");
@@ -74,7 +77,7 @@ protected:
   	SetFlags( ACH_SAVE_GLOBAL );
     m_bStoreProgressInSteam = true;
   	SetGoal( 1 );
-	SetMapNameFilter( "chapter_4" );
+    SetMapNameFilter( "chapter_4" );
   }
 
   // Listen for this event (event must be defined in :/resource/ModEvents.res)
@@ -102,7 +105,7 @@ protected:
   	SetFlags( ACH_SAVE_GLOBAL );
     m_bStoreProgressInSteam = true;
   	SetGoal( 1 );
-	SetMapNameFilter( "chapter_3" );
+    SetMapNameFilter( "chapter_3" );
   }
 
   // Listen for this event (event must be defined in :/resource/ModEvents.res)
@@ -125,14 +128,14 @@ class CAchievementE120CatchEmAll : public CBaseAchievement
 {
 protected:
 
-	void Init()
-	{
-  		SetFlags( ACH_LISTEN_MAP_EVENTS | ACH_SAVE_WITH_GAME );
-		m_bStoreProgressInSteam = true;
-		SetGoal( 8 );
-	}
+  void Init()
+  {
+  	SetFlags( ACH_LISTEN_MAP_EVENTS | ACH_SAVE_WITH_GAME );
+    m_bStoreProgressInSteam = true;
+    SetGoal( 8 );
+  }
 
-	// don't show progress notifications for this achievement, it's distracting
+  // don't show progress notifications for this achievement, it's distracting
 	virtual bool ShouldShowProgressNotification() { return false; }
 };
 DECLARE_ACHIEVEMENT( CAchievementE120CatchEmAll, ACHIEVEMENT_E120_CATCH_EM_ALL, "E120_CATCH_EM_ALL", 20 );
@@ -143,9 +146,9 @@ protected:
 
   void Init()
   {
-  	SetFlags( ACH_LISTEN_MAP_EVENTS | ACH_SAVE_WITH_GAME );
+    SetFlags( ACH_LISTEN_MAP_EVENTS | ACH_SAVE_WITH_GAME );
     m_bStoreProgressInSteam = true;
-	SetGoal( 4 );
+    SetGoal( 4 );
   }
 
   virtual bool ShouldShowProgressNotification() { return true; }
@@ -182,13 +185,14 @@ protected:
 };
 DECLARE_ACHIEVEMENT( CAchievementE120StriderSmasher, ACHIEVEMENT_E120_STRIDER_SMASHER, "E120_STRIDER_SMASHER", 25 );
 
-
 // achievements which are won by a map event firing once (triggerd trough logic_achievements)
 DECLARE_MAP_EVENT_ACHIEVEMENT( ACHIEVEMENT_E120_REUNITED, "E120_REUNITED", 30 );
 DECLARE_MAP_EVENT_ACHIEVEMENT( ACHIEVEMENT_E120_METROIDVANIA, "E120_METROIDVANIA", 10 );
 DECLARE_MAP_EVENT_ACHIEVEMENT( ACHIEVEMENT_E120_CHAPTER_1, "E120_CHAPTER_1", 5 );
 DECLARE_MAP_EVENT_ACHIEVEMENT( ACHIEVEMENT_E120_CHAPTER_2, "E120_CHAPTER_2", 5 );
 DECLARE_MAP_EVENT_ACHIEVEMENT( ACHIEVEMENT_E120_CHAPTER_3, "E120_CHAPTER_3", 10 );
+
+//TODO: add E120_STRIDER_SMASHER achievement
 
 /*
 //-----------------------------------------------------------------------------

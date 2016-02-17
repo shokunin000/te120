@@ -3375,16 +3375,20 @@ void C_BaseAnimating::ProcessMuzzleFlashEvent()
 		{
 			Vector vAttachment, vAng;
 			QAngle angles;
+#ifdef HL2_EPISODIC
 			GetAttachment( 1, vAttachment, angles ); // set 1 instead "attachment"
-
+#else
+			GetAttachment( attachment, vAttachment, angles );
+#endif
 			AngleVectors( angles, &vAng );
 			vAttachment += vAng * 2;
 
-			dlight_t *dl = effects->CL_AllocDlight ( index );
+			// Make an dlight
+			dlight_t *dl = effects->CL_AllocDlight( index );
 			dl->origin = vAttachment;
-			dl->color.r = 231;
-			dl->color.g = 219;
-			dl->color.b = 14;
+			dl->color.r = 252;
+			dl->color.g = 238;
+			dl->color.b = 128;
 			dl->die = gpGlobals->curtime + 0.05f;
 			dl->radius = random->RandomFloat( 245.0f, 256.0f );
 			dl->decay = 512.0f;

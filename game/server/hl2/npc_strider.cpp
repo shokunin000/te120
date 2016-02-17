@@ -1882,7 +1882,7 @@ void CNPC_Strider::HandleAnimEvent( animevent_t *pEvent )
 //TE120--
 			// Don't shoot unless player is looking.
 			CBasePlayer *pPlayer = AI_GetSinglePlayer();
-			
+
 			if ( pPlayer->FVisible(this) )
 			{
 				AimCannonAt( GetCannonTarget(), 0.1 );
@@ -2359,7 +2359,7 @@ void CNPC_Strider::InputDisableMoveToLOS( inputdata_t &inputdata )
 void CNPC_Strider::InputExplode( inputdata_t &inputdata )
 {
 	CTakeDamageInfo killInfo;
-	killInfo.SetAttacker( UTIL_GetLocalPlayer() ); //TE120 changed
+	killInfo.SetAttacker( AI_GetSinglePlayer() );//TE120
 	killInfo.SetInflictor( this );
 	killInfo.SetDamage( GetHealth() );
 	TakeDamage( killInfo );
@@ -3140,7 +3140,7 @@ int CNPC_Strider::OnTakeDamage_Alive( const CTakeDamageInfo &info )
 			{
 				// See if the person that injured me is an NPC.
 				CAI_BaseNPC *pAttacker = dynamic_cast<CAI_BaseNPC *>( info.GetAttacker() );
-				CBasePlayer *pPlayer = UTIL_GetLocalPlayer();
+				CBasePlayer *pPlayer = AI_GetSinglePlayer();
 
 				if( pAttacker && pAttacker->IsAlive() && pPlayer )
 				{
