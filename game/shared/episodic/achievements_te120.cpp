@@ -152,7 +152,7 @@ protected:
   	SetFlags( ACH_SAVE_GLOBAL );
     m_bStoreProgressInSteam = true;
   	SetGoal( 2 );
-	SetMapNameFilter( "chapter_4" );
+    SetMapNameFilter( "chapter_4" );
   }
 
   // Listen for this event (event must be defined in :/resource/ModEvents.res)
