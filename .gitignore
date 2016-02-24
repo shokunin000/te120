@@ -81,24 +81,3 @@ lib/public/**/vgui_controls.*
 
 # Linux
 .directory
-
-# Mod specific
-/devtools
-/materialsystem
-/lib
-/fgdlib
-/gcsdk
-/mathlib/*
-!/mathlib/sse.cpp
-/raytrace
-/thirdparty
-/tier1
-/utils
-/vgui2
-/vpc_scripts
-/vstdlib
-/tier0
-*.lib
-*.pdb
-*.vpc_crc
-*.sentinel
