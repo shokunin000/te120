@@ -289,9 +289,8 @@ extern "C" {
 
 //TE120--
 //
-// TE120 Achievements
+// TE120 Achievement ids
 //
-//TODO: Add more achievements!
 #define ACHIEVEMENT_E120_REUNITED	0
 #define ACHIEVEMENT_E120_MY_FIRST_GRAVITY_JUMP 1
 #define ACHIEVEMENT_E120_CATCH_EM_ALL 2
