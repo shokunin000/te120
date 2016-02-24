@@ -22,7 +22,7 @@ CAchievementMgr AchievementMgr;	//create achievement manager object
 
 // resets the achievements, debug only, disable in release!
 //#define RESETSTATS
-//int CalcPlayerAttacks( bool bBulletOnly );
+int CalcPlayerAttacks( bool bBulletOnly );
 
 class CAchievementE120MyFirstGravityJump : public CBaseAchievement
 {
@@ -30,6 +30,8 @@ protected:
 
   void Init()
   {
+  	//SetFlags(ACH_LISTEN_MAP_EVENTS | ACH_SAVE_WITH_GAME);
+    //SetFlags(ACH_SAVE_WITH_GAME);
     SetFlags( ACH_SAVE_GLOBAL );
   	SetGoal( 1 );
     SetMapNameFilter( "chapter_2" );
@@ -38,6 +40,16 @@ protected:
     DevMsg("Reset all stats!\n");
     steamapicontext->SteamUserStats()->ResetAllStats( true );
   #endif
+  /*
+    int iCurrentStatValue;
+    steamapicontext->SteamUserStats()->GetStat( "stat_test", &iCurrentStatValue );
+    Msg( "Current stat_test value: %i\n", iCurrentStatValue );
+    steamapicontext->SteamUserStats()->SetStat( "stat_test", iCurrentStatValue + 1 );
+    steamapicontext->SteamUserStats()->StoreStats();
+    Msg( "New stat_test value: %i\n", iCurrentStatValue );
+
+    int iBulletAttackCount = CalcPlayerAttacks( true );
+  */
   }
 
   // Listen for this event (event must be defined in :/resource/ModEvents.res)
@@ -152,7 +164,7 @@ protected:
   	SetFlags( ACH_SAVE_GLOBAL );
     m_bStoreProgressInSteam = true;
   	SetGoal( 2 );
-    SetMapNameFilter( "chapter_4" );
+	SetMapNameFilter( "chapter_4" );
   }
 
   // Listen for this event (event must be defined in :/resource/ModEvents.res)
@@ -180,6 +192,7 @@ DECLARE_MAP_EVENT_ACHIEVEMENT( ACHIEVEMENT_E120_CHAPTER_1, "E120_CHAPTER_1", 5 )
 DECLARE_MAP_EVENT_ACHIEVEMENT( ACHIEVEMENT_E120_CHAPTER_2, "E120_CHAPTER_2", 5 );
 DECLARE_MAP_EVENT_ACHIEVEMENT( ACHIEVEMENT_E120_CHAPTER_3, "E120_CHAPTER_3", 10 );
 
+//TODO: add E120_STRIDER_SMASHER achievement
 
 /*
 //-----------------------------------------------------------------------------

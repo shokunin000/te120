@@ -96,7 +96,7 @@ void NDebugOverlay::EntityBounds( const CBaseEntity *pEntity, int r, int g, int 
 void NDebugOverlay::Line( const Vector &origin, const Vector &target, int r, int g, int b, bool noDepthTest, float duration )
 {
 	// --------------------------------------------------------------
-	// Clip the line before sending so we 
+	// Clip the line before sending so we
 	// don't overflow the client message buffer
 	// --------------------------------------------------------------
 	CBasePlayer *player = GetLocalPlayer();
@@ -106,10 +106,10 @@ void NDebugOverlay::Line( const Vector &origin, const Vector &target, int r, int
 
 	// Clip line that is far away
 	if (((player->GetAbsOrigin() - origin).LengthSqr() > MAX_OVERLAY_DIST_SQR) &&
-		((player->GetAbsOrigin() - target).LengthSqr() > MAX_OVERLAY_DIST_SQR) ) 
+		((player->GetAbsOrigin() - target).LengthSqr() > MAX_OVERLAY_DIST_SQR) )
 		return;
 
-	// Clip line that is behind the client 
+	// Clip line that is behind the client
 	Vector clientForward;
 	player->EyeVectors( &clientForward );
 
@@ -117,8 +117,8 @@ void NDebugOverlay::Line( const Vector &origin, const Vector &target, int r, int
 	Vector toTarget		= target - player->GetAbsOrigin();
  	float  dotOrigin	= DotProduct(clientForward,toOrigin);
  	float  dotTarget	= DotProduct(clientForward,toTarget);
-	
-	if (dotOrigin < 0 && dotTarget < 0) 
+
+	if (dotOrigin < 0 && dotTarget < 0)
 		return;
 
 	if ( debugoverlay )
@@ -142,22 +142,22 @@ void NDebugOverlay::Triangle( const Vector &p1, const Vector &p2, const Vector &
 	Vector to2 = p2 - player->GetAbsOrigin();
 	Vector to3 = p3 - player->GetAbsOrigin();
 
-	if ((to1.LengthSqr() > MAX_OVERLAY_DIST_SQR) && 
-		(to2.LengthSqr() > MAX_OVERLAY_DIST_SQR) && 
+	if ((to1.LengthSqr() > MAX_OVERLAY_DIST_SQR) &&
+		(to2.LengthSqr() > MAX_OVERLAY_DIST_SQR) &&
 		(to3.LengthSqr() > MAX_OVERLAY_DIST_SQR))
 	{
 		return;
 	}
 
-	// Clip triangles that are behind the client 
+	// Clip triangles that are behind the client
 	Vector clientForward;
 	player->EyeVectors( &clientForward );
-	
+
  	float  dot1 = DotProduct(clientForward, to1);
  	float  dot2 = DotProduct(clientForward, to2);
  	float  dot3 = DotProduct(clientForward, to3);
 
-	if (dot1 < 0 && dot2 < 0 && dot3 < 0) 
+	if (dot1 < 0 && dot2 < 0 && dot3 < 0)
 		return;
 
 	if ( debugoverlay )
@@ -173,8 +173,8 @@ void NDebugOverlay::EntityText( int entityID, int text_offset, const char *text,
 {
 	if ( debugoverlay )
 	{
-		debugoverlay->AddEntityTextOverlay( entityID, text_offset, duration, 
-			(int)clamp(r * 255.f,0.f,255.f), (int)clamp(g * 255.f,0.f,255.f), (int)clamp(b * 255.f,0.f,255.f), 
+		debugoverlay->AddEntityTextOverlay( entityID, text_offset, duration,
+			(int)clamp(r * 255.f,0.f,255.f), (int)clamp(g * 255.f,0.f,255.f), (int)clamp(b * 255.f,0.f,255.f),
 			(int)clamp(a * 255.f,0.f,255.f), text );
 	}
 }
@@ -191,7 +191,7 @@ void NDebugOverlay::EntityTextAtPosition( const Vector &origin, int text_offset,
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: Add grid overlay 
+// Purpose: Add grid overlay
 //-----------------------------------------------------------------------------
 void NDebugOverlay::Grid( const Vector &vPosition )
 {
@@ -207,22 +207,22 @@ void NDebugOverlay::Grid( const Vector &vPosition )
 void NDebugOverlay::Text( const Vector &origin, const char *text, bool bViewCheck, float duration )
 {
 	CBasePlayer *player = GetLocalPlayer();
-	
+
 	if ( !player )
 		return;
 
 	// Clip text that is far away
-	if ( ( player->GetAbsOrigin() - origin ).LengthSqr() > MAX_OVERLAY_DIST_SQR ) 
+	if ( ( player->GetAbsOrigin() - origin ).LengthSqr() > MAX_OVERLAY_DIST_SQR )
 		return;
 
-	// Clip text that is behind the client 
+	// Clip text that is behind the client
 	Vector clientForward;
 	player->EyeVectors( &clientForward );
 
 	Vector toText	= origin - player->GetAbsOrigin();
  	float  dotPr	= DotProduct(clientForward,toText);
-	
-	if (dotPr < 0) 
+
+	if (dotPr < 0)
 		return;
 
 	// Clip text that is obscured
@@ -230,7 +230,7 @@ void NDebugOverlay::Text( const Vector &origin, const char *text, bool bViewChec
 	{
 		trace_t tr;
 		UTIL_TraceLine(player->GetAbsOrigin(), origin, MASK_OPAQUE, NULL, COLLISION_GROUP_NONE, &tr);
-		
+
 		if ((tr.endpos - origin).Length() > 10)
 			return;
 	}
@@ -238,7 +238,7 @@ void NDebugOverlay::Text( const Vector &origin, const char *text, bool bViewChec
 	if ( debugoverlay )
 	{
 		debugoverlay->AddTextOverlay( origin, duration, "%s", text );
-	}	
+	}
 }
 
 //-----------------------------------------------------------------------------
@@ -324,20 +324,20 @@ void NDebugOverlay::Cross3DOriented( const matrix3x4_t &m, float size, int c, bo
 
 //--------------------------------------------------------------------------------
 // Purpose : Draw tick marks between start and end position of the given distance
-//			 with text every tickTextDist steps apart. 
+//			 with text every tickTextDist steps apart.
 //--------------------------------------------------------------------------------
 void NDebugOverlay::DrawTickMarkedLine(const Vector &startPos, const Vector &endPos, float tickDist, int tickTextDist, int r, int g, int b, bool noDepthTest, float duration )
 {
 	CBasePlayer* pPlayer = GetDebugPlayer();
 
-	if ( !pPlayer ) 
+	if ( !pPlayer )
 		return;
-	
+
 	Vector	lineDir		= (endPos - startPos);
 	float	lineDist	= VectorNormalize( lineDir );
 	int		numTicks	= lineDist/tickDist;
 	Vector	vBodyDir;
-	
+
 #if defined( CLIENT_DLL )
 	AngleVectors( pPlayer->LocalEyeAngles(), &vBodyDir );
 #else
@@ -360,7 +360,7 @@ void NDebugOverlay::DrawTickMarkedLine(const Vector &startPos, const Vector &end
 		// Draw tick mark
 		Vector tickLeft	 = tickPos - sideDir;
 		Vector tickRight = tickPos + sideDir;
-		
+
 		// Draw tick mark text
 		if (tickTextCnt == tickTextDist)
 		{
@@ -375,7 +375,7 @@ void NDebugOverlay::DrawTickMarkedLine(const Vector &startPos, const Vector &end
 		{
 			Line(tickLeft, tickRight, r,g,b,noDepthTest,duration);
 		}
-		
+
 		tickTextCnt++;
 
 		tickPos = tickPos + (tickDist * lineDir);
@@ -389,7 +389,7 @@ void NDebugOverlay::DrawGroundCrossHairOverlay( void )
 {
 	CBasePlayer* pPlayer = GetDebugPlayer();
 
-	if ( !pPlayer ) 
+	if ( !pPlayer )
 		return;
 
 	// Trace a line to where player is looking
@@ -517,7 +517,7 @@ void NDebugOverlay::Axis( const Vector &position, const QAngle &angles, float si
 {
 	Vector xvec, yvec, zvec;
 	AngleVectors( angles, &xvec, &yvec, &zvec );
-	
+
 	xvec = position + (size * xvec);
 	yvec = position - (size * yvec); // Left is positive
 	zvec = position + (size * zvec);
@@ -591,7 +591,7 @@ void NDebugOverlay::Circle( const Vector &position, float radius, int r, int g, 
 
 	QAngle vecAngles;
 	VectorAngles( clientForward, vecAngles );
-	
+
 	Circle( position, vecAngles, radius, r, g, b, a, bNoDepthTest, flDuration );
 }
 
@@ -617,7 +617,7 @@ void NDebugOverlay::Circle( const Vector &position, const Vector &xAxis, const V
 	const float flRadStep = (M_PI*2.0f) / (float) nSegments;
 
 	Vector vecLastPosition;
-	
+
 	// Find our first position
 	// Retained for triangle fanning
 	Vector vecStart = position + xAxis * radius;
@@ -639,8 +639,11 @@ void NDebugOverlay::Circle( const Vector &position, const Vector &xAxis, const V
 
 		// If we have an alpha value, then draw the fan
 		if ( a && i > 1 )
-		{		
-			debugoverlay->AddTriangleOverlay( vecStart, vecLastPosition, vecPosition, r, g, b, a, bNoDepthTest, flDuration );
+		{
+			if ( debugoverlay )
+			{
+				debugoverlay->AddTriangleOverlay( vecStart, vecLastPosition, vecPosition, r, g, b, a, bNoDepthTest, flDuration );
+			}
 		}
 	}
 }
