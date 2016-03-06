@@ -59,5 +59,47 @@ public:
 	virtual bool IsOn( void );
 };
 
+//-----------------------------------------------------------------------------
+// Purpose: Used for glowing qr codes
+//-----------------------------------------------------------------------------
+class CFuncBrushGlow : public CFuncBrush
+{
+	DECLARE_CLASS( CFuncBrushGlow, CFuncBrush );
+
+public:
+
+	void	Spawn();
+
+	void	UpdateThink();
+	void	IllumThink();
+
+	//---------------------------------
+	//	Inputs
+	//---------------------------------
+	void	InputAbsorbEnergy( inputdata_t &inputdata );
+	void	InputEmitEnergy( inputdata_t &inputdata );
+
+	DECLARE_DATADESC();
+
+	bool			m_bAbsorbing;
+	bool			m_bStartOff;
+	bool			m_fIsIlluminated;	// is this brush illuminated by the player flashlight?
+	float			m_flAbsorbTime;
+	float			m_flEmitTime;
+
+	//---------------------------------
+	//	Outputs
+	//---------------------------------
+	COutputFloat	m_Energy;
+	COutputEvent	m_OnIlluminated;
+	COutputEvent	m_OnNotIlluminated;
+
+private:
+
+	void	CheckIlluminated();
+
+	float			m_flAbsorbRate;
+	float			m_flEmitRate;
+};
 
 #endif // MODELENTITIES_H

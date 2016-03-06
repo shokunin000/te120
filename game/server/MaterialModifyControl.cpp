@@ -82,7 +82,7 @@ BEGIN_DATADESC( CMaterialModifyControl )
 	DEFINE_FIELD( m_flFloatLerpTransitionTime, FIELD_FLOAT ),
 	DEFINE_FIELD( m_nModifyMode, FIELD_INTEGER ),
 	// Inputs.
-	DEFINE_INPUTFUNC( FIELD_STRING, "SetMaterialVar", SetMaterialVar ),
+	DEFINE_INPUTFUNC( FIELD_FLOAT, "SetMaterialVar", SetMaterialVar ),
 	DEFINE_INPUTFUNC( FIELD_VOID, "SetMaterialVarToCurrentTime", SetMaterialVarToCurrentTime ),
 	DEFINE_INPUTFUNC( FIELD_STRING, "StartAnimSequence", InputStartAnimSequence ),
 	DEFINE_INPUTFUNC( FIELD_STRING, "StartFloatLerp", InputStartFloatLerp ),
@@ -176,7 +176,10 @@ void CMaterialModifyControl::SetMaterialVar( inputdata_t &inputdata )
 		//DevMsg( 1, "CMaterialModifyControl::SetMaterialVar %s %s %s=\"%s\"\n", 
 			//GetDebugName(), m_szMaterialName.Get(), m_szMaterialVar.Get(), inputdata.value.String() );
 	//}
-	Q_strncpy( m_szMaterialVarValue.GetForModify(), inputdata.value.String(), MATERIAL_MODIFY_STRING_SIZE );
+	char temp[32];
+	Q_snprintf( temp, 32, "%f", inputdata.value.Float() );
+
+	Q_strncpy( m_szMaterialVarValue.GetForModify(), temp, MATERIAL_MODIFY_STRING_SIZE );
 	m_nModifyMode = MATERIAL_MODIFY_MODE_SETVAR;
 }
 
