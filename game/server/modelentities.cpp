@@ -368,12 +368,15 @@ LINK_ENTITY_TO_CLASS( func_brushglow, CFuncBrushGlow );
 
 BEGIN_DATADESC( CFuncBrushGlow )
 
-	DEFINE_THINKFUNC( IllumThink ),
-
 	// Function pointers
-	DEFINE_FUNCTION( UpdateThink ),
+	DEFINE_THINKFUNC( IllumThink ),
+	DEFINE_THINKFUNC( UpdateThink ),
+
+	// Fields
 	DEFINE_FIELD( m_bAbsorbing, FIELD_BOOLEAN ),
 	DEFINE_FIELD( m_fIsIlluminated, FIELD_BOOLEAN ),
+	DEFINE_FIELD( m_flAbsorbRate, FIELD_FLOAT ),
+	DEFINE_FIELD( m_flEmitRate, FIELD_FLOAT ),
 	DEFINE_KEYFIELD( m_bStartOff, FIELD_BOOLEAN, "StartOff"),
 	DEFINE_KEYFIELD( m_flAbsorbTime, FIELD_FLOAT, "AbsorbTime"),
 	DEFINE_KEYFIELD( m_flEmitTime, FIELD_FLOAT, "EmitTime"),
@@ -451,12 +454,12 @@ void CFuncBrushGlow::InputEmitEnergy( inputdata_t &inputdata )
 void CFuncBrushGlow::UpdateThink( void )
 {
 	float fCurrentEnergy = m_Energy.Get();
-	// Msg( "Energy %f\n", fCurrentEnergy );
 
 	if ( m_bAbsorbing )
 	{
-		if ( fCurrentEnergy < 1.0 )
+		if ( fCurrentEnergy < 1.0f )
 		{
+			// DevMsg( "Absorbing Energy %f\n", fCurrentEnergy );
 			fCurrentEnergy = clamp(fCurrentEnergy + m_flAbsorbRate, 0.0, 1.0);
 
 			// Change at absorb rate every think until we reach 1.0
@@ -467,8 +470,9 @@ void CFuncBrushGlow::UpdateThink( void )
 				SetNextThink( gpGlobals->curtime + DT_BRUSH_GLOW );
 		}
 	}
-	else if ( fCurrentEnergy > 0.0 )
+	else if ( fCurrentEnergy > 0.0f )
 	{
+		// DevMsg( "Emitting Energy %f\n", fCurrentEnergy );
 		fCurrentEnergy = clamp(fCurrentEnergy - m_flEmitRate, 0.0, 1.0);
 
 		// Change at emit rate every think until we reach 0.0
@@ -519,7 +523,7 @@ void CFuncBrushGlow::CheckIlluminated()
 
 				// Send output that I am illuminated
 				m_OnIlluminated.FireOutput( this, this );
-				//DevMsg( "I am illuminated!\n" ); //Debug
+				// DevMsg( "I am illuminated!\n" ); //Debug
 			}
 		}
 		else if ( m_fIsIlluminated )
@@ -528,7 +532,7 @@ void CFuncBrushGlow::CheckIlluminated()
 
 			// Send out that I am no longer illuminated
 			m_OnNotIlluminated.FireOutput(this, this);
-			//DevMsg( "I am no longer illuminated!\n" ); //Debug
+			// DevMsg( "I am no longer illuminated!\n" ); //Debug
 		}
 	}
 }
