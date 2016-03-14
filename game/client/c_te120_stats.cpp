@@ -40,12 +40,12 @@ void C_TE120Stats::PostInit()
 {
 
   CountGameLaunches();
-  ResetAllStats();
+  // ResetAllStats();
 }
 
 void C_TE120Stats::Shutdown()
 {
-  ResetAllStats();
+  // ResetAllStats();
 }
 
 void C_TE120Stats::LevelInitPostEntity()
@@ -106,7 +106,7 @@ void C_TE120Stats::CountPlayTime()
 void C_TE120Stats::ResetAllStats()
 {
   DevMsg("Reset all stats!\n");
-  steamapicontext->SteamUserStats()->ResetAllStats( true );
+  steamapicontext->SteamUserStats()->ResetAllStats( false );
   steamapicontext->SteamUserStats()->SetStat( "stat_num_games", 0 );
   steamapicontext->SteamUserStats()->SetStat( "stat_meters_traveled", 0.0f );
   //steamapicontext->SteamUserStats()->StoreStats();
