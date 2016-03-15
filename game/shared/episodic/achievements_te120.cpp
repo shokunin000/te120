@@ -32,7 +32,7 @@ protected:
   {
     SetFlags( ACH_SAVE_GLOBAL );
   	SetGoal( 1 );
-    // SetMapNameFilter( "chapter_2" );
+    SetMapNameFilter( "chapter_2" );
     m_bStoreProgressInSteam = true;
   #ifdef RESETSTATS
     DevMsg("Reset all stats!\n");
