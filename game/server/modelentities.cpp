@@ -459,7 +459,7 @@ void CFuncBrushGlow::UpdateThink( void )
 	{
 		if ( fCurrentEnergy < 1.0f )
 		{
-			// DevMsg( "Absorbing Energy %f\n", fCurrentEnergy );
+			DevMsg( "Absorbing Energy %f at %f rate.\n", fCurrentEnergy, m_flAbsorbRate );
 			fCurrentEnergy = clamp(fCurrentEnergy + m_flAbsorbRate, 0.0, 1.0);
 
 			// Change at absorb rate every think until we reach 1.0
@@ -472,7 +472,7 @@ void CFuncBrushGlow::UpdateThink( void )
 	}
 	else if ( fCurrentEnergy > 0.0f )
 	{
-		// DevMsg( "Emitting Energy %f\n", fCurrentEnergy );
+		DevMsg( "Emitting Energy %f at %f rate.\n", fCurrentEnergy, m_flEmitRate );
 		fCurrentEnergy = clamp(fCurrentEnergy - m_flEmitRate, 0.0, 1.0);
 
 		// Change at emit rate every think until we reach 0.0
@@ -515,6 +515,7 @@ void CFuncBrushGlow::CheckIlluminated()
 		pPlayer->IsIlluminatedByFlashlight( this, &fDot );
 		// Msg( "fDot: %f\n", fDot );
 
+		// Is this glow entity within a 15 degree cone and visible?
 		if ( fDot > 0.96f && pPlayer->FVisible(this) )
 		{
 			if ( !m_fIsIlluminated )
