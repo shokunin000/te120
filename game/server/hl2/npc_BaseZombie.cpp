@@ -870,7 +870,6 @@ int CNPC_BaseZombie::OnTakeDamage_Alive( const CTakeDamageInfo &inputInfo )
 		{
 			EmitSound( "E3_Phystown.Slicer" );
 //TE120--
-			DevMsg("Chopped Headcrab!\n");
 			// Fire event for achievement: E120_SLICER
 			IGameEvent *event = gameeventmanager->CreateEvent( "sliced_zombie" );
 			if ( event )
@@ -902,13 +901,11 @@ int CNPC_BaseZombie::OnTakeDamage_Alive( const CTakeDamageInfo &inputInfo )
 				Vector vecForce = inputInfo.GetDamageForce() * 0.1;
 				vecForce += Vector( 0, 0, 2000.0 );
 				ReleaseHeadcrab( EyePosition(), vecForce, true, false, true );
-				DevMsg("Sliced Headcrab of!\n");//TE120
 
 //TE120--
+				DevMsg("Sliced Headcrab of!\n");
 // TODO: Verify, never managed to trigger RELEASE_RAGDOLL_SLICED_OFF
 /*
-				DevMsg("Sliced Headcrab of!\n");
-
 				// Fire event for achievement: E120_SLICER
  				IGameEvent *event = gameeventmanager->CreateEvent( "sliced_zombie" );
  				if ( event )
@@ -2107,10 +2104,12 @@ void CNPC_BaseZombie::PrescheduleThink( void )
 	{
 		m_flBurnDamage = 0;
 	}
+
 //TE120--
 	// If we're being illuminated by the flashlight send output
 	CBasePlayer *pPlayer = AI_GetSinglePlayer();
- 	if ( pPlayer )
+
+	if ( pPlayer )
 	{
 		if ( pPlayer->IsIlluminatedByFlashlight( this, NULL ) )
 		{
@@ -2120,7 +2119,7 @@ void CNPC_BaseZombie::PrescheduleThink( void )
 
 				// Send output that I am illuminated
 				m_OnIlluminated.FireOutput( this, this );
-				//DevMsg( "I am illuminated!\n" ); //Debug
+				DevMsg( "I am illuminated!\n" ); //Debug
 			}
     }
 		else if ( m_fIsIlluminated )
@@ -2129,7 +2128,7 @@ void CNPC_BaseZombie::PrescheduleThink( void )
 
 			// Send out that I am no longer illuminated
 			m_OnNotIlluminated.FireOutput(this, this);
-			//DevMsg( "I am no longer illuminated!\n" ); //Debug
+			DevMsg( "I am no longer illuminated!\n" ); //Debug
 		}
 	}
 }
@@ -2560,6 +2559,7 @@ void CNPC_BaseZombie::ReleaseHeadcrab( const Vector &vecOrigin, const Vector &ve
 		{
 			pCrab->Ignite( 30 );
 		}
+
 //TE120--
 		// Duplicate relationship to player
 		CBasePlayer *pPlayer = AI_GetSinglePlayer();

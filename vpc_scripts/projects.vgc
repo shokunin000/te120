@@ -135,4 +135,3 @@ $Project "togl"
 {
 	"togl\togl.vpc" [$WIN32||$POSIX]
 }
-

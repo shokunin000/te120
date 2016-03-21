@@ -88,7 +88,7 @@ ConVar bugbait_distract_time( "bugbait_distract_time", "5" );
 ConVar bugbait_grenade_radius( "bugbait_grenade_radius", "150" );
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CGrenadeBugBait::Spawn( void )
 {
@@ -97,7 +97,7 @@ void CGrenadeBugBait::Spawn( void )
 	SetModel( GRENADE_MODEL );
 	SetCollisionGroup( COLLISION_GROUP_PROJECTILE );
 	SetMoveType( MOVETYPE_FLYGRAVITY, MOVECOLLIDE_DEFAULT );
-	SetSolid( SOLID_BBOX ); 
+	SetSolid( SOLID_BBOX );
 
 	UTIL_SetSize( this, Vector( -2, -2, -2), Vector( 2, 2, 2 ) );
 
@@ -109,7 +109,7 @@ void CGrenadeBugBait::Spawn( void )
 
 	/*
 	m_pSporeTrail = SporeTrail::CreateSporeTrail();
-	
+
 	m_pSporeTrail->m_bEmit				= true;
 	m_pSporeTrail->m_flSpawnRate		= 100.0f;
 	m_pSporeTrail->m_flParticleLifetime	= 1.0f;
@@ -122,7 +122,7 @@ void CGrenadeBugBait::Spawn( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CGrenadeBugBait::Precache( void )
 {
@@ -136,7 +136,7 @@ void CGrenadeBugBait::Precache( void )
 #define	NUM_SPLASHES	6
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CGrenadeBugBait::BugBaitTouch( CBaseEntity *pOther )
 {
@@ -165,7 +165,7 @@ void CGrenadeBugBait::BugBaitTouch( CBaseEntity *pOther )
 		pSporeExplosion->SetLocalOrigin( GetAbsOrigin() );
 		pSporeExplosion->m_flSpawnRate			= 8.0f;
 		pSporeExplosion->m_flParticleLifetime	= 2.0f;
-		pSporeExplosion->SetRenderColor( 0.0f, 0.5f, 0.25f, 0.15f );
+		pSporeExplosion->SetRenderColor( 0, 128, 64, 38 );
 
 		pSporeExplosion->m_flStartSize = 32.0f;
 		pSporeExplosion->m_flEndSize = 64.0f;
@@ -216,7 +216,7 @@ bool CGrenadeBugBait::ActivateBugbaitTargets( CBaseEntity *pOwner, Vector vecOri
 	bool			suppressCall = false;
 
 	int count = UTIL_EntitiesInBox( pList, 100, vecOrigin - delta, vecOrigin + delta, 0 );
-	
+
 	// If the bugbait's been thrown, look for nearby targets to affect
 	if ( !bSqueezed )
 	{
@@ -237,7 +237,7 @@ bool CGrenadeBugBait::ActivateBugbaitTargets( CBaseEntity *pOwner, Vector vecOri
 
 						if ( tr.fraction == 1.0 || tr.m_pEnt == pCombine )
 						{
-							// Randomize the start time a little so multiple combine hit by 
+							// Randomize the start time a little so multiple combine hit by
 							// the same bugbait don't all dance in synch.
 							g_EventQueue.AddEvent( pCombine, "HitByBugbait", RandomFloat(0, 0.5), pOwner, pOwner );
 						}
@@ -280,7 +280,7 @@ bool CGrenadeBugBait::ActivateBugbaitTargets( CBaseEntity *pOwner, Vector vecOri
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CGrenadeBugBait::ThinkBecomeSolid( void )
 {
@@ -289,31 +289,31 @@ void CGrenadeBugBait::ThinkBecomeSolid( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : duration - 
+// Purpose:
+// Input  : duration -
 //-----------------------------------------------------------------------------
 void CGrenadeBugBait::SetGracePeriod( float duration )
 {
 	SetThink( &CGrenadeBugBait::ThinkBecomeSolid );
 	SetNextThink( gpGlobals->curtime + duration );
 
-	// Become unsolid	
+	// Become unsolid
 	AddSolidFlags( FSOLID_NOT_SOLID );
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : &position - 
-//			&angles - 
-//			&velocity - 
-//			&angVelocity - 
-//			*owner - 
+// Purpose:
+// Input  : &position -
+//			&angles -
+//			&velocity -
+//			&angVelocity -
+//			*owner -
 // Output : CBaseGrenade
 //-----------------------------------------------------------------------------
 CGrenadeBugBait *BugBaitGrenade_Create( const Vector &position, const QAngle &angles, const Vector &velocity, const QAngle &angVelocity, CBaseEntity *owner )
 {
 	CGrenadeBugBait *pGrenade = (CGrenadeBugBait *) CBaseEntity::Create( "npc_grenade_bugbait", position, angles, owner );
-	
+
 	if ( pGrenade != NULL )
 	{
 		pGrenade->SetLocalAngularVelocity( angVelocity );
@@ -323,4 +323,3 @@ CGrenadeBugBait *BugBaitGrenade_Create( const Vector &position, const QAngle &an
 
 	return pGrenade;
 }
-

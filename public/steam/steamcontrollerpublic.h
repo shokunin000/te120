@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2013, Valve LLC, All rights reserved. ============
+//========= Copyright 1996-2013, Valve LLC, All rights reserved. ============
 //
 // Purpose: Controller related public types/constants
 //

@@ -899,7 +899,7 @@ void CAmbientGeneric::SendSound( SoundFlags_t flags)
 			UTIL_EmitAmbientSound(pSoundSource->GetSoundSourceIndex(), pSoundSource->GetAbsOrigin(), szSoundFile,
 				(m_dpv.vol * 0.01), m_iSoundLevel, flags, m_dpv.pitch);
 			if (m_fLooping)
-							m_fActive = true;
+				m_fActive = true;
 		}
 	}
 	else

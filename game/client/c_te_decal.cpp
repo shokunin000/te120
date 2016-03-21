@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $Workfile:     $
 // $Date:         $
@@ -55,7 +55,7 @@ END_RECV_TABLE()
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 C_TEDecal::C_TEDecal( void )
 {
@@ -68,23 +68,23 @@ C_TEDecal::C_TEDecal( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 C_TEDecal::~C_TEDecal( void )
 {
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void C_TEDecal::Precache( void )
-{											 
+{
 }
 
 //-----------------------------------------------------------------------------
-// Recording 
+// Recording
 //-----------------------------------------------------------------------------
-static inline void RecordDecal( const Vector &pos, const Vector &start, 
+static inline void RecordDecal( const Vector &pos, const Vector &start,
 	int entity, int hitbox, int index )
 {
 	if ( !ToolsEnabled() )
@@ -111,14 +111,14 @@ static inline void RecordDecal( const Vector &pos, const Vector &start,
 		msg->SetString( "decalname", effects->Draw_DecalNameFromIndex( index ) );
 
 		ToolFramework_PostToolMessage( HTOOLHANDLE_INVALID, msg );
-		
+
 		msg->deleteThis();
 	}
 }
 
 
 //-----------------------------------------------------------------------------
-// Tempent 
+// Tempent
 //-----------------------------------------------------------------------------
 void TE_Decal( IRecipientFilter& filter, float delay,
 	const Vector* pos, const Vector* start, int entity, int hitbox, int index )
@@ -142,14 +142,14 @@ void TE_Decal( IRecipientFilter& filter, float delay,
 		if ( ( ent = cl_entitylist->GetEnt( entity ) ) == NULL )
 			return;
 
-		ent->AddDecal( *start, *pos, *pos, hitbox, 
+		ent->AddDecal( *start, *pos, *pos, hitbox,
 			index, false, tr );
 	}
 }
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void C_TEDecal::PostDataUpdate( DataUpdateType_t updateType )
 {

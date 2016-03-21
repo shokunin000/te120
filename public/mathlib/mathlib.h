@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 //===========================================================================//
 
@@ -77,7 +77,7 @@ public:
 private:
 	unsigned int mOldValues;
 #else
-	FPExceptionEnabler(unsigned int enableBits = 0)
+	FPExceptionEnabler(unsigned int /*enableBits*/ = 0)
 	{
 	}
 	~FPExceptionEnabler()
@@ -208,8 +208,8 @@ public:
 	{
 		m_Plane[i].normal = vecNormal;
 		m_Plane[i].dist = dist;
-		m_Plane[i].type = nType;
-		m_Plane[i].signbits = SignbitsForPlane( &m_Plane[i] );
+		m_Plane[i].type = static_cast<byte>(nType);
+		m_Plane[i].signbits = static_cast<byte>(SignbitsForPlane( &m_Plane[i] ));
 		m_AbsNormal[i].Init( fabs(vecNormal.x), fabs(vecNormal.y), fabs(vecNormal.z) );
 	}
 
@@ -237,7 +237,7 @@ bool R_CullBoxSkipNear( const Vector& mins, const Vector& maxs, const Frustum_t 
 struct matrix3x4_t
 {
 	matrix3x4_t() {}
-	matrix3x4_t( 
+	matrix3x4_t(
 		float m00, float m01, float m02, float m03,
 		float m10, float m11, float m12, float m13,
 		float m20, float m21, float m22, float m23 )
@@ -620,13 +620,13 @@ void MatrixQuaternion( const matrix3x4_t &mat, Quaternion &q );
 inline float MatrixRowDotProduct( const matrix3x4_t &in1, int row, const Vector& in2 )
 {
 	Assert( (row >= 0) && (row < 3) );
-	return DotProduct( in1[row], in2.Base() ); 
+	return DotProduct( in1[row], in2.Base() );
 }
 
 inline float MatrixColumnDotProduct( const matrix3x4_t &in1, int col, const Vector& in2 )
 {
 	Assert( (col >= 0) && (col < 4) );
-	return in1[0][col] * in2[0] + in1[1][col] * in2[1] + in1[2][col] * in2[2]; 
+	return in1[0][col] * in2[0] + in1[1][col] * in2[1] + in1[2][col] * in2[2];
 }
 
 int __cdecl BoxOnPlaneSide (const float *emins, const float *emaxs, const cplane_t *plane);
@@ -742,7 +742,7 @@ template<> FORCEINLINE QAngleByValue Lerp<QAngleByValue>( float flPercent, const
 
 
 /// Same as swap(), but won't cause problems with std::swap
-template <class T> 
+template <class T>
 FORCEINLINE void V_swap( T& x, T& y )
 {
 	T temp = x;
@@ -775,7 +775,7 @@ inline float Sign( float x )
 // else if ( n > maxindex ) return maxindex;
 // else return n;
 //
-// This is not always a clear performance win, but when you have situations where a clamped 
+// This is not always a clear performance win, but when you have situations where a clamped
 // value is thrashing against a boundary this is a big win. (ie, valid, invalid, valid, invalid, ...)
 //
 // Note: This code has been run against all possible integers.
@@ -785,7 +785,7 @@ inline int ClampArrayBounds( int n, unsigned maxindex )
 	// mask is 0 if less than 4096, 0xFFFFFFFF if greater than
 	unsigned int inrangemask = 0xFFFFFFFF + (((unsigned) n) > maxindex );
 	unsigned int lessthan0mask = 0xFFFFFFFF + ( n >= 0 );
-	
+
 	// If the result was valid, set the result, (otherwise sets zero)
 	int result = (inrangemask & n);
 
@@ -1003,7 +1003,7 @@ void BuildGammaTable( float gamma, float texGamma, float brightness, int overbri
 // convert texture to linear 0..1 value
 inline float TexLightToLinear( int c, int exponent )
 {
-	extern float power2_n[256]; 
+	extern float power2_n[256];
 	Assert( exponent >= -128 && exponent <= 127 );
 	return ( float )c * power2_n[exponent+128];
 }
@@ -1015,7 +1015,7 @@ int LinearToTexture( float f );
 int LinearToScreenGamma( float f );
 float TextureToLinear( int c );
 
-// compressed color format 
+// compressed color format
 struct ColorRGBExp32
 {
 	byte r, g, b;
@@ -1035,7 +1035,7 @@ bool SolveInverseQuadratic( float x1, float y1, float x2, float y2, float x3, fl
 // decreasing curve if the data is monotonically increasing or decreasing. In order to enforce the
 // monoticity condition, it is possible that the resulting quadratic will only approximate the data
 // instead of interpolating it. This code is not especially fast.
-bool SolveInverseQuadraticMonotonic( float x1, float y1, float x2, float y2, 
+bool SolveInverseQuadraticMonotonic( float x1, float y1, float x2, float y2,
 									 float x3, float y3, float &a, float &b, float &c );
 
 
@@ -1071,11 +1071,11 @@ void VectorYawRotate( const Vector& in, float flYaw, Vector &out);
 // 1
 // | 	**************
 // |  **
-// | * 
 // | *
-// |* 
-// |* 
-// |*  
+// | *
+// |*
+// |*
+// |*
 // |___________________
 // 0                   1
 //
@@ -1217,7 +1217,7 @@ FORCEINLINE int RoundFloatToInt(float f)
 	flResult = __fctiw( f );
 	return pResult[1];
 #else
-#error Unknown architecture
+	return (int) f;
 #endif
 }
 
@@ -1246,7 +1246,7 @@ FORCEINLINE unsigned long RoundFloatToUnsignedLong(float f)
 	Assert( pIntResult[1] >= 0 );
 	return pResult[1];
 #else  // !X360
-	
+
 #if defined( PLATFORM_WINDOWS_PC64 )
 	uint nRet = ( uint ) f;
 	if ( nRet & 1 )
@@ -1354,7 +1354,7 @@ FORCEINLINE int FastFloatToSmallInt( float c )
 
 //-----------------------------------------------------------------------------
 // Purpose: Bound input float to .001 (millisecond) boundary
-// Input  : in - 
+// Input  : in -
 // Output : inline float
 //-----------------------------------------------------------------------------
 inline float ClampToMsec( float in )
@@ -1390,7 +1390,7 @@ inline int Ceil2Int( float a )
 
 
 // Get the barycentric coordinates of "pt" in triangle [A,B,C].
-inline void GetBarycentricCoords2D( 
+inline void GetBarycentricCoords2D(
 	Vector2D const &A,
 	Vector2D const &B,
 	Vector2D const &C,
@@ -1411,28 +1411,28 @@ inline void GetBarycentricCoords2D(
 // Return true of the sphere might touch the box (the sphere is actually treated
 // like a box itself, so this may return true if the sphere's bounding box touches
 // a corner of the box but the sphere itself doesn't).
-inline bool QuickBoxSphereTest( 
+inline bool QuickBoxSphereTest(
 	const Vector& vOrigin,
 	float flRadius,
 	const Vector& bbMin,
 	const Vector& bbMax )
 {
 	return vOrigin.x - flRadius < bbMax.x && vOrigin.x + flRadius > bbMin.x &&
-		vOrigin.y - flRadius < bbMax.y && vOrigin.y + flRadius > bbMin.y && 
+		vOrigin.y - flRadius < bbMax.y && vOrigin.y + flRadius > bbMin.y &&
 		vOrigin.z - flRadius < bbMax.z && vOrigin.z + flRadius > bbMin.z;
 }
 
 
 // Return true of the boxes intersect (but not if they just touch).
-inline bool QuickBoxIntersectTest( 
+inline bool QuickBoxIntersectTest(
 	const Vector& vBox1Min,
 	const Vector& vBox1Max,
 	const Vector& vBox2Min,
 	const Vector& vBox2Max )
 {
-	return 
+	return
 		vBox1Min.x < vBox2Max.x && vBox1Max.x > vBox2Min.x &&
-		vBox1Min.y < vBox2Max.y && vBox1Max.y > vBox2Min.y && 
+		vBox1Min.y < vBox2Max.y && vBox1Max.y > vBox2Min.y &&
 		vBox1Min.z < vBox2Max.z && vBox1Max.z > vBox2Min.z;
 }
 
@@ -1451,7 +1451,7 @@ extern float SrgbGammaTo360Gamma( float flSrgbGammaValue );
 // linear (0..4) to screen corrected vertex space (0..1?)
 FORCEINLINE float LinearToVertexLight( float f )
 {
-	extern float lineartovertex[4096];	
+	extern float lineartovertex[4096];
 
 	// Gotta clamp before the multiply; could overflow...
 	// assume 0..4 range
@@ -1472,7 +1472,7 @@ FORCEINLINE float LinearToVertexLight( float f )
 
 FORCEINLINE unsigned char LinearToLightmap( float f )
 {
-	extern unsigned char lineartolightmap[4096];	
+	extern unsigned char lineartolightmap[4096];
 
 	// Gotta clamp before the multiply; could overflow...
 	int i = RoundFloatToInt( f * 1024.f );	// assume 0..4 range
@@ -1519,30 +1519,30 @@ void Catmull_Rom_Spline(
 	const Vector &p2,
 	const Vector &p3,
 	const Vector &p4,
-	float t, 
+	float t,
 	Vector &output );
 
 // Interpolate a Catmull-Rom spline.
 // Returns the tangent of the point at t of the spline
-void Catmull_Rom_Spline_Tangent( 
+void Catmull_Rom_Spline_Tangent(
 	const Vector &p1,
 	const Vector &p2,
 	const Vector &p3,
 	const Vector &p4,
-	float t, 
+	float t,
 	Vector &output );
 
 // area under the curve [0..t]
-void Catmull_Rom_Spline_Integral( 
+void Catmull_Rom_Spline_Integral(
 	const Vector &p1,
 	const Vector &p2,
 	const Vector &p3,
 	const Vector &p4,
-	float t, 
+	float t,
 	Vector& output );
 
 // area under the curve [0..1]
-void Catmull_Rom_Spline_Integral( 
+void Catmull_Rom_Spline_Integral(
 	const Vector &p1,
 	const Vector &p2,
 	const Vector &p3,
@@ -1556,7 +1556,7 @@ void Catmull_Rom_Spline_Normalize(
 	const Vector &p2,
 	const Vector &p3,
 	const Vector &p4,
-	float t, 
+	float t,
 	Vector &output );
 
 // area under the curve [0..t]
@@ -1566,7 +1566,7 @@ void Catmull_Rom_Spline_Integral_Normalize(
 	const Vector &p2,
 	const Vector &p3,
 	const Vector &p4,
-	float t, 
+	float t,
 	Vector& output );
 
 // Interpolate a Catmull-Rom spline.
@@ -1576,7 +1576,7 @@ void Catmull_Rom_Spline_NormalizeX(
 	const Vector &p2,
 	const Vector &p3,
 	const Vector &p4,
-	float t, 
+	float t,
 	Vector &output );
 
 // area under the curve [0..t]
@@ -1585,7 +1585,7 @@ void Catmull_Rom_Spline_NormalizeX(
 	const Vector &p2,
 	const Vector &p3,
 	const Vector &p4,
-	float t, 
+	float t,
 	Vector& output );
 
 // Interpolate a Hermite spline.
@@ -1595,7 +1595,7 @@ void Hermite_Spline(
 	const Vector &p2,
 	const Vector &d1,
 	const Vector &d2,
-	float t, 
+	float t,
 	Vector& output );
 
 float Hermite_Spline(
@@ -1610,7 +1610,7 @@ void Hermite_Spline(
 	const Vector &p0,
 	const Vector &p1,
 	const Vector &p2,
-	float t, 
+	float t,
 	Vector& output );
 
 float Hermite_Spline(
@@ -1622,16 +1622,16 @@ float Hermite_Spline(
 
 void Hermite_SplineBasis( float t, float basis[] );
 
-void Hermite_Spline( 
-	const Quaternion &q0, 
-	const Quaternion &q1, 
-	const Quaternion &q2, 
-	float t, 
+void Hermite_Spline(
+	const Quaternion &q0,
+	const Quaternion &q1,
+	const Quaternion &q2,
+	float t,
 	Quaternion &output );
 
 
 // See http://en.wikipedia.org/wiki/Kochanek-Bartels_curves
-// 
+//
 // Tension:  -1 = Round -> 1 = Tight
 // Bias:     -1 = Pre-shoot (bias left) -> 1 = Post-shoot (bias right)
 // Continuity: -1 = Box corners -> 1 = Inverted corners
@@ -1639,30 +1639,30 @@ void Hermite_Spline(
 // If T=B=C=0 it's the same matrix as Catmull-Rom.
 // If T=1 & B=C=0 it's the same as Cubic.
 // If T=B=0 & C=-1 it's just linear interpolation
-// 
+//
 // See http://news.povray.org/povray.binaries.tutorials/attachment/%3CXns91B880592482seed7@povray.org%3E/Splines.bas.txt
 // for example code and descriptions of various spline types...
-// 
+//
 void Kochanek_Bartels_Spline(
-	float tension, 
-	float bias, 
+	float tension,
+	float bias,
 	float continuity,
 	const Vector &p1,
 	const Vector &p2,
 	const Vector &p3,
 	const Vector &p4,
-	float t, 
+	float t,
 	Vector& output );
 
 void Kochanek_Bartels_Spline_NormalizeX(
-	float tension, 
-	float bias, 
+	float tension,
+	float bias,
 	float continuity,
 	const Vector &p1,
 	const Vector &p2,
 	const Vector &p3,
 	const Vector &p4,
-	float t, 
+	float t,
 	Vector& output );
 
 // See link at Kochanek_Bartels_Spline for info on the basis matrix used
@@ -1671,7 +1671,7 @@ void Cubic_Spline(
 	const Vector &p2,
 	const Vector &p3,
 	const Vector &p4,
-	float t, 
+	float t,
 	Vector& output );
 
 void Cubic_Spline_NormalizeX(
@@ -1679,7 +1679,7 @@ void Cubic_Spline_NormalizeX(
 	const Vector &p2,
 	const Vector &p3,
 	const Vector &p4,
-	float t, 
+	float t,
 	Vector& output );
 
 // See link at Kochanek_Bartels_Spline for info on the basis matrix used
@@ -1688,7 +1688,7 @@ void BSpline(
 	const Vector &p2,
 	const Vector &p3,
 	const Vector &p4,
-	float t, 
+	float t,
 	Vector& output );
 
 void BSpline_NormalizeX(
@@ -1696,7 +1696,7 @@ void BSpline_NormalizeX(
 	const Vector &p2,
 	const Vector &p3,
 	const Vector &p4,
-	float t, 
+	float t,
 	Vector& output );
 
 // See link at Kochanek_Bartels_Spline for info on the basis matrix used
@@ -1705,7 +1705,7 @@ void Parabolic_Spline(
 	const Vector &p2,
 	const Vector &p3,
 	const Vector &p4,
-	float t, 
+	float t,
 	Vector& output );
 
 void Parabolic_Spline_NormalizeX(
@@ -1713,7 +1713,7 @@ void Parabolic_Spline_NormalizeX(
 	const Vector &p2,
 	const Vector &p3,
 	const Vector &p4,
-	float t, 
+	float t,
 	Vector& output );
 
 // quintic interpolating polynomial from Perlin.
@@ -1721,19 +1721,19 @@ void Parabolic_Spline_NormalizeX(
 FORCEINLINE float QuinticInterpolatingPolynomial(float t)
 {
 	// 6t^5-15t^4+10t^3
-	return t * t * t *( t * ( t* 6.0 - 15.0 ) + 10.0 );
+	return static_cast<float>(t * t * t *( t * ( t* 6.0 - 15.0 ) + 10.0 ));
 }
 
 // given a table of sorted tabulated positions, return the two indices and blendfactor to linear
 // interpolate. Does a search. Can be used to find the blend value to interpolate between
 // keyframes.
-void GetInterpolationData( float const *pKnotPositions, 
+void GetInterpolationData( float const *pKnotPositions,
 						   float const *pKnotValues,
 						   int nNumValuesinList,
 						   int nInterpolationRange,
 						   float flPositionToInterpolateAt,
 						   bool bWrap,
-						   float *pValueA, 
+						   float *pValueA,
 						   float *pValueB,
 						   float *pInterpolationValue);
 
@@ -1823,7 +1823,7 @@ void TransformAABB( const matrix3x4_t &in1, const Vector &vecMinsIn, const Vecto
 void ITransformAABB( const matrix3x4_t &in1, const Vector &vecMinsIn, const Vector &vecMaxsIn, Vector &vecMinsOut, Vector &vecMaxsOut );
 
 //-----------------------------------------------------------------------------
-// Rotates a AABB into another space; which will inherently grow the box. 
+// Rotates a AABB into another space; which will inherently grow the box.
 // (same as TransformAABB, but doesn't take the translation into account)
 //-----------------------------------------------------------------------------
 void RotateAABB( const matrix3x4_t &in1, const Vector &vecMinsIn, const Vector &vecMaxsIn, Vector &vecMinsOut, Vector &vecMaxsOut );
@@ -1913,7 +1913,7 @@ FORCEINLINE unsigned int * PackNormal_HEND3N( const float *pNormal, unsigned int
 	Assert( temp[0] >= -1023 && temp[0] <= 1023 );
 	Assert( temp[1] >= -1023 && temp[1] <= 1023 );
 	Assert( temp[2] >= -511 && temp[2] <= 511 );
-	
+
 	*pPackedNormal = ( ( temp[2] & 0x3ff ) << 22L ) |
                      ( ( temp[1] & 0x7ff ) << 11L ) |
                      ( ( temp[0] & 0x7ff ) << 0L );
@@ -1933,7 +1933,7 @@ FORCEINLINE unsigned int * PackNormal_HEND3N( float nx, float ny, float nz, unsi
 	Assert( temp[0] >= -1023 && temp[0] <= 1023 );
 	Assert( temp[1] >= -1023 && temp[1] <= 1023 );
 	Assert( temp[2] >= -511 && temp[2] <= 511 );
-	
+
 	*pPackedNormal = ( ( temp[2] & 0x3ff ) << 22L ) |
                      ( ( temp[1] & 0x7ff ) << 11L ) |
                      ( ( temp[0] & 0x7ff ) << 0L );
@@ -2017,13 +2017,13 @@ FORCEINLINE float * UnpackNormal_UBYTE4( const unsigned int *pPackedNormal, floa
 	unsigned char cX, cY;
 	if ( bIsTangent )
 	{
-		cX = *pPackedNormal >> 16;					// Unpack Z
-		cY = *pPackedNormal >> 24;					// Unpack W
+		cX = static_cast<unsigned char>(*pPackedNormal >> 16);					// Unpack Z
+		cY = static_cast<unsigned char>(*pPackedNormal >> 24);					// Unpack W
 	}
 	else
 	{
-		cX = *pPackedNormal >>  0;					// Unpack X
-		cY = *pPackedNormal >>  8;					// Unpack Y
+		cX = static_cast<unsigned char>(*pPackedNormal >>  0);					// Unpack X
+		cY = static_cast<unsigned char>(*pPackedNormal >>  8);					// Unpack Y
 	}
 
 	float x = cX - 128.0f;
@@ -2088,7 +2088,7 @@ FORCEINLINE unsigned int * PackNormal_UBYTE4( float nx, float ny, float nz, unsi
 	float xSignBit = 0.5f*( 1 - xSign );			// [-1,+1] -> [1,0]
 	float ySignBit = 0.5f*( 1 - ySign );			// 1 is negative bit (like slt instruction)
 	float zSignBit = 0.5f*( 1 - zSign );
-	float tSignBit = 0.5f*( 1 - binormalSign );		
+	float tSignBit = 0.5f*( 1 - binormalSign );
 
 	float absX = xSign*nx;							// 0..1 range (abs)
 	float absY = ySign*ny;
@@ -2116,7 +2116,7 @@ FORCEINLINE unsigned int * PackNormal_UBYTE4( float nx, float ny, float nz, unsi
 
 	if ( !bIsTangent )
 		*pPackedNormal = (cX <<  0) | (cY <<  8);	// xy for normal
-	else						   
+	else
 		*pPackedNormal = (cX << 16) | (cY << 24);	// zw for tangent
 
 	return pPackedNormal;
@@ -2166,11 +2166,11 @@ inline bool CloseEnough( const Vector &a, const Vector &b, float epsilon = EQUAL
 }
 
 // Fast compare
-// maxUlps is the maximum error in terms of Units in the Last Place. This 
+// maxUlps is the maximum error in terms of Units in the Last Place. This
 // specifies how big an error we are willing to accept in terms of the value
-// of the least significant digit of the floating point number’s 
-// representation. maxUlps can also be interpreted in terms of how many 
-// representable floats we are willing to accept between A and B. 
+// of the least significant digit of the floating point numberï¿½s
+// representation. maxUlps can also be interpreted in terms of how many
+// representable floats we are willing to accept between A and B.
 // This function will allow maxUlps-1 floats between A and B.
 bool AlmostEqual(float a, float b, int maxUlps = 10);
 
@@ -2183,4 +2183,3 @@ inline bool AlmostEqual( const Vector &a, const Vector &b, int maxUlps = 10)
 
 
 #endif	// MATH_BASE_H
-

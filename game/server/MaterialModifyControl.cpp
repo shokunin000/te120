@@ -82,7 +82,7 @@ BEGIN_DATADESC( CMaterialModifyControl )
 	DEFINE_FIELD( m_flFloatLerpTransitionTime, FIELD_FLOAT ),
 	DEFINE_FIELD( m_nModifyMode, FIELD_INTEGER ),
 	// Inputs.
-	DEFINE_INPUTFUNC( FIELD_STRING, "SetMaterialVar", SetMaterialVar ),
+	DEFINE_INPUTFUNC( FIELD_FLOAT, "SetMaterialVar", SetMaterialVar ),//TE120
 	DEFINE_INPUTFUNC( FIELD_VOID, "SetMaterialVarToCurrentTime", SetMaterialVarToCurrentTime ),
 	DEFINE_INPUTFUNC( FIELD_STRING, "StartAnimSequence", InputStartAnimSequence ),
 	DEFINE_INPUTFUNC( FIELD_STRING, "StartFloatLerp", InputStartFloatLerp ),
@@ -161,7 +161,7 @@ int CMaterialModifyControl::ShouldTransmit( const CCheckTransmitInfo *pInfo )
 	{
 		return pEnt->ShouldTransmit( pInfo );
 	}
-	
+
 	return FL_EDICT_DONTSEND;
 }
 
@@ -173,15 +173,20 @@ void CMaterialModifyControl::SetMaterialVar( inputdata_t &inputdata )
 {
 	//if( debug_materialmodifycontrol.GetBool() && Q_stristr( GetDebugName(), "alyx" ) )
 	//{
-		//DevMsg( 1, "CMaterialModifyControl::SetMaterialVar %s %s %s=\"%s\"\n", 
+		//DevMsg( 1, "CMaterialModifyControl::SetMaterialVar %s %s %s=\"%s\"\n",
 			//GetDebugName(), m_szMaterialName.Get(), m_szMaterialVar.Get(), inputdata.value.String() );
 	//}
-	Q_strncpy( m_szMaterialVarValue.GetForModify(), inputdata.value.String(), MATERIAL_MODIFY_STRING_SIZE );
+//TE120--
+	char temp[32];
+	Q_snprintf( temp, 32, "%f", inputdata.value.Float() );
+
+	Q_strncpy( m_szMaterialVarValue.GetForModify(), temp, MATERIAL_MODIFY_STRING_SIZE );
+//TE120--
 	m_nModifyMode = MATERIAL_MODIFY_MODE_SETVAR;
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CMaterialModifyControl::SetMaterialVarToCurrentTime( inputdata_t &inputdata )
 {
@@ -192,7 +197,7 @@ void CMaterialModifyControl::SetMaterialVarToCurrentTime( inputdata_t &inputdata
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CMaterialModifyControl::InputStartAnimSequence( inputdata_t &inputdata )
 {
@@ -237,7 +242,7 @@ void CMaterialModifyControl::InputStartAnimSequence( inputdata_t &inputdata )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CMaterialModifyControl::InputStartFloatLerp( inputdata_t &inputdata )
 {
@@ -246,7 +251,7 @@ void CMaterialModifyControl::InputStartFloatLerp( inputdata_t &inputdata )
 
 //	if( debug_materialmodifycontrol.GetBool() )//&& Q_stristr( GetDebugName(), "alyx" ) )
 //	{
-//		DevMsg( 1, "CMaterialModifyControl::InputStartFloatLerp %s %s %s \"%s\"\n", 
+//		DevMsg( 1, "CMaterialModifyControl::InputStartFloatLerp %s %s %s \"%s\"\n",
 //			GetDebugName(), m_szMaterialName.Get(), m_szMaterialVar.Get(), inputdata.value.String() );
 //	}
 

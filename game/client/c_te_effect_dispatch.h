@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //=============================================================================//
@@ -33,8 +33,8 @@ public:
 
 
 //
-// Use this macro to register a client effect callback. 
-// If you do DECLARE_CLIENT_EFFECT( "MyEffectName", MyCallback ), then MyCallback will be 
+// Use this macro to register a client effect callback.
+// If you do DECLARE_CLIENT_EFFECT( "MyEffectName", MyCallback ), then MyCallback will be
 // called when the server does DispatchEffect( "MyEffect", data )
 //
 #define DECLARE_CLIENT_EFFECT( effectName, callbackFunction ) \
@@ -42,5 +42,6 @@ public:
 
 void DispatchEffectToCallback( const char *pEffectName, const CEffectData &m_EffectData );
 void DispatchEffect( const char *pName, const CEffectData &data );
+void DispatchEffect( const char *pName, const CEffectData &data, IRecipientFilter &filter );
 
 #endif // C_TE_EFFECT_DISPATCH_H

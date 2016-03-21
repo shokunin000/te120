@@ -96,6 +96,7 @@ void CFuncMoveLinear::Spawn( void )
 
 	m_vecPosition1 = GetLocalOrigin() - (m_vecMoveDir * m_flMoveDistance * m_flStartPosition);
 	m_vecPosition2 = m_vecPosition1 + (m_vecMoveDir * m_flMoveDistance);
+
 //TE120--
 	// Update position reference entities
 	if ( m_hPosition1 != NULL )
@@ -112,6 +113,7 @@ void CFuncMoveLinear::Spawn( void )
 			m_hPosition2->SetParent( GetParent() );
 	}
 //TE120--
+
 	m_vecFinalDest = GetLocalOrigin();
 
 	SetTouch( NULL );

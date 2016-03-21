@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 //=============================================================================
 
@@ -24,7 +24,7 @@
 #define PARTICLES_MANIFEST_FILE				"particles/particles_manifest.txt"
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 int GetAttachTypeFromString( const char *pszString )
 {
@@ -52,8 +52,8 @@ int GetAttachTypeFromString( const char *pszString )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : list - 
+// Purpose:
+// Input  : list -
 //-----------------------------------------------------------------------------
 void GetParticleManifest( CUtlVector<CUtlString>& list )
 {
@@ -82,7 +82,7 @@ void GetParticleManifest( CUtlVector<CUtlString>& list )
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void ParseParticleEffects( bool bLoadSheets, bool bPrecache )
 {
@@ -103,7 +103,7 @@ void ParseParticleEffects( bool bLoadSheets, bool bPrecache )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void ReloadParticleEffectsInList( IFileList *pFilesToReload )
 {
@@ -142,7 +142,7 @@ void ReloadParticleEffectsInList( IFileList *pFilesToReload )
 	// Then check to see if we need to reload the map's particles
 	const char *pszMapName = NULL;
 #ifdef CLIENT_DLL
-	pszMapName = engine->GetLevelName();	
+	pszMapName = engine->GetLevelName();
 #else
 	pszMapName = STRING( gpGlobals->mapname );
 #endif
@@ -158,7 +158,7 @@ void ReloadParticleEffectsInList( IFileList *pFilesToReload )
 	{
 		ParseParticleEffects( true, true );
 	}
-	
+
 	g_pParticleSystemMgr->DecommitTempMemory();
 }
 
@@ -236,12 +236,12 @@ void ParseParticleEffectsMap( const char *pMapName, bool bLoadSheets, IFileList 
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void PrecacheStandardParticleSystems( )
 {
 #ifdef GAME_DLL
-	// Now add each particle system name to the network string pool, so we can send string_t's 
+	// Now add each particle system name to the network string pool, so we can send string_t's
 	// down to the client instead of full particle system names.
 	for ( int i = 0; i < g_pParticleSystemMgr->GetParticleSystemCount(); i++ )
 	{
@@ -258,7 +258,7 @@ void PrecacheStandardParticleSystems( )
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void DispatchParticleEffect( const char *pszParticleName, ParticleAttachment_t iAttachType, CBaseEntity *pEntity, const char *pszAttachmentName, bool bResetAllParticlesOnEntity )
 {
@@ -280,7 +280,7 @@ void DispatchParticleEffect( const char *pszParticleName, ParticleAttachment_t i
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void DispatchParticleEffect( const char *pszParticleName, ParticleAttachment_t iAttachType, CBaseEntity *pEntity, int iAttachmentPoint, bool bResetAllParticlesOnEntity )
 {
@@ -321,7 +321,7 @@ void DispatchParticleEffect( const char *pszParticleName, ParticleAttachment_t i
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void DispatchParticleEffect( const char *pszParticleName, ParticleAttachment_t iAttachType, CBaseEntity *pEntity, const char *pszAttachmentName, Vector vecColor1, Vector vecColor2, bool bUseColors, bool bResetAllParticlesOnEntity )
 {
@@ -381,7 +381,7 @@ void DispatchParticleEffect( const char *pszParticleName, ParticleAttachment_t i
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void DispatchParticleEffect( int iEffectIndex, Vector vecOrigin, Vector vecStart, QAngle vecAngles, CBaseEntity *pEntity )
 {
@@ -416,7 +416,7 @@ void DispatchParticleEffect( int iEffectIndex, Vector vecOrigin, Vector vecStart
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void DispatchParticleEffect( const char *pszParticleName, Vector vecOrigin, QAngle vecAngles, Vector vecColor1, Vector vecColor2, bool bUseColors, CBaseEntity *pEntity, int iAttachType )
 {
@@ -459,7 +459,7 @@ void DispatchParticleEffect( const char *pszParticleName, Vector vecOrigin, QAng
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void DispatchParticleEffect( const char *pszParticleName, Vector vecOrigin, QAngle vecAngles, CBaseEntity *pEntity )
 {
@@ -477,7 +477,7 @@ void DispatchParticleEffect( const char *pszParticleName, Vector vecOrigin, Vect
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void StopParticleEffects( CBaseEntity *pEntity )
 {
@@ -528,11 +528,11 @@ void StopParticleEffects( CBaseEntity *pEntity )
 		CBaseEntity *pEntity = NULL;
 		while ( (pEntity = GetNextCommandEntity( pPlayer, name, pEntity )) != NULL )
 		{
-			/* 
+			/*
 			Fire the test particle system on this entity
 			*/
 
-			DispatchParticleEffect( 
+			DispatchParticleEffect(
 				pszParticleFile,
 				(ParticleAttachment_t)iAttachType,
 				pEntity,

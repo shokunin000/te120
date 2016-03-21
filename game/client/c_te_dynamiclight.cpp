@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $Workfile:     $
 // $Date:         $
@@ -44,7 +44,7 @@ public:
 
 
 //-----------------------------------------------------------------------------
-// Networking 
+// Networking
 //-----------------------------------------------------------------------------
 IMPLEMENT_CLIENTCLASS_EVENT_DT(C_TEDynamicLight, DT_TEDynamicLight, CTEDynamicLight)
 	RecvPropVector( RECVINFO(m_vecOrigin)),
@@ -59,7 +59,7 @@ END_RECV_TABLE()
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 C_TEDynamicLight::C_TEDynamicLight( void )
 {
@@ -74,7 +74,7 @@ C_TEDynamicLight::C_TEDynamicLight( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 C_TEDynamicLight::~C_TEDynamicLight( void )
 {
@@ -83,6 +83,7 @@ C_TEDynamicLight::~C_TEDynamicLight( void )
 void TE_DynamicLight( IRecipientFilter& filter, float delay,
 	const Vector* org, int r, int g, int b, int exponent, float radius, float time, float decay, int nLightIndex )
 {
+	// Create a "Dynamic" light that will illuminate the world
 	dlight_t *dl = effects->CL_AllocDlight( nLightIndex );
 	if ( !dl )
 		return;
@@ -95,6 +96,22 @@ void TE_DynamicLight( IRecipientFilter& filter, float delay,
 	dl->color.exponent	= exponent;
 	dl->die		= gpGlobals->curtime + time;
 	dl->decay	= decay;
+
+//TE120--
+	// Create an "Entity" Light that will illumninate entities
+  dlight_t *el = effects->CL_AllocElight( nLightIndex );
+  if ( !el )
+  	return;
+
+	el->origin = *org;
+	el->radius = radius;
+	el->color.r	= r;
+	el->color.g	= g;
+	el->color.b	= b;
+	el->color.exponent = exponent;
+	el->die	= gpGlobals->curtime + time;
+	el->decay	= decay;
+//TE120--
 
 	if ( ToolsEnabled() && clienttools->IsInRecordingMode() )
 	{
@@ -122,8 +139,8 @@ void TE_DynamicLight( IRecipientFilter& filter, float delay,
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : bool - 
+// Purpose:
+// Input  : bool -
 //-----------------------------------------------------------------------------
 void C_TEDynamicLight::PostDataUpdate( DataUpdateType_t updateType )
 {
@@ -146,7 +163,6 @@ void TE_DynamicLight( IRecipientFilter& filter, float delay, KeyValues *pKeyValu
 	float flDecay = pKeyValues->GetFloat( "decay" );
  	int nLightIndex = pKeyValues->GetInt( "lightindex", LIGHT_INDEX_TE_DYNAMIC );
 
-	TE_DynamicLight( filter, 0.0f, &vecOrigin, c.r(), c.g(), c.b(), nExponent, 
+	TE_DynamicLight( filter, 0.0f, &vecOrigin, c.r(), c.g(), c.b(), nExponent,
 		flRadius, flDuration, flDecay, nLightIndex );
 }
-

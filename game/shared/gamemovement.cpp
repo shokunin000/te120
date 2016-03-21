@@ -19,9 +19,6 @@
 	#include "hl_movedata.h"
 #endif
 
-// memdbgon must be the last include file in a .cpp file!!!
-#include "tier0/memdbgon.h"
-
 #define	STOP_EPSILON		0.1
 #define	MAX_CLIP_PLANES		5
 
@@ -34,6 +31,9 @@ extern IFileSystem *filesystem;
 	#include "env_player_surface_trigger.h"
 	static ConVar dispcoll_drawplane( "dispcoll_drawplane", "0" );
 #endif
+
+// memdbgon must be the last include file in a .cpp file!!!
+#include "tier0/memdbgon.h"
 
 
 // tickcount currently isn't set during prediction, although gpGlobals->curtime and

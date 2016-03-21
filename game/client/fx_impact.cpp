@@ -271,7 +271,6 @@ static void PerformNewCustomEffects( const Vector &vecOrigin, trace_t &tr, const
 	{
 		pImpactName = effect.m_pNameNoFlecks;
 	}
-
 	if ( !pImpactName )
 		return;
 
@@ -286,13 +285,13 @@ static void PerformNewCustomEffects( const Vector &vecOrigin, trace_t &tr, const
 
 	Vector vecImpactPoint = ( tr.fraction != 1.0f ) ? tr.endpos : vecOrigin;
 #ifdef _DEBUG
-	if(!VectorsAreEqual( vecOrigin, tr.endpos, 1e-1 ))
+	if ( !VectorsAreEqual( vecOrigin, tr.endpos, 1e-1 ) )
 	{
 		Warning( "Impact decal drawn too far from the surface impacted.\n" );
 	}
 #endif
 
-	PrecacheParticleSystem(pImpactName);
+	//PrecacheParticleSystem(pImpactName);
 	CSmartPtr<CNewParticleEffect> pEffect = new CNewParticleEffect( NULL, pImpactName );
 	if ( !pEffect->IsValid() )
  		return;
@@ -317,15 +316,15 @@ void PerformCustomEffects( const Vector &vecOrigin, trace_t &tr, const Vector &s
 	if ( tr.surface.flags & (SURF_SKY|SURF_NODRAW|SURF_HINT|SURF_SKIP) )
 		return;
 
+	if ( cl_new_impact_effects.GetInt() )
+	{
+		PerformNewCustomEffects( vecOrigin, tr, shotDir, iMaterial, iScale, nFlags );
+	}
+
 	bool bNoFlecks = !r_drawflecks.GetBool();
 	if ( !bNoFlecks )
 	{
 		bNoFlecks = ( ( nFlags & FLAGS_CUSTIOM_EFFECTS_NOFLECKS ) != 0  );
-	}
-
-	if ( cl_new_impact_effects.GetInt() )
-	{
-		PerformNewCustomEffects( vecOrigin, tr, shotDir, iMaterial, iScale, nFlags );
 	}
 
 	Vector norm = tr.plane.normal;

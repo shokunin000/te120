@@ -69,15 +69,8 @@ echo
 echo "Create Game Projects..."
 pushd `dirname $0`
 devtools/bin/vpc /2013
-#devtools/bin/vpc /hl2 /episodic +everything /mksln everything
 devtools/bin/vpc /episodic +game /mksln games
-#devtools/bin/vpc /episodic +game_shader_dx9 +game +everything /mksln games
-#devtools/bin/vpc /episodic +game_shader_dx9 +game /mksln games
-#devtools/bin/vpc /hl2 /episodic +game /mksln games
-#devtools/bin/vpc /hl2 /episodic +game_shader_dx9 +game /mksln games
 popd
-
-echo
 
 # Build TE120
 echo "Using ccache."
@@ -85,11 +78,10 @@ export PATH="/usr/lib/ccache/bin/:$PATH"
 echo "Building TE120..."
 make -f games.mak
 
-#
-##chmod 0664 ./bin/client.so
-##chmod 0664 ./bin/server.so
-##chmod +x ./bin/client.so
-##chmod +x ./bin/server.so
+# Copy files
+echo "Copy files..."
+cp -f ../game/mod_episodic/bin/client.so "/media/vincent/dbcbf69d-8162-4768-976c-c7c5b5ace72b/SteamLibrary/steamapps/common/Transmissions Element 120/te120/bin"
+cp -f ../game/mod_episodic/bin/server.so "/media/vincent/dbcbf69d-8162-4768-976c-c7c5b5ace72b/SteamLibrary/steamapps/common/Transmissions Element 120/te120/bin"
 
 echo "Cleaning up..."
 export PATH=$OLD_PATH

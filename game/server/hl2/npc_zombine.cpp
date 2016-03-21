@@ -49,14 +49,6 @@ enum
 #define MAX_SPRINT_TIME 20.0f
 //TE120--
 
-#define MIN_SPRINT_DISTANCE 64.0f
-//TE120--
-#define MAX_SPRINT_DISTANCE 2048.0f
-
-#define SPRINT_CHANCE_VALUE 15
-//TE120--
-#define SPRINT_CHANCE_VALUE_DARKNESS 50
-
 #define GRENADE_PULL_MAX_DISTANCE 512.0f//TE120
 
 #define ZOMBINE_MAX_GRENADES 1
@@ -75,7 +67,7 @@ int AE_ZOMBINE_PULLPIN;
 
 extern bool IsAlyxInDarknessMode();
 
-ConVar	sk_zombie_soldier_health( "sk_zombie_soldier_health","0");
+ConVar sk_zombie_soldier_health( "sk_zombie_soldier_health", "0");
 
 float g_flZombineGrenadeTimes = 0;
 
@@ -169,10 +161,10 @@ private:
 	float	m_flSprintRestTime;
 
 	float	m_flSuperFastAttackTime;
-	float   m_flGrenadePullTime;
+	float m_flGrenadePullTime;
 
-	int		m_iGrenadeCount;
-	int		m_nGrenades;//TE120
+	int	m_iGrenadeCount;
+	int	m_nGrenades;//TE120
 
 	EHANDLE	m_hGrenade;
 
@@ -418,9 +410,11 @@ void CNPC_Zombine::GatherGrenadeConditions( void )
 
 	if ( m_ActBusyBehavior.IsActive() )
 		return;
+
 //TE120--
 	CBasePlayer *pPlayer = AI_GetSinglePlayer();
-	float flLengthToEnemy = (GetEnemy()->GetAbsOrigin() - GetAbsOrigin()).Length();
+
+	float flLengthToEnemy = ( GetEnemy()->GetAbsOrigin() - GetAbsOrigin() ).Length();
 
 	if ( pPlayer && pPlayer->FInViewCone(this) ) // || flLengthToEnemy < 48
 	{

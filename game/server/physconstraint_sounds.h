@@ -196,10 +196,10 @@ Vector VelocitySampler::GetRelativeVelocity( IPhysicsObject *pObj, IPhysicsObjec
 
 Vector VelocitySampler::GetRelativeAngularVelocity( IPhysicsObject *pObj, IPhysicsObject *pReferenceFrame )
 {
-//TE120----
+//TE120--
 	if ( !pObj )
 		return Vector(0, 0, 0);
-//TE120----
+//TE120--
 
 	Assert(pObj);
 

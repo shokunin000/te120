@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $Workfile:     $
 // $Date:         $
@@ -52,21 +52,21 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 C_TEEffectDispatch::C_TEEffectDispatch( void )
 {
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 C_TEEffectDispatch::~C_TEEffectDispatch( void )
 {
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void DispatchEffectToCallback( const char *pEffectName, const CEffectData &m_EffectData )
 {
@@ -141,7 +141,7 @@ static void RecordEffect( const char *pEffectName, const CEffectData &data )
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void C_TEEffectDispatch::PostDataUpdate( DataUpdateType_t updateType )
 {
@@ -158,9 +158,9 @@ void C_TEEffectDispatch::PostDataUpdate( DataUpdateType_t updateType )
 
 
 IMPLEMENT_CLIENTCLASS_EVENT_DT( C_TEEffectDispatch, DT_TEEffectDispatch, CTEEffectDispatch )
-	
+
 	RecvPropDataTable( RECVINFO_DT( m_EffectData ), 0, &REFERENCE_RECV_TABLE( DT_EffectData ) )
-			
+
 END_RECV_TABLE()
 
 //-----------------------------------------------------------------------------
@@ -179,6 +179,10 @@ void DispatchEffect( const char *pName, const CEffectData &data )
 	te->DispatchEffect( filter, 0.0, data.m_vOrigin, pName, data );
 }
 
+void DispatchEffect( const char *pName, const CEffectData &data, IRecipientFilter &filter )
+{
+	te->DispatchEffect( filter, 0.0, data.m_vOrigin, pName, data );
+}
 
 //-----------------------------------------------------------------------------
 // Playback
@@ -187,7 +191,7 @@ void TE_DispatchEffect( IRecipientFilter& filter, float delay, KeyValues *pKeyVa
 {
 	CEffectData data;
 	data.m_nMaterial = 0;
-		  
+
 	data.m_vOrigin.x = pKeyValues->GetFloat( "originx" );
 	data.m_vOrigin.y = pKeyValues->GetFloat( "originy" );
 	data.m_vOrigin.z = pKeyValues->GetFloat( "originz" );

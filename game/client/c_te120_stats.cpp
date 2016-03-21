@@ -38,14 +38,17 @@ C_TE120Stats::~C_TE120Stats()
 
 void C_TE120Stats::PostInit()
 {
-
   CountGameLaunches();
-  ResetAllStats();
 }
 
 void C_TE120Stats::Shutdown()
 {
-  ResetAllStats();
+	// Reset all stats and achivements when developer mod is on (should be disabled in final release)
+	static ConVarRef developer( "developer" );
+	if ( developer.GetInt() != 0 )
+	{
+		ResetAllStats();// Debug
+	}
 }
 
 void C_TE120Stats::LevelInitPostEntity()
@@ -80,6 +83,7 @@ virtual void OnSave() = 0;
 virtual void OnRestore() = 0;
 */
 
+// Count how often TE120 was launched
 void C_TE120Stats::CountGameLaunches()
 {
   int iCurrentStatValue;
@@ -90,6 +94,7 @@ void C_TE120Stats::CountGameLaunches()
   DevMsg( "New stat_num_games value: %i\n", iCurrentStatValue );
 }
 
+// Count TE120 playtime (in levels)
 void C_TE120Stats::CountPlayTime()
 {
 	float flElapsed = gpGlobals->realtime - m_flLevelStartTime;
@@ -103,6 +108,7 @@ void C_TE120Stats::CountPlayTime()
 	DevMsg( "Playtime value: %f\n", flElapsed );
 }
 
+// Only for development, resets all stats an achivements
 void C_TE120Stats::ResetAllStats()
 {
   DevMsg("Reset all stats!\n");

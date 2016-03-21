@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 //=============================================================================
 
@@ -69,7 +69,7 @@ CParticleProperty::CParticleProperty()
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 CParticleProperty::~CParticleProperty()
 {
@@ -87,7 +87,7 @@ void CParticleProperty::Init( CBaseEntity *pEntity )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 int CParticleProperty::GetParticleAttachment( C_BaseEntity *pEntity, const char *pszAttachmentName, const char *pszParticleName )
 {
@@ -117,7 +117,7 @@ CNewParticleEffect *CParticleProperty::Create( const char *pszParticleName, Part
 	// Create the system
 	return Create( pszParticleName, iAttachType, iAttachment );
 }
-	  
+
 //-----------------------------------------------------------------------------
 // Purpose: Create a new particle system and attach it to our owner
 //-----------------------------------------------------------------------------
@@ -131,7 +131,7 @@ CNewParticleEffect *CParticleProperty::Create( const char *pszParticleName, Part
 
 	int nBatchMode = cl_particle_batch_mode.GetInt();
 	CParticleSystemDefinition *pDef = g_pParticleSystemMgr->FindParticleSystem( pszParticleName );
-	bool bRequestedBatch = ( nBatchMode == 2 ) || ( ( nBatchMode == 1 ) && pDef && pDef->ShouldBatch() ); 
+	bool bRequestedBatch = ( nBatchMode == 2 ) || ( ( nBatchMode == 1 ) && pDef && pDef->ShouldBatch() );
 	if ( ( iAttachType == PATTACH_CUSTOMORIGIN ) && bRequestedBatch )
 	{
 		int iIndex = FindEffect( pszParticleName );
@@ -167,12 +167,12 @@ CNewParticleEffect *CParticleProperty::Create( const char *pszParticleName, Part
 	{
 		m_pOuter->OnNewParticleEffect( pszParticleName, newEffect->pParticleEffect.GetObject() );
 	}
-	
+
 	return newEffect->pParticleEffect.GetObject();
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CParticleProperty::AddControlPoint( CNewParticleEffect *pEffect, int iPoint, C_BaseEntity *pEntity, ParticleAttachment_t iAttachType, const char *pszAttachmentName, Vector vecOriginOffset )
 {
@@ -192,7 +192,7 @@ void CParticleProperty::AddControlPoint( CNewParticleEffect *pEffect, int iPoint
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CParticleProperty::AddControlPoint( int iEffectIndex, int iPoint, C_BaseEntity *pEntity, ParticleAttachment_t iAttachType, int iAttachmentPoint, Vector vecOriginOffset )
 {
@@ -216,7 +216,7 @@ void CParticleProperty::AddControlPoint( int iEffectIndex, int iPoint, C_BaseEnt
 		iIndex = pEffect->pControlPoints.AddToTail();
 		pNewPoint = &pEffect->pControlPoints[iIndex];
 	}
-	
+
 	pNewPoint->iControlPoint = iPoint;
 	pNewPoint->hEntity = pEntity;
 	pNewPoint->iAttachType = iAttachType;
@@ -254,7 +254,7 @@ void CParticleProperty::SetControlPointParent( int iEffectIndex, int whichContro
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: Stop effects from emitting more particles. If no effect is 
+// Purpose: Stop effects from emitting more particles. If no effect is
 //			specified, all effects attached to this entity are stopped.
 //-----------------------------------------------------------------------------
 void CParticleProperty::StopEmission( CNewParticleEffect *pEffect, bool bWakeOnStop, bool bDestroyAsleepSystems )
@@ -337,7 +337,7 @@ void CParticleProperty::StopParticlesInvolving( CBaseEntity *pEntity )
 	// If we return from dormancy and are then told to stop emitting,
 	// we should have died while dormant. Remove ourselves immediately.
 	bool bRemoveInstantly = (m_iDormancyChangedAtFrame == gpGlobals->framecount);
-	
+
 	int nCount = m_ParticleEffects.Count();
 	for ( int i = 0; i < nCount; ++i )
 	{
@@ -427,7 +427,7 @@ void CParticleProperty::StopParticlesWithNameAndAttachment( const char *pszEffec
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CParticleProperty::OnParticleSystemUpdated( CNewParticleEffect *pEffect, float flTimeDelta )
 {
@@ -451,7 +451,7 @@ void CParticleProperty::OnParticleSystemUpdated( CNewParticleEffect *pEffect, fl
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CParticleProperty::OnParticleSystemDeleted( CNewParticleEffect *pEffect )
 {
@@ -481,7 +481,7 @@ void CParticleProperty::OwnerSetDormantTo( bool bDormant )
 #endif
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 int	CParticleProperty::FindEffect( CNewParticleEffect *pEffect )
 {
@@ -507,7 +507,7 @@ int CParticleProperty::FindEffect( const char *pEffectName, int nStart /*= 0*/ )
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CParticleProperty::UpdateParticleEffect( ParticleEffectList_t *pEffect, bool bInitializing, int iOnlyThisControlPoint )
 {
@@ -527,7 +527,7 @@ void CParticleProperty::UpdateParticleEffect( ParticleEffectList_t *pEffect, boo
 extern void FormatViewModelAttachment( Vector &vOrigin, bool bInverse );
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CParticleProperty::UpdateControlPoint( ParticleEffectList_t *pEffect, int iPoint, bool bInitializing )
 {
@@ -546,7 +546,7 @@ void CParticleProperty::UpdateControlPoint( ParticleEffectList_t *pEffect, int i
 		return;
 	}
 
-	// Only update non-follow particles when we're initializing, 
+	// Only update non-follow particles when we're initializing,
 	// unless we're parented to something, in which case we should always update
 	if ( !bInitializing && !pPoint->hEntity->GetMoveParent() && (pPoint->iAttachType == PATTACH_ABSORIGIN || pPoint->iAttachType == PATTACH_POINT ) )
 		return;
@@ -590,7 +590,7 @@ void CParticleProperty::UpdateControlPoint( ParticleEffectList_t *pEffect, int i
 				MatrixVectors( headBone, &vecForward, &vecRight, &vecUp );
 				MatrixPosition( headBone, vecOrigin );
 
-				CALL_ATTRIB_HOOK_FLOAT_ON_OTHER( pAnimating, flOffset, particle_effect_vertical_offset );	
+				CALL_ATTRIB_HOOK_FLOAT_ON_OTHER( pAnimating, flOffset, particle_effect_vertical_offset );
 			}
 		}
 	}
@@ -681,7 +681,7 @@ void CParticleProperty::DebugPrintEffects( void )
 
 		if ( !pParticleEffect )
 			continue;
-	
+
 		Msg( "(%d)  EffectName \"%s\"  Dormant? %s  Emission Stopped? %s \n",
 			i,
 			pParticleEffect->GetEffectName(),

@@ -53,6 +53,11 @@ void CC_DropPrimary( void )
 
 static ConCommand dropprimary("dropprimary", CC_DropPrimary, "dropprimary: Drops the primary weapon of the player.");
 
+// link to the correct class.
+#if !defined ( HL2MP )
+LINK_ENTITY_TO_CLASS( player, C_BaseHLPlayer );
+#endif
+
 //-----------------------------------------------------------------------------
 // Constructor
 //-----------------------------------------------------------------------------
@@ -627,7 +632,7 @@ void C_BaseHLPlayer::PerformClientSideNPCSpeedModifiers( float flFrameTime, CUse
 bool C_BaseHLPlayer::CreateMove( float flInputSampleTime, CUserCmd *pCmd )
 {
 	bool bResult = BaseClass::CreateMove( flInputSampleTime, pCmd );
-	
+
 	if ( !IsInAVehicle() )
 	{
 		PerformClientSideObstacleAvoidance( TICK_INTERVAL, pCmd );
