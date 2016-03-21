@@ -377,7 +377,7 @@ BEGIN_DATADESC( CFuncBrushGlow )
 	DEFINE_FIELD( m_bAbsorbing, FIELD_BOOLEAN ),
 	DEFINE_FIELD( m_fIsIlluminated, FIELD_BOOLEAN ),
 	DEFINE_FIELD( m_flAbsorbRate, FIELD_FLOAT ),
- 	DEFINE_FIELD( m_flEmitRate, FIELD_FLOAT ),
+	DEFINE_FIELD( m_flEmitRate, FIELD_FLOAT ),
 	DEFINE_KEYFIELD( m_bStartOff, FIELD_BOOLEAN, "StartOff"),
 	DEFINE_KEYFIELD( m_flAbsorbTime, FIELD_FLOAT, "AbsorbTime"),
 	DEFINE_KEYFIELD( m_flEmitTime, FIELD_FLOAT, "EmitTime"),
@@ -429,6 +429,7 @@ void CFuncBrushGlow::Spawn()
 void CFuncBrushGlow::InputAbsorbEnergy( inputdata_t &inputdata )
 {
 	m_bAbsorbing = true;
+
 	// Use think to start building up energy
 	SetThink( &CFuncBrushGlow::UpdateThink );
 	SetNextThink( gpGlobals->curtime + DT_BRUSH_GLOW );
@@ -441,6 +442,7 @@ void CFuncBrushGlow::InputAbsorbEnergy( inputdata_t &inputdata )
 void CFuncBrushGlow::InputEmitEnergy( inputdata_t &inputdata )
 {
 	m_bAbsorbing = false;
+
 	// Use think to start building up energy
 	SetThink( &CFuncBrushGlow::UpdateThink );
 	SetNextThink( gpGlobals->curtime + DT_BRUSH_GLOW );
@@ -456,6 +458,7 @@ void CFuncBrushGlow::UpdateThink( void )
 	if ( m_bAbsorbing && fCurrentEnergy < 1.0f )
 	{
 		DevMsg( "Absorbing Energy %f at %f rate.\n", fCurrentEnergy, m_flAbsorbRate );
+
 		fCurrentEnergy = clamp(fCurrentEnergy + m_flAbsorbRate, 0.0f, 1.0f);
 
 		// Change at absorb rate every think until we reach 1.0
@@ -468,6 +471,7 @@ void CFuncBrushGlow::UpdateThink( void )
 	else if ( fCurrentEnergy > 0.0f )
 	{
 		DevMsg( "Emitting Energy %f at %f rate.\n", fCurrentEnergy, m_flEmitRate );
+
 		fCurrentEnergy = clamp(fCurrentEnergy - m_flEmitRate, 0.0f, 1.0f);
 
 		// Change at emit rate every think until we reach 0.0
@@ -505,7 +509,9 @@ void CFuncBrushGlow::CheckIlluminated()
  	if ( pPlayer )
 	{
 		float fDot;
+
 		pPlayer->IsIlluminatedByFlashlight( this, &fDot );
+
 		DevMsg( "fDot: %f\n", fDot );
 
 		// Is this glow entity within a 15 degree cone and visible?
@@ -526,6 +532,7 @@ void CFuncBrushGlow::CheckIlluminated()
 
 			// Send out that I am no longer illuminated
 			m_OnNotIlluminated.FireOutput(this, this);
+
 			DevMsg( "I am no longer illuminated!\n" ); //Debug
 		}
 	}

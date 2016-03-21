@@ -176,12 +176,14 @@ void CMaterialModifyControl::SetMaterialVar( inputdata_t &inputdata )
 		//DevMsg( 1, "CMaterialModifyControl::SetMaterialVar %s %s %s=\"%s\"\n",
 			//GetDebugName(), m_szMaterialName.Get(), m_szMaterialVar.Get(), inputdata.value.String() );
 	//}
+
 //TE120--
 	char temp[32];
 	Q_snprintf( temp, 32, "%f", inputdata.value.Float() );
 
 	Q_strncpy( m_szMaterialVarValue.GetForModify(), temp, MATERIAL_MODIFY_STRING_SIZE );
 //TE120--
+
 	m_nModifyMode = MATERIAL_MODIFY_MODE_SETVAR;
 }
 
