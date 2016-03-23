@@ -68,7 +68,6 @@ echo
 # Create Game Projects
 echo "Create Game Projects..."
 pushd `dirname $0`
-devtools/bin/vpc /2013
 devtools/bin/vpc /episodic +game /mksln games
 popd
 

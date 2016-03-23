@@ -466,8 +466,8 @@ private:
 	volatile T m_value;
 };
 
-typedef CInterlockedIntT<long> CInterlockedInt;
-typedef CInterlockedIntT<unsigned long> CInterlockedUInt;
+typedef CInterlockedIntT<int> CInterlockedInt;
+typedef CInterlockedIntT<unsigned> CInterlockedUInt;
 
 //-----------------------------------------------------------------------------
 
@@ -1662,7 +1662,7 @@ inline bool CThreadSpinRWLock::TryLockForWrite()
 
 inline bool CThreadSpinRWLock::TryLockForRead()
 {
-	if ( m_nWriters != 0l )
+	if ( m_nWriters != 0 )
 	{
 		return false;
 	}
