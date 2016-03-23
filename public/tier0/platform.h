@@ -132,13 +132,13 @@
 	#else
 		#define IsLinux() false
 	#endif
-	
+
 	#if defined( OSX )
 		#define IsOSX() true
 	#else
 		#define IsOSX() false
 	#endif
-	
+
 	#define IsPosix() true
 	#define IsPlatformOpenGL() true
 #else
@@ -371,7 +371,7 @@ typedef void * HINSTANCE;
 
 #ifdef GNUC
 #undef offsetof
-//#define offsetof( type, var ) __builtin_offsetof( type, var ) 
+//#define offsetof( type, var ) __builtin_offsetof( type, var )
 #define offsetof(s,m)	(size_t)&(((s *)0)->m)
 #else
 #undef offsetof
@@ -438,7 +438,7 @@ typedef void * HINSTANCE;
 #elif defined( GNUC )
 // gnuc has the align decoration at the end
 #define ALIGN4
-#define ALIGN8 
+#define ALIGN8
 #define ALIGN16
 #define ALIGN32
 #define ALIGN128
@@ -559,7 +559,7 @@ typedef void * HINSTANCE;
 	#define  STDCALL				__stdcall
 	#ifdef FORCEINLINE
 		#undef FORCEINLINE
-#endif 
+#endif
 	#define  FORCEINLINE			__forceinline
 	#define  FORCEINLINE_TEMPLATE		__forceinline
 	#else
@@ -862,7 +862,7 @@ template <typename T>
 inline T QWordSwapC( T dw )
 {
 	// Assert sizes passed to this are already correct, otherwise
-	// the cast to uint64 * below is unsafe and may have wrong results 
+	// the cast to uint64 * below is unsafe and may have wrong results
 	// or even crash.
 	PLAT_COMPILE_TIME_ASSERT( sizeof( dw ) == sizeof(uint64) );
 
@@ -934,6 +934,31 @@ inline T QWordSwapC( T dw )
 	}
 
 	#pragma warning(pop)
+
+#elif defined( _LINUX ) || defined( __APPLE__ )
+
+	#define WordSwap  WordSwapAsm
+	#define DWordSwap DWordSwapAsm
+
+	template <typename T>
+	inline T WordSwapAsm( T w )
+	{
+		__asm__ (
+			"xchg %b0, %h0\n"
+			: "+r" (w)
+		);
+		return w;
+	}
+
+	template <typename T>
+	inline T DWordSwapAsm( T dw )
+	{
+		__asm__ (
+			"bswap %0\n"
+			: "+r" (dw)
+		);
+		return dw;
+	}
 
 #else
 
@@ -1080,7 +1105,7 @@ FORCEINLINE void StoreLittleDWord( unsigned long *base, unsigned int dwordIndex,
 //
 // It should not be changed after startup unless you really know what you're doing. The only place
 // that should do this is the benchmark code itself so it can output a legit duration.
-PLATFORM_INTERFACE void				Plat_SetBenchmarkMode( bool bBenchmarkMode );	
+PLATFORM_INTERFACE void				Plat_SetBenchmarkMode( bool bBenchmarkMode );
 PLATFORM_INTERFACE bool				Plat_IsInBenchmarkMode();
 
 
@@ -1140,7 +1165,7 @@ inline uint64 Plat_Rdtsc()
 			memcpy( this, &src, sizeof(_classname) );	\
 			return *this;								\
 		}
-	
+
 // Processor Information:
 struct CPUInformation
 {
@@ -1157,12 +1182,12 @@ struct CPUInformation
 
 	uint8 m_nLogicalProcessors;		// Number op logical processors.
 	uint8 m_nPhysicalProcessors;	// Number of physical processors
-	
+
 	bool m_bSSE3 : 1,
 		 m_bSSSE3 : 1,
 		 m_bSSE4a : 1,
 		 m_bSSE41 : 1,
-		 m_bSSE42 : 1;	
+		 m_bSSE42 : 1;
 
 	int64 m_Speed;						// In cycles per second.
 

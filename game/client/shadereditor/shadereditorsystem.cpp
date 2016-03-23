@@ -28,6 +28,10 @@
 #include "modelrendersystem.h"
 #endif
 
+#define STRINGIFY(x) #x
+#define STRINGIFY_EXPAND(x) STRINGIFY(x)
+#define SHARED_LIBRARY_EXT STRINGIFY_EXPAND(_EXTERNAL_DLL_EXT)
+
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
@@ -84,13 +88,13 @@ bool ShaderEditorHandler::Init()
 
 	char modulePath[MAX_PATH*4];
 #ifdef SWARM_DLL
-	Q_snprintf( modulePath, sizeof( modulePath ), "%s/bin/shadereditor_swarm.dll", engine->GetGameDirectory() );
+	Q_snprintf( modulePath, sizeof( modulePath ), "%s/bin/shadereditor_swarm" SHARED_LIBRARY_EXT, engine->GetGameDirectory() );
 #elif SOURCE_2006
-	Q_snprintf( modulePath, sizeof( modulePath ), "%s/bin/shadereditor_2006.dll", engine->GetGameDirectory() );
+	Q_snprintf( modulePath, sizeof( modulePath ), "%s/bin/shadereditor_2006" SHARED_LIBRARY_EXT, engine->GetGameDirectory() );
 #elif SOURCE_2013
-	Q_snprintf( modulePath, sizeof( modulePath ), "%s/bin/shadereditor_2013.dll", engine->GetGameDirectory() );
+	Q_snprintf( modulePath, sizeof( modulePath ), "%s/bin/shadereditor_2013" SHARED_LIBRARY_EXT, engine->GetGameDirectory() );
 #else
-	Q_snprintf( modulePath, sizeof( modulePath ), "%s/bin/shadereditor_2007.dll", engine->GetGameDirectory() );
+	Q_snprintf( modulePath, sizeof( modulePath ), "%s/bin/shadereditor_2007" SHARED_LIBRARY_EXT, engine->GetGameDirectory() );
 #endif
 	shaderEditorModule = Sys_LoadModule( modulePath );
 	if ( shaderEditorModule )
@@ -111,7 +115,7 @@ bool ShaderEditorHandler::Init()
 	}
 	else
 	{
-		Warning( "Cannot load shadereditor.dll from %s!\n", modulePath );
+		Warning( "Cannot load shadereditor" SHARED_LIBRARY_EXT "from %s!\n", modulePath );
 	}
 
 	m_bReady = shaderEdit != NULL;

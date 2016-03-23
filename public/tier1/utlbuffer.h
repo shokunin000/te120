@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //
@@ -24,7 +24,7 @@
 //-----------------------------------------------------------------------------
 struct characterset_t;
 
-	
+
 //-----------------------------------------------------------------------------
 // Description of character conversions for string output
 // Here's an example of how to use the macros to define a character conversion
@@ -196,7 +196,7 @@ public:
 	// Used for getting objects that have a byteswap datadesc defined
 	template <typename T> void GetObjects( T *dest, int count = 1 );
 
-	// This will get at least 1 byte and up to nSize bytes. 
+	// This will get at least 1 byte and up to nSize bytes.
 	// It will return the number of bytes actually read.
 	int				GetUpTo( void *pMem, int nSize );
 
@@ -318,7 +318,7 @@ public:
 	// Am I valid? (overflow or underflow error), Once invalid it stays invalid
 	bool IsValid() const;
 
-	// Do I contain carriage return/linefeeds? 
+	// Do I contain carriage return/linefeeds?
 	bool ContainsCRLF() const;
 
 	// Am I read-only
@@ -581,12 +581,12 @@ inline const void* CUtlBuffer::PeekGet( int offset ) const
 // Unserialization
 //-----------------------------------------------------------------------------
 
-template <typename T> 
+template <typename T>
 inline void CUtlBuffer::GetObject( T *dest )
 {
 	if ( CheckGet( sizeof(T) ) )
 	{
-		if ( !m_Byteswap.IsSwappingBytes() || ( sizeof( T ) == 1 ) )
+		if ( ( sizeof( T ) == 1 ) || !m_Byteswap.IsSwappingBytes() )
 		{
 			*dest = *(T *)PeekGet();
 		}
@@ -594,7 +594,7 @@ inline void CUtlBuffer::GetObject( T *dest )
 		{
 			m_Byteswap.SwapFieldsToTargetEndian<T>( dest, (T*)PeekGet() );
 		}
-		m_Get += sizeof(T);	
+		m_Get += sizeof(T);
 	}
 	else
 	{
@@ -603,7 +603,7 @@ inline void CUtlBuffer::GetObject( T *dest )
 }
 
 
-template <typename T> 
+template <typename T>
 inline void CUtlBuffer::GetObjects( T *dest, int count )
 {
 	for ( int i = 0; i < count; ++i, ++dest )
@@ -613,12 +613,12 @@ inline void CUtlBuffer::GetObjects( T *dest, int count )
 }
 
 
-template <typename T> 
+template <typename T>
 inline void CUtlBuffer::GetTypeBin( T &dest )
 {
 	if ( CheckGet( sizeof(T) ) )
 	{
-		if ( !m_Byteswap.IsSwappingBytes() || ( sizeof( T ) == 1 ) )
+		if ( ( sizeof( T ) == 1 ) || !m_Byteswap.IsSwappingBytes() )
 		{
 			dest = *(T *)PeekGet();
 		}
@@ -626,12 +626,12 @@ inline void CUtlBuffer::GetTypeBin( T &dest )
 		{
 			m_Byteswap.SwapBufferToTargetEndian<T>( &dest, (T*)PeekGet() );
 		}
-		m_Get += sizeof(T);	
-	}		
+		m_Get += sizeof(T);
+	}
 	else
 	{
 		dest = 0;
-	}					
+	}
 }
 
 template <>
@@ -657,15 +657,15 @@ inline void CUtlBuffer::GetTypeBin< float >( float &dest )
 		{
 			m_Byteswap.SwapBufferToTargetEndian< float >( &dest, &dest );
 		}
-		m_Get += sizeof( float );	
-	}		
+		m_Get += sizeof( float );
+	}
 	else
 	{
 		dest = 0;
-	}					
+	}
 }
 
-template <typename T> 
+template <typename T>
 inline void CUtlBuffer::GetType( T &dest, const char *pszFmt )
 {
 	if (!IsText())
@@ -754,20 +754,20 @@ inline double CUtlBuffer::GetDouble( )
 // Where am I writing?
 //-----------------------------------------------------------------------------
 inline unsigned char CUtlBuffer::GetFlags() const
-{ 
-	return m_Flags; 
+{
+	return m_Flags;
 }
 
 
 //-----------------------------------------------------------------------------
-// 
+//
 //-----------------------------------------------------------------------------
 inline bool CUtlBuffer::IsExternallyAllocated() const
-{ 
+{
 	return m_Memory.IsExternallyAllocated();
 }
 
-	
+
 //-----------------------------------------------------------------------------
 // Where am I writing?
 //-----------------------------------------------------------------------------
@@ -799,12 +799,12 @@ inline void* CUtlBuffer::PeekPut( int offset )
 // Various put methods
 //-----------------------------------------------------------------------------
 
-template <typename T> 
+template <typename T>
 inline void CUtlBuffer::PutObject( T *src )
 {
 	if ( CheckPut( sizeof(T) ) )
 	{
-		if ( !m_Byteswap.IsSwappingBytes() || ( sizeof( T ) == 1 ) )
+		if ( ( sizeof( T ) == 1 ) || !m_Byteswap.IsSwappingBytes() )
 		{
 			*(T *)PeekPut() = *src;
 		}
@@ -818,7 +818,7 @@ inline void CUtlBuffer::PutObject( T *src )
 }
 
 
-template <typename T> 
+template <typename T>
 inline void CUtlBuffer::PutObjects( T *src, int count )
 {
 	for ( int i = 0; i < count; ++i, ++src )
@@ -828,12 +828,12 @@ inline void CUtlBuffer::PutObjects( T *src, int count )
 }
 
 
-template <typename T> 
+template <typename T>
 inline void CUtlBuffer::PutTypeBin( T src )
 {
 	if ( CheckPut( sizeof(T) ) )
 	{
-		if ( !m_Byteswap.IsSwappingBytes() || ( sizeof( T ) == 1 ) )
+		if ( ( sizeof( T ) == 1 ) || !m_Byteswap.IsSwappingBytes() )
 		{
 			*(T *)PeekPut() = src;
 		}
@@ -846,7 +846,7 @@ inline void CUtlBuffer::PutTypeBin( T src )
 	}
 }
 
-template <typename T> 
+template <typename T>
 inline void CUtlBuffer::PutType( T src, const char *pszFmt )
 {
 	if (!IsText())
@@ -907,7 +907,7 @@ inline void CUtlBuffer::EnableTabs( bool bEnable )
 	}
 	else
 	{
-		m_Flags |= AUTO_TABS_DISABLED; 
+		m_Flags |= AUTO_TABS_DISABLED;
 	}
 }
 
@@ -975,37 +975,37 @@ inline void CUtlBuffer::PutDouble( double d )
 //-----------------------------------------------------------------------------
 // Am I a text buffer?
 //-----------------------------------------------------------------------------
-inline bool CUtlBuffer::IsText() const 
-{ 
-	return (m_Flags & TEXT_BUFFER) != 0; 
+inline bool CUtlBuffer::IsText() const
+{
+	return (m_Flags & TEXT_BUFFER) != 0;
 }
 
 
 //-----------------------------------------------------------------------------
 // Can I grow if I'm externally allocated?
 //-----------------------------------------------------------------------------
-inline bool CUtlBuffer::IsGrowable() const 
-{ 
-	return (m_Flags & EXTERNAL_GROWABLE) != 0; 
+inline bool CUtlBuffer::IsGrowable() const
+{
+	return (m_Flags & EXTERNAL_GROWABLE) != 0;
 }
 
 
 //-----------------------------------------------------------------------------
 // Am I valid? (overflow or underflow error), Once invalid it stays invalid
 //-----------------------------------------------------------------------------
-inline bool CUtlBuffer::IsValid() const 
-{ 
-	return m_Error == 0; 
+inline bool CUtlBuffer::IsValid() const
+{
+	return m_Error == 0;
 }
 
 
 //-----------------------------------------------------------------------------
-// Do I contain carriage return/linefeeds? 
+// Do I contain carriage return/linefeeds?
 //-----------------------------------------------------------------------------
-inline bool CUtlBuffer::ContainsCRLF() const 
-{ 
-	return IsText() && ((m_Flags & CONTAINS_CRLF) != 0); 
-} 
+inline bool CUtlBuffer::ContainsCRLF() const
+{
+	return IsText() && ((m_Flags & CONTAINS_CRLF) != 0);
+}
 
 
 //-----------------------------------------------------------------------------
@@ -1013,21 +1013,21 @@ inline bool CUtlBuffer::ContainsCRLF() const
 //-----------------------------------------------------------------------------
 inline bool CUtlBuffer::IsReadOnly() const
 {
-	return (m_Flags & READ_ONLY) != 0; 
+	return (m_Flags & READ_ONLY) != 0;
 }
 
 
 //-----------------------------------------------------------------------------
 // Buffer base and size
 //-----------------------------------------------------------------------------
-inline const void* CUtlBuffer::Base() const	
-{ 
-	return m_Memory.Base(); 
+inline const void* CUtlBuffer::Base() const
+{
+	return m_Memory.Base();
 }
 
 inline void* CUtlBuffer::Base()
 {
-	return m_Memory.Base(); 
+	return m_Memory.Base();
 }
 
 // Returns the base as a const char*, only valid in text mode.
@@ -1037,9 +1037,9 @@ inline const char *CUtlBuffer::String() const
 	return reinterpret_cast<const char*>( m_Memory.Base() );
 }
 
-inline int CUtlBuffer::Size() const			
-{ 
-	return m_Memory.NumAllocated(); 
+inline int CUtlBuffer::Size() const
+{
+	return m_Memory.NumAllocated();
 }
 
 
@@ -1081,4 +1081,3 @@ inline void	CUtlBuffer::CopyBuffer( const void *pubData, int cubData )
 }
 
 #endif // UTLBUFFER_H
-

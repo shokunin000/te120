@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //=============================================================================//
@@ -19,6 +19,8 @@
 #define LIGHTGLOW_OUTERMAXDIST_BITS	16
 #define LIGHTGLOW_OUTERMAXDIST_MAX_VALUE	((1 << LIGHTGLOW_OUTERMAXDIST_BITS)-1)
 
+const float LIGHTGLOW_MAX_GLOW_PROXY_SIZE = 64.0f;
+
 class CLightGlow : public CBaseEntity
 {
 public:
@@ -27,7 +29,7 @@ public:
 	DECLARE_DATADESC();
 
 					CLightGlow();
-					
+
 	virtual void	Spawn( void );
 	virtual void	Activate( void );
 	virtual int		UpdateTransmitState( void );
@@ -58,7 +60,7 @@ IMPLEMENT_SERVERCLASS_ST_NOBASE( CLightGlow, DT_LightGlow )
 	SendPropVector(SENDINFO(m_vecOrigin), -1,  SPROP_COORD ),
 	SendPropQAngles	(SENDINFO(m_angRotation), 13, 0, SendProxy_Angles ),
 	SendPropEHandle (SENDINFO_NAME(m_hMoveParent, moveparent)),
-	SendPropFloat( SENDINFO(m_flGlowProxySize ), 6,	SPROP_ROUNDUP,	0.0f,	64.0f ),
+	SendPropFloat( SENDINFO(m_flGlowProxySize ), 6,	SPROP_ROUNDUP,	0.0f,	LIGHTGLOW_MAX_GLOW_PROXY_SIZE ),
 	SendPropFloat( SENDINFO_NAME( m_flHDRColorScale, HDRColorScale ), 0,	SPROP_NOSCALE,	0.0f,	100.0f ),
 END_SEND_TABLE()
 
@@ -78,7 +80,7 @@ BEGIN_DATADESC( CLightGlow )
 END_DATADESC()
 
 //-----------------------------------------------------------------------------
-// Constructor 
+// Constructor
 //-----------------------------------------------------------------------------
 CLightGlow::CLightGlow( void )
 {
@@ -91,7 +93,7 @@ CLightGlow::CLightGlow( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CLightGlow::Spawn( void )
 {
@@ -111,7 +113,7 @@ int CLightGlow::UpdateTransmitState( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CLightGlow::Activate()
 {
@@ -127,6 +129,12 @@ void CLightGlow::Activate()
 	{
 		Warning( "env_lightglow outermaxdist too large (%d should be %d).\n", m_nOuterMaxDist.Get(), LIGHTGLOW_OUTERMAXDIST_MAX_VALUE );
 		m_nOuterMaxDist = LIGHTGLOW_OUTERMAXDIST_MAX_VALUE;
+	}
+
+	if ( m_flGlowProxySize > LIGHTGLOW_MAX_GLOW_PROXY_SIZE )
+	{
+		Warning( "env_lightglow glowproxysize too large (%f should be %f).\n", m_flGlowProxySize.Get(), LIGHTGLOW_MAX_GLOW_PROXY_SIZE );
+		m_flGlowProxySize = LIGHTGLOW_MAX_GLOW_PROXY_SIZE;
 	}
 }
 
