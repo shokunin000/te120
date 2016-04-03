@@ -8,6 +8,7 @@
 #include "entityoutput.h"
 #include "ndebugoverlay.h"
 #include "modelentities.h"
+#include "tier0/vprof.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -453,6 +454,8 @@ void CFuncBrushGlow::InputEmitEnergy( inputdata_t &inputdata )
 //-----------------------------------------------------------------------------
 void CFuncBrushGlow::UpdateThink( void )
 {
+	VPROF_BUDGET( "CVisibleShadowList::GlowCalc", VPROF_BUDGETGROUP_GLOWCALC );
+
 	float fCurrentEnergy = m_Energy.Get();
 
 	if ( m_bAbsorbing && fCurrentEnergy < 1.0f )
@@ -488,6 +491,8 @@ void CFuncBrushGlow::UpdateThink( void )
 //-----------------------------------------------------------------------------
 void CFuncBrushGlow::IllumThink( void )
 {
+	VPROF_BUDGET( "CVisibleShadowList::IllumThink", VPROF_BUDGETGROUP_GLOWCALC );
+
 	if ( ( UTIL_FindClientInPVS( edict() ) != NULL ) || ( UTIL_ClientPVSIsExpanded() && UTIL_FindClientInVisibilityPVS( edict() ) ) )
 	{
 		CheckIlluminated();
@@ -504,6 +509,8 @@ void CFuncBrushGlow::IllumThink( void )
 
 void CFuncBrushGlow::CheckIlluminated()
 {
+	VPROF_BUDGET( "CVisibleShadowList::CheckIlluminated", VPROF_BUDGETGROUP_GLOWCALC );
+
 	// If we're being illuminated by the flashlight send output
 	CBasePlayer *pPlayer = AI_GetSinglePlayer();
  	if ( pPlayer )

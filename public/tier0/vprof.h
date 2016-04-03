@@ -140,7 +140,9 @@
 #define VPROF_BUDGETGROUP_TENFOOT					VPROF_BUDGETGROUP_CHROMEHTML
 #define VPROF_BUDGETGROUP_STEAMUI					VPROF_BUDGETGROUP_CHROMEHTML
 #define VPROF_BUDGETGROUP_ATTRIBUTES				_T("Attributes")
-	
+#define VPROF_BUDGETGROUP_SETUPVIEWS				_T("SetupViews")
+#define VPROF_BUDGETGROUP_GLOWCALC					_T("GlowCalc")
+
 #ifdef _X360
 // update flags
 #define VPROF_UPDATE_BUDGET				0x01	// send budget data every frame

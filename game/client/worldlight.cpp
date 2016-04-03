@@ -185,6 +185,8 @@ void CWorldLights::LevelInitPreEntity()
 //-----------------------------------------------------------------------------
 bool CWorldLights::GetBrightestLightSource(const Vector &vecPosition, Vector &vecLightPos, Vector &vecLightBrightness)
 {
+	VPROF_BUDGET( "CWorldLights::GetBrightestLightSource", VPROF_BUDGETGROUP_SHADOW_RENDERING );
+
 	if ( !m_nWorldLights || !m_pWorldLights )
 		return false;
 
