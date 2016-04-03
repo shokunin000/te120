@@ -1509,6 +1509,7 @@ public:
 
 	~CPanelAnimationDictionary()
 	{
+		/*
 		int v2, v1 = m_AnimationMaps.Count();
 		PanelAnimationMapEntry *pCur;
 		PanelAnimationMap *pMap;
@@ -1521,13 +1522,23 @@ public:
 				for(int y = 0; y < v2; y++)
 				{
 					pCur = &(pMap->entries[y]);
-					delete [] pCur->m_pszScriptName;
-					delete [] pCur->m_pszVariable;
-					delete [] pCur->m_pszType;
-					delete [] pCur->m_pszDefaultValue;
+
+					if (pCur->m_pszScriptName)
+						delete [] pCur->m_pszScriptName;
+
+					if (pCur->m_pszVariable)
+						delete [] pCur->m_pszVariable;
+
+					if (pCur->m_pszType)
+						delete [] pCur->m_pszType;
+
+					if (pCur->m_pszDefaultValue)
+						delete [] pCur->m_pszDefaultValue;
 				}
 			}
 		}
+		*/
+
 		m_PanelAnimationMapPool.Clear();
 	}
 

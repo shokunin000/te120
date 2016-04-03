@@ -3377,8 +3377,6 @@ void C_BaseAnimating::ProcessMuzzleFlashEvent()
 			QAngle angles;
 #ifdef HL2_EPISODIC
 			GetAttachment( 1, vAttachment, angles ); // set 1 instead "attachment"
-#else
-			GetAttachment( attachment, vAttachment, angles );
 #endif
 			AngleVectors( angles, &vAng );
 			vAttachment += vAng * 2;
