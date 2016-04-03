@@ -1192,6 +1192,8 @@ CClientShadowMgr::CClientShadowMgr() :
 {
 	m_nDepthTextureResolution = r_flashlightdepthres.GetInt();
 	m_bThreaded = false;
+
+	
 	m_bShadowFromWorldLights = r_worldlight_castshadows.GetBool();
 }
 
@@ -1565,6 +1567,19 @@ void CClientShadowMgr::LevelInitPreEntity()
 	{
 		m_ShadowAllocator.Reset();
 		m_bRenderTargetNeedsClear = true;
+	}
+
+	// Disable this in chapter_4
+	if (modelinfo)
+	{
+		const char *pszMapName = modelinfo->GetModelName(modelinfo->GetModel(1));
+		if ( pszMapName && pszMapName[0] )
+		{
+			if ( FStrEq(pszMapName, "maps/chapter_3.bsp") || FStrEq(pszMapName, "maps/chapter_4.bsp") )
+			{
+				m_bShadowFromWorldLights = false;
+			}
+		}
 	}
 }
 
@@ -4214,6 +4229,8 @@ bool CClientShadowMgr::IsFlashlightTarget( ClientShadowHandle_t shadowHandle, IC
 
 const Vector &CClientShadowMgr::GetShadowDirection( ClientShadowHandle_t shadowHandle ) const
 {
+	VPROF_BUDGET( "CVisibleShadowList::GetShadowDirection", VPROF_BUDGETGROUP_SHADOW_RENDERING );
+
 	Assert( shadowHandle != CLIENTSHADOW_INVALID_HANDLE );
 
 	IClientRenderable* pRenderable = ClientEntityList().GetClientRenderableFromHandle( m_Shadows[shadowHandle].m_Entity );
@@ -4235,6 +4252,8 @@ const Vector &CClientShadowMgr::GetShadowDirection( ClientShadowHandle_t shadowH
 
 void CClientShadowMgr::UpdateShadowDirectionFromLocalLightSource( ClientShadowHandle_t shadowHandle )
 {
+	VPROF_BUDGET( "CVisibleShadowList::UpdateShadowDirectionFromLocalLightSource", VPROF_BUDGETGROUP_SHADOW_RENDERING );
+
 	Assert( shadowHandle != CLIENTSHADOW_INVALID_HANDLE );
 
 	ClientShadow_t& shadow = m_Shadows[shadowHandle];
@@ -4364,6 +4383,7 @@ void CClientShadowMgr::UpdateShadowDirectionFromLocalLightSource( ClientShadowHa
 
 void CClientShadowMgr::UpdateDirtyShadow( ClientShadowHandle_t handle )
 {
+	VPROF_BUDGET( "CVisibleShadowList::UpdateDirtyShadow", VPROF_BUDGETGROUP_SHADOW_RENDERING );
 	Assert( m_Shadows.IsValidIndex( handle ) );
 
 	if ( IsShadowingFromWorldLights() )
@@ -4374,11 +4394,28 @@ void CClientShadowMgr::UpdateDirtyShadow( ClientShadowHandle_t handle )
 
 void WorldLightCastShadowCallback(IConVar *pVar, const char *pszOldValue, float flOldValue)
 {
-	s_ClientShadowMgr.SetShadowFromWorldLightsEnabled(r_worldlight_castshadows.GetBool());
+	bool bTemp = r_worldlight_castshadows.GetBool();
+
+	// Disable this in chapter_4
+	if (modelinfo)
+	{
+		const char *pszMapName = modelinfo->GetModelName(modelinfo->GetModel(1));
+		if ( pszMapName && pszMapName[0] )
+		{
+			if ( FStrEq(pszMapName, "maps/chapter_3.bsp") || FStrEq(pszMapName, "maps/chapter_4.bsp") )
+			{
+				bTemp = false;
+			}
+		}
+	}
+
+	s_ClientShadowMgr.SetShadowFromWorldLightsEnabled(bTemp);
 }
 
 void CClientShadowMgr::SetShadowFromWorldLightsEnabled( bool bEnabled )
 {
+	VPROF_BUDGET( "CVisibleShadowList::SetShadowFromWorldLightsEnabled", VPROF_BUDGETGROUP_SHADOW_RENDERING );
+
 	if ( bEnabled == IsShadowingFromWorldLights() )
 		return;
 
