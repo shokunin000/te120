@@ -647,8 +647,14 @@ void CGamePlayerEquip::Touch( CBaseEntity *pOther )
 
 void CGamePlayerEquip::EquipPlayer( CBaseEntity *pEntity )
 {
-// Allow game_player_equip with logic_auto --
 	CBasePlayer *pPlayer = NULL;
+
+	// Fix for crash on use game_player_equip with logic_auto
+	// When using logic_auto pEntity is not the player.
+	if (pEntity && !pEntity->IsPlayer() )
+	{		
+		pEntity = NULL;
+	}
 
 	// If no entity found use player (sp only)
 	if ( pEntity == NULL )
@@ -656,7 +662,6 @@ void CGamePlayerEquip::EquipPlayer( CBaseEntity *pEntity )
 
 	if (pEntity && pEntity->IsPlayer() )
 		pPlayer = (CBasePlayer *)pEntity;
-//--
 
 	for ( int i = 0; i < MAX_EQUIP; i++ )
 	{
