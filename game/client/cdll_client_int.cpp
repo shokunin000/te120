@@ -1671,6 +1671,21 @@ void CHLClient::ResetStringTablePointers()
 //-----------------------------------------------------------------------------
 void CHLClient::LevelShutdown( void )
 {
+	//TE120-------------------------------------------------------------
+	/*
+	This is a hacky fix for a bug in chapter_4. If the level is reloaded
+	before r_unloadlightmaps value has returned to 0 then on the next
+	load the level appears black. r_unloadlightmaps needs about 1-2
+	minutes to refresh the lightmaps. Not sure why this helps with perf
+	but chapter_4 needs it!
+	*/
+	static ConVar *pCVcl_unloadedlightmaps = NULL;
+	pCVcl_unloadedlightmaps = ( ConVar * )cvar->FindVar( "r_unloadlightmaps" );
+
+	if (pCVcl_unloadedlightmaps && (pCVcl_unloadedlightmaps->GetFloat() > 0) )
+		engine->ClientCmd( "r_unloadlightmaps 0" );
+	//TE120-------------------------------------------------------------
+
 	// HACK: Bogus, but the logic is too complicated in the engine
 	if (!g_bLevelInitialized)
 		return;
