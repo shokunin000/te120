@@ -1728,6 +1728,12 @@ static TITLECOMMENT gTitleComments[] =
 
 	{ "ep2_outland_12a", "#ep2_Chapter7_Title" },
 	{ "ep2_outland_12", "#ep2_Chapter6_Title" },
+//TE120--
+	{ "chapter_1", "#te120_Chapter1_Title" },
+	{ "chapter_2", "#te120_Chapter2_Title" },
+	{ "chapter_3", "#te120_Chapter3_Title" },
+	{ "chapter_4", "#te120_Chapter4_Title" },
+//TE120--
 #endif
 };
 
