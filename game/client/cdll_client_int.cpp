@@ -1634,6 +1634,19 @@ void CHLClient::LevelInitPreEntity( char const* pMapName )
 		CReplayRagdollRecorder::Instance().Init();
 	}
 #endif
+
+	//TE120-------------------------------------------------------------
+	/*
+	During the end sequence, physics time is scaled to give the appearance
+	of slowed time. If you load another save during this scene the physics
+	speed does not reset. This will make sure it does!
+	*/
+	static ConVar *pCVcl_phys_timescale = NULL;
+	pCVcl_phys_timescale = ( ConVar * )cvar->FindVar( "phys_timescale" );
+
+	if (pCVcl_phys_timescale && (pCVcl_phys_timescale->GetFloat() > 0) )
+		engine->ClientCmd( "phys_timescale 0" );
+	//TE120-------------------------------------------------------------
 }
 
 
