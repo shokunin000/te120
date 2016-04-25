@@ -1644,8 +1644,8 @@ void CHLClient::LevelInitPreEntity( char const* pMapName )
 	static ConVar *pCVcl_phys_timescale = NULL;
 	pCVcl_phys_timescale = ( ConVar * )cvar->FindVar( "phys_timescale" );
 
-	if (pCVcl_phys_timescale && (pCVcl_phys_timescale->GetFloat() > 0) )
-		engine->ClientCmd( "phys_timescale 0" );
+	if (pCVcl_phys_timescale && (pCVcl_phys_timescale->GetFloat() < 1) )
+		engine->ClientCmd( "phys_timescale 1" );
 	//TE120-------------------------------------------------------------
 }
 
