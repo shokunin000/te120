@@ -88,11 +88,15 @@ virtual void OnRestore() = 0;
 void C_TE120Stats::CountGameLaunches()
 {
   int iCurrentStatValue;
-  steamapicontext->SteamUserStats()->GetStat( "stat_num_games", &iCurrentStatValue );
-  DevMsg( "Current stat_num_games value: %i\n", iCurrentStatValue );
-  steamapicontext->SteamUserStats()->SetStat( "stat_num_games", iCurrentStatValue + 1 ); // increment var
-  steamapicontext->SteamUserStats()->StoreStats();
-  DevMsg( "New stat_num_games value: %i\n", iCurrentStatValue );
+
+  if (steamapicontext && steamapicontext->SteamUserStats())
+  {
+	  steamapicontext->SteamUserStats()->GetStat( "stat_num_games", &iCurrentStatValue );
+	  DevMsg( "Current stat_num_games value: %i\n", iCurrentStatValue );
+	  steamapicontext->SteamUserStats()->SetStat( "stat_num_games", iCurrentStatValue + 1 ); // increment var
+	  steamapicontext->SteamUserStats()->StoreStats();
+	  DevMsg( "New stat_num_games value: %i\n", iCurrentStatValue );
+  }
 }
 
 // Count TE120 playtime (in levels)
