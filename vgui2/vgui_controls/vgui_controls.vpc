@@ -99,7 +99,7 @@ $Project "vgui_controls"
 		$File	"URLLabel.cpp"
 		$File	"WizardPanel.cpp"
 		$File	"WizardSubPanel.cpp"
-		$File   "$SRCDIR/vgui2/src/vgui_key_translation.cpp"
+		$File "$SRCDIR/vgui2/src/vgui_key_translation.cpp"
 	}
 
 	$Folder	"Public Header Files"

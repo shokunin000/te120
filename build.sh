@@ -1,4 +1,5 @@
 #!/bin/bash
+SYSTEM=`lsb_release -sd`
 
 # Redirect output
 logfile=build.log
@@ -7,11 +8,12 @@ tee < ${logfile}.pipe $logfile &
 exec &> ${logfile}.pipe
 rm ${logfile}.pipe
 
-# Set path to steam runtime sdk change this to your path!
-# Arch
-#export STEAM_RUNTIME_ROOT="/run/media/vincent/dbcbf69d-8162-4768-976c-c7c5b5ace72b/sourceengine/steam-runtime-sdk"
-# Ubuntu
-export STEAM_RUNTIME_ROOT="/media/vincent/dbcbf69d-8162-4768-976c-c7c5b5ace72b/sourceengine/steam-runtime-sdk"
+# Set path to steam runtime sdk
+if [ "$SYSTEM" = "Ubuntu 14.04.4 LTS" -o "$SYSTEM" = "Ubuntu 16.04 LTS" ]; then
+	export STEAM_RUNTIME_ROOT="/media/vincent/dbcbf69d-8162-4768-976c-c7c5b5ace72b/Development/sourceengine/steam-runtime-sdk"
+else
+	export STEAM_RUNTIME_ROOT="/run/media/vincent/dbcbf69d-8162-4768-976c-c7c5b5ace72b/Development/sourceengine/steam-runtime-sdk"
+fi
 
 # Stop the script if we run into any errors
 set -e

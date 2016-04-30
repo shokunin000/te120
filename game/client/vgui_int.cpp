@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //=============================================================================//
@@ -76,11 +76,11 @@ public:
 			kv->SetString( entry->name(), "" );
 		}
 	}
-	
+
 	virtual void SetData( Panel *panel, KeyValues *kv, PanelAnimationMapEntry *entry )
 	{
 		void *data = ( void * )( (*entry->m_pfnLookup)( panel ) );
-		
+
 		CHudTextureHandle *pHandle = ( CHudTextureHandle * )data;
 
 		const char *texturename = kv->GetString( entry->name() );
@@ -191,7 +191,7 @@ bool VGui_Startup( CreateInterfaceFn appSystemFactory )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void VGui_CreateGlobalPanels( void )
 {
@@ -200,6 +200,7 @@ void VGui_CreateGlobalPanels( void )
 #if defined( TRACK_BLOCKING_IO )
 	VPANEL gameDLLPanel = enginevgui->GetPanel( PANEL_GAMEDLL );
 #endif
+
 	// Part of game
 	internalCenterPrint->Create( gameToolParent );
 	loadingdisc->Create( gameToolParent );
@@ -279,8 +280,8 @@ void VGui_PostRender()
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : cl_panelanimation - 
+// Purpose:
+// Input  : cl_panelanimation -
 //-----------------------------------------------------------------------------
 CON_COMMAND( cl_panelanimation, "Shows panel animation variables: <panelname | blank for all panels>." )
 {

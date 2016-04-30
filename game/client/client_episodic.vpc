@@ -66,6 +66,7 @@ $Project "Client (Episodic)"
 			$File	"hl2\c_npc_combinegunship.cpp"
 			$File	"hl2\c_npc_manhack.cpp"
 			$File	"hl2\c_npc_rollermine.cpp"
+			$File	"$SRCDIR\game\shared\episodic\donation_te120.cpp"//TE120
 			$File	"hl2\c_plasma_beam_node.cpp"
 			$File	"hl2\c_prop_combine_ball.cpp"
 			$File	"hl2\c_prop_combine_ball.h"

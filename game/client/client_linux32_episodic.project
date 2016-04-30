@@ -68,6 +68,7 @@
       <File Name="../../game/shared/episodic/achievements_ep2.cpp"/>
       <File Name="../../game/shared/episodic/achievements_epx.cpp"/>
       <File Name="../../game/shared/episodic/achievements_te120.cpp"/>
+      <File Name="../../game/shared/episodic/donation_te120.cpp"/>
       <File Name="../../game/shared/eventlist.cpp"/>
       <File Name="../../game/shared/func_ladder.cpp"/>
       <File Name="../../game/shared/gamemovement.cpp"/>
