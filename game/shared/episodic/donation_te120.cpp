@@ -8,11 +8,14 @@
 #include "convar.h"
 #include "steam/steam_api.h"
 
+// memdbgon must be the last include file in a .cpp file!!!
+#include "tier0/memdbgon.h"
+
 void OpenDonationPage_f( void )
 {
   if ( steamapicontext && steamapicontext->SteamFriends() )
   {
-    steamapicontext->SteamFriends()->ActivateGameOverlayToWebPage( "http://www.youtube.com" );
+    steamapicontext->SteamFriends()->ActivateGameOverlayToWebPage( "http://www.transmissions-element120.com/" );
   }
 }
 
