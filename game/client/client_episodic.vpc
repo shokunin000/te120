@@ -97,6 +97,7 @@ $Project "Client (Episodic)"
 			$File	"hl2\clientmode_hlnormal.cpp"
 			$File	"hl2\clientmode_hlnormal.h"
 			$File	"death.cpp"
+			$File	"$SRCDIR\game\shared\episodic\donation_te120.cpp"//TE120
 			$File	"$SRCDIR\game\shared\hl2\env_headcrabcanister_shared.cpp"
 			$File	"$SRCDIR\game\shared\hl2\env_headcrabcanister_shared.h"
 			$File	"$SRCDIR\game\shared\episodic\npc_advisor_shared.h"
