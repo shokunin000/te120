@@ -51,6 +51,7 @@ static ConVar r_flashlightladderdist( "r_flashlightladderdist", "40.0", FCVAR_CH
 static ConVar mat_slopescaledepthbias_shadowmap( "mat_slopescaledepthbias_shadowmap", "3", FCVAR_CHEAT );//TE120
 static ConVar mat_depthbias_shadowmap( "mat_depthbias_shadowmap", "0.00001", FCVAR_CHEAT );//TE120
 
+ClientShadowHandle_t g_hFlashlightHandle = CLIENTSHADOW_INVALID_HANDLE;
 
 void r_newflashlightCallback_f( IConVar *pConVar, const char *pOldString, float flOldValue )
 {
@@ -95,6 +96,8 @@ CFlashlightEffect::CFlashlightEffect(int nEntIndex)
 CFlashlightEffect::~CFlashlightEffect()
 {
 	LightOff();
+
+	g_hFlashlightHandle = CLIENTSHADOW_INVALID_HANDLE;
 }
 
 
@@ -351,6 +354,8 @@ void CFlashlightEffect::UpdateLightNew(const Vector &vecPos, const Vector &vecFo
 
 	g_pClientShadowMgr->UpdateProjectedTexture( m_FlashlightHandle, true );
 
+	g_hFlashlightHandle = m_FlashlightHandle;
+
 	// Kill the old flashlight method if we have one.
 	LightOffOld();
 
@@ -460,6 +465,8 @@ void CFlashlightEffect::LightOffNew()
 		g_pClientShadowMgr->DestroyFlashlight( m_FlashlightHandle );
 		m_FlashlightHandle = CLIENTSHADOW_INVALID_HANDLE;
 	}
+
+	g_hFlashlightHandle = CLIENTSHADOW_INVALID_HANDLE;
 }
 
 //-----------------------------------------------------------------------------

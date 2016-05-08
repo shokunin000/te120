@@ -46,7 +46,7 @@ void FormatViewModelAttachment( Vector &vOrigin, bool bInverse )
 {
 	// Presumably, SetUpView has been called so we know our FOV and render origin.
 	const CViewSetup *pViewSetup = view->GetPlayerViewSetup();
-	
+
 	float worldx = tan( pViewSetup->fov * M_PI/360.0 );
 	float viewx = tan( pViewSetup->fovViewmodel * M_PI/360.0 );
 
@@ -56,7 +56,7 @@ void FormatViewModelAttachment( Vector &vOrigin, bool bInverse )
 	float factorX = worldx / viewx;
 
 	float factorY = factorX;
-	
+
 	// Get the coordinates in the viewer's space.
 	Vector tmp = vOrigin - pViewSetup->origin;
 	Vector vTransformed( MainViewRight().Dot( tmp ), MainViewUp().Dot( tmp ), MainViewForward().Dot( tmp ) );
@@ -168,7 +168,7 @@ bool C_BaseViewModel::Interpolate( float currentTime )
 		}
 	}
 
-	// Prediction errors?	
+	// Prediction errors?
 	if ( elapsed_time < 0 )
 	{
 		elapsed_time = 0;
@@ -231,9 +231,9 @@ void C_BaseViewModel::ApplyBoneMatrixTransform( matrix3x4_t& transform )
 		// Transform into view space.
 		matrix3x4_t temp, temp2;
 		ConcatTransforms( viewMatrix, transform, temp );
-		
+
 		// Flip it along X.
-		
+
 		// (This is the slower way to do it, and it equates to negating the top row).
 		//matrix3x4_t mScale;
 		//SetIdentityMatrix( mScale );
@@ -299,7 +299,7 @@ int C_BaseViewModel::DrawModel( int flags )
 		GetColorModulation( color );
 		render->SetColorModulation(	color );
 	}
-		
+
 	C_BasePlayer *pPlayer = C_BasePlayer::GetLocalPlayer();
 	C_BaseCombatWeapon *pWeapon = GetOwningWeapon();
 	int ret;
@@ -335,7 +335,7 @@ int C_BaseViewModel::DrawModel( int flags )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 int C_BaseViewModel::InternalDrawModel( int flags )
 {
@@ -359,7 +359,7 @@ int C_BaseViewModel::DrawOverriddenViewmodel( int flags )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 // Output : int
 //-----------------------------------------------------------------------------
 int C_BaseViewModel::GetFxBlend( void )
@@ -383,7 +383,7 @@ int C_BaseViewModel::GetFxBlend( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 // Output : Returns true on success, false on failure.
 //-----------------------------------------------------------------------------
 bool C_BaseViewModel::IsTransparent( void )
@@ -403,7 +403,7 @@ bool C_BaseViewModel::IsTransparent( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 bool C_BaseViewModel::UsesPowerOfTwoFrameBufferTexture( void )
 {
@@ -429,7 +429,7 @@ bool C_BaseViewModel::UsesPowerOfTwoFrameBufferTexture( void )
 void C_BaseViewModel::UpdateAnimationParity( void )
 {
 	C_BasePlayer *pPlayer = C_BasePlayer::GetLocalPlayer();
-	
+
 	// If we're predicting, then we don't use animation parity because we change the animations on the clientside
 	// while predicting. When not predicting, only the server changes the animations, so a parity mismatch
 	// tells us if we need to reset the animation.
@@ -446,7 +446,7 @@ void C_BaseViewModel::UpdateAnimationParity( void )
 
 //-----------------------------------------------------------------------------
 // Purpose: Update global map state based on data received
-// Input  : bnewentity - 
+// Input  : bnewentity -
 //-----------------------------------------------------------------------------
 void C_BaseViewModel::OnDataChanged( DataUpdateType_t updateType )
 {
@@ -473,8 +473,13 @@ void C_BaseViewModel::AddEntity( void )
 	}
 }
 
+bool C_BaseViewModel::ShouldReceiveProjectedTextures( int flags )
+{
+	return ( flags & SHADOW_FLAGS_PLAYER_FLASHLIGHT ) == 0;
+}
+
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void C_BaseViewModel::GetBoneControllers(float controllers[MAXSTUDIOBONECTRLS])
 {
@@ -489,7 +494,7 @@ void C_BaseViewModel::GetBoneControllers(float controllers[MAXSTUDIOBONECTRLS])
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 // Output : RenderGroup_t
 //-----------------------------------------------------------------------------
 RenderGroup_t C_BaseViewModel::GetRenderGroup()

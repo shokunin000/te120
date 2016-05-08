@@ -1194,7 +1194,7 @@ CClientShadowMgr::CClientShadowMgr() :
 	m_nDepthTextureResolution = r_flashlightdepthres.GetInt();
 	m_bThreaded = false;
 
-	
+
 	m_bShadowFromWorldLights = r_worldlight_castshadows.GetBool();
 }
 
@@ -3501,8 +3501,15 @@ void CClientShadowMgr::AddShadowToReceiver( ClientShadowHandle_t handle,
 	if (pSourceRenderable == pRenderable)
 		return;
 
+	int flags = SHADOW_FLAGS_PROJECTED_TEXTURE_TYPE_MASK;
+	extern ClientShadowHandle_t g_hFlashlightHandle;
+	if ( g_hFlashlightHandle == handle )
+	{
+		flags |= SHADOW_FLAGS_PLAYER_FLASHLIGHT;
+	}
+
 	// Don't bother if this renderable doesn't receive shadows or light from flashlights
-	if( !pRenderable->ShouldReceiveProjectedTextures( SHADOW_FLAGS_PROJECTED_TEXTURE_TYPE_MASK ) )
+	if( !pRenderable->ShouldReceiveProjectedTextures( flags ) )
 		return;
 
 	// Cull if the origin is on the wrong side of a shadow clip plane....
