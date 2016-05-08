@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $Workfile:     $
 // $NoKeywords: $
@@ -39,7 +39,7 @@ private:
 
 //-----------------------------------------------------------------------------
 // Purpose: Instances the overlay object
-// Input  : *parent - 
+// Input  : *parent -
 //-----------------------------------------------------------------------------
 CDebugOverlay::CDebugOverlay( vgui::VPANEL parent ) :
 	BaseClass( NULL, "CDebugOverlay" )
@@ -59,12 +59,12 @@ CDebugOverlay::CDebugOverlay( vgui::VPANEL parent ) :
 	// set the scheme before any child control is created
 	vgui::HScheme scheme = vgui::scheme()->LoadSchemeFromFileEx( enginevgui->GetPanel( PANEL_CLIENTDLL_TOOLS ), "resource/ClientScheme.res", "Client");
 	SetScheme( scheme );
-	
+
 	vgui::ivgui()->AddTickSignal( GetVPanel(), 250 );
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 CDebugOverlay::~CDebugOverlay( void )
 {
@@ -86,7 +86,7 @@ void CDebugOverlay::ApplySchemeSettings(vgui::IScheme *pScheme)
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CDebugOverlay::OnTick( void )
 {
@@ -110,9 +110,9 @@ bool CDebugOverlay::ShouldDraw( void )
 void CDebugOverlay::Paint()
 {
 	OverlayText_t* pCurrText = debugoverlay->GetFirst();
-	while (pCurrText) 
+	while (pCurrText)
 	{
-		if ( pCurrText->text != NULL ) 
+		if ( pCurrText->text != NULL )
 		{
 			// --------------
 			// Draw the text
@@ -125,20 +125,20 @@ void CDebugOverlay::Paint()
 
 			if (pCurrText->bUseOrigin)
 			{
-				if (!debugoverlay->ScreenPosition( pCurrText->origin, screenPos )) 
+				if (!debugoverlay->ScreenPosition( pCurrText->origin, screenPos ))
 				{
 					float xPos		= screenPos[0];
 					float yPos		= screenPos[1]+ (pCurrText->lineOffset*13); // Line spacing;
-					g_pMatSystemSurface->DrawColoredText( m_hFont, xPos, yPos, r, g, b, a, pCurrText->text );
+					g_pMatSystemSurface->DrawColoredText( m_hFont, xPos, yPos, r, g, b, a, "%s", pCurrText->text );
 				}
 			}
 			else
 			{
-				if (!debugoverlay->ScreenPosition( pCurrText->flXPos,pCurrText->flYPos, screenPos )) 
-				{	
+				if (!debugoverlay->ScreenPosition( pCurrText->flXPos,pCurrText->flYPos, screenPos ))
+				{
 					float xPos		= screenPos[0];
 					float yPos		= screenPos[1]+ (pCurrText->lineOffset*13); // Line spacing;
-					g_pMatSystemSurface->DrawColoredText( m_hFont, xPos, yPos, r, g, b, a, pCurrText->text );
+					g_pMatSystemSurface->DrawColoredText( m_hFont, xPos, yPos, r, g, b, a, "%s", pCurrText->text );
 				}
 			}
 		}
