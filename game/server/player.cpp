@@ -6203,7 +6203,7 @@ void CBasePlayer::CheatImpulseCommands( int iImpulse )
 		GiveAmmo( 3,	"rpg_round");
 		GiveAmmo( 5,	"grenade");
 		GiveAmmo( 32,	"357" );
-		//GiveAmmo( 16,	"XBowBolt" );
+		GiveAmmo( 16,	"XBowBolt" );
 
 		GiveNamedItem( "weapon_smg1" );
 		GiveNamedItem( "weapon_frag" );
@@ -6215,7 +6215,7 @@ void CBasePlayer::CheatImpulseCommands( int iImpulse )
 
 		GiveNamedItem( "weapon_rpg" );
 		GiveNamedItem( "weapon_357" );
-		//GiveNamedItem( "weapon_crossbow" );//TE120
+		GiveNamedItem( "weapon_crossbow" );
 
 		if ( GetHealth() < 100 )
 		{
