@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //
@@ -46,6 +46,7 @@ enum ShadowFlags_t
 
 #define SHADOW_FLAGS_PROJECTED_TEXTURE_TYPE_MASK ( SHADOW_FLAGS_FLASHLIGHT | SHADOW_FLAGS_SHADOW )
 
+#define SHADOW_FLAGS_PLAYER_FLASHLIGHT ( 1 << 16 )
 
 //-----------------------------------------------------------------------------
 //
@@ -107,7 +108,7 @@ public:
 	virtual ShadowHandle_t CreateShadow( IMaterial* pMaterial, IMaterial* pModelMaterial, void* pBindProxy, int creationFlags ) = 0;
 	virtual void DestroyShadow( ShadowHandle_t handle ) = 0;
 
-	// Resets the shadow material (useful for shadow LOD.. doing blobby at distance) 
+	// Resets the shadow material (useful for shadow LOD.. doing blobby at distance)
 	virtual void SetShadowMaterial( ShadowHandle_t handle, IMaterial* pMaterial, IMaterial* pModelMaterial, void* pBindProxy ) = 0;
 
 	// Shadow opacity
@@ -133,7 +134,7 @@ public:
 	// the shadow size measured in the space of the shadow matrix; the
 	// shadow goes from +/- size.x/2 along the x axis of the shadow matrix
 	// and +/- size.y/2 along the y axis of the shadow matrix.
-	virtual void ProjectShadow( ShadowHandle_t handle, const Vector &origin, 
+	virtual void ProjectShadow( ShadowHandle_t handle, const Vector &origin,
 		const Vector& projectionDir, const VMatrix& worldToShadow, const Vector2D& size,
 		int nLeafCount, const int *pLeafList,
 		float maxHeight, float falloffOffset, float falloffAmount, const Vector &vecCasterOrigin ) = 0;
@@ -146,7 +147,7 @@ public:
 	virtual const Frustum_t &GetFlashlightFrustum( ShadowHandle_t handle ) = 0;
 
 	// Methods related to shadows on brush models
-	virtual void AddShadowToBrushModel( ShadowHandle_t handle, 
+	virtual void AddShadowToBrushModel( ShadowHandle_t handle,
 		model_t* pModel, const Vector& origin, const QAngle& angles ) = 0;
 
 	// Removes all shadows from a brush model
