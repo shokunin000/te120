@@ -4939,7 +4939,7 @@ int CBaseEntity::PrecacheModel( const char *name, bool bPreload )
 	{
 		if ( !engine->IsModelPrecached( name ) )
 		{
-			Assert( !"CBaseEntity::PrecacheModel:  too late" );
+			//Assert( !"CBaseEntity::PrecacheModel:  too late" );
 			Warning( "Late precache of %s\n", name );
 		}
 	}
