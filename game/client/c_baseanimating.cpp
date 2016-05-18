@@ -3057,6 +3057,7 @@ struct BoneAccess
 	char const *tag;
 };
 
+static CThreadFastMutex g_BoneAccessMutex;
 static CUtlVector< BoneAccess >		g_BoneAccessStack;
 static BoneAccess g_BoneAcessBase;
 
@@ -3071,6 +3072,8 @@ bool C_BaseAnimating::IsBoneAccessAllowed() const
 // (static function)
 void C_BaseAnimating::PushAllowBoneAccess( bool bAllowForNormalModels, bool bAllowForViewModels, char const *tagPush )
 {
+	AUTO_LOCK( g_BoneAccessMutex );
+
 	BoneAccess save = g_BoneAcessBase;
 	g_BoneAccessStack.AddToTail( save );
 
@@ -3082,6 +3085,8 @@ void C_BaseAnimating::PushAllowBoneAccess( bool bAllowForNormalModels, bool bAll
 
 void C_BaseAnimating::PopBoneAccess( char const *tagPop )
 {
+	AUTO_LOCK( g_BoneAccessMutex );
+
 	// Validate that pop matches the push
 	Assert( ( g_BoneAcessBase.tag == tagPop ) || ( g_BoneAcessBase.tag && g_BoneAcessBase.tag != ( char const * ) 1 && tagPop && tagPop != ( char const * ) 1 && !strcmp( g_BoneAcessBase.tag, tagPop ) ) );
 	int lastIndex = g_BoneAccessStack.Count() - 1;
@@ -3569,7 +3574,7 @@ void C_BaseAnimating::DoAnimationEvents( CStudioHdr *pStudioHdr )
 		}
 
 		// Necessary to get the next loop working
-		m_flPrevEventCycle = -0.01;
+		m_flPrevEventCycle = flEventCycle - 0.001f;
 	}
 
 	for (int i = 0; i < (int)seqdesc.numevents; i++)

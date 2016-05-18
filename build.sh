@@ -1,5 +1,5 @@
 #!/bin/bash
-SYSTEM=`lsb_release -sd`
+SYSTEM="$(lsb_release -sd)"
 
 # Redirect output
 logfile=build.log
@@ -69,7 +69,7 @@ echo
 
 # Create Game Projects
 echo "Create Game Projects..."
-pushd `dirname $0`
+pushd "$(dirname "$0")"
 devtools/bin/vpc /episodic +game /mksln games
 popd
 
@@ -81,8 +81,8 @@ make -f games.mak
 
 # Copy files
 echo "Copy files..."
-cp -f ../game/mod_episodic/bin/client.so "/media/vincent/dbcbf69d-8162-4768-976c-c7c5b5ace72b/SteamLibrary/steamapps/common/Transmissions Element 120/te120/bin"
-cp -f ../game/mod_episodic/bin/server.so "/media/vincent/dbcbf69d-8162-4768-976c-c7c5b5ace72b/SteamLibrary/steamapps/common/Transmissions Element 120/te120/bin"
+cp -f ../game/mod_episodic/bin/client.so "/media/vincent/daac250d-bf7b-468d-a36b-059dfe4afec4/SteamLibrary/steamapps/common/Transmissions Element 120/te120/bin"
+cp -f ../game/mod_episodic/bin/server.so "/media/vincent/daac250d-bf7b-468d-a36b-059dfe4afec4/SteamLibrary/steamapps/common/Transmissions Element 120/te120/bin"
 
 echo "Cleaning up..."
 export PATH=$OLD_PATH
