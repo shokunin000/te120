@@ -43,8 +43,8 @@ extern ConVar ai_use_efficiency;
 extern ConVar ai_use_think_optimizations;
 #define ShouldUseEfficiency() ( ai_use_think_optimizations.GetBool() && ai_use_efficiency.GetBool() )
 
-ConVar	ai_simulate_task_overtime( "ai_simulate_task_overtime", "0" );
-ConVar	ai_enhanced_perception("ai_enhanced_perception", "1", FCVAR_ARCHIVE);
+ConVar ai_simulate_task_overtime( "ai_simulate_task_overtime", "0" );
+ConVar ai_enhanced_perception( "ai_enhanced_perception", "1", FCVAR_ARCHIVE );
 
 #define MAX_TASKS_RUN 10
 

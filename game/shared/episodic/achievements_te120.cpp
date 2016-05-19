@@ -3,26 +3,17 @@
 // Purpose: handles all TE120 achievements
 //
 //=============================================================================
-
 #include "cbase.h"
 
 #ifdef CLIENT_DLL
-
 #include "achievementmgr.h"
 #include "baseachievement.h"
-// for CalcPlayerAttacks
-#include "baseplayer_shared.h"
-#include "basehlcombatweapon_shared.h"
-#include "ammodef.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
-CAchievementMgr AchievementMgr;	//create achievement manager object
-
-// resets the achievements, debug only, disable in release!
-//#define RESETSTATS
-//int CalcPlayerAttacks( bool bBulletOnly );
+//create achievement manager object
+CAchievementMgr AchievementMgr;
 
 class CAchievementE120MyFirstGravityJump : public CBaseAchievement
 {
@@ -34,13 +25,9 @@ protected:
   	SetGoal( 1 );
     SetMapNameFilter( "chapter_2" );
     m_bStoreProgressInSteam = true;
-  #ifdef RESETSTATS
-    DevMsg("Reset all stats!\n");
-    steamapicontext->SteamUserStats()->ResetAllStats( true );
-  #endif
   }
 
-  // Listen for this event (event must be defined in :/resource/ModEvents.res)
+  // Listen for this event (event must be defined in :/resource/modevents.res)
   virtual void ListenForEvents()
   {
     ListenForGameEvent( "first_gravity_jump" );
@@ -68,7 +55,7 @@ protected:
     SetMapNameFilter( "chapter_4" );
   }
 
-  // Listen for this event (event must be defined in :/resource/ModEvents.res)
+  // Listen for this event (event must be defined in :/resource/modevents.res)
   virtual void ListenForEvents()
   {
     ListenForGameEvent( "chapter_4_complete" );
@@ -96,7 +83,7 @@ protected:
     SetMapNameFilter( "chapter_3" );
   }
 
-  // Listen for this event (event must be defined in :/resource/ModEvents.res)
+  // Listen for this event (event must be defined in :/resource/modevents.res)
   virtual void ListenForEvents()
   {
     ListenForGameEvent( "sliced_zombie" );
@@ -152,7 +139,7 @@ protected:
   	SetFlags( ACH_SAVE_GLOBAL );
     m_bStoreProgressInSteam = true;
   	SetGoal( 2 );
-	SetMapNameFilter( "chapter_4" );
+    SetMapNameFilter( "chapter_4" );
   }
 
   // Listen for this event (event must be defined in :/resource/modevents.res)
@@ -180,39 +167,4 @@ DECLARE_MAP_EVENT_ACHIEVEMENT( ACHIEVEMENT_E120_CHAPTER_1, "E120_CHAPTER_1", 5 )
 DECLARE_MAP_EVENT_ACHIEVEMENT( ACHIEVEMENT_E120_CHAPTER_2, "E120_CHAPTER_2", 5 );
 DECLARE_MAP_EVENT_ACHIEVEMENT( ACHIEVEMENT_E120_CHAPTER_3, "E120_CHAPTER_3", 10 );
 
-/*
-//-----------------------------------------------------------------------------
-// Purpose: Counts the accumulated # of primary and secondary attacks from all
-//			weapons (except grav gun).  If bBulletOnly is true, only counts
-//			attacks with ammo that does bullet damage.
-//-----------------------------------------------------------------------------
-int CalcPlayerAttacks( bool bBulletOnly )
-{
-  C_BasePlayer *pPlayer = C_BasePlayer::GetLocalPlayer();
-	CAmmoDef *pAmmoDef = GetAmmoDef();
-	if ( !pPlayer || !pAmmoDef )
-		return 0;
-
-	int iTotalAttacks = 0;
-	int iWeapons = pPlayer->WeaponCount();
-	for ( int i = 0; i < iWeapons; i++ )
-	{
-		CBaseHLCombatWeapon *pWeapon = dynamic_cast<CBaseHLCombatWeapon *>( pPlayer->GetWeapon( i ) );
-		if ( pWeapon )
-		{
-			// add primary attacks if we were asked for all attacks, or only if it uses bullet ammo if we were asked to count bullet attacks
-			if ( !bBulletOnly || ( pAmmoDef->m_AmmoType[pWeapon->GetPrimaryAmmoType()].nDamageType == DMG_BULLET ) )
-			{
-				iTotalAttacks += pWeapon->m_iPrimaryAttacks;
-			}
-			// add secondary attacks if we were asked for all attacks, or only if it uses bullet ammo if we were asked to count bullet attacks
-			if ( !bBulletOnly || ( pAmmoDef->m_AmmoType[pWeapon->GetSecondaryAmmoType()].nDamageType == DMG_BULLET ) )
-			{
-				iTotalAttacks += pWeapon->m_iSecondaryAttacks;
-			}
-		}
-	}
-	return iTotalAttacks;
-}
-*/
 #endif // CLIENT_DLL

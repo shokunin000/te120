@@ -160,7 +160,6 @@ extern vgui::IInputInternal *g_InputInternal;
 // HPE_END
 //=============================================================================
 
-
 #ifdef PORTAL
 #include "PortalRender.h"
 #endif
@@ -168,6 +167,8 @@ extern vgui::IInputInternal *g_InputInternal;
 #ifdef SIXENSE
 #include "sixense/in_sixense.h"
 #endif
+
+//#define RESETSTATS // TE120
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -1635,7 +1636,7 @@ void CHLClient::LevelInitPreEntity( char const* pMapName )
 	}
 #endif
 
-	//TE120-------------------------------------------------------------
+//TE120--
 	/*
 	During the end sequence, physics time is scaled to give the appearance
 	of slowed time. If you load another save during this scene the physics
@@ -1646,7 +1647,13 @@ void CHLClient::LevelInitPreEntity( char const* pMapName )
 
 	if (pCVcl_phys_timescale && (pCVcl_phys_timescale->GetFloat() < 1) )
 		engine->ClientCmd( "phys_timescale 1" );
-	//TE120-------------------------------------------------------------
+
+	// Reset all achievements and stats (for development only)
+#ifdef RESETSTATS
+	DevMsg("Reset all stats!\n");
+	steamapicontext->SteamUserStats()->ResetAllStats( true );
+#endif
+//TE120--
 }
 
 
@@ -1684,7 +1691,7 @@ void CHLClient::ResetStringTablePointers()
 //-----------------------------------------------------------------------------
 void CHLClient::LevelShutdown( void )
 {
-	//TE120-------------------------------------------------------------
+//TE120--
 	/*
 	This is a hacky fix for a bug in chapter_4. If the level is reloaded
 	before r_unloadlightmaps value has returned to 0 then on the next
@@ -1697,7 +1704,7 @@ void CHLClient::LevelShutdown( void )
 
 	if (pCVcl_unloadedlightmaps && (pCVcl_unloadedlightmaps->GetFloat() > 0) )
 		engine->ClientCmd( "r_unloadlightmaps 0" );
-	//TE120-------------------------------------------------------------
+//TE120--
 
 	// HACK: Bogus, but the logic is too complicated in the engine
 	if (!g_bLevelInitialized)
