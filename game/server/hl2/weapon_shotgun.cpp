@@ -556,10 +556,10 @@ void CWeaponShotgun::SecondaryAttack( void )
 	m_iSecondaryAttacks++;
 	gamestats->Event_WeaponFired( pPlayer, false, GetClassname() );
 
-	if ( m_iClip1 && ( !( pPlayer->GetAmmoCount( m_iPrimaryAmmoType ) <= 0 ) && !m_iClip1 ) )
+	if ( m_iClip1 && !( ( pPlayer->GetAmmoCount( m_iPrimaryAmmoType ) <= 0 ) && ( m_iClip1  <= 1 ) ) )
   {
      // Start the muzzle smoking effect
-     DispatchParticleEffect( "weapon_muzzle_smoke", PATTACH_POINT_FOLLOW, pPlayer->GetViewModel(), "muzzle", true);
+     DispatchParticleEffect( "weapon_muzzle_smoke_long", PATTACH_POINT_FOLLOW, pPlayer->GetViewModel(), "muzzle", true);
   }
 }
 
