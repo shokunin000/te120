@@ -19,6 +19,7 @@
 #include "engine/IEngineSound.h"
 #include "te_effect_dispatch.h"
 #include "gamestats.h"
+#include "particle_parse.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -33,6 +34,8 @@ class CWeapon357 : public CBaseHLCombatWeapon
 public:
 
 	CWeapon357( void );
+
+  void	Precache( void );
 
 	void	PrimaryAttack( void );
 	void	Operator_HandleAnimEvent( animevent_t *pEvent, CBaseCombatCharacter *pOperator );
@@ -60,6 +63,15 @@ CWeapon357::CWeapon357( void )
 {
 	m_bReloadsSingly	= false;
 	m_bFiresUnderwater	= false;
+}
+
+//-----------------------------------------------------------------------------
+// Purpose:
+//-----------------------------------------------------------------------------
+void CWeapon357::Precache( void )
+{
+	PrecacheParticleSystem( "weapon_muzzle_smoke" );
+	BaseClass::Precache();
 }
 
 //-----------------------------------------------------------------------------
@@ -133,7 +145,7 @@ void CWeapon357::PrimaryAttack( void )
 	m_iClip1--;
 
 	Vector vecSrc		= pPlayer->Weapon_ShootPosition();
-	Vector vecAiming	= pPlayer->GetAutoaimVector( AUTOAIM_SCALE_DEFAULT );	
+	Vector vecAiming	= pPlayer->GetAutoaimVector( AUTOAIM_SCALE_DEFAULT );
 
 	pPlayer->FireBullets( 1, vecSrc, vecAiming, vec3_origin, MAX_TRACE_LENGTH, m_iPrimaryAmmoType, 0 );
 
@@ -155,6 +167,12 @@ void CWeapon357::PrimaryAttack( void )
 	if ( !m_iClip1 && pPlayer->GetAmmoCount( m_iPrimaryAmmoType ) <= 0 )
 	{
 		// HEV suit - indicate out of ammo condition
-		pPlayer->SetSuitUpdate( "!HEV_AMO0", FALSE, 0 ); 
+		pPlayer->SetSuitUpdate( "!HEV_AMO0", FALSE, 0 );
 	}
+
+  if ( ( m_iClip1 % 2 == 0 ) && !( ( pPlayer->GetAmmoCount( m_iPrimaryAmmoType ) <= 0 ) && ( m_iClip1  <= 1 ) ) )
+  {
+     // Start the muzzle smoking effect
+     DispatchParticleEffect( "weapon_muzzle_smoke", PATTACH_POINT_FOLLOW, pPlayer->GetViewModel(), "muzzle", true);
+  }
 }

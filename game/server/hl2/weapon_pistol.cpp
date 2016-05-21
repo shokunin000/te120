@@ -17,6 +17,7 @@
 #include "game.h"
 #include "vstdlib/random.h"
 #include "gamestats.h"
+#include "particle_parse.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -61,21 +62,21 @@ public:
 	virtual bool Reload( void );
 
 	virtual const Vector& GetBulletSpread( void )
-	{		
+	{
 		// Handle NPCs first
 		static Vector npcCone = VECTOR_CONE_5DEGREES;
 		if ( GetOwner() && GetOwner()->IsNPC() )
 			return npcCone;
-			
+
 		static Vector cone;
 
 		if ( pistol_use_new_accuracy.GetBool() )
 		{
-			float ramp = RemapValClamped(	m_flAccuracyPenalty, 
-											0.0f, 
-											PISTOL_ACCURACY_MAXIMUM_PENALTY_TIME, 
-											0.0f, 
-											1.0f ); 
+			float ramp = RemapValClamped(	m_flAccuracyPenalty,
+											0.0f,
+											PISTOL_ACCURACY_MAXIMUM_PENALTY_TIME,
+											0.0f,
+											1.0f );
 
 			// We lerp from very accurate to inaccurate over time
 			VectorLerp( VECTOR_CONE_1DEGREES, VECTOR_CONE_6DEGREES, ramp, cone );
@@ -88,20 +89,20 @@ public:
 
 		return cone;
 	}
-	
-	virtual int	GetMinBurst() 
-	{ 
-		return 1; 
-	}
 
-	virtual int	GetMaxBurst() 
-	{ 
-		return 3; 
-	}
-
-	virtual float GetFireRate( void ) 
+	virtual int	GetMinBurst()
 	{
-		return 0.5f; 
+		return 1;
+	}
+
+	virtual int	GetMaxBurst()
+	{
+		return 3;
+	}
+
+	virtual float GetFireRate( void )
+	{
+		return 0.5f;
 	}
 
 	DECLARE_ACTTABLE();
@@ -129,7 +130,7 @@ BEGIN_DATADESC( CWeaponPistol )
 
 END_DATADESC()
 
-acttable_t	CWeaponPistol::m_acttable[] = 
+acttable_t	CWeaponPistol::m_acttable[] =
 {
 	{ ACT_IDLE,						ACT_IDLE_PISTOL,				true },
 	{ ACT_IDLE_ANGRY,				ACT_IDLE_ANGRY_PISTOL,			true },
@@ -167,10 +168,11 @@ CWeaponPistol::CWeaponPistol( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CWeaponPistol::Precache( void )
 {
+	PrecacheParticleSystem( "weapon_muzzle_smoke" );
 	BaseClass::Precache();
 }
 
@@ -214,7 +216,7 @@ void CWeaponPistol::DryFire( void )
 {
 	WeaponSound( EMPTY );
 	SendWeaponAnim( ACT_VM_DRYFIRE );
-	
+
 	m_flSoonestPrimaryAttack	= gpGlobals->curtime + PISTOL_FASTEST_DRY_REFIRE_TIME;
 	m_flNextPrimaryAttack		= gpGlobals->curtime + SequenceDuration();
 }
@@ -255,10 +257,16 @@ void CWeaponPistol::PrimaryAttack( void )
 
 	m_iPrimaryAttacks++;
 	gamestats->Event_WeaponFired( pOwner, true, GetClassname() );
+
+	if ( ( m_iClip1 % 5 == 0 ) && !( ( pOwner->GetAmmoCount( m_iPrimaryAmmoType ) <= 0 ) && ( m_iClip1  <= 1 ) ) )
+	{
+     // Start the muzzle smoking effect
+     DispatchParticleEffect( "weapon_muzzle_smoke", PATTACH_POINT_FOLLOW, pOwner->GetViewModel(), "muzzle", true);
+	}
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CWeaponPistol::UpdatePenaltyTime( void )
 {
@@ -276,7 +284,7 @@ void CWeaponPistol::UpdatePenaltyTime( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CWeaponPistol::ItemPreFrame( void )
 {
@@ -286,7 +294,7 @@ void CWeaponPistol::ItemPreFrame( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CWeaponPistol::ItemBusyFrame( void )
 {
@@ -304,7 +312,7 @@ void CWeaponPistol::ItemPostFrame( void )
 
 	if ( m_bInReload )
 		return;
-	
+
 	CBasePlayer *pOwner = ToBasePlayer( GetOwner() );
 
 	if ( pOwner == NULL )
@@ -322,7 +330,7 @@ void CWeaponPistol::ItemPostFrame( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 // Output : int
 //-----------------------------------------------------------------------------
 Activity CWeaponPistol::GetPrimaryAttackActivity( void )
@@ -353,12 +361,12 @@ bool CWeaponPistol::Reload( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CWeaponPistol::AddViewKick( void )
 {
 	CBasePlayer *pPlayer  = ToBasePlayer( GetOwner() );
-	
+
 	if ( pPlayer == NULL )
 		return;
 

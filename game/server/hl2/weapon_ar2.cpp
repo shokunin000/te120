@@ -124,6 +124,8 @@ void CWeaponAR2::Precache( void )
 {
 	BaseClass::Precache();
 
+  PrecacheParticleSystem( "weapon_muzzle_smoke_long" );
+
 	UTIL_PrecacheOther( "prop_combine_ball" );
 	UTIL_PrecacheOther( "env_entity_dissolver" );
 }
@@ -260,6 +262,7 @@ void CWeaponAR2::DelayedAttack( void )
 	// Can blow up after a short delay (so have time to release mouse button)
 	m_flNextSecondaryAttack = gpGlobals->curtime + 1.0f;
 }
+
 
 //-----------------------------------------------------------------------------
 // Purpose:
