@@ -23,8 +23,6 @@
 
 extern ConVar    sk_plr_dmg_smg1_grenade;
 
-//#define OLD
-
 class CWeaponSMG1 : public CHLSelectFireMachineGun
 {
 	DECLARE_DATADESC();
