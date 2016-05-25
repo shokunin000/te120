@@ -15,7 +15,7 @@ void OpenURL_f( const CCommand &args )
 		if ( args.ArgC() < 1 | args.Arg(1) == "" )
 		{
 			//Msg("Usage: s_cl_openurl <link>\n");
-			steamapicontext->SteamFriends()->ActivateGameOverlayToWebPage("https://www.youcaring.com/carebox-program-571865");
+			steamapicontext->SteamFriends()->ActivateGameOverlayToWebPage("https://www.youcaring.com/TE120andCarebox");
 			return;
 		}
 		else if ( !Q_strncmp( args.Arg(1), "http://", 7 ) || !Q_strncmp( args.Arg(1), "https://", 8 ) )
