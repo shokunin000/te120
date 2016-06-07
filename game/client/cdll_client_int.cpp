@@ -168,8 +168,6 @@ extern vgui::IInputInternal *g_InputInternal;
 #include "sixense/in_sixense.h"
 #endif
 
-//#define RESETSTATS // TE120
-
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
@@ -1649,9 +1647,12 @@ void CHLClient::LevelInitPreEntity( char const* pMapName )
 		engine->ClientCmd( "phys_timescale 1" );
 
 	// Reset all achievements and stats (for development only)
+	// This should only used during development!
+	//#define RESETSTATS
 #ifdef RESETSTATS
 	DevMsg("Reset all stats!\n");
 	steamapicontext->SteamUserStats()->ResetAllStats( true );
+	steamapicontext->SteamUserStats()->StoreStats();
 #endif
 //TE120--
 }
