@@ -57,3 +57,13 @@ config.cfg
 
 # Shader files
 *.tmp
+*.sentinel
+*.unsuccessfulbuild
+*.dll
+*.lib
+*.exe
+*.manifest
+utils/qc_eyes/Release/QC_Eyes.res
+thirdparty/protobuf-2.3.0/m4/lt~obsolete.m4
+mathlib/sse1.cpp
+mathlib/sse1.h
