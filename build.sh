@@ -10,9 +10,9 @@ rm ${logfile}.pipe
 
 # Set path to steam runtime sdk
 if [ "$SYSTEM" = "Ubuntu 14.04.4 LTS" -o "$SYSTEM" = "Ubuntu 16.04 LTS" ]; then
-	export STEAM_RUNTIME_ROOT="/media/vincent/dbcbf69d-8162-4768-976c-c7c5b5ace72b/Development/sourceengine/steam-runtime-sdk"
+	export STEAM_RUNTIME_ROOT="/media/disk2/Development/sourceengine/steam-runtime-sdk"
 else
-	export STEAM_RUNTIME_ROOT="/run/media/vincent/dbcbf69d-8162-4768-976c-c7c5b5ace72b/Development/sourceengine/steam-runtime-sdk"
+	export STEAM_RUNTIME_ROOT="/run/media/disk2/Development/sourceengine/steam-runtime-sdk"
 fi
 
 # Stop the script if we run into any errors
@@ -81,8 +81,8 @@ make -f games.mak
 
 # Copy files
 echo "Copy files..."
-cp -f ../game/mod_episodic/bin/client.so "/media/vincent/daac250d-bf7b-468d-a36b-059dfe4afec4/SteamLibrary/steamapps/common/Transmissions Element 120/te120/bin"
-cp -f ../game/mod_episodic/bin/server.so "/media/vincent/daac250d-bf7b-468d-a36b-059dfe4afec4/SteamLibrary/steamapps/common/Transmissions Element 120/te120/bin"
+cp -f ../game/mod_episodic/bin/client.so "/media/disk1/SteamLibrary/steamapps/common/Transmissions Element 120/te120/bin"
+cp -f ../game/mod_episodic/bin/server.so "/media/disk1/SteamLibrary/steamapps/common/Transmissions Element 120/te120/bin"
 
 echo "Cleaning up..."
 export PATH=$OLD_PATH
