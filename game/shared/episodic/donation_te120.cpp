@@ -12,9 +12,8 @@ void OpenURL_f( const CCommand &args )
 {
 	if ( steamapicontext && steamapicontext->SteamFriends() )
 	{
-		if ( args.ArgC() < 1 | args.Arg(1) == "" )
+		if ( args.ArgC() < 1 || Q_strlen(args.Arg(1)) == 0 )
 		{
-			//Msg("Usage: s_cl_openurl <link>\n");
 			steamapicontext->SteamFriends()->ActivateGameOverlayToWebPage("https://www.youcaring.com/TE120andCarebox");
 			return;
 		}
