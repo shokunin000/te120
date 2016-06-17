@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $Workfile:     $
 // $NoKeywords: $
@@ -106,8 +106,8 @@ C_LocalTempEntity::C_LocalTempEntity()
 
 //-----------------------------------------------------------------------------
 // Purpose: Prepare a temp entity for creation
-// Input  : time - 
-//			*model - 
+// Input  : time -
+//			*model -
 //-----------------------------------------------------------------------------
 void C_LocalTempEntity::Prepare( const model_t *pmodel, float time )
 {
@@ -117,7 +117,7 @@ void C_LocalTempEntity::Prepare( const model_t *pmodel, float time )
 	Clear();
 
 	// Use these to set per-frame and termination conditions / actions
-	flags = FTENT_NONE;		
+	flags = FTENT_NONE;
 	die = time + 0.75;
 	SetModelPointer( pmodel );
 	SetRenderMode( kRenderNormal );
@@ -150,7 +150,7 @@ void C_LocalTempEntity::SetAcceleration( const Vector &vecVelocity )
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 // Output : int
 //-----------------------------------------------------------------------------
 int C_LocalTempEntity::DrawStudioModel( int flags )
@@ -160,7 +160,7 @@ int C_LocalTempEntity::DrawStudioModel( int flags )
 
 	if ( !GetModel() || modelinfo->GetModelType( GetModel() ) != mod_studio )
 		return drawn;
-	
+
 	// Make sure m_pstudiohdr is valid for drawing
 	MDLCACHE_CRITICAL_SECTION();
 	if ( !GetModelPtr() )
@@ -172,11 +172,11 @@ int C_LocalTempEntity::DrawStudioModel( int flags )
 	}
 	else
 	{
-		drawn = modelrender->DrawModel( 
-			flags, 
+		drawn = modelrender->DrawModel(
+			flags,
 			this,
 			MODEL_INSTANCE_INVALID,
-			index, 
+			index,
 			GetModel(),
 			GetAbsOrigin(),
 			GetAbsAngles(),
@@ -188,8 +188,8 @@ int C_LocalTempEntity::DrawStudioModel( int flags )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : flags - 
+// Purpose:
+// Input  : flags -
 //-----------------------------------------------------------------------------
 int	C_LocalTempEntity::DrawModel( int flags )
 {
@@ -220,11 +220,11 @@ int	C_LocalTempEntity::DrawModel( int flags )
 	switch ( modelinfo->GetModelType( GetModel() ) )
 	{
 	case mod_sprite:
-		drawn = DrawSprite( 
+		drawn = DrawSprite(
 			this,
-			GetModel(), 
-			GetAbsOrigin(), 
-			GetAbsAngles(), 
+			GetModel(),
+			GetAbsOrigin(),
+			GetAbsAngles(),
 			m_flFrame,  // sprite frame to render
 			m_nBody > 0 ? cl_entitylist->GetBaseEntity( m_nBody ) : NULL,  // attach to
 			m_nSkin,  // attachment point
@@ -248,7 +248,7 @@ int	C_LocalTempEntity::DrawModel( int flags )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 // Output : Returns true on success, false on failure.
 //-----------------------------------------------------------------------------
 bool C_LocalTempEntity::IsActive( void )
@@ -256,7 +256,7 @@ bool C_LocalTempEntity::IsActive( void )
 	bool active = true;
 
 	float life = die - gpGlobals->curtime;
-	
+
 	if ( life < 0 )
 	{
 		if ( flags & FTENT_FADEOUT )
@@ -266,9 +266,9 @@ bool C_LocalTempEntity::IsActive( void )
 			{
 				SetRenderMode( kRenderTransTexture );
 			}
-			
+
 			alpha = tempent_renderamt * ( 1 + life * fadeSpeed );
-			
+
 			if ( alpha <= 0 )
 			{
 				active = false;
@@ -277,7 +277,7 @@ bool C_LocalTempEntity::IsActive( void )
 
 			SetRenderColorA( alpha );
 		}
-		else 
+		else
 		{
 			active = false;
 		}
@@ -336,7 +336,7 @@ bool C_LocalTempEntity::Frame( float frametime, int framenumber )
 	{
 		SetLocalOrigin( GetLocalOrigin() + m_vecTempEntVelocity * frametime );
 	}
-	
+
 	if ( flags & FTENT_SPRANIMATE )
 	{
 		m_flFrame += frametime * m_flFrameRate;
@@ -407,7 +407,7 @@ bool C_LocalTempEntity::Frame( float frametime, int framenumber )
 					}
 
 					m_iLastCollisionFrame = gpGlobals->framecount;
-					bShouldCollide = true; 
+					bShouldCollide = true;
 				}
 			}
 
@@ -431,10 +431,10 @@ bool C_LocalTempEntity::Frame( float frametime, int framenumber )
 				}
 
 				// Make sure it didn't bump into itself... (?!?)
-				if  ( 
-					(trace.fraction != 1) && 
-						( (trace.DidHitWorld()) || 
-						  (trace.m_pEnt != ClientEntityList().GetEnt(clientIndex)) ) 
+				if  (
+					(trace.fraction != 1) &&
+						( (trace.DidHitWorld()) ||
+						  (trace.m_pEnt != ClientEntityList().GetEnt(clientIndex)) )
 					)
 				{
 					traceFraction = trace.fraction;
@@ -454,12 +454,12 @@ bool C_LocalTempEntity::Frame( float frametime, int framenumber )
 				VectorCopy( trace.plane.normal, traceNormal );
 			}
 		}
-		
+
 		if ( traceFraction != 1  )	// Decent collision now, and damping works
 		{
 			float  proj, damp;
 			SetLocalOrigin( trace.endpos );
-			
+
 			// Damp velocity
 			damp = bounceFactor;
 			if ( flags & (FTENT_GRAVITY|FTENT_SLOWGRAVITY) )
@@ -481,7 +481,7 @@ bool C_LocalTempEntity::Frame( float frametime, int framenumber )
 			{
 				m_RenderGroup = RENDER_GROUP_OTHER;
 				flags &= ~FTENT_CHANGERENDERONCOLLIDE;
-			}	
+			}
 
 			if (hitSound)
 			{
@@ -528,8 +528,8 @@ bool C_LocalTempEntity::Frame( float frametime, int framenumber )
 			if (flags & FTENT_COLLIDEKILL)
 			{
 				// die on impact
-				flags &= ~FTENT_FADEOUT;	
-				die = gpGlobals->curtime;			
+				flags &= ~FTENT_FADEOUT;
+				die = gpGlobals->curtime;
 			}
 			else if ( flags & FTENT_ATTACHTOTARGET)
 			{
@@ -559,7 +559,7 @@ bool C_LocalTempEntity::Frame( float frametime, int framenumber )
 					// Reflect rotation (fake)
 					SetLocalAnglesDim( Y_INDEX, -GetLocalAnglesDim( Y_INDEX ) );
 				}
-				
+
 				if ( damp != 1 )
 				{
 					VectorScale( m_vecTempEntVelocity, damp, m_vecTempEntVelocity );
@@ -678,8 +678,8 @@ private:
 
 //-----------------------------------------------------------------------------
 // Purpose: Adds brekable to list, starts new context if needed
-// Input  : *entity - 
-//			isSlave - 
+// Input  : *entity -
+//			isSlave -
 //-----------------------------------------------------------------------------
 void CBreakableHelper::Insert( C_LocalTempEntity *entity, bool isSlave )
 {
@@ -688,7 +688,7 @@ void CBreakableHelper::Insert( C_LocalTempEntity *entity, bool isSlave )
 	{
 		++m_nCurrentContext;
 	}
-	
+
 	BreakableList_t entry;
 	entry.context = m_nCurrentContext;
 	entry.entity = entity;
@@ -698,7 +698,7 @@ void CBreakableHelper::Insert( C_LocalTempEntity *entity, bool isSlave )
 
 //-----------------------------------------------------------------------------
 // Purpose: Removes all instances of entity in the list
-// Input  : *entity - 
+// Input  : *entity -
 //-----------------------------------------------------------------------------
 void CBreakableHelper::Remove( C_LocalTempEntity *entity )
 {
@@ -718,7 +718,7 @@ void CBreakableHelper::Remove( C_LocalTempEntity *entity )
 //-----------------------------------------------------------------------------
 // Purpose: For a given breakable, find the "first" or head object and use it's current
 //  origin as the lighting origin for the entire group of objects
-// Input  : *entity - 
+// Input  : *entity -
 // Output : const Vector
 //-----------------------------------------------------------------------------
 const Vector *CBreakableHelper::GetLightingOrigin( C_LocalTempEntity *entity )
@@ -746,7 +746,7 @@ const Vector *CBreakableHelper::GetLightingOrigin( C_LocalTempEntity *entity )
 
 //-----------------------------------------------------------------------------
 // Purpose: Wipe breakable helper list
-// Input  :  - 
+// Input  :  -
 //-----------------------------------------------------------------------------
 void CBreakableHelper::Clear()
 {
@@ -758,7 +758,7 @@ static CBreakableHelper g_BreakableHelper;
 
 //-----------------------------------------------------------------------------
 // Purpose: See if it's in the breakable helper list and, if so, remove
-// Input  :  - 
+// Input  :  -
 //-----------------------------------------------------------------------------
 void C_LocalTempEntity::OnRemoveTempEntity()
 {
@@ -766,7 +766,7 @@ void C_LocalTempEntity::OnRemoveTempEntity()
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 CTempEnts::CTempEnts( void ) :
 	m_TempEntsPool( ( MAX_TEMP_ENTITIES / 20 ), CUtlMemoryPool::GROW_SLOW )
@@ -774,7 +774,7 @@ CTempEnts::CTempEnts( void ) :
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 CTempEnts::~CTempEnts( void )
 {
@@ -784,9 +784,9 @@ CTempEnts::~CTempEnts( void )
 
 //-----------------------------------------------------------------------------
 // Purpose: Create a fizz effect
-// Input  : *pent - 
-//			modelIndex - 
-//			density - 
+// Input  : *pent -
+//			modelIndex -
+//			density -
 //-----------------------------------------------------------------------------
 void CTempEnts::FizzEffect( C_BaseEntity *pent, int modelIndex, int density, int current )
 {
@@ -797,7 +797,7 @@ void CTempEnts::FizzEffect( C_BaseEntity *pent, int modelIndex, int density, int
 	Vector			origin;
 	Vector			mins, maxs;
 
-	if ( !pent->GetModel() || !modelIndex ) 
+	if ( !pent->GetModel() || !modelIndex )
 		return;
 
 	model = modelinfo->GetModel( modelIndex );
@@ -846,12 +846,12 @@ void CTempEnts::FizzEffect( C_BaseEntity *pent, int modelIndex, int density, int
 
 //-----------------------------------------------------------------------------
 // Purpose: Create bubbles
-// Input  : *mins - 
-//			*maxs - 
-//			height - 
-//			modelIndex - 
-//			count - 
-//			speed - 
+// Input  : *mins -
+//			*maxs -
+//			height -
+//			modelIndex -
+//			count -
+//			speed -
 //-----------------------------------------------------------------------------
 void CTempEnts::Bubbles( const Vector &mins, const Vector &maxs, float height, int modelIndex, int count, float speed )
 {
@@ -861,7 +861,7 @@ void CTempEnts::Bubbles( const Vector &mins, const Vector &maxs, float height, i
 	float				sine, cosine;
 	Vector				origin;
 
-	if ( !modelIndex ) 
+	if ( !modelIndex )
 		return;
 
 	model = modelinfo->GetModel( modelIndex );
@@ -884,28 +884,28 @@ void CTempEnts::Bubbles( const Vector &mins, const Vector &maxs, float height, i
 		pTemp->x = origin[0];
 		pTemp->y = origin[1];
 		SinCos( random->RandomInt( -3, 3 ), &sine, &cosine );
-		
+
 		float zspeed = random->RandomInt(80,140);
 		pTemp->SetVelocity( Vector(speed * cosine, speed * sine, zspeed) );
 		pTemp->die = gpGlobals->curtime + ((height - (origin[2] - mins[2])) / zspeed) - 0.1;
 		pTemp->m_flFrame = random->RandomInt( 0, frameCount-1 );
-		
+
 		// Set sprite scale
 		pTemp->m_flSpriteScale = 1.0 / random->RandomFloat(4,16);
 		pTemp->SetRenderMode( kRenderTransAlpha );
-		
+
 		pTemp->SetRenderColor( 255, 255, 255, 192 );
 	}
 }
 
 //-----------------------------------------------------------------------------
 // Purpose: Create bubble trail
-// Input  : *start - 
-//			*end - 
-//			height - 
-//			modelIndex - 
-//			count - 
-//			speed - 
+// Input  : *start -
+//			*end -
+//			height -
+//			modelIndex -
+//			count -
+//			speed -
 //-----------------------------------------------------------------------------
 void CTempEnts::BubbleTrail( const Vector &start, const Vector &end, float flWaterZ, int modelIndex, int count, float speed )
 {
@@ -915,7 +915,7 @@ void CTempEnts::BubbleTrail( const Vector &start, const Vector &end, float flWat
 	float				dist, angle;
 	Vector				origin;
 
-	if ( !modelIndex ) 
+	if ( !modelIndex )
 		return;
 
 	model = modelinfo->GetModel( modelIndex );
@@ -945,7 +945,7 @@ void CTempEnts::BubbleTrail( const Vector &start, const Vector &end, float flWat
 		// Set sprite scale
 		pTemp->m_flSpriteScale = 1.0 / random->RandomFloat(4,8);
 		pTemp->SetRenderMode( kRenderTransAlpha );
-		
+
 		pTemp->SetRenderColor( 255, 255, 255, 192 );
 	}
 }
@@ -956,8 +956,8 @@ void CTempEnts::BubbleTrail( const Vector &start, const Vector &end, float flWat
 // Purpose: Only used by BreakModel temp ents for now.  Allows them to share a single
 //  lighting origin amongst a group of objects.  If the master object goes away, the next object
 //  in the group becomes the new lighting origin, etc.
-// Input  : *entity - 
-//			flags - 
+// Input  : *entity -
+//			flags -
 // Output : int
 //-----------------------------------------------------------------------------
 int BreakModelDrawHelper( C_LocalTempEntity *entity, int flags )
@@ -987,23 +987,23 @@ int BreakModelDrawHelper( C_LocalTempEntity *entity, int flags )
 
 //-----------------------------------------------------------------------------
 // Purpose: Create model shattering shards
-// Input  : *pos - 
-//			*size - 
-//			*dir - 
-//			random - 
-//			life - 
-//			count - 
-//			modelIndex - 
-//			flags - 
+// Input  : *pos -
+//			*size -
+//			*dir -
+//			random -
+//			life -
+//			count -
+//			modelIndex -
+//			flags -
 //-----------------------------------------------------------------------------
-void CTempEnts::BreakModel( const Vector &pos, const QAngle &angles, const Vector &size, const Vector &dir, 
+void CTempEnts::BreakModel( const Vector &pos, const QAngle &angles, const Vector &size, const Vector &dir,
 						   float randRange, float life, int count, int modelIndex, char flags)
 {
 	int					i, frameCount;
 	C_LocalTempEntity			*pTemp;
 	const model_t		*pModel;
 
-	if (!modelIndex) 
+	if (!modelIndex)
 		return;
 
 	pModel = modelinfo->GetModel( modelIndex );
@@ -1028,7 +1028,7 @@ void CTempEnts::BreakModel( const Vector &pos, const QAngle &angles, const Vecto
 
 	matrix3x4_t transform;
 	AngleMatrix( angles, pos, transform );
-	for ( i = 0; i < count; i++ ) 
+	for ( i = 0; i < count; i++ )
 	{
 		Vector vecLocalSpot, vecSpot;
 
@@ -1039,13 +1039,13 @@ void CTempEnts::BreakModel( const Vector &pos, const QAngle &angles, const Vecto
 		VectorTransform( vecLocalSpot, transform, vecSpot );
 
 		pTemp = TempEntAlloc(vecSpot, pModel);
-		
+
 		if (!pTemp)
 			return;
 
 		// keep track of break_type, so we know how to play sound on collision
 		pTemp->hitSound = flags;
-		
+
 		if ( modelinfo->GetModelType( pModel ) == mod_sprite )
 		{
 			pTemp->m_flFrame = random->RandomInt(0,frameCount-1);
@@ -1057,7 +1057,7 @@ void CTempEnts::BreakModel( const Vector &pos, const QAngle &angles, const Vecto
 
 		pTemp->flags |= FTENT_COLLIDEWORLD | FTENT_FADEOUT | FTENT_SLOWGRAVITY;
 
-		if ( random->RandomInt(0,255) < 200 ) 
+		if ( random->RandomInt(0,255) < 200 )
 		{
 			pTemp->flags |= FTENT_ROTATE;
 			pTemp->m_vecTempEntAngVelocity[0] = random->RandomFloat(-256,255);
@@ -1100,7 +1100,7 @@ void CTempEnts::BreakModel( const Vector &pos, const QAngle &angles, const Vecto
 void CTempEnts::PhysicsProp( int modelindex, int skin, const Vector& pos, const QAngle &angles, const Vector& vel, int flags, int effects )
 {
 	C_PhysPropClientside *pEntity = C_PhysPropClientside::CreateNew();
-	
+
 	if ( !pEntity )
 		return;
 
@@ -1147,18 +1147,18 @@ void CTempEnts::PhysicsProp( int modelindex, int skin, const Vector& pos, const 
 
 //-----------------------------------------------------------------------------
 // Purpose: Create a clientside projectile
-// Input  : vecOrigin - 
-//			vecVelocity - 
-//			modelindex - 
-//			lifetime - 
-//			*pOwner - 
+// Input  : vecOrigin -
+//			vecVelocity -
+//			modelindex -
+//			lifetime -
+//			*pOwner -
 //-----------------------------------------------------------------------------
 C_LocalTempEntity *CTempEnts::ClientProjectile( const Vector& vecOrigin, const Vector& vecVelocity, const Vector& vecAcceleration, int modelIndex, int lifetime, CBaseEntity *pOwner, const char *pszImpactEffect, const char *pszParticleEffect )
 {
 	C_LocalTempEntity	*pTemp;
 	const model_t		*model;
 
-	if ( !modelIndex ) 
+	if ( !modelIndex )
 		return NULL;
 
 	model = modelinfo->GetModel( modelIndex );
@@ -1180,7 +1180,7 @@ C_LocalTempEntity *CTempEnts::ClientProjectile( const Vector& vecOrigin, const V
 	pTemp->SetAbsOrigin( vecOrigin );
 	pTemp->die = gpGlobals->curtime + lifetime;
 	pTemp->flags = FTENT_COLLIDEALL | FTENT_ATTACHTOTARGET | FTENT_ALIGNTOMOTION;
-	pTemp->clientIndex = ( pOwner != NULL ) ? pOwner->entindex() : 0; 
+	pTemp->clientIndex = ( pOwner != NULL ) ? pOwner->entindex() : 0;
 	pTemp->SetOwnerEntity( pOwner );
 	pTemp->SetImpactEffect( pszImpactEffect );
 	if ( pszParticleEffect )
@@ -1198,15 +1198,15 @@ C_LocalTempEntity *CTempEnts::ClientProjectile( const Vector& vecOrigin, const V
 
 //-----------------------------------------------------------------------------
 // Purpose: Create sprite TE
-// Input  : *pos - 
-//			*dir - 
-//			scale - 
-//			modelIndex - 
-//			rendermode - 
-//			renderfx - 
-//			a - 
-//			life - 
-//			flags - 
+// Input  : *pos -
+//			*dir -
+//			scale -
+//			modelIndex -
+//			rendermode -
+//			renderfx -
+//			a -
+//			life -
+//			flags -
 // Output : C_LocalTempEntity
 //-----------------------------------------------------------------------------
 C_LocalTempEntity *CTempEnts::TempSprite( const Vector &pos, const Vector &dir, float scale, int modelIndex, int rendermode, int renderfx, float a, float life, int flags, const Vector &normal )
@@ -1215,7 +1215,7 @@ C_LocalTempEntity *CTempEnts::TempSprite( const Vector &pos, const Vector &dir, 
 	const model_t		*model;
 	int					frameCount;
 
-	if ( !modelIndex ) 
+	if ( !modelIndex )
 		return NULL;
 
 	model = modelinfo->GetModel( modelIndex );
@@ -1255,12 +1255,12 @@ C_LocalTempEntity *CTempEnts::TempSprite( const Vector &pos, const Vector &dir, 
 
 //-----------------------------------------------------------------------------
 // Purpose: Spray sprite
-// Input  : *pos - 
-//			*dir - 
-//			modelIndex - 
-//			count - 
-//			speed - 
-//			iRand - 
+// Input  : *pos -
+//			*dir -
+//			modelIndex -
+//			count -
+//			speed -
+//			iRand -
 //-----------------------------------------------------------------------------
 void CTempEnts::Sprite_Spray( const Vector &pos, const Vector &dir, int modelIndex, int count, int speed, int iRand )
 {
@@ -1275,14 +1275,14 @@ void CTempEnts::Sprite_Spray( const Vector &pos, const Vector &dir, int modelInd
 
 	// more vertical displacement
 	znoise = noise * 1.5;
-	
+
 	if ( znoise > 1 )
 	{
 		znoise = 1;
 	}
 
 	pModel = modelinfo->GetModel( modelIndex );
-	
+
 	if ( !pModel )
 	{
 		Warning("No model %d!\n", modelIndex);
@@ -1329,7 +1329,7 @@ void CTempEnts::Sprite_Trail( const Vector &vecStart, const Vector &vecEnd, int 
 	int					flFrameCount;
 
 	pModel = modelinfo->GetModel( modelIndex );
-	
+
 	if ( !pModel )
 	{
 		Warning("No model %d!\n", modelIndex);
@@ -1388,10 +1388,10 @@ void CTempEnts::Sprite_Trail( const Vector &vecStart, const Vector &vecEnd, int 
 
 //-----------------------------------------------------------------------------
 // Purpose: Attaches entity to player
-// Input  : client - 
-//			modelIndex - 
-//			zoffset - 
-//			life - 
+// Input  : client -
+//			modelIndex -
+//			zoffset -
+//			life -
 //-----------------------------------------------------------------------------
 void CTempEnts::AttachTentToPlayer( int client, int modelIndex, float zoffset, float life )
 {
@@ -1414,7 +1414,7 @@ void CTempEnts::AttachTentToPlayer( int client, int modelIndex, float zoffset, f
 	}
 
 	pModel = modelinfo->GetModel( modelIndex );
-	
+
 	if ( !pModel )
 	{
 		Warning("No model %d!\n", modelIndex);
@@ -1435,7 +1435,7 @@ void CTempEnts::AttachTentToPlayer( int client, int modelIndex, float zoffset, f
 	pTemp->SetRenderColorA( 255 );
 	pTemp->tempent_renderamt = 255;
 	pTemp->m_nRenderFX = kRenderFxNoDissipation;
-	
+
 	pTemp->clientIndex = client;
 	pTemp->tentOffset[ 0 ] = 0;
 	pTemp->tentOffset[ 1 ] = 0;
@@ -1481,7 +1481,7 @@ void CTempEnts::KillAttachedTents( int client )
 			// if it is attached to this client, set it to die instantly.
 			if ( pTemp->clientIndex == client )
 			{
-				pTemp->die = gpGlobals->curtime;// good enough, it will die on next tent update. 
+				pTemp->die = gpGlobals->curtime;// good enough, it will die on next tent update.
 			}
 		}
 	}
@@ -1491,10 +1491,10 @@ void CTempEnts::KillAttachedTents( int client )
 
 //-----------------------------------------------------------------------------
 // Purpose: Create ricochet sprite
-// Input  : *pos - 
-//			*pmodel - 
-//			duration - 
-//			scale - 
+// Input  : *pos -
+//			*pmodel -
+//			duration -
+//			scale -
 //-----------------------------------------------------------------------------
 void CTempEnts::RicochetSprite( const Vector &pos, model_t *pmodel, float duration, float scale )
 {
@@ -1514,7 +1514,7 @@ void CTempEnts::RicochetSprite( const Vector &pos, model_t *pmodel, float durati
 	pTemp->SetVelocity( vec3_origin );
 
 	pTemp->SetLocalOrigin( pos );
-	
+
 	pTemp->fadeSpeed = 8;
 	pTemp->die = gpGlobals->curtime;
 
@@ -1524,11 +1524,11 @@ void CTempEnts::RicochetSprite( const Vector &pos, model_t *pmodel, float durati
 
 //-----------------------------------------------------------------------------
 // Purpose: Create blood sprite
-// Input  : *org - 
-//			colorindex - 
-//			modelIndex - 
-//			modelIndex2 - 
-//			size - 
+// Input  : *org -
+//			colorindex -
+//			modelIndex -
+//			modelIndex2 -
+//			size -
 //-----------------------------------------------------------------------------
 void CTempEnts::BloodSprite( const Vector &org, int r, int g, int b, int a, int modelIndex, int modelIndex2, float size )
 {
@@ -1548,7 +1548,7 @@ void CTempEnts::BloodSprite( const Vector &org, int r, int g, int b, int a, int 
 			pTemp->m_nRenderFX		= kRenderFxClampMinScale;
 			pTemp->m_flSpriteScale	= random->RandomFloat( size / 25, size / 35);
 			pTemp->flags			= FTENT_SPRANIMATE;
- 
+
 			pTemp->m_clrRender		= impactcolor;
 			pTemp->tempent_renderamt= pTemp->m_clrRender->a;
 
@@ -1567,9 +1567,9 @@ void CTempEnts::BloodSprite( const Vector &org, int r, int g, int b, int a, int 
 
 //-----------------------------------------------------------------------------
 // Purpose: Create default sprite TE
-// Input  : *pos - 
-//			spriteIndex - 
-//			framerate - 
+// Input  : *pos -
+//			spriteIndex -
+//			framerate -
 // Output : C_LocalTempEntity
 //-----------------------------------------------------------------------------
 C_LocalTempEntity *CTempEnts::DefaultSprite( const Vector &pos, int spriteIndex, float framerate )
@@ -1611,8 +1611,8 @@ C_LocalTempEntity *CTempEnts::DefaultSprite( const Vector &pos, int spriteIndex,
 
 //-----------------------------------------------------------------------------
 // Purpose: Create sprite smoke
-// Input  : *pTemp - 
-//			scale - 
+// Input  : *pTemp -
+//			scale -
 //-----------------------------------------------------------------------------
 void CTempEnts::Sprite_Smoke( C_LocalTempEntity *pTemp, float scale )
 {
@@ -1634,10 +1634,10 @@ void CTempEnts::Sprite_Smoke( C_LocalTempEntity *pTemp, float scale )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : pos1 - 
-//			angles - 
-//			type - 
+// Purpose:
+// Input  : pos1 -
+//			angles -
+//			type -
 //-----------------------------------------------------------------------------
 void CTempEnts::EjectBrass( const Vector &pos1, const QAngle &angles, const QAngle &gunAngles, int type )
 {
@@ -1645,7 +1645,7 @@ void CTempEnts::EjectBrass( const Vector &pos1, const QAngle &angles, const QAng
 		return;
 
 	const model_t *pModel = m_pShells[type];
-	
+
 	if ( pModel == NULL )
 		return;
 
@@ -1688,7 +1688,7 @@ void CTempEnts::EjectBrass( const Vector &pos1, const QAngle &angles, const QAng
 						dir[1] + random->RandomFloat(-64,64),
 						dir[2] + random->RandomFloat(  0,64) ) );
 
-	pTemp->die = gpGlobals->curtime + 1.0f + random->RandomFloat( 0.0f, 1.0f );	// Add an extra 0-1 secs of life	
+	pTemp->die = gpGlobals->curtime + 1.0f + random->RandomFloat( 0.0f, 1.0f );	// Add an extra 0-1 secs of life
 }
 
 //-----------------------------------------------------------------------------
@@ -1718,11 +1718,11 @@ C_LocalTempEntity * CTempEnts::SpawnTempModel( const model_t *pModel, const Vect
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : type - 
-//			entityIndex - 
-//			attachmentIndex - 
-//			firstPerson - 
+// Purpose:
+// Input  : type -
+//			entityIndex -
+//			attachmentIndex -
+//			firstPerson -
 //-----------------------------------------------------------------------------
 void CTempEnts::MuzzleFlash( int type, ClientEntityHandle_t hEntity, int attachmentIndex, bool firstPerson )
 {
@@ -1798,8 +1798,8 @@ void CTempEnts::MuzzleFlash( int type, ClientEntityHandle_t hEntity, int attachm
 
 //-----------------------------------------------------------------------------
 // Purpose: Play muzzle flash
-// Input  : *pos1 - 
-//			type - 
+// Input  : *pos1 -
+//			type -
 //-----------------------------------------------------------------------------
 void CTempEnts::MuzzleFlash( const Vector& pos1, const QAngle& angles, int type, ClientEntityHandle_t hEntity, bool firstPerson )
 {
@@ -1865,10 +1865,10 @@ void CTempEnts::MuzzleFlash( const Vector& pos1, const QAngle& angles, int type,
 			MuzzleFlash_Combine_NPC( hEntity, 1 );
 		}
 		break;
-	
+
 	default:
 		// There's no supported muzzle flash for the type specified!
-		Assert(0);
+		//Assert(0);
 		break;
 	}
 
@@ -1878,9 +1878,9 @@ void CTempEnts::MuzzleFlash( const Vector& pos1, const QAngle& angles, int type,
 
 //-----------------------------------------------------------------------------
 // Purpose: Create explosion sprite
-// Input  : *pTemp - 
-//			scale - 
-//			flags - 
+// Input  : *pTemp -
+//			scale -
+//			flags -
 //-----------------------------------------------------------------------------
 void CTempEnts::Sprite_Explode( C_LocalTempEntity *pTemp, float scale, int flags )
 {
@@ -1891,12 +1891,12 @@ void CTempEnts::Sprite_Explode( C_LocalTempEntity *pTemp, float scale, int flags
 	{
 		// solid sprite
 		pTemp->SetRenderMode( kRenderNormal );
-		pTemp->SetRenderColorA( 255 ); 
+		pTemp->SetRenderColorA( 255 );
 	}
 	else if( flags & TE_EXPLFLAG_DRAWALPHA )
 	{
 		// alpha sprite
-		pTemp->SetRenderMode( kRenderTransAlpha ); 
+		pTemp->SetRenderMode( kRenderTransAlpha );
 		pTemp->SetRenderColorA( 180 );
 	}
 	else
@@ -1959,8 +1959,8 @@ C_LocalTempEntity *CTempEnts::FindTempEntByID( int nID, int nSubID )
 
 //-----------------------------------------------------------------------------
 // Purpose: Allocate temp entity ( normal/low priority )
-// Input  : *org - 
-//			*model - 
+// Input  : *org -
+//			*model -
 // Output : C_LocalTempEntity
 //-----------------------------------------------------------------------------
 C_LocalTempEntity *CTempEnts::TempEntAlloc( const Vector& org, const model_t *model )
@@ -2008,7 +2008,7 @@ C_LocalTempEntity *CTempEnts::TempEntAlloc( const Vector& org, const model_t *mo
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 // Output : C_LocalTempEntity
 //-----------------------------------------------------------------------------
 C_LocalTempEntity *CTempEnts::TempEntAlloc()
@@ -2033,7 +2033,7 @@ void CTempEnts::TempEntFree( int index )
 
 		// Remove the tempent from the ClientEntityList before removing it from the pool.
 		if ( ( pTemp->flags & FTENT_CLIENTSIDEPARTICLES ) )
-		{			
+		{
 			// Stop the particle emission if this hasn't happened already - collision or system timing out on its own.
 			if ( !pTemp->m_bParticleCollision )
 			{
@@ -2043,7 +2043,7 @@ void CTempEnts::TempEntFree( int index )
 		}
 
 		pTemp->OnRemoveTempEntity();
-	
+
 		m_TempEntsPool.Free( pTemp );
 	}
 }
@@ -2073,8 +2073,8 @@ bool CTempEnts::FreeLowPriorityTempEnt()
 //-----------------------------------------------------------------------------
 // Purpose: Allocate a temp entity, if there are no slots, kick out a low priority
 //  one if possible
-// Input  : *org - 
-//			*model - 
+// Input  : *org -
+//			*model -
 // Output : C_LocalTempEntity
 //-----------------------------------------------------------------------------
 C_LocalTempEntity *CTempEnts::TempEntAllocHigh( const Vector& org, const model_t *model )
@@ -2090,18 +2090,18 @@ C_LocalTempEntity *CTempEnts::TempEntAllocHigh( const Vector& org, const model_t
 	pTemp = TempEntAlloc();
 	if ( !pTemp )
 	{
-		// no temporary ents free, so find the first active low-priority temp ent 
+		// no temporary ents free, so find the first active low-priority temp ent
 		// and overwrite it.
 		FreeLowPriorityTempEnt();
 
 		pTemp = TempEntAlloc();
 	}
 
-	
+
 	if ( !pTemp )
 	{
 		// didn't find anything? The tent list is either full of high-priority tents
-		// or all tents in the list are still due to live for > 10 seconds. 
+		// or all tents in the list are still due to live for > 10 seconds.
 		DevWarning( 1,"Couldn't alloc a high priority TENT (max %i)!\n", MAX_TEMP_ENTITIES );
 		return NULL;
 	}
@@ -2126,8 +2126,8 @@ C_LocalTempEntity *CTempEnts::TempEntAllocHigh( const Vector& org, const model_t
 
 //-----------------------------------------------------------------------------
 // Purpose: Play sound when temp ent collides with something
-// Input  : *pTemp - 
-//			damp - 
+// Input  : *pTemp -
+//			damp -
 //-----------------------------------------------------------------------------
 void CTempEnts::PlaySound ( C_LocalTempEntity *pTemp, float damp )
 {
@@ -2214,18 +2214,18 @@ void CTempEnts::PlaySound ( C_LocalTempEntity *pTemp, float damp )
 	}
 
 	zvel = abs( pTemp->GetVelocity()[2] );
-		
+
 	// only play one out of every n
 
 	if ( isshellcasing )
-	{	
-		// play first bounce, then 1 out of 3		
+	{
+		// play first bounce, then 1 out of 3
 		if ( zvel < 200 && random->RandomInt(0,3) )
 			return;
 	}
 	else
 	{
-		if ( random->RandomInt(0,5) ) 
+		if ( random->RandomInt(0,5) )
 			return;
 	}
 
@@ -2238,16 +2238,16 @@ void CTempEnts::PlaySound ( C_LocalTempEntity *pTemp, float damp )
 	if ( damp > 0.0 )
 	{
 		int pitch;
-		
+
 		if ( isshellcasing )
 		{
-			fvol *= MIN (1.0, ((float)zvel) / 350.0); 
+			fvol *= MIN (1.0, ((float)zvel) / 350.0);
 		}
 		else
 		{
-			fvol *= MIN (1.0, ((float)zvel) / 450.0); 
+			fvol *= MIN (1.0, ((float)zvel) / 450.0);
 		}
-		
+
 		if ( !random->RandomInt(0,3) && !isshellcasing )
 		{
 			pitch = random->RandomInt( params.pitchlow, params.pitchhigh );
@@ -2270,10 +2270,10 @@ void CTempEnts::PlaySound ( C_LocalTempEntity *pTemp, float damp )
 		C_BaseEntity::EmitSound( filter, SOUND_FROM_WORLD, ep );
 	}
 }
-					
+
 //-----------------------------------------------------------------------------
 // Purpose: Add temp entity to visible entities list of it's in PVS
-// Input  : *pEntity - 
+// Input  : *pEntity -
 // Output : int
 //-----------------------------------------------------------------------------
 int CTempEnts::AddVisibleTempEntity( C_LocalTempEntity *pEntity )
@@ -2293,7 +2293,7 @@ int CTempEnts::AddVisibleTempEntity( C_LocalTempEntity *pEntity )
 		maxs[i] = pEntity->GetAbsOrigin()[i] + model_maxs[i];
 	}
 
-	// FIXME: Vis isn't setup by the time we get here, so this call fails if 
+	// FIXME: Vis isn't setup by the time we get here, so this call fails if
 	//		  you try to add a tempent before the first frame is drawn, and it's
 	//		  one frame behind the rest of the time. Fix this.
 	// does the box intersect a visible leaf?
@@ -2301,7 +2301,7 @@ int CTempEnts::AddVisibleTempEntity( C_LocalTempEntity *pEntity )
 	{
 		// Temporary entities have no corresponding element in cl_entitylist
 		pEntity->index = -1;
-		
+
 		// Add to list
 		if( pEntity->m_RenderGroup == RENDER_GROUP_OTHER )
 		{
@@ -2327,7 +2327,7 @@ void CTempEnts::Update(void)
 	float		frametime;
 
 	// Don't simulate while loading
-	if ( ( m_TempEnts.Count() == 0 ) || !engine->IsInGame() )		
+	if ( ( m_TempEnts.Count() == 0 ) || !engine->IsInGame() )
 	{
 		return;
 	}
@@ -2338,7 +2338,7 @@ void CTempEnts::Update(void)
 	frametime = gpGlobals->frametime;
 
 	// in order to have tents collide with players, we have to run the player prediction code so
-	// that the client has the player list. We run this code once when we detect any COLLIDEALL 
+	// that the client has the player list. We run this code once when we detect any COLLIDEALL
 	// tent, then set this BOOL to true so the code doesn't get run again if there's more than
 	// one COLLIDEALL ent for this update. (often are).
 
@@ -2371,7 +2371,7 @@ void CTempEnts::Update(void)
 				// Cull to PVS (not frustum cull, just PVS)
 				if ( !AddVisibleTempEntity( current ) )
 				{
-					if ( !( current->flags & FTENT_PERSIST ) ) 
+					if ( !( current->flags & FTENT_PERSIST ) )
 					{
 						// If we can't draw it this frame, just dump it.
 						current->die = gpGlobals->curtime;
@@ -2470,7 +2470,7 @@ void CTempEnts::LevelShutdown()
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CTempEnts::Shutdown()
 {
@@ -2518,9 +2518,9 @@ inline void CTempEnts::CacheMuzzleFlashes( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : entityIndex - 
-//			attachmentIndex - 
+// Purpose:
+// Input  : entityIndex -
+//			attachmentIndex -
 //-----------------------------------------------------------------------------
 void CTempEnts::MuzzleFlash_Combine_Player( ClientEntityHandle_t hEntity, int attachmentIndex )
 {
@@ -2542,7 +2542,7 @@ void CTempEnts::MuzzleFlash_Combine_Player( ClientEntityHandle_t hEntity, int at
 		offset = (forward * (i*8.0f*flScale));
 
 		pParticle = (SimpleParticle *) pSimple->AddParticle( sizeof( SimpleParticle ), m_Material_Combine_MuzzleFlash_Player[random->RandomInt(0,1)], offset );
-			
+
 		if ( pParticle == NULL )
 			return;
 
@@ -2566,7 +2566,7 @@ void CTempEnts::MuzzleFlash_Combine_Player( ClientEntityHandle_t hEntity, int at
 
 	// Tack on the smoke
 	pParticle = (SimpleParticle *) pSimple->AddParticle( sizeof( SimpleParticle ), m_Material_Combine_MuzzleFlash_Player[random->RandomInt(0,1)], vec3_origin );
-		
+
 	if ( pParticle == NULL )
 		return;
 
@@ -2584,16 +2584,16 @@ void CTempEnts::MuzzleFlash_Combine_Player( ClientEntityHandle_t hEntity, int at
 
 	pParticle->m_uchStartSize	= random->RandomFloat( 10.0f, 16.0f );
 	pParticle->m_uchEndSize		= pParticle->m_uchStartSize;
-	
+
 	pParticle->m_flRoll			= random->RandomInt( 0, 360 );
 	pParticle->m_flRollDelta	= 0.0f;
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : &origin - 
-//			&angles - 
-//			entityIndex - 
+// Purpose:
+// Input  : &origin -
+//			&angles -
+//			entityIndex -
 //-----------------------------------------------------------------------------
 void CTempEnts::MuzzleFlash_Combine_NPC( ClientEntityHandle_t hEntity, int attachmentIndex )
 {
@@ -2642,7 +2642,7 @@ void CTempEnts::MuzzleFlash_Combine_NPC( ClientEntityHandle_t hEntity, int attac
 		pParticle->m_flRoll			= random->RandomInt( 0, 360 );
 		pParticle->m_flRollDelta	= 0.0f;
 	}
-	
+
 	Vector right(0,1,0), up(0,0,1);
 	Vector dir = right - up;
 
@@ -2656,7 +2656,7 @@ void CTempEnts::MuzzleFlash_Combine_NPC( ClientEntityHandle_t hEntity, int attac
 		offset = (dir * (i*flScale));
 
 		pParticle = (SimpleParticle *) pSimple->AddParticle( sizeof( SimpleParticle ), g_Mat_Combine_Muzzleflash[random->RandomInt(0,1)], offset );
-			
+
 		if ( pParticle == NULL )
 			return;
 
@@ -2761,7 +2761,7 @@ void CTempEnts::MuzzleFlash_Combine_NPC( ClientEntityHandle_t hEntity, int attac
 
 	matrix3x4_t	matAttachment;
 	Vector		origin;
-	
+
 	// Grab the origin out of the transform for the attachment
 	if ( FX_GetAttachmentTransform( hEntity, attachmentIndex, matAttachment ) )
 	{
@@ -2798,8 +2798,8 @@ void CTempEnts::MuzzleFlash_Combine_NPC( ClientEntityHandle_t hEntity, int attac
 }
 
 //==================================================
-// Purpose: 
-// Input: 
+// Purpose:
+// Input:
 //==================================================
 
 void CTempEnts::MuzzleFlash_AR2_NPC( const Vector &origin, const QAngle &angles, ClientEntityHandle_t hEntity )
@@ -2809,7 +2809,7 @@ void CTempEnts::MuzzleFlash_AR2_NPC( const Vector &origin, const QAngle &angles,
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CTempEnts::MuzzleFlash_SMG1_NPC( ClientEntityHandle_t hEntity, int attachmentIndex )
 {
@@ -2818,7 +2818,7 @@ void CTempEnts::MuzzleFlash_SMG1_NPC( ClientEntityHandle_t hEntity, int attachme
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CTempEnts::MuzzleFlash_SMG1_Player( ClientEntityHandle_t hEntity, int attachmentIndex )
 {
@@ -2840,7 +2840,7 @@ void CTempEnts::MuzzleFlash_SMG1_Player( ClientEntityHandle_t hEntity, int attac
 		offset = (forward * (i*8.0f*flScale));
 
 		pParticle = (SimpleParticle *) pSimple->AddParticle( sizeof( SimpleParticle ), m_Material_MuzzleFlash_Player[random->RandomInt(0,3)], offset );
-			
+
 		if ( pParticle == NULL )
 			return;
 
@@ -2864,8 +2864,8 @@ void CTempEnts::MuzzleFlash_SMG1_Player( ClientEntityHandle_t hEntity, int attac
 }
 
 //==================================================
-// Purpose: 
-// Input: 
+// Purpose:
+// Input:
 //==================================================
 
 void CTempEnts::MuzzleFlash_Shotgun_Player( ClientEntityHandle_t hEntity, int attachmentIndex )
@@ -2899,7 +2899,7 @@ void CTempEnts::MuzzleFlash_Shotgun_Player( ClientEntityHandle_t hEntity, int at
 		offset = origin + (forward * (i*8.0f*flScale));
 
 		pParticle = (SimpleParticle *) pSimple->AddParticle( sizeof( SimpleParticle ), m_Material_MuzzleFlash_Player[random->RandomInt(0,3)], offset );
-			
+
 		if ( pParticle == NULL )
 			return;
 
@@ -2923,8 +2923,8 @@ void CTempEnts::MuzzleFlash_Shotgun_Player( ClientEntityHandle_t hEntity, int at
 }
 
 //==================================================
-// Purpose: 
-// Input: 
+// Purpose:
+// Input:
 //==================================================
 
 void CTempEnts::MuzzleFlash_Shotgun_NPC( ClientEntityHandle_t hEntity, int attachmentIndex )
@@ -2966,7 +2966,7 @@ void CTempEnts::MuzzleFlash_Shotgun_NPC( ClientEntityHandle_t hEntity, int attac
 		for ( int i = 0; i < numEmbers; i++ )
 		{
 			pParticle = (SimpleParticle *) pEmbers->AddParticle( sizeof( SimpleParticle ), g_Mat_SMG_Muzzleflash[0], origin );
-				
+
 			if ( pParticle == NULL )
 				return;
 
@@ -2997,7 +2997,7 @@ void CTempEnts::MuzzleFlash_Shotgun_NPC( ClientEntityHandle_t hEntity, int attac
 	//
 	// Trails
 	//
-	
+
 	CSmartPtr<CTrailParticles> pTrails = CTrailParticles::Create( "MuzzleFlash_Shotgun_NPC" );
 	pTrails->SetSortOrigin( origin );
 
@@ -3011,7 +3011,7 @@ void CTempEnts::MuzzleFlash_Shotgun_NPC( ClientEntityHandle_t hEntity, int attac
 	for ( i = 0; i < numEmbers; i++ )
 	{
 		pTrailParticle = (TrailParticle *) pTrails->AddParticle( sizeof( TrailParticle ), g_Mat_SMG_Muzzleflash[0], origin );
-			
+
 		if ( pTrailParticle == NULL )
 			return;
 
@@ -3022,7 +3022,7 @@ void CTempEnts::MuzzleFlash_Shotgun_NPC( ClientEntityHandle_t hEntity, int attac
 
 		pTrailParticle->m_vecVelocity.Random( -spread, spread );
 		pTrailParticle->m_vecVelocity += forward;
-		
+
 		VectorNormalize( pTrailParticle->m_vecVelocity );
 		VectorNormalize( forward );
 
@@ -3039,7 +3039,7 @@ void CTempEnts::MuzzleFlash_Shotgun_NPC( ClientEntityHandle_t hEntity, int attac
 }
 
 //==================================================
-// Purpose: 
+// Purpose:
 //==================================================
 void CTempEnts::MuzzleFlash_357_Player( ClientEntityHandle_t hEntity, int attachmentIndex )
 {
@@ -3068,7 +3068,7 @@ void CTempEnts::MuzzleFlash_357_Player( ClientEntityHandle_t hEntity, int attach
 	offset = origin + forward * 8.0f;
 
 	pParticle = (SimpleParticle *) pSimple->AddParticle( sizeof( SimpleParticle ), g_Mat_DustPuff[0], offset );
-		
+
 	if ( pParticle == NULL )
 		return;
 
@@ -3100,7 +3100,7 @@ void CTempEnts::MuzzleFlash_357_Player( ClientEntityHandle_t hEntity, int attach
 		offset = origin + (forward * (i*8.0f*flScale));
 
 		pParticle = (SimpleParticle *) pSimple->AddParticle( sizeof( SimpleParticle ), m_Material_MuzzleFlash_Player[random->RandomInt(0,3)], offset );
-			
+
 		if ( pParticle == NULL )
 			return;
 
@@ -3124,8 +3124,8 @@ void CTempEnts::MuzzleFlash_357_Player( ClientEntityHandle_t hEntity, int attach
 }
 
 //==================================================
-// Purpose: 
-// Input: 
+// Purpose:
+// Input:
 //==================================================
 
 void CTempEnts::MuzzleFlash_Pistol_Player( ClientEntityHandle_t hEntity, int attachmentIndex )
@@ -3156,7 +3156,7 @@ void CTempEnts::MuzzleFlash_Pistol_Player( ClientEntityHandle_t hEntity, int att
 	if ( random->RandomInt( 0, 3 ) != 0 )
 	{
 		pParticle = (SimpleParticle *) pSimple->AddParticle( sizeof( SimpleParticle ), g_Mat_DustPuff[0], offset );
-			
+
 		if ( pParticle == NULL )
 			return;
 
@@ -3189,7 +3189,7 @@ void CTempEnts::MuzzleFlash_Pistol_Player( ClientEntityHandle_t hEntity, int att
 		offset = origin + (forward * (i*4.0f*flScale));
 
 		pParticle = (SimpleParticle *) pSimple->AddParticle( sizeof( SimpleParticle ), m_Material_MuzzleFlash_Player[random->RandomInt(0,3)], offset );
-			
+
 		if ( pParticle == NULL )
 			return;
 
@@ -3213,8 +3213,8 @@ void CTempEnts::MuzzleFlash_Pistol_Player( ClientEntityHandle_t hEntity, int att
 }
 
 //==================================================
-// Purpose: 
-// Input: 
+// Purpose:
+// Input:
 //==================================================
 
 void CTempEnts::MuzzleFlash_Pistol_NPC( ClientEntityHandle_t hEntity, int attachmentIndex )
@@ -3226,8 +3226,8 @@ void CTempEnts::MuzzleFlash_Pistol_NPC( ClientEntityHandle_t hEntity, int attach
 
 
 //==================================================
-// Purpose: 
-// Input: 
+// Purpose:
+// Input:
 //==================================================
 
 void CTempEnts::MuzzleFlash_RPG_NPC( ClientEntityHandle_t hEntity, int attachmentIndex )
@@ -3371,11 +3371,11 @@ void CTempEnts::CSEjectBrass( const Vector &vecPosition, const QAngle &angVeloci
 	Vector velocity;
 	Vector origin;
 	QAngle angle;
-	
+
 	// Add some randomness to the velocity
 
 	AngleVectors( angVelocity, &forward, &right, &up );
-	
+
 	velocity = forward * nVelocity * random->RandomFloat( 1.2, 2.8 ) +
 			   up * random->RandomFloat( -10, 10 ) +
 			   right * random->RandomFloat( -20, 20 );
@@ -3406,7 +3406,7 @@ void CTempEnts::CSEjectBrass( const Vector &vecPosition, const QAngle &angVeloci
 	pTemp->m_vecTempEntAngVelocity[2] = 0;
 	pTemp->SetRenderMode( kRenderNormal );
 	pTemp->tempent_renderamt = 255;
-	
+
 	pTemp->die = gpGlobals->curtime + 10;
 
 	bool bViewModelBrass = false;
@@ -3434,6 +3434,5 @@ void CTempEnts::CSEjectBrass( const Vector &vecPosition, const QAngle &angVeloci
 		pTemp->m_RenderGroup = RENDER_GROUP_VIEW_MODEL_OPAQUE;
 	}
 
-	
-}
 
+}

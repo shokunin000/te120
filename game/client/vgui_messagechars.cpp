@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $Workfile:     $
 // $Date:         $
@@ -47,16 +47,16 @@ public:
 	virtual				~CMessageCharsPanel( void );
 
 	// Add block of text to list
-	virtual int			AddText( 
-		float flTime, 
-		vgui::HFont hCustomFont, 
-		int x, 
-		int y, 
-		int r, 
-		int g, 
-		int b, 
-		int a, 
-		char *fmt, 
+	virtual int			AddText(
+		float flTime,
+		vgui::HFont hCustomFont,
+		int x,
+		int y,
+		int r,
+		int g,
+		int b,
+		int a,
+		char *fmt,
 		int messageID,
 		... );
 
@@ -88,11 +88,11 @@ private:
 };
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : *parent - 
-// Output : 
+// Purpose:
+// Input  : *parent -
+// Output :
 //-----------------------------------------------------------------------------
-CMessageCharsPanel::CMessageCharsPanel( vgui::VPANEL parent ) : 
+CMessageCharsPanel::CMessageCharsPanel( vgui::VPANEL parent ) :
 	BaseClass( NULL, "CMessageCharsPanel" )
 {
 	SetParent( parent );
@@ -102,8 +102,8 @@ CMessageCharsPanel::CMessageCharsPanel( vgui::VPANEL parent ) :
 	SetCursor( null );
 	SetKeyBoardInputEnabled( false );
 	SetMouseInputEnabled( false );
-	
-	m_hFont = vgui::INVALID_FONT; 
+
+	m_hFont = vgui::INVALID_FONT;
 
 	SetFgColor( Color( 0, 0, 0, 255 ) );
 	SetPaintBackgroundEnabled( false );
@@ -116,8 +116,8 @@ CMessageCharsPanel::CMessageCharsPanel( vgui::VPANEL parent ) :
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Output : 
+// Purpose:
+// Output :
 //-----------------------------------------------------------------------------
 CMessageCharsPanel::~CMessageCharsPanel( void )
 {
@@ -136,7 +136,7 @@ void CMessageCharsPanel::ApplySchemeSettings(vgui::IScheme *pScheme)
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CMessageCharsPanel::Clear( void )
 {
@@ -192,22 +192,22 @@ CMessageCharsPanel::message_t *CMessageCharsPanel::AllocMessage( void )
 
 //-----------------------------------------------------------------------------
 // Purpose: Allocate message and fill in data
-// Input  : x - 
-//			y - 
-//			*fmt - 
-//			... - 
+// Input  : x -
+//			y -
+//			*fmt -
+//			... -
 // Output : int
 //-----------------------------------------------------------------------------
-int CMessageCharsPanel::AddText( 
-	float flTime, 
-	vgui::HFont hCustomFont, 
-	int x, 
-	int y, 
-	int r, 
-	int g, 
-	int b, 
-	int a, 
-	char *fmt, 
+int CMessageCharsPanel::AddText(
+	float flTime,
+	vgui::HFont hCustomFont,
+	int x,
+	int y,
+	int r,
+	int g,
+	int b,
+	int a,
+	char *fmt,
 	int messageID,
 	... )
 {
@@ -235,7 +235,7 @@ int CMessageCharsPanel::AddText(
 
 	Assert( !msg->text );
 
-	int textLength = Q_strlen( data ) + 1;
+	const int textLength = Q_strlen( data ) + 1;
 	msg->text = new char[ textLength ];
 	Assert( msg->text );
 	Q_strncpy( msg->text, data, textLength );
@@ -257,9 +257,9 @@ int CMessageCharsPanel::AddText(
 
 //-----------------------------------------------------------------------------
 // Purpose: Determine text size ahead of time
-// Input  : *wide - 
-//			*tall - 
-//			*string - 
+// Input  : *wide -
+//			*tall -
+//			*string -
 //-----------------------------------------------------------------------------
 void CMessageCharsPanel::GetTextExtents( vgui::HFont hCustomFont, int *wide, int *tall, const char *string )
 {
@@ -278,7 +278,7 @@ void CMessageCharsPanel::GetTextExtents( vgui::HFont hCustomFont, int *wide, int
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CMessageCharsPanel::OnTick( void )
 {
@@ -290,7 +290,7 @@ void CMessageCharsPanel::OnTick( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 // Output : Returns true on success, false on failure.
 //-----------------------------------------------------------------------------
 bool CMessageCharsPanel::ShouldDraw( void )
@@ -302,10 +302,10 @@ bool CMessageCharsPanel::ShouldDraw( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : 
+// Purpose:
+// Input  :
 //-----------------------------------------------------------------------------
-void CMessageCharsPanel::Paint() 
+void CMessageCharsPanel::Paint()
 {
 	CMessageCharsPanel::message_t *msg = m_pActive;
 	while ( msg )

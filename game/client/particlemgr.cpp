@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //
@@ -118,7 +118,7 @@ CEffectMaterial::CEffectMaterial()
 	m_pGroup = NULL;
 }
 
-					
+
 //-----------------------------------------------------------------------------
 // CParticleEffectBinding.
 //-----------------------------------------------------------------------------
@@ -129,7 +129,7 @@ CParticleEffectBinding::CParticleEffectBinding()
 
 	m_LocalSpaceTransform.Identity();
 	m_bLocalSpaceTransformIdentity = true;
-	
+
 	m_Flags = 0;
 	SetAutoUpdateBBox( true );
 	SetFirstFrameFlag( true );
@@ -150,7 +150,7 @@ CParticleEffectBinding::CParticleEffectBinding()
 	m_nActiveParticles = 0;
 
 	m_FrameCode = 0;
-	m_ListIndex = 0xFFFF; 
+	m_ListIndex = 0xFFFF;
 
 	m_UpdateBBoxCounter = 0;
 
@@ -282,6 +282,7 @@ void CParticleEffectBinding::BBoxCalcEnd( bool bboxSet, Vector &bbMin, Vector &b
 	// we don't have anything, so leave m_Min and m_Max at the sort origin.
 	if ( bboxSet )
 	{
+		Assert( bbMinWorld.IsValid() && bbMaxWorld.IsValid() );
 		m_Min = bbMinWorld;
 		m_Max = bbMaxWorld;
 	}
@@ -321,7 +322,7 @@ int CParticleEffectBinding::DrawModel( int flags )
 	}
 
 	SetDrawn( true );
-	
+
 	// Don't do anything if there are no particles.
 	if( !m_nActiveParticles )
 		return 1;
@@ -341,13 +342,13 @@ int CParticleEffectBinding::DrawModel( int flags )
 	}
 
 	// For each material, render...
-	// This does an incremental bubble sort. It only does one pass every frame, and it will shuffle 
+	// This does an incremental bubble sort. It only does one pass every frame, and it will shuffle
 	// unsorted particles one step towards where they should be.
 	bool bWireframe = false;
 	FOR_EACH_LL( m_Materials, iMaterial )
 	{
 		CEffectMaterial *pMaterial = m_Materials[iMaterial];
-		
+
 		if ( pMaterial->m_pGroup->m_pPageMaterial && pMaterial->m_pGroup->m_pPageMaterial->NeedsPowerOfTwoFrameBufferTexture() )
 		{
 			UpdateRefractTexture();
@@ -357,10 +358,10 @@ int CParticleEffectBinding::DrawModel( int flags )
 		{
 			UpdateScreenEffectTexture();
 		}
-		
-		DrawMaterialParticles( 
+
+		DrawMaterialParticles(
 			bBucketSort,
-			pMaterial, 
+			pMaterial,
 			flFrameTime,
 			bWireframe );
 	}
@@ -371,10 +372,10 @@ int CParticleEffectBinding::DrawModel( int flags )
 		FOR_EACH_LL( m_Materials, iDrawMaterial )
 		{
 			CEffectMaterial *pMaterial = m_Materials[iDrawMaterial];
-			
-			DrawMaterialParticles( 
+
+			DrawMaterialParticles(
 				bBucketSort,
-				pMaterial, 
+				pMaterial,
 				flFrameTime,
 				bWireframe );
 		}
@@ -461,13 +462,13 @@ int CParticleEffectBinding::DrawModel( int flags )
 				}
 				else
 				{
-					// green, this effect presents less cpu load 
+					// green, this effect presents less cpu load
 					r = 0;
 					g = 255;
 					b = 0;
 				}
 			}
-		
+
 			if ( bDraw )
 			{
 				debugoverlay->AddBoxOverlay( center, mins, maxs, QAngle( 0, 0, 0 ), r, g, b, 16, 0 );
@@ -511,7 +512,7 @@ Particle* CParticleEffectBinding::AddParticle( int sizeInBytes, PMaterialHandle 
 		if ( rand() % 10 <= 6 )
 			return NULL;
 	}
-	
+
 	// Allocate the puppy. We are actually allocating space for the
 	// internals + the actual data
 	Particle* pParticle = m_pParticleMgr->AllocParticle( PARTICLE_SIZE );
@@ -521,7 +522,7 @@ Particle* CParticleEffectBinding::AddParticle( int sizeInBytes, PMaterialHandle 
 	// Link it in
 	CEffectMaterial *pEffectMat = GetEffectMaterial( hMaterial );
 	InsertParticleAfter( pParticle, &pEffectMat->m_Particles );
-	
+
 	if ( hMaterial )
 		pParticle->m_pSubTexture = hMaterial;
 	else
@@ -533,9 +534,11 @@ Particle* CParticleEffectBinding::AddParticle( int sizeInBytes, PMaterialHandle 
 
 void CParticleEffectBinding::SetBBox( const Vector &bbMin, const Vector &bbMax, bool bDisableAutoUpdate )
 {
+	Assert( bbMin.IsValid() && bbMax.IsValid() );
+
 	m_Min = bbMin;
 	m_Max = bbMax;
-	
+
 	if ( bDisableAutoUpdate )
 		SetAutoUpdateBBox( false );
 }
@@ -563,6 +566,7 @@ bool CParticleEffectBinding::EnlargeBBoxToContain( const Vector &pt )
 {
 	if ( m_nActiveParticles == 0 )
 	{
+		Assert( pt.IsValid() );
 		m_Min = m_Max = pt;
 		return true;
 	}
@@ -570,23 +574,23 @@ bool CParticleEffectBinding::EnlargeBBoxToContain( const Vector &pt )
 	bool bHasChanged = false;
 
 	// check min bounds
-	if ( pt.x < m_Min.x ) 
+	if ( pt.x < m_Min.x )
 		{ m_Min.x = pt.x; bHasChanged = true; }
 
-	if ( pt.y < m_Min.y ) 
+	if ( pt.y < m_Min.y )
 		{ m_Min.y = pt.y; bHasChanged = true; }
 
-	if ( pt.z < m_Min.z ) 
+	if ( pt.z < m_Min.z )
 		{ m_Min.z = pt.z; bHasChanged = true; }
 
 	// check max bounds
-	if ( pt.x > m_Max.x ) 
+	if ( pt.x > m_Max.x )
 		{ m_Max.x = pt.x; bHasChanged = true; }
 
-	if ( pt.y > m_Max.y ) 
+	if ( pt.y > m_Max.y )
 		{ m_Max.y = pt.y; bHasChanged = true; }
 
-	if ( pt.z > m_Max.z ) 
+	if ( pt.z > m_Max.z )
 		{ m_Max.z = pt.z; bHasChanged = true; }
 
 	return bHasChanged;
@@ -603,17 +607,17 @@ void CParticleEffectBinding::DetectChanges()
 	float flExtraBuffer = flBuffer * 1.3f;
 
 	// if nothing changed, return
-	if ( m_Min.x < m_LastMin.x || 
-		 m_Min.y < m_LastMin.y || 
-		 m_Min.z < m_LastMin.z || 
+	if ( m_Min.x < m_LastMin.x ||
+		 m_Min.y < m_LastMin.y ||
+		 m_Min.z < m_LastMin.z ||
 
 		 m_Min.x > (m_LastMin.x + flExtraBuffer) ||
 		 m_Min.y > (m_LastMin.y + flExtraBuffer) ||
 		 m_Min.z > (m_LastMin.z + flExtraBuffer) ||
 
-		 m_Max.x > m_LastMax.x || 
-		 m_Max.y > m_LastMax.y || 
-		 m_Max.z > m_LastMax.z || 
+		 m_Max.x > m_LastMax.x ||
+		 m_Max.y > m_LastMax.y ||
+		 m_Max.z > m_LastMax.z ||
 
 		 m_Max.x < (m_LastMax.x - flExtraBuffer) ||
 		 m_Max.y < (m_LastMax.y - flExtraBuffer) ||
@@ -639,7 +643,7 @@ void CParticleEffectBinding::GrowBBoxFromParticlePositions( CEffectMaterial *pMa
 
 	for( Particle *pCur=pMaterial->m_Particles.m_pNext; pCur != &pMaterial->m_Particles; pCur=pCur->m_pNext )
 	{
-		// Update bounding box 
+		// Update bounding box
 		VectorMin( bbMin, pCur->m_Pos, bbMin );
 		VectorMax( bbMax, pCur->m_Pos, bbMax );
 		bboxSet = true;
@@ -669,7 +673,7 @@ void CParticleEffectBinding::SimulateParticles( float flTimeDelta )
 		bool bboxSet = false;
 
 		// slow the expensive update operation for particle systems that use auto-update-bbox
-		// auto update the bbox after N frames then randomly 1/N or after 2*N frames 
+		// auto update the bbox after N frames then randomly 1/N or after 2*N frames
 		bool bFullBBoxUpdate = false;
 		++m_UpdateBBoxCounter;
 		if ( ( m_UpdateBBoxCounter >= BBOX_UPDATE_EVERY_N && random->RandomInt( 0, BBOX_UPDATE_EVERY_N ) == 0 ) ||
@@ -722,7 +726,7 @@ void CParticleEffectBinding::SetDrawThruLeafSystem( int bDraw )
 		Assert( !( m_Flags & FLAGS_DRAW_BEFORE_VIEW_MODEL) );
 	}
 
-	SetFlag( FLAGS_DRAW_THRU_LEAF_SYSTEM, bDraw ); 
+	SetFlag( FLAGS_DRAW_THRU_LEAF_SYSTEM, bDraw );
 }
 
 
@@ -733,8 +737,8 @@ void CParticleEffectBinding::SetDrawBeforeViewModel( int bDraw )
 	// Don't draw through the leaf system if they want it to specifically draw before the view model.
 	if ( bDraw )
 		m_Flags &= ~FLAGS_DRAW_THRU_LEAF_SYSTEM;
-	
-	SetFlag( FLAGS_DRAW_BEFORE_VIEW_MODEL, bDraw ); 
+
+	SetFlag( FLAGS_DRAW_BEFORE_VIEW_MODEL, bDraw );
 }
 
 
@@ -764,9 +768,9 @@ int CParticleEffectBinding::GetActiveParticleList( int nCount, Particle **ppPart
 }
 
 
-int CParticleEffectBinding::DrawMaterialParticles( 
+int CParticleEffectBinding::DrawMaterialParticles(
 	bool bBucketSort,
-	CEffectMaterial *pMaterial, 
+	CEffectMaterial *pMaterial,
 	float flTimeDelta,
 	bool bWireframe
 	 )
@@ -800,7 +804,7 @@ int CParticleEffectBinding::DrawMaterialParticles(
 
 	// Flush out any remaining particles.
 	builder.End( false, true );
-	
+
 	return m_nActiveParticles;
 }
 
@@ -817,7 +821,7 @@ void CParticleEffectBinding::RenderStart( VMatrix &tempModel, VMatrix &tempView 
 
 		// We're gonna assume the model matrix was identity and blow it off
 		// This means that the particle positions are all specified in world space
-		// which makes bounding box computations faster. 
+		// which makes bounding box computations faster.
 		m_pParticleMgr->m_mModelView = tempView;
 
 		// Force the user clip planes to use the old view matrix
@@ -876,7 +880,7 @@ void CParticleEffectBinding::DoBucketSort( CEffectMaterial *pMaterial, float *zC
 	{
 		buckets[iBucket].m_pPrev = buckets[iBucket].m_pNext = &buckets[iBucket];
 	}
-	
+
 	// Sort into buckets.
 	int iCurParticle = 0;
 	Particle *pNext, *pCur;
@@ -946,12 +950,12 @@ void CParticleEffectBinding::Term()
 		for(Particle *pCur = pMaterial->m_Particles.m_pNext; pCur != &pMaterial->m_Particles; pCur=pNext )
 		{
 			pNext = pCur->m_pNext;
-			
+
 			RemoveParticle( pCur );
 		}
-		
+
 		delete pMaterial;
-	}	
+	}
 	m_Materials.Purge();
 
 	memset( m_EffectMaterialHash, 0, sizeof( m_EffectMaterialHash ) );
@@ -961,7 +965,7 @@ void CParticleEffectBinding::Term()
 void CParticleEffectBinding::RemoveParticle( Particle *pParticle )
 {
 	UnlinkParticle( pParticle );
-	
+
 	// Important that this is updated BEFORE NotifyDestroyParticle is called.
 	--m_nActiveParticles;
 	Assert( m_nActiveParticles >= 0 );
@@ -988,7 +992,7 @@ bool CParticleEffectBinding::RecalculateBoundingBox()
 	FOR_EACH_LL( m_Materials, iMaterial )
 	{
 		CEffectMaterial *pMaterial = m_Materials[iMaterial];
-		
+
 		for( Particle *pCur=pMaterial->m_Particles.m_pNext; pCur != &pMaterial->m_Particles; pCur=pCur->m_pNext )
 		{
 			VectorMin( bbMin, pCur->m_Pos, bbMin );
@@ -999,6 +1003,7 @@ bool CParticleEffectBinding::RecalculateBoundingBox()
 	// Get the bbox into world space.
 	if ( m_bLocalSpaceTransformIdentity )
 	{
+		Assert( bbMin.IsValid() && bbMax.IsValid() );
 		m_Min = bbMin;
 		m_Max = bbMax;
 	}
@@ -1050,7 +1055,7 @@ CParticleMgr::CParticleMgr()
 	m_DefaultInvalidSubTexture.m_pMaterial = NULL;
 	m_DefaultInvalidSubTexture.m_tCoordMins[0] = m_DefaultInvalidSubTexture.m_tCoordMins[1] = 0;
 	m_DefaultInvalidSubTexture.m_tCoordMaxs[0] = m_DefaultInvalidSubTexture.m_tCoordMaxs[1] = 1;
-	
+
 	m_nCurrentParticlesAllocated = 0;
 
 	SetDefLessFunc( m_effectFactories );
@@ -1093,7 +1098,7 @@ bool CParticleMgr::Init(unsigned long count, IMaterialSystem *pMaterials)
 		startParams.nThreads = 3;
 		startParams.nStackSize = 128*1024;
 		startParams.fDistribute = TRS_TRUE;
-		startParams.bUseAffinityTable = true;    
+		startParams.bUseAffinityTable = true;
 		startParams.iAffinityTable[0] = XBOX_PROCESSOR_1;
 		startParams.iAffinityTable[1] = XBOX_PROCESSOR_3;
 		startParams.iAffinityTable[2] = XBOX_PROCESSOR_5;
@@ -1121,7 +1126,7 @@ void CParticleMgr::Term()
 	m_NewEffects.Purge();
 
 	for( int i = m_SubTextures.First(); i != m_SubTextures.InvalidIndex(); i = m_SubTextures.Next( i ) )
-	{	
+	{
 		IMaterial *pMaterial = m_SubTextures[i]->m_pMaterial;
 		if ( pMaterial )
 			pMaterial->Release();
@@ -1129,7 +1134,7 @@ void CParticleMgr::Term()
 	m_SubTextures.PurgeAndDeleteElements();
 
 	for( int i = m_SubTextureGroups.Count(); --i >= 0; )
-	{	
+	{
 		IMaterial *pMaterial = m_SubTextureGroups[i]->m_pPageMaterial;
 		if ( pMaterial )
 			pMaterial->Release();
@@ -1142,7 +1147,7 @@ void CParticleMgr::Term()
 		m_pMaterialSystem->UncacheUnusedMaterials();
 	}
 	m_pMaterialSystem = NULL;
-	
+
 	if ( m_pThreadPool[0] )
 	{
 		m_pThreadPool[0]->Stop();
@@ -1171,7 +1176,7 @@ Particle *CParticleMgr::AllocParticle( int size )
 	// Enforce max particle limit.
 	if ( m_nCurrentParticlesAllocated >= MAX_TOTAL_PARTICLES )
 		return NULL;
-		
+
 	Particle *pRet = (Particle *)malloc( size );
 	if ( pRet )
 		++m_nCurrentParticlesAllocated;
@@ -1184,7 +1189,7 @@ void CParticleMgr::FreeParticle( Particle *pParticle )
 	Assert( m_nCurrentParticlesAllocated > 0 );
 	if ( pParticle )
 		--m_nCurrentParticlesAllocated;
-	
+
 	free( pParticle );
 }
 
@@ -1340,7 +1345,7 @@ void CParticleMgr::RemoveEffect( CParticleEffectBinding *pEffect )
 	{
 		pEffect->m_pSim->NotifyRemove();
 		m_Effects.Remove( listIndex );
-		
+
 	}
 	else
 	{
@@ -1380,7 +1385,7 @@ void CParticleMgr::RemoveAllNewEffects()
 			{
 				pEnt->ParticleProp()->OnParticleSystemDeleted( pNewEffect );
 			}
-		}		
+		}
 		RemoveEffect( pNewEffect );
 		pNewEffect = pNextEffect;
 	}
@@ -1399,7 +1404,7 @@ void CParticleMgr::RemoveAllEffects()
 	RemoveAllNewEffects();
 
 	for( int i = m_SubTextures.First(); i != m_SubTextures.InvalidIndex(); i = m_SubTextures.Next( i ) )
-	{	
+	{
 		IMaterial *pMaterial = m_SubTextures[i]->m_pMaterial;
 		if ( pMaterial )
 			pMaterial->Release();
@@ -1410,7 +1415,7 @@ void CParticleMgr::RemoveAllEffects()
 	//m_SubTextures.PurgeAndDeleteElements();
 
 	for( int i = m_SubTextureGroups.Count(); --i >= 0; )
-	{	
+	{
 		IMaterial *pMaterial = m_SubTextureGroups[i]->m_pPageMaterial;
 		if ( pMaterial )
 			pMaterial->Release();
@@ -1481,12 +1486,12 @@ void CParticleMgr::PostRender()
 	FOR_EACH_LL( m_Effects, i )
 	{
 		CParticleEffectBinding *pEffect = m_Effects[i];
-		
+
 		// Tell the effect if it was drawn or not.
 		pEffect->SetWasDrawnPrevFrame( pEffect->WasDrawn() );
 
 		// Now that we've rendered, clear this flag so it'll simulate next frame.
-		pEffect->SetFlag( CParticleEffectBinding::FLAGS_FIRST_FRAME, false );	
+		pEffect->SetFlag( CParticleEffectBinding::FLAGS_FIRST_FRAME, false );
 	}
 }
 
@@ -1579,7 +1584,7 @@ static void ProcessPSystem( CNewParticleEffect *&pNewEffect )
 }
 
 
-int CParticleMgr::ComputeParticleDefScreenArea( int nInfoCount, RetireInfo_t *pInfo, float *pTotalArea, CParticleSystemDefinition* pDef, 
+int CParticleMgr::ComputeParticleDefScreenArea( int nInfoCount, RetireInfo_t *pInfo, float *pTotalArea, CParticleSystemDefinition* pDef,
 	const CViewSetup& view, const VMatrix &worldToPixels, float flFocalDist )
 {
 	int nCollection = 0;
@@ -1625,7 +1630,7 @@ int CParticleMgr::ComputeParticleDefScreenArea( int nInfoCount, RetireInfo_t *pI
 		float flArea = ( flMaxX - flMinX ) * ( flMaxY - flMinY );
 		Assert( flArea <= flMaxPixels );
 		flArea *= flCullCost;
-		*pTotalArea += flArea; 
+		*pTotalArea += flArea;
 
 		pInfo[nCollection].m_flScreenArea = flArea;
 		pInfo[nCollection].m_pCollection = pCollection;
@@ -1636,7 +1641,7 @@ int CParticleMgr::ComputeParticleDefScreenArea( int nInfoCount, RetireInfo_t *pI
 	return nCollection;
 }
 
-int CParticleMgr::RetireSort( const void *p1, const void *p2 ) 
+int CParticleMgr::RetireSort( const void *p1, const void *p2 )
 {
 	RetireInfo_t *pRetire1 = (RetireInfo_t*)p1;
 	RetireInfo_t *pRetire2 = (RetireInfo_t*)p2;
@@ -1646,7 +1651,7 @@ int CParticleMgr::RetireSort( const void *p1, const void *p2 )
 	return ( flArea > 0 ) ? -1 : 1;
 }
 
-bool CParticleMgr::RetireParticleCollections( CParticleSystemDefinition* pDef, 
+bool CParticleMgr::RetireParticleCollections( CParticleSystemDefinition* pDef,
 	int nCount, RetireInfo_t *pInfo, float flScreenArea, float flMaxTotalArea )
 {
 	bool bRetirementOccurred = false;
@@ -2050,10 +2055,10 @@ PMaterialHandle CParticleMgr::GetPMaterial( const char *pMaterialName )
 				float flOffset[2], flScale[2];
 				pIMaterial->GetMaterialOffset( flOffset );
 				pIMaterial->GetMaterialScale( flScale );
-				
+
 				pSubTexture->m_tCoordMins[0] = (0*flScale[0] + flOffset[0]) * pPageMaterial->GetMappingWidth();
 				pSubTexture->m_tCoordMaxs[0] = (1*flScale[0] + flOffset[0]) * pPageMaterial->GetMappingWidth();
-				
+
 				pSubTexture->m_tCoordMins[1] = (0*flScale[1] + flOffset[1]) * pPageMaterial->GetMappingHeight();
 				pSubTexture->m_tCoordMaxs[1] = (1*flScale[1] + flOffset[1]) * pPageMaterial->GetMappingHeight();
 
@@ -2065,7 +2070,7 @@ PMaterialHandle CParticleMgr::GetPMaterial( const char *pMaterialName )
 				pSubTexture->m_pGroup = &pSubTexture->m_DefaultGroup;
 				pSubTexture->m_DefaultGroup.m_pPageMaterial = pIMaterial;
 				pPageMaterial = pIMaterial; // For tcoord scaling.
-				
+
 				pSubTexture->m_tCoordMins[0] = pSubTexture->m_tCoordMins[1] = 0;
 				pSubTexture->m_tCoordMaxs[0] = pIMaterial->GetMappingWidth();
 				pSubTexture->m_tCoordMaxs[1] = pIMaterial->GetMappingHeight();
@@ -2076,13 +2081,13 @@ PMaterialHandle CParticleMgr::GetPMaterial( const char *pMaterialName )
 			pSubTexture->m_tCoordMins[1] = (pSubTexture->m_tCoordMins[1] + 0.5f) / pPageMaterial->GetMappingHeight();
 			pSubTexture->m_tCoordMaxs[0] = (pSubTexture->m_tCoordMaxs[0] - 0.5f) / pPageMaterial->GetMappingWidth();
 			pSubTexture->m_tCoordMaxs[1] = (pSubTexture->m_tCoordMaxs[1] - 0.5f) / pPageMaterial->GetMappingHeight();
-		
+
 			return pSubTexture;
 		}
 		else
 		{
 			return NULL;
-		} 
+		}
 	}
 	else
 	{
@@ -2426,7 +2431,3 @@ void CParticleMgr::StatsSpewResults()
 #endif
 #endif
 }
-
-
-
-

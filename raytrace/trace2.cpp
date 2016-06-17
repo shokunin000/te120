@@ -50,7 +50,7 @@ static fltx4 TraceLimit={1.0e20,1.0e20,1.0e20,1.0e20};
 void RayTracingEnvironment::RenderScene(
 	int width, int height,								   // width and height of desired rendering
 	int stride,											 // actual width in pixels of target buffer
-	uint32 *output_buffer,									// pointer to destination 
+	uint32 *output_buffer,									// pointer to destination
 	Vector CameraOrigin,									// eye position
 	Vector ULCorner,										// word space coordinates of upper left
 															// monitor corner
@@ -74,10 +74,10 @@ void RayTracingEnvironment::RenderScene(
 	// block_offsets-relative offsets for eahc of the 4 pixels in the block, in sse format
 	FourVectors block_offsets;
 	block_offsets.LoadAndSwizzle(Vector(0,0,0),dxvector,dyvector,dxvector+dyvector);
-	
+
 	FourRays myrays;
 	myrays.origin.DuplicateVector(CameraOrigin);
-	
+
 	// tmprays is used fo rthe case when we cannot trace 4 rays at once.
 	FourRays tmprays;
 	tmprays.origin.DuplicateVector(CameraOrigin);
@@ -94,10 +94,10 @@ void RayTracingEnvironment::RenderScene(
 			myrays.direction.DuplicateVector(SLoc);
 			myrays.direction+=block_offsets;
 			myrays.direction.VectorNormalize();
-			
+
 			RayTracingResult rslt;
 			Trace4Rays(myrays,all_zeros,TraceLimit, &rslt);
-			if ((rslt.HitIds[0]==-1) && (rslt.HitIds[1]==-1) && 
+			if ((rslt.HitIds[0]==-1) && (rslt.HitIds[1]==-1) &&
 				(rslt.HitIds[2]==-1) && (rslt.HitIds[3]==-1))
 				MapLinearIntensities(BackgroundColor,dest,dest+1,dest+stride,dest+stride+1);
 			else
@@ -130,7 +130,7 @@ void RayTracingEnvironment::RenderScene(
 				FourVectors surface_pos=myrays.direction;
 				surface_pos*=rslt.HitDistance;
 				surface_pos+=myrays.origin;
-				
+
 				switch(lmode)
 				{
 					case DIRECT_LIGHTING:
@@ -181,7 +181,7 @@ void RayTracingEnvironment::RenderScene(
 				// now, mask off non-hitting pixels
 				intens.VProduct(surf_colors);
 				fltx4 no_hit_mask=CmpGtSIMD(rslt.HitDistance,TraceLimit);
-				
+
 				intens.x=OrSIMD(AndSIMD(BackgroundColor.x,no_hit_mask),
 								   AndNotSIMD(no_hit_mask,intens.x));
 				intens.y=OrSIMD(AndSIMD(BackgroundColor.y,no_hit_mask),
@@ -233,7 +233,7 @@ void RayTracingEnvironment::ComputeVirtualLightSources(void)
 						fltx4 ndoti=rslt.surface_normal*myrays.direction;
 						fltx4 bad_dirs=AndSIMD(CmpGtSIMD(ndoti,Four_Zeros),
 												   LoadAlignedSIMD((float *) signmask));
-						
+
 						// flip signs of all "wrong" normals
 						rslt.surface_normal.x=XorSIMD(bad_dirs,rslt.surface_normal.x);
 						rslt.surface_normal.y=XorSIMD(bad_dirs,rslt.surface_normal.y);
