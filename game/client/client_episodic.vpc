@@ -27,7 +27,6 @@ $Project "Client (Episodic)"
 		$File	"c_team_objectiveresource.cpp"
 		$File	"c_team_objectiveresource.h"
 //TE120--
-		$File	"c_te120_stats.cpp"
 		$File	"c_weapon_physconcussion.cpp"
 		$File	"c_entgloweffect.cpp"
 		$File	"c_entgloweffect.h"
