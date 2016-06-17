@@ -1194,7 +1194,7 @@ CClientShadowMgr::CClientShadowMgr() :
 	m_nDepthTextureResolution = r_flashlightdepthres.GetInt();
 	m_bThreaded = false;
 
-	
+
 	m_bShadowFromWorldLights = r_worldlight_castshadows.GetBool();
 }
 

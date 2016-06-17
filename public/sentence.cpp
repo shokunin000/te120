@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //
@@ -89,7 +89,7 @@ unsigned int CWordTag::GetEndByte() const { return 0; }
 #endif
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 CWordTag::CWordTag( void )
 {
@@ -104,8 +104,8 @@ CWordTag::CWordTag( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : from - 
+// Purpose:
+// Input  : from -
 //-----------------------------------------------------------------------------
 CWordTag::CWordTag( const CWordTag& from )
 {
@@ -127,8 +127,8 @@ CWordTag::CWordTag( const CWordTag& from )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : *word - 
+// Purpose:
+// Input  : *word -
 //-----------------------------------------------------------------------------
 CWordTag::CWordTag( const char *word )
 {
@@ -145,7 +145,7 @@ CWordTag::CWordTag( const char *word )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 CWordTag::~CWordTag( void )
 {
@@ -159,8 +159,8 @@ CWordTag::~CWordTag( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : *tag - 
+// Purpose:
+// Input  : *tag -
 // Output : int
 //-----------------------------------------------------------------------------
 int CWordTag::IndexOfPhoneme( CPhonemeTag *tag )
@@ -175,8 +175,8 @@ int CWordTag::IndexOfPhoneme( CPhonemeTag *tag )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : *word - 
+// Purpose:
+// Input  : *word -
 //-----------------------------------------------------------------------------
 void CWordTag::SetWord( const char *word )
 {
@@ -192,7 +192,7 @@ void CWordTag::SetWord( const char *word )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 // Output : const char
 //-----------------------------------------------------------------------------
 const char *CWordTag::GetWord() const
@@ -245,7 +245,7 @@ CBasePhonemeTag::CBasePhonemeTag( const CBasePhonemeTag& from )
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 CPhonemeTag::CPhonemeTag( void )
 {
@@ -257,8 +257,8 @@ CPhonemeTag::CPhonemeTag( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : from - 
+// Purpose:
+// Input  : from -
 //-----------------------------------------------------------------------------
 CPhonemeTag::CPhonemeTag( const CPhonemeTag& from ) :
 	BaseClass( from )
@@ -272,8 +272,8 @@ CPhonemeTag::CPhonemeTag( const CPhonemeTag& from ) :
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : *phoneme - 
+// Purpose:
+// Input  : *phoneme -
 //-----------------------------------------------------------------------------
 CPhonemeTag::CPhonemeTag( const char *phoneme )
 {
@@ -291,7 +291,7 @@ CPhonemeTag::CPhonemeTag( const char *phoneme )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 CPhonemeTag::~CPhonemeTag( void )
 {
@@ -299,8 +299,8 @@ CPhonemeTag::~CPhonemeTag( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : *phoneme - 
+// Purpose:
+// Input  : *phoneme -
 //-----------------------------------------------------------------------------
 void CPhonemeTag::SetTag( const char *phoneme )
 {
@@ -367,7 +367,7 @@ static CCLanguage g_CCLanguageLookup[] =
 	{ CC_JAPANESE,	"japanese",		250,	150,	0 },
 	{ CC_RUSSIAN,	"russian",		0,		250,	150 },
 	{ CC_THAI,		"thai",			0 ,		150,	250 },
-	{ CC_PORTUGUESE,"portuguese",	0 ,		0,		150 },	
+	{ CC_PORTUGUESE,"portuguese",	0 ,		0,		150 },
 };
 
 #pragma pack()
@@ -387,8 +387,8 @@ void CSentence::ColorForLanguage( int language, unsigned char& r, unsigned char&
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : language - 
+// Purpose:
+// Input  : language -
 // Output : char const
 //-----------------------------------------------------------------------------
 char const *CSentence::NameForLanguage( int language )
@@ -402,8 +402,8 @@ char const *CSentence::NameForLanguage( int language )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : *name - 
+// Purpose:
+// Input  : *name -
 // Output : int
 //-----------------------------------------------------------------------------
 int CSentence::LanguageForName( char const *name )
@@ -420,7 +420,7 @@ int CSentence::LanguageForName( char const *name )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 CSentence::CSentence( void )
 {
@@ -436,7 +436,7 @@ CSentence::CSentence( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 CSentence::~CSentence( void )
 {
@@ -567,7 +567,7 @@ void CSentence::ParseCloseCaption( CUtlBuffer& buf )
 	char token[ 4096 ];
 	while ( 1 )
 	{
-		// Format is 
+		// Format is
 		// language_name
 		// {
 		//   PHRASE char streamlength "streambytes" starttime endtime
@@ -616,7 +616,7 @@ void CSentence::ParseCloseCaption( CUtlBuffer& buf )
 			buf.GetChar();
 			buf.Get( cc_stream, cc_length );
 			cc_stream[ cc_length ] = 0;
-			
+
 			// Skip space
 			buf.GetChar();
 			buf.GetString( token );
@@ -658,9 +658,9 @@ void CSentence::ParseOptions( CUtlBuffer& buf )
 
 
 //-----------------------------------------------------------------------------
-// Purpose: VERSION 1.0 parser, need to implement new ones if 
+// Purpose: VERSION 1.0 parser, need to implement new ones if
 //  file format changes!!!
-// Input  : buf - 
+// Input  : buf -
 //-----------------------------------------------------------------------------
 void CSentence::ParseDataVersionOnePointZero( CUtlBuffer& buf )
 {
@@ -671,6 +671,10 @@ void CSentence::ParseDataVersionOnePointZero( CUtlBuffer& buf )
 		buf.GetString( token );
 		if ( strlen( token ) <= 0 )
 			break;
+
+		// end of block, return
+	 	if ( !V_strcmp( token, "}" ) )
+	 		break;
 
 		char section[ 256 ];
 		Q_strncpy( section, token, sizeof( section ) );
@@ -690,7 +694,7 @@ void CSentence::ParseDataVersionOnePointZero( CUtlBuffer& buf )
 		else if ( !stricmp( section, "EMPHASIS" ) )
 		{
 			ParseEmphasis( buf );
-		}		
+		}
 		else if ( !stricmp( section, "CLOSECAPTION" ) )
 		{
 			// NOTE:  CLOSECAPTION IS NO LONGER VALID
@@ -706,8 +710,8 @@ void CSentence::ParseDataVersionOnePointZero( CUtlBuffer& buf )
 
 // This is a compressed save of just the data needed to drive phonemes in the engine (no word / sentence text, etc )
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : buf - 
+// Purpose:
+// Input  : buf -
 //-----------------------------------------------------------------------------
 void CSentence::CacheSaveToBuffer( CUtlBuffer& buf, int version )
 {
@@ -788,8 +792,8 @@ void CSentence::CacheSaveToBuffer( CUtlBuffer& buf, int version )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : buf - 
+// Purpose:
+// Input  : buf -
 //-----------------------------------------------------------------------------
 void CSentence::CacheRestoreFromBuffer( CUtlBuffer& buf )
 {
@@ -970,7 +974,7 @@ void CSentence::SaveToBuffer( CUtlBuffer& buf )
 		CWordTag *word = m_Words[ i ];
 		Assert( word );
 
-		buf.Printf( "WORD %s %.3f %.3f\n", 
+		buf.Printf( "WORD %s %.3f %.3f\n",
 			word->GetWord(),
 			word->m_flStartTime,
 			word->m_flEndTime );
@@ -981,8 +985,8 @@ void CSentence::SaveToBuffer( CUtlBuffer& buf )
 			CPhonemeTag *phoneme = word->m_Phonemes[ j ];
 			Assert( phoneme );
 
-			buf.Printf( "%i %s %.3f %.3f 1\n", 
-				phoneme->GetPhonemeCode(), 
+			buf.Printf( "%i %s %.3f %.3f 1\n",
+				phoneme->GetPhonemeCode(),
 				phoneme->GetTag(),
 				phoneme->GetStartTime(),
 				phoneme->GetEndTime() );
@@ -1017,9 +1021,9 @@ void CSentence::SaveToBuffer( CUtlBuffer& buf )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : *data - 
-//			size - 
+// Purpose:
+// Input  : *data -
+//			size -
 //-----------------------------------------------------------------------------
 void CSentence::InitFromDataChunk( void *data, int size )
 {
@@ -1032,8 +1036,8 @@ void CSentence::InitFromDataChunk( void *data, int size )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : buf - 
+// Purpose:
+// Input  : buf -
 //-----------------------------------------------------------------------------
 void CSentence::InitFromBuffer( CUtlBuffer& buf )
 {
@@ -1061,7 +1065,7 @@ void CSentence::InitFromBuffer( CUtlBuffer& buf )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 // Output : int
 //-----------------------------------------------------------------------------
 int CSentence::GetWordBase( void )
@@ -1075,7 +1079,7 @@ int CSentence::GetWordBase( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CSentence::ResetToBase( void )
 {
@@ -1091,7 +1095,7 @@ void CSentence::ResetToBase( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CSentence::MarkNewPhraseBase( void )
 {
@@ -1101,7 +1105,7 @@ void CSentence::MarkNewPhraseBase( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CSentence::Reset( void )
 {
@@ -1120,8 +1124,8 @@ void CSentence::Reset( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : *tag - 
+// Purpose:
+// Input  : *tag -
 //-----------------------------------------------------------------------------
 void CSentence::AddPhonemeTag( CWordTag *word, CPhonemeTag *tag )
 {
@@ -1129,8 +1133,8 @@ void CSentence::AddPhonemeTag( CWordTag *word, CPhonemeTag *tag )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : *tag - 
+// Purpose:
+// Input  : *tag -
 //-----------------------------------------------------------------------------
 void CSentence::AddWordTag( CWordTag *tag )
 {
@@ -1140,7 +1144,7 @@ void CSentence::AddWordTag( CWordTag *tag )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 // Output : int
 //-----------------------------------------------------------------------------
 int CSentence::CountPhonemes( void )
@@ -1158,7 +1162,7 @@ int CSentence::CountPhonemes( void )
 
 //-----------------------------------------------------------------------------
 // Purpose: // For legacy loading, try to find a word that contains the time
-// Input  : time - 
+// Input  : time -
 // Output : CWordTag
 //-----------------------------------------------------------------------------
 CWordTag *CSentence::EstimateBestWord( float time )
@@ -1201,8 +1205,8 @@ CWordTag *CSentence::EstimateBestWord( float time )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : *phoneme - 
+// Purpose:
+// Input  : *phoneme -
 // Output : CWordTag
 //-----------------------------------------------------------------------------
 CWordTag *CSentence::GetWordForPhoneme( CPhonemeTag *phoneme )
@@ -1230,7 +1234,7 @@ CWordTag *CSentence::GetWordForPhoneme( CPhonemeTag *phoneme )
 
 //-----------------------------------------------------------------------------
 // Purpose: Assignment operator
-// Input  : src - 
+// Input  : src -
 // Output : CSentence&
 //-----------------------------------------------------------------------------
 CSentence& CSentence::operator=( const CSentence& src )
@@ -1347,8 +1351,8 @@ void CSentence::Append( float starttime, const CSentence& src )
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : *text - 
+// Purpose:
+// Input  : *text -
 //-----------------------------------------------------------------------------
 void CSentence::SetText( const char *text )
 {
@@ -1370,7 +1374,7 @@ void CSentence::SetText( const char *text )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 // Output : const char
 //-----------------------------------------------------------------------------
 const char *CSentence::GetText( void ) const
@@ -1383,7 +1387,7 @@ const char *CSentence::GetText( void ) const
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CSentence::SetTextFromWords( void )
 {
@@ -1407,7 +1411,7 @@ void CSentence::SetTextFromWords( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CSentence::Resort( void )
 {
@@ -1429,8 +1433,8 @@ void CSentence::Resort( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : number - 
+// Purpose:
+// Input  : number -
 // Output : CEmphasisSample
 //-----------------------------------------------------------------------------
 CEmphasisSample *CSentence::GetBoundedSample( int number, float endtime )
@@ -1442,7 +1446,7 @@ CEmphasisSample *CSentence::GetBoundedSample( int number, float endtime )
 	static CEmphasisSample nullend;
 	nullend.time = endtime;
 	nullend.value = 0.5f;
-	
+
 	if ( number < 0 )
 	{
 		return &nullstart;
@@ -1451,27 +1455,27 @@ CEmphasisSample *CSentence::GetBoundedSample( int number, float endtime )
 	{
 		return &nullend;
 	}
-	
+
 	return GetSample( number );
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : time - 
-//			type - 
+// Purpose:
+// Input  : time -
+//			type -
 // Output : float
 //-----------------------------------------------------------------------------
 float CSentence::GetIntensity( float time, float endtime )
 {
 	float zeroValue = 0.5f;
-	
+
 	int c = GetNumSamples();
-	
+
 	if ( c <= 0 )
 	{
 		return zeroValue;
 	}
-	
+
 	int i;
 	for ( i = -1 ; i < c; i++ )
 	{
@@ -1513,12 +1517,12 @@ float CSentence::GetIntensity( float time, float endtime )
 	f2 = clamp( f2, 0.0f, 1.0f );
 
 	Vector vOut;
-	Catmull_Rom_Spline( 
+	Catmull_Rom_Spline(
 		vPre,
 		vStart,
 		vEnd,
 		vNext,
-		f2, 
+		f2,
 		vOut );
 
 	float retval = clamp( vOut.y, 0.0f, 1.0f );
@@ -1644,7 +1648,7 @@ int CSentence::CountWords( char const *str )
 		return 0;
 
 	int c = 1;
-	
+
 	unsigned char *p = (unsigned char *)str;
 	while ( *p )
 	{
@@ -1663,14 +1667,14 @@ int CSentence::CountWords( char const *str )
 
 		p++;
 	}
-	
+
 	return c;
 }
 
 
 //-----------------------------------------------------------------------------
 // Purpose: Static method
-// Input  : in - 
+// Input  : in -
 // Output : Returns true on success, false on failure.
 //-----------------------------------------------------------------------------
 bool CSentence::ShouldSplitWord( char in )
@@ -1710,7 +1714,7 @@ void CSentence::CreateEventWordDistribution( char const *pszText, float flSenten
 	char word[ 256 ];
 	unsigned char const *in = (unsigned char *)pszText;
 	char *out = word;
-	
+
 	while ( *in )
 	{
 		if ( !ShouldSplitWord( *in ) )
@@ -1726,7 +1730,7 @@ void CSentence::CreateEventWordDistribution( char const *pszText, float flSenten
 			{
 				in++;
 			}
-			
+
 			if ( strlen( word ) > 0 )
 			{
 				CWordTag *w = new CWordTag();
@@ -1734,16 +1738,16 @@ void CSentence::CreateEventWordDistribution( char const *pszText, float flSenten
 				w->SetWord( word );
 				w->m_flStartTime = wordStart;
 				w->m_flEndTime = wordStart + wordLength;
-				
+
 				AddWordTag( w );
-				
+
 				wordStart += wordLength;
 			}
-			
+
 			out = word;
 		}
 	}
-	
+
 	*out = 0;
 
 	if ( strlen( word ) > 0 )
@@ -1753,9 +1757,9 @@ void CSentence::CreateEventWordDistribution( char const *pszText, float flSenten
 		w->SetWord( word );
 		w->m_flStartTime = wordStart;
 		w->m_flEndTime = wordStart + wordLength;
-		
+
 		AddWordTag( w );
-		
+
 		wordStart += wordLength;
 	}
 }
