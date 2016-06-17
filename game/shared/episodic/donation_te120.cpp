@@ -23,7 +23,7 @@ void OpenURL_f( const CCommand &args )
 			return;
 		}
 	}
-	
+
 	Msg("Missing Steam API context, failed to execute: s_cl_openurl\n");
 
 }
