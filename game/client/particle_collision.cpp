@@ -26,7 +26,7 @@
 #define	COLLISION_EPSILON		0.01f
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 CBaseSimpleCollision::CBaseSimpleCollision( void )
 {
@@ -34,9 +34,9 @@ CBaseSimpleCollision::CBaseSimpleCollision( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : &origin - 
-//			radius - 
+// Purpose:
+// Input  : &origin -
+//			radius -
 //-----------------------------------------------------------------------------
 void CBaseSimpleCollision::Setup( const Vector &origin, float speed, float gravity )
 {
@@ -85,7 +85,7 @@ void CBaseSimpleCollision::TraceLine( const Vector &start, const Vector &end, tr
 		pTrace->fraction		= t	- COLLISION_EPSILON;
 		pTrace->plane.normal	= m_collisionPlanes[i].m_Normal;
 		pTrace->plane.dist		= m_collisionPlanes[i].m_Dist;
-		
+
 		//If we need an exact trace, test again on a successful hit
 		if ( ( coarse == false ) && ( pTrace->fraction < 1.0f ) )
 		{
@@ -95,7 +95,7 @@ void CBaseSimpleCollision::TraceLine( const Vector &start, const Vector &end, tr
 		#if	__DEBUG_PARTICLE_COLLISION_OVERLAY
 		debugoverlay->AddBoxOverlay( vIntersection, Vector(-1,-1,-1), Vector(1,1,1), QAngle(0,0,0), 0, 255, 0, 16, __DEBUG_PARTICLE_COLLISION_OVERLAY_LIFETIME );
 		#endif	//__DEBUG_PARTICLE_COLLISION_OVERLAY
-		
+
 		//Done
 		return;
 	}
@@ -171,7 +171,7 @@ void CBaseSimpleCollision::TestForPlane( const Vector &start, const Vector &dir,
 		{
 			#if	__DEBUG_PARTICLE_COLLISION_OVERLAY
 			debugoverlay->AddLineOverlay( testStart, tr.endpos, 255, 0, 0, true, __DEBUG_PARTICLE_COLLISION_OVERLAY_LIFETIME );
-			
+
 			QAngle angles;
 
 			VectorAngles( tr.plane.normal,angles );
@@ -179,7 +179,7 @@ void CBaseSimpleCollision::TestForPlane( const Vector &start, const Vector &dir,
 
 			debugoverlay->AddBoxOverlay( tr.endpos, Vector(-64,-64,0), Vector(64,64,0), angles, 255, 0, 0, 16, __DEBUG_PARTICLE_COLLISION_OVERLAY_LIFETIME );
 			#endif	//__DEBUG_PARTICLE_COLLISION_OVERLAY
-			
+
 			//Test the plane against a set of criteria
 			ConsiderPlane( &tr.plane );
 
@@ -190,24 +190,24 @@ void CBaseSimpleCollision::TestForPlane( const Vector &start, const Vector &dir,
 		#if	__DEBUG_PARTICLE_COLLISION_OVERLAY
 		debugoverlay->AddLineOverlay( testStart, tr.endpos, 0, 128.0f+(128.0f*((float)i/(float)NUM_DISCREET_STEPS)), 0, true, __DEBUG_PARTICLE_COLLISION_OVERLAY_LIFETIME );
 		#endif	//__DEBUG_PARTICLE_COLLISION_OVERLAY
-		
+
 		//Save that position for the next round
 		testStart = testEnd;
 	}
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CBaseSimpleCollision::ClearActivePlanes( void )
-{ 
+{
 	for ( int i = 0; i < MAX_COLLISION_PLANES; i++ )
 	{
 		m_collisionPlanes[i].m_Dist	= -1.0f;
 		m_collisionPlanes[i].m_Normal.Init();
 	}
 
-	m_nActivePlanes = 0; 
+	m_nActivePlanes = 0;
 }
 
 //
@@ -215,7 +215,7 @@ void CBaseSimpleCollision::ClearActivePlanes( void )
 //
 
 //-----------------------------------------------------------------------------
-// Constructor 
+// Constructor
 //-----------------------------------------------------------------------------
 CParticleCollision::CParticleCollision( void )
 {
@@ -294,7 +294,9 @@ void CParticleCollision::Setup( const Vector &origin, const Vector *dir, float a
 //			timeDelta - time step
 //-----------------------------------------------------------------------------
 bool CParticleCollision::MoveParticle( Vector &origin, Vector &velocity, float *rollDelta, float timeDelta, trace_t *pTrace )
-{	
+{
+	pTrace->allsolid = false;
+	
 	//Don't bother with non-moving particles
 	if ( velocity == vec3_origin )
 		return false;
@@ -303,7 +305,7 @@ bool CParticleCollision::MoveParticle( Vector &origin, Vector &velocity, float *
 	velocity[2] -= m_flGravity * timeDelta;
 
 	//Move
-	Vector testPosition = ( origin + ( velocity * timeDelta ) );	
+	Vector testPosition = ( origin + ( velocity * timeDelta ) );
 
 	//Only collide if we have active planes
 	if ( m_nActivePlanes > 0 )
@@ -324,29 +326,29 @@ bool CParticleCollision::MoveParticle( Vector &origin, Vector &velocity, float *
 			{
 				//See if we've settled
 				if ( ( pTrace->plane.normal[2] >= 0.5f ) && ( fabs( velocity[2] ) <= 48.0f ) )
-				{		
+				{
 					//Leave the particle at the collision point
 					origin += velocity * ( (pTrace->fraction-COLLISION_EPSILON) * timeDelta );
-					
+
 					//Stop the particle
 					velocity	= vec3_origin;
-					
+
 					if ( rollDelta != NULL )
 					{
 						*rollDelta	= 0.0f;
 					}
-					
+
 					return false;
 				}
 				else
 				{
 					//Move the particle to the collision point
 					origin += velocity * ( (pTrace->fraction-COLLISION_EPSILON) * timeDelta );
-					
+
 					//Find the reflection vector
 					float proj = velocity.Dot( pTrace->plane.normal );
 					velocity += pTrace->plane.normal * (-proj*2.0f);
-					
+
 					//Apply dampening
 					velocity *= random->RandomFloat( (m_flCollisionDampen-0.1f), (m_flCollisionDampen+0.1f) );
 
@@ -371,6 +373,6 @@ bool CParticleCollision::MoveParticle( Vector &origin, Vector &velocity, float *
 
 	//Simple move, no collision
 	origin = testPosition;
-	
+
 	return false;
 }
