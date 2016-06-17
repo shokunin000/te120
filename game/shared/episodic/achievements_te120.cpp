@@ -9,10 +9,7 @@
 #include "achievementmgr.h"
 #include "baseachievement.h"
 
-// memdbgon must be the last include file in a .cpp file!!!
-#include "tier0/memdbgon.h"
-
-//create achievement manager object
+// Create achievement manager object
 CAchievementMgr AchievementMgr;
 
 class CAchievementE120MyFirstGravityJump : public CBaseAchievement
