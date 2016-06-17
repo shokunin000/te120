@@ -61,7 +61,7 @@ END_DATADESC()
 
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 CEnvMicrophone::~CEnvMicrophone( void )
 {
@@ -150,7 +150,7 @@ void CEnvMicrophone::Activate(void)
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CEnvMicrophone::OnRestore( void )
 {
@@ -183,7 +183,7 @@ void CEnvMicrophone::ActivateSpeaker( void )
 
 	if ( m_iszSpeakerName != NULL_STRING )
 	{
-		// We've got a speaker to play heard sounds through. To do this, we need to add ourselves 
+		// We've got a speaker to play heard sounds through. To do this, we need to add ourselves
 		// to the list of microphones who want to be told whenever a sound is played.
 		if ( s_Microphones.Find(this) == -1 )
 		{
@@ -226,8 +226,8 @@ void CEnvMicrophone::InputDisable( inputdata_t &inputdata )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : &inputdata - 
+// Purpose:
+// Input  : &inputdata -
 //-----------------------------------------------------------------------------
 void CEnvMicrophone::InputSetSpeakerName( inputdata_t &inputdata )
 {
@@ -307,7 +307,7 @@ bool CEnvMicrophone::CanHearSound( int entindex, soundlevel_t soundlevel, float 
 	{
 		pEntity = CBaseEntity::Instance( engine->PEntityOfEntIndex(entindex) );
 	}
-			    
+
 	// Cull out sounds except from specific entities
 	CBaseFilter *pFilter = m_hListenFilter.Get();
 	if ( pFilter )
@@ -384,7 +384,7 @@ void CEnvMicrophone::Think(void)
 	bool fHearSound = false;
 
 	float flMaxVolume = 0;
-	
+
 	//
 	// Find the loudest sound that this microphone cares about.
 	//
@@ -403,9 +403,12 @@ void CEnvMicrophone::Think(void)
 					fHearSound = true;
 				}
 			}
-		}
 
-		nSound = pCurrentSound->NextSound();
+			nSound = pCurrentSound->NextSound();
+		}
+		else
+			break;
+
 	}
 
 	if( fHearSound )
@@ -533,13 +536,13 @@ bool CEnvMicrophone::OnSoundPlayed( int entindex, const char *soundname, soundle
 			if ( s_Microphones[i] )
 			{
 				MicrophoneResult_t eResult = s_Microphones[i]->SoundPlayed(
-					entindex, 
-					soundname, 
-					soundlevel, 
-					flVolume, 
-					iFlags, 
-					iPitch, 
-					pOrigin, 
+					entindex,
+					soundname,
+					soundlevel,
+					flVolume,
+					iFlags,
+					iPitch,
+					pOrigin,
 					soundtime,
 					soundorigins );
 
