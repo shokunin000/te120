@@ -27,7 +27,6 @@ $Project "Client (Episodic)"
 		$File	"c_team_objectiveresource.cpp"
 		$File	"c_team_objectiveresource.h"
 //TE120--
-		$File	"c_te120_stats.cpp"
 		$File	"c_weapon_physconcussion.cpp"
 		$File	"c_entgloweffect.cpp"
 		$File	"c_entgloweffect.h"
@@ -97,7 +96,7 @@ $Project "Client (Episodic)"
 			$File	"hl2\clientmode_hlnormal.cpp"
 			$File	"hl2\clientmode_hlnormal.h"
 			$File	"death.cpp"
-			$File	"$SRCDIR\game\shared\episodic\donation_te120.cpp"//TE120
+			$File	"$SRCDIR\game\shared\episodic\convars_te120.cpp"//TE120
 			$File	"$SRCDIR\game\shared\hl2\env_headcrabcanister_shared.cpp"
 			$File	"$SRCDIR\game\shared\hl2\env_headcrabcanister_shared.h"
 			$File	"$SRCDIR\game\shared\episodic\npc_advisor_shared.h"
@@ -125,9 +124,7 @@ $Project "Client (Episodic)"
 			$File	"hl2\hud_damageindicator.cpp"
 			$File	"hl2\hud_flashlight.cpp"
 			$File	"hl2\hud_locator.cpp"
-//TE120--
-			$File	"hl2\hud_locator.h"
-//TE120--
+			$File	"hl2\hud_locator.h"//TE120
 			$File	"hl2\hud_health.cpp"
 			$File	"hl2\hud_poisondamageindicator.cpp"
 			$File	"hud_posture.cpp"
@@ -145,7 +142,6 @@ $Project "Client (Episodic)"
 			$File	"episodic\c_npc_puppet.cpp"
 		}
 //TE120--
-		// Remove [$WIN32] to allow ShaderEditor build on any OS
 		$Folder "Shader Editor"
 		{
 			$Folder	"Header Files"

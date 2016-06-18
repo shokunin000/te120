@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //=============================================================================
@@ -30,13 +30,13 @@ using namespace vgui;
 #define ACHIEVEMENT_NOTIFICATION_DURATION 10.0f
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 
 DECLARE_HUDELEMENT_DEPTH( CAchievementNotificationPanel, 100 );
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 CAchievementNotificationPanel::CAchievementNotificationPanel( const char *pElementName ) : CHudElement( pElementName ), BaseClass( NULL, "AchievementNotificationPanel" )
 {
@@ -55,7 +55,7 @@ CAchievementNotificationPanel::CAchievementNotificationPanel( const char *pEleme
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CAchievementNotificationPanel::Init()
 {
@@ -63,18 +63,18 @@ void CAchievementNotificationPanel::Init()
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CAchievementNotificationPanel::ApplySchemeSettings( IScheme *pScheme )
 {
 	// load control settings...
 	LoadControlSettings( "resource/UI/AchievementNotification.res" );
-	
+
 	BaseClass::ApplySchemeSettings( pScheme );
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CAchievementNotificationPanel::PerformLayout( void )
 {
@@ -89,7 +89,7 @@ void CAchievementNotificationPanel::PerformLayout( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CAchievementNotificationPanel::FireGameEvent( IGameEvent * event )
 {
@@ -105,16 +105,16 @@ void CAchievementNotificationPanel::FireGameEvent( IGameEvent * event )
 		{
 			// shouldn't ever get achievement progress if steam not running and user logged in, but check just in case
 			if ( !steamapicontext->SteamUserStats() )
-			{				
+			{
 				Msg( "Steam not running, achievement progress notification not displayed\n" );
 			}
-			else 
+			else
 			{
 				// use Steam to show achievement progress UI
 				steamapicontext->SteamUserStats()->IndicateAchievementProgress( pchName, iCur, iMax );
 			}
 		}
-		else 
+		else
 		{
 			// on X360 we need to show our own achievement progress UI
 
@@ -156,7 +156,7 @@ void CAchievementNotificationPanel::OnTick( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 bool CAchievementNotificationPanel::ShouldDraw( void )
 {
@@ -164,7 +164,7 @@ bool CAchievementNotificationPanel::ShouldDraw( void )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CAchievementNotificationPanel::AddNotification( const char *szIconBaseName, const wchar_t *pHeading, const wchar_t *pTitle )
 {
@@ -235,7 +235,7 @@ void CAchievementNotificationPanel::ShowNextNotification()
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
+// Purpose:
 //-----------------------------------------------------------------------------
 void CAchievementNotificationPanel::SetXAndWide( Panel *pPanel, int x, int wide )
 {
@@ -251,7 +251,7 @@ CON_COMMAND_F( achievement_notification_test, "Test the hud notification UI", FC
 
 	CAchievementNotificationPanel *pPanel = GET_HUDELEMENT( CAchievementNotificationPanel );
 	if ( pPanel )
-	{		
+	{
 		pPanel->AddNotification( "HL2_KILL_ODESSAGUNSHIP", L"Achievement Progress", ( 0 == ( iCount % 2 ) ? L"Test Notification Message A (1/10)" :
 			L"Test Message B" ) );
 	}
@@ -265,7 +265,7 @@ CON_COMMAND_F( achievement_notification_test, "Test the hud notification UI", FC
 		event->SetInt( "cur_val", ( iCount%9 ) + 1 );
 		event->SetInt( "max_val", 10 );
 		gameeventmanager->FireEvent( event );
-	}	
+	}
 #endif
 
 	iCount++;

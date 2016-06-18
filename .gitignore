@@ -1,6 +1,7 @@
 # Visual Studio
 *.suo
 *.user
+*.sln.docstates
 *.obj
 *.pch
 *.tlog
@@ -9,26 +10,33 @@
 *.exp
 *.ilk
 *.lastbuildstate
-*.pdb
+vc100.pdb
 ipch
 *.sdf
 *.opensdf
 *.idb
-*.vcxproj*
-*.sln*
+*.vcxproj
+*.vcxproj.filters
+*.sln
+[Dd]ebug*/
+[Rr]elease*/
 
 # OSX/Linux build products
+*.DS_Store
 *.mak*
-*.vpc_crc
+*.mak.vpc_crc
 *.project
 *.xcodeproj/
 obj_*/
 !devtools/*.mak
 !utils/smdlexp/smdlexp.mak
+*_osx32*
 
 # Specific Source build products
+client.pdb
 client.dll
 client.lib
+server.pdb
 server.dll
 server.lib
 
@@ -45,6 +53,12 @@ client.dylib
 client.dylib.dSYM/
 server.dylib
 server.dylib.dSYM/
+
+*.vpc.sentinel
+*.vpc_crc
+**/generated_proto/**
+**/src/utils/sapi51/**
+**/game/**/bin/**
 
 lib/public/**/fgdlib.*
 lib/public/**/mathlib.*

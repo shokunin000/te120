@@ -56,13 +56,13 @@ CON_COMMAND( ai_debug_node_connect, "Debug the attempted connection between two 
 {
 	g_DebugConnectNode1 = atoi( args[1] );
 	g_DebugConnectNode2 = atoi( args[2] );
-	
+
 	DevMsg( "ai_debug_node_connect: debugging enbabled for %d <--> %d\n", g_DebugConnectNode1, g_DebugConnectNode2 );
 }
 
 //-----------------------------------------------------------------------------
 // This CVAR allows level designers to override the building
-// of node graphs due to date conflicts with the BSP and AIN 
+// of node graphs due to date conflicts with the BSP and AIN
 // files. That way they don't have to wait for the node graph
 // to rebuild following small only-ents changes. This CVAR
 // always defaults to 0 and must be set at the command
@@ -76,7 +76,7 @@ ConVar g_ai_norebuildgraph( "ai_norebuildgraph", "0" );
 //
 //-----------------------------------------------------------------------------
 
-CAI_NetworkManager *g_pAINetworkManager;			
+CAI_NetworkManager *g_pAINetworkManager;
 
 //-----------------------------------------------------------------------------
 
@@ -113,7 +113,7 @@ CAI_NetworkManager::CAI_NetworkManager(void)
 	//  Add to linked list of networks
 	// ---------------------------------
 };
-         
+
 //-----------------------------------------------------------------------------
 
 CAI_NetworkManager::~CAI_NetworkManager(void)
@@ -192,7 +192,7 @@ void CAI_NetworkManager::StartRebuild( void )
 //-----------------------------------------------------------------------------
 // Purpose: Called by save restore code if no valid load graph was loaded at restore time.
 //  Prevents writing out of a "bogus" node graph...
-// Input  :  - 
+// Input  :  -
 //-----------------------------------------------------------------------------
 void CAI_NetworkManager::MarkDontSaveGraph()
 {
@@ -229,12 +229,12 @@ void CAI_NetworkManager::SaveNetworkGraph( void )
 	// -----------------------------
 	char	szNrpFilename [MAX_PATH];// text node report filename
 	Q_strncpy( szNrpFilename, "maps/graphs" ,sizeof(szNrpFilename));
-	
+
 	// Usually adding on the map filename and stripping it does nothing, but if the map is under a subdir,
 	// this makes it create the correct subdir under maps/graphs.
 	char tempFilename[MAX_PATH];
 	Q_snprintf( tempFilename, sizeof( tempFilename ), "%s/%s", szNrpFilename, STRING( gpGlobals->mapname ) );
-	
+
 	// Remove the filename.
 	int len = strlen( tempFilename );
 	for ( int i=0; i < len; i++ )
@@ -245,7 +245,7 @@ void CAI_NetworkManager::SaveNetworkGraph( void )
 			break;
 		}
 	}
-	
+
 	// Make sure the directories we need exist.
 	filesystem->CreateDirHierarchy( tempFilename, "DEFAULT_WRITE_PATH" );
 
@@ -525,7 +525,7 @@ void CAI_NetworkManager::LoadNetworkGraph( void )
 			filesystem->FreeOptimalReadBuffer( pData );
 		}
 	}
-	
+
 
 
 	if ( !bHaveAIN && !filesystem->ReadFile( szNrpFilename, "game", buf ) )
@@ -544,7 +544,7 @@ void CAI_NetworkManager::LoadNetworkGraph( void )
 		DevMsg( "AI node graph %s is out of date\n", szNrpFilename );
 		return;
 	}
-	
+
 	DevMsg( "Passed first ver check\n" );
 
 
@@ -565,8 +565,8 @@ void CAI_NetworkManager::LoadNetworkGraph( void )
 	if ( mapversion != gpGlobals->mapversion && !g_ai_norebuildgraph.GetBool() )
 	{
 		bool bOK = false;
-		
-		const char *pGameDir = CommandLine()->ParmValue( "-game", "hl2" );		
+
+		const char *pGameDir = CommandLine()->ParmValue( "-game", "hl2" );
 		char szLoweredGameDir[256];
 		Q_strncpy( szLoweredGameDir, pGameDir, sizeof( szLoweredGameDir ) );
 		Q_strlower( szLoweredGameDir );
@@ -578,7 +578,7 @@ void CAI_NetworkManager::LoadNetworkGraph( void )
 		{
 			bOK = true;
 		}
-		
+
 		if ( !bOK )
 		{
 			DevMsg( "AI node graph %s is out of date (map version changed)\n", szNrpFilename );
@@ -601,7 +601,7 @@ void CAI_NetworkManager::LoadNetworkGraph( void )
 		Assert( 0 );
 		return;
 	}
-	
+
 	DevMsg( "Finishing load\n" );
 
 
@@ -673,7 +673,7 @@ void CAI_NetworkManager::LoadNetworkGraph( void )
 		GetEditOps()->m_pNodeIndexTable[node] = buf.GetInt();
 	}
 
-	
+
 #if 1
 	CUtlRBTree<int> usedIds;
 	CUtlRBTree<int> reportedIds;
@@ -681,7 +681,7 @@ void CAI_NetworkManager::LoadNetworkGraph( void )
 	SetDefLessFunc( reportedIds );
 
 	bool printedHeader = false;
-	
+
 	for (node = 0; node < m_pNetwork->m_iNumNodes; node++)
 	{
 		int editorId = GetEditOps()->m_pNodeIndexTable[node];
@@ -888,7 +888,7 @@ void CAI_NetworkManager::LoadNetworkGraph( void )
 // Purpose:  Deletes all AINetworks from memory
 //-----------------------------------------------------------------------------
 
-void CAI_NetworkManager::DeleteAllAINetworks(void) 
+void CAI_NetworkManager::DeleteAllAINetworks(void)
 {
 	CAI_DynamicLink::gm_bInitialized = false;
 	gm_fNetworksLoaded = false;
@@ -909,11 +909,11 @@ void CAI_NetworkManager::BuildNetworkGraph( void )
 	CAI_DynamicLink::gm_bInitialized = false;
 	g_AINetworkBuilder.Build( m_pNetwork );
 
-	// If I'm loading for the first time save.  Otherwise I'm 
+	// If I'm loading for the first time save.  Otherwise I'm
 	// doing a wc edit and I don't want to save
 	if (!CAI_NetworkManager::NetworksLoaded())
 	{
-		SaveNetworkGraph();	
+		SaveNetworkGraph();
 
 		gm_fNetworksLoaded = true;
 	}
@@ -938,7 +938,7 @@ void CAI_NetworkManager::InitializeAINetworks()
 	}
 	if ( CAI_NetworkManager::IsAIFileCurrent( STRING( gpGlobals->mapname ) ) )
 	{
-		pNetwork->LoadNetworkGraph(); 
+		pNetwork->LoadNetworkGraph();
 		if ( !g_bAIDisabledByUser )
 		{
 			CAI_BaseNPC::m_nDebugBits &= ~bits_debugDisableAI;
@@ -976,23 +976,23 @@ bool CAI_NetworkManager::IsAIFileCurrent ( const char *szMapName )
 		// dvd build process validates and guarantees correctness, timestamps are allowed to be wrong
 		return true;
 	}
-	
+
 	{
-		const char *pGameDir = CommandLine()->ParmValue( "-game", "hl2" );		
+		const char *pGameDir = CommandLine()->ParmValue( "-game", "hl2" );
 		char szLoweredGameDir[256];
 		Q_strncpy( szLoweredGameDir, pGameDir, sizeof( szLoweredGameDir ) );
 		Q_strlower( szLoweredGameDir );
-		
+
 		if ( !V_stricmp( szLoweredGameDir, "hl2" ) || !V_stricmp( szLoweredGameDir, "episodic" ) || !V_stricmp( szLoweredGameDir, "ep2" ) || !V_stricmp( szLoweredGameDir, "portal" ) || !V_stricmp( szLoweredGameDir, "lostcoast" )  || !V_stricmp( szLoweredGameDir, "hl1" ) )
 		{
 			// we shipped good node graphs for our games
 			return true;
 		}
 	}
-	
+
 	Q_snprintf( szBspFilename, sizeof( szBspFilename ), "maps/%s%s.bsp" ,szMapName, GetPlatformExt() );
 	Q_snprintf( szGraphFilename, sizeof( szGraphFilename ), "maps/graphs/%s%s.ain", szMapName, GetPlatformExt() );
-	
+
 	int iCompare;
 	if ( engine->CompareFileTime( szBspFilename, szGraphFilename, &iCompare ) )
 	{
@@ -1001,14 +1001,14 @@ bool CAI_NetworkManager::IsAIFileCurrent ( const char *szMapName )
 			// BSP file is newer.
 			if ( g_ai_norebuildgraph.GetInt() )
 			{
-				// The user has specified that they wish to override the 
+				// The user has specified that they wish to override the
 				// rebuilding of outdated nodegraphs (see top of this file)
 				if ( filesystem->FileExists( szGraphFilename ) )
 				{
-					// Display these messages only if the graph exists, and the 
+					// Display these messages only if the graph exists, and the
 					// user is asking to override the rebuilding. If the graph does
-					// not exist, we're going to build it whether the user wants to or 
-					// not. 
+					// not exist, we're going to build it whether the user wants to or
+					// not.
 					DevMsg( 2, ".AIN File will *NOT* be updated. User Override.\n\n" );
 					DevMsg( "\n*****Node Graph Rebuild OVERRIDDEN by user*****\n\n" );
 				}
@@ -1047,7 +1047,7 @@ void CAI_NetworkManager::DelayedInit( void )
 	if ( !g_ai_norebuildgraph.GetInt() )
 	{
 		// ----------------------------------------------------------
-		//  Actually enter DelayedInit twice when rebuilding the 
+		//  Actually enter DelayedInit twice when rebuilding the
 		//  node graph.  The first time through we just print the
 		//  warning message.  We only actually do the rebuild on
 		//  the second pass to make sure the message hits the screen
@@ -1072,7 +1072,7 @@ void CAI_NetworkManager::DelayedInit( void )
 
 
 		// --------------------------------------------
-		// If I haven't loaded a network, or I'm in 
+		// If I haven't loaded a network, or I'm in
 		// WorldCraft edit mode rebuild the network
 		// --------------------------------------------
 		else if ( !m_bDontSaveGraph && ( !CAI_NetworkManager::NetworksLoaded() || engine->IsInEditMode() ) )
@@ -1114,7 +1114,7 @@ void CAI_NetworkManager::DelayedInit( void )
 			m_bNeedGraphRebuild = true;
 			g_pAINetworkManager->SetNextThink( gpGlobals->curtime + 1 );
 			return;
-		}	
+		}
 
 	}
 
@@ -1123,7 +1123,7 @@ void CAI_NetworkManager::DelayedInit( void )
 	// --------------------------------------------
 	CAI_DynamicLink::InitDynamicLinks();
 	FixupHints();
-	
+
 	GetEditOps()->OnInit();
 
 	m_fInitalized = true;
@@ -1224,7 +1224,7 @@ int CAI_NetworkEditTools::GetWCIdFromNodeId( int nNodeId )
 //			and within the angular threshold (ignores worldspawn).
 //			DO NOT USE FOR ANY RUN TIME RELEASE CODE
 //			Used for selection of nodes in debugging display only!
-//			
+//
 //-----------------------------------------------------------------------------
 
 CAI_Node *CAI_NetworkEditTools::FindAINodeNearestFacing( const Vector &origin, const Vector &facing, float threshold, int nNodeType)
@@ -1239,7 +1239,7 @@ CAI_Node *CAI_NetworkEditTools::FindAINodeNearestFacing( const Vector &origin, c
 		if (aiNet->GetNode(node)->GetType() != NODE_DELETED)
 		{
 			// Pick nodes that are in the current editing type
-			if ( nNodeType	== NODE_ANY								|| 
+			if ( nNodeType	== NODE_ANY								||
 				 nNodeType	== aiNet->GetNode(node)->GetType()  )
 			{
 				// Make vector to node
@@ -1251,7 +1251,7 @@ CAI_Node *CAI_NetworkEditTools::FindAINodeNearestFacing( const Vector &origin, c
 				{
 					// Make sure I have a line of sight to it
 					trace_t tr;
-					AI_TraceLine ( origin, aiNet->GetNode(node)->GetPosition(m_iHullDrawNum), 
+					AI_TraceLine ( origin, aiNet->GetNode(node)->GetPosition(m_iHullDrawNum),
 						MASK_BLOCKLOS, NULL, COLLISION_GROUP_NONE, &tr );
 					if ( tr.fraction == 1.0 )
 					{
@@ -1273,7 +1273,7 @@ Vector PointOnLineNearestPoint(const Vector& vStartPos, const Vector& vEndPos, c
 	float	fNumerator		= DotProduct(vEndToStart,vOrgToStart);
 	float	fDenominator	= vEndToStart.Length() * vOrgToStart.Length();
 	float	fIntersectDist	= vOrgToStart.Length()*(fNumerator/fDenominator);
-	VectorNormalize( vEndToStart ); 
+	VectorNormalize( vEndToStart );
 	Vector	vIntersectPos	= vStartPos + vEndToStart * fIntersectDist;
 
 	return vIntersectPos;
@@ -1302,7 +1302,7 @@ CAI_Link *CAI_NetworkEditTools::FindAILinkNearestFacing( const Vector &vOrigin, 
 				(!m_bAirEditMode && aiNet->GetNode(node)->GetType() == NODE_GROUND))
 			{
 				// Go through each link
-				for (int link=0; link < aiNet->GetNode(node)->NumLinks();link++) 
+				for (int link=0; link < aiNet->GetNode(node)->NumLinks();link++)
 				{
 					CAI_Link *nodeLink = aiNet->GetNode(node)->GetLinkByIndex(link);
 
@@ -1361,7 +1361,7 @@ CAI_Link *CAI_NetworkEditTools::FindAILinkNearestFacing( const Vector &vOrigin, 
 
 
 //-----------------------------------------------------------------------------
-// Purpose:  Used for WC edit more.  Marks that the network should be 
+// Purpose:  Used for WC edit more.  Marks that the network should be
 //			 rebuild and turns of any displays that have been invalidated
 //			 as the network is now out of date
 // Input  :
@@ -1402,10 +1402,10 @@ void CAI_NetworkEditTools::ClearRebuildFlags( void )
 //-----------------------------------------------------------------------------
 // Purpose: Sets the next hull to draw, or none if at end of hulls
 //-----------------------------------------------------------------------------
-void CAI_NetworkEditTools::DrawNextHull(const char *ainet_name) 
+void CAI_NetworkEditTools::DrawNextHull(const char *ainet_name)
 {
 	m_iHullDrawNum++;
-	if (m_iHullDrawNum == NUM_HULLS) 
+	if (m_iHullDrawNum == NUM_HULLS)
 	{
 		m_iHullDrawNum = 0;
 	}
@@ -1417,10 +1417,10 @@ void CAI_NetworkEditTools::DrawNextHull(const char *ainet_name)
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-void CAI_NetworkEditTools::DrawHull(Hull_t eHull) 
+void CAI_NetworkEditTools::DrawHull(Hull_t eHull)
 {
 	m_iHullDrawNum = eHull;
-	if (m_iHullDrawNum >= NUM_HULLS) 
+	if (m_iHullDrawNum >= NUM_HULLS)
 	{
 		m_iHullDrawNum = 0;
 	}
@@ -1431,11 +1431,11 @@ void CAI_NetworkEditTools::DrawHull(Hull_t eHull)
 
 
 //-----------------------------------------------------------------------------
-// Purpose: Used just for debug display, to color nodes grey that the 
+// Purpose: Used just for debug display, to color nodes grey that the
 //			currently selected hull size can't use.
 //-----------------------------------------------------------------------------
 
-void CAI_NetworkEditTools::RecalcUsableNodesForHull(void) 
+void CAI_NetworkEditTools::RecalcUsableNodesForHull(void)
 {
 	// -----------------------------------------------------
 	//  Use test hull to check hull sizes
@@ -1445,7 +1445,7 @@ void CAI_NetworkEditTools::RecalcUsableNodesForHull(void)
 	m_pTestHull->SetHullType((Hull_t)m_iHullDrawNum);
 	m_pTestHull->SetHullSizeNormal();
 
-	for (int node=0;node<m_pNetwork->NumNodes();node++) 
+	for (int node=0;node<m_pNetwork->NumNodes();node++)
 	{
 		if ( ( m_pNetwork->GetNode(node)->m_eNodeInfo & ( HullToBit( (Hull_t)m_iHullDrawNum ) << NODE_ENT_FLAGS_SHIFT ) )  ||
 			 m_pTestHull->GetNavigator()->CanFitAtNode(node))
@@ -1464,7 +1464,7 @@ void CAI_NetworkEditTools::RecalcUsableNodesForHull(void)
 // Purpose: Sets debug bits
 //-----------------------------------------------------------------------------
 
-void CAI_NetworkEditTools::SetDebugBits(const char *ainet_name,int debug_bit) 
+void CAI_NetworkEditTools::SetDebugBits(const char *ainet_name,int debug_bit)
 {
 	CAI_NetworkEditTools *pEditOps = g_pAINetworkManager->GetEditOps();
 	if ( !pEditOps )
@@ -1481,7 +1481,7 @@ void CAI_NetworkEditTools::SetDebugBits(const char *ainet_name,int debug_bit)
 		{
 			pEditOps->m_debugNetOverlays |= bits_debugOverlayNodesLev2;
 		}
-		else 
+		else
 		{
 			pEditOps->m_debugNetOverlays |= bits_debugOverlayNodes;
 
@@ -1522,7 +1522,7 @@ void CAI_NetworkEditTools::DrawEditInfoOverlay(void)
 	tTextParam.holdTime		= 1;
 	tTextParam.fxTime		= 0;
 	tTextParam.channel		= 0;
-	
+
 	char hullTypeTxt[50];
 	char nodeTypeTxt[50];
 	char editTypeTxt[50];
@@ -1614,7 +1614,7 @@ void CAI_NetworkEditTools::DrawAINetworkOverlay(void)
 	// --------------------
 	// Draw the graph connectivity
 	// ---------------------
-	if (m_debugNetOverlays & bits_debugOverlayGraphConnect) 
+	if (m_debugNetOverlays & bits_debugOverlayGraphConnect)
 	{
 		// ---------------------------------------------------
 		//  If network needs rebuilding do so before display
@@ -1625,7 +1625,7 @@ void CAI_NetworkEditTools::DrawAINetworkOverlay(void)
 		}
 		else if (m_iGConnectivityNode != NO_NODE)
 		{
-			for (int node=0;node<m_pNetwork->NumNodes();node++) 
+			for (int node=0;node<m_pNetwork->NumNodes();node++)
 			{
 				if ( m_pNetwork->IsConnected( m_iGConnectivityNode, node) )
 				{
@@ -1651,12 +1651,12 @@ void CAI_NetworkEditTools::DrawAINetworkOverlay(void)
 		}
 		else
 		{
-			for (int node=startDrawNode;node<endDrawNode;node++) 
+			for (int node=startDrawNode;node<endDrawNode;node++)
 			{
-				for (int link=0;link<pAINode[node]->NumLinks();link++) 
+				for (int link=0;link<pAINode[node]->NumLinks();link++)
 				{
 					// Only draw link once
-					if (pAINode[node]->GetLinkByIndex(link)->DestNodeID(node) < node) 
+					if (pAINode[node]->GetLinkByIndex(link)->DestNodeID(node) < node)
 					{
 
 						Vector srcPos	 = pAINode[pAINode[node]->GetLinkByIndex(link)->m_iSrcID]->GetPosition(m_iHullDrawNum);
@@ -1667,13 +1667,13 @@ void CAI_NetworkEditTools::DrawAINetworkOverlay(void)
 						Vector hullMaxs = NAI_Hull::Maxs(m_iHullDrawNum);
 						hullMaxs.x = length + hullMaxs.x;
 
-						if (pAINode[node]->GetLinkByIndex(link)->m_iAcceptedMoveTypes[m_iHullDrawNum] & bits_CAP_MOVE_FLY) 
-						{	
+						if (pAINode[node]->GetLinkByIndex(link)->m_iAcceptedMoveTypes[m_iHullDrawNum] & bits_CAP_MOVE_FLY)
+						{
 							NDebugOverlay::BoxDirection(srcPos, hullMins, hullMaxs, direction, 100,255,255,20,flDrawDuration);
 						}
-						
-						if (pAINode[node]->GetLinkByIndex(link)->m_iAcceptedMoveTypes[m_iHullDrawNum] & bits_CAP_MOVE_CLIMB) 
-						{	
+
+						if (pAINode[node]->GetLinkByIndex(link)->m_iAcceptedMoveTypes[m_iHullDrawNum] & bits_CAP_MOVE_CLIMB)
+						{
 							// Display as a vertical slice up the climbing surface unless dismount node
 							if (pAINode[pAINode[node]->GetLinkByIndex(link)->m_iSrcID]->GetOrigin() != pAINode[pAINode[node]->GetLinkByIndex(link)->m_iDestID]->GetOrigin())
 							{
@@ -1692,13 +1692,13 @@ void CAI_NetworkEditTools::DrawAINetworkOverlay(void)
 							NDebugOverlay::BoxDirection(srcPos, hullMins, hullMaxs, direction, 255,0,255,20,flDrawDuration);
 						}
 
-						if (pAINode[node]->GetLinkByIndex(link)->m_iAcceptedMoveTypes[m_iHullDrawNum] & bits_CAP_MOVE_GROUND) 
-						{	
+						if (pAINode[node]->GetLinkByIndex(link)->m_iAcceptedMoveTypes[m_iHullDrawNum] & bits_CAP_MOVE_GROUND)
+						{
 							NDebugOverlay::BoxDirection(srcPos, hullMins, hullMaxs, direction, 0,255,50,20,flDrawDuration);
 						}
 
-						else if (pAINode[node]->GetLinkByIndex(link)->m_iAcceptedMoveTypes[m_iHullDrawNum] & bits_CAP_MOVE_JUMP) 
-						{	
+						else if (pAINode[node]->GetLinkByIndex(link)->m_iAcceptedMoveTypes[m_iHullDrawNum] & bits_CAP_MOVE_JUMP)
+						{
 							NDebugOverlay::BoxDirection(srcPos, hullMins, hullMaxs, direction, 0,0,255,20,flDrawDuration);
 						}
 					}
@@ -1718,7 +1718,7 @@ void CAI_NetworkEditTools::DrawAINetworkOverlay(void)
 	// -------------------------------
 	// Draw the nodes and connections
 	// -------------------------------
-	if (m_debugNetOverlays & (bits_debugOverlayNodes | bits_debugOverlayConnections)) 
+	if (m_debugNetOverlays & (bits_debugOverlayNodes | bits_debugOverlayConnections))
 	{
 		for (int node=startDrawNode;node<endDrawNode;node++) {
 
@@ -1728,7 +1728,7 @@ void CAI_NetworkEditTools::DrawAINetworkOverlay(void)
 				// --------------------
 				// Draw the connections
 				// ---------------------
-				if (m_debugNetOverlays & bits_debugOverlayConnections) 
+				if (m_debugNetOverlays & bits_debugOverlayConnections)
 				{
 					// ---------------------------------------------------
 					//  If network needs rebuilding do so before display
@@ -1755,7 +1755,7 @@ void CAI_NetworkEditTools::DrawAINetworkOverlay(void)
 
 								int linkInfo = pAINode[node]->GetLinkByIndex(link)->m_LinkInfo;
 								int moveTypes = pAINode[node]->GetLinkByIndex(link)->m_iAcceptedMoveTypes[m_iHullDrawNum];
-			
+
 								// when rendering, raise NODE_GROUND off the floor slighty as they seem to clip too much
 								if ( srcType == NODE_GROUND)
 								{
@@ -1773,27 +1773,27 @@ void CAI_NetworkEditTools::DrawAINetworkOverlay(void)
 									NDebugOverlay::Line(srcPos, desPos, 255,0,0, false, flDrawDuration);
 								}
 								// Draw in grey if link turned off
-								else if (linkInfo & bits_LINK_OFF)						
+								else if (linkInfo & bits_LINK_OFF)
 								{
 									NDebugOverlay::Line(srcPos, desPos, 100,100,100, false, flDrawDuration);
 								}
 								else if ((m_debugNetOverlays & bits_debugOverlayFlyConnections) && (moveTypes & bits_CAP_MOVE_FLY))
-								{	
+								{
 									NDebugOverlay::Line(srcPos, desPos, 100,255,255, false, flDrawDuration);
 								}
-								else if (moveTypes & bits_CAP_MOVE_CLIMB) 
-								{	
+								else if (moveTypes & bits_CAP_MOVE_CLIMB)
+								{
 									NDebugOverlay::Line(srcPos, desPos, 255,0,255, false, flDrawDuration);
 								}
-								else if (moveTypes & bits_CAP_MOVE_GROUND) 
-								{	
+								else if (moveTypes & bits_CAP_MOVE_GROUND)
+								{
 									NDebugOverlay::Line(srcPos, desPos, 0,255,50, false, flDrawDuration);
 								}
 								else if ((m_debugNetOverlays & bits_debugOverlayJumpConnections) && (moveTypes & bits_CAP_MOVE_JUMP) )
-								{	
+								{
 									NDebugOverlay::Line(srcPos, desPos, 0,0,255, false, flDrawDuration);
 								}
-								else  
+								else
 								{	// Dark red if this hull can't use
 									bool isFly = ( srcType == NODE_AIR || desType == NODE_AIR );
 									bool isJump = true;
@@ -1816,7 +1816,7 @@ void CAI_NetworkEditTools::DrawAINetworkOverlay(void)
 						}
 					}
 				}
-				if (m_debugNetOverlays & bits_debugOverlayNodes) 
+				if (m_debugNetOverlays & bits_debugOverlayNodes)
 				{
 					int r  = 255;
 					int g  = 0;
@@ -1854,7 +1854,7 @@ void CAI_NetworkEditTools::DrawAINetworkOverlay(void)
 						}
 					}
 					// Otherwise base color off of node type
-					else 
+					else
 					{
 						// If node is new and hasn't been rebuild yet
 						if (pAINode[node]->m_eNodeInfo & bits_NODE_WC_CHANGED)
@@ -1898,7 +1898,7 @@ void CAI_NetworkEditTools::DrawAINetworkOverlay(void)
 					nodePos	 = pAINode[node]->GetPosition(m_iHullDrawNum);
 
 					NDebugOverlay::Box(nodePos, Vector(-5,-5,-5), Vector(5,5,5), r,g,b,0,flDrawDuration);
-					
+
 					// If climb node draw line in facing direction
 					if (pAINode[node]->GetType() == NODE_CLIMB)
 					{
@@ -1925,7 +1925,7 @@ void CAI_NetworkEditTools::DrawAINetworkOverlay(void)
 						loc.y+=6;
 						loc.z+=6;
 						NDebugOverlay::Text( loc, msg, true, flDrawDuration);
-						
+
 						// Print the hintgroup if we have one
 						if ( pAINode[node]->GetHint() )
 						{
@@ -1942,7 +1942,7 @@ void CAI_NetworkEditTools::DrawAINetworkOverlay(void)
 	// -------------------------------
 	//  Identify hull being displayed
 	// -------------------------------
-	if (m_debugNetOverlays & (bits_debugOverlayNodes | bits_debugOverlayConnections | bits_debugOverlayHulls)) 
+	if (m_debugNetOverlays & (bits_debugOverlayNodes | bits_debugOverlayConnections | bits_debugOverlayHulls))
 	{
 		DrawEditInfoOverlay();
 	}
@@ -1970,7 +1970,7 @@ void CAI_NetworkEditTools::DrawAINetworkOverlay(void)
 			m_nPerfStatNN		= 0;
 			m_nPerfStatPB		= 0;
 		}
-#endif		
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -1980,7 +1980,7 @@ void CAI_NetworkEditTools::DrawAINetworkOverlay(void)
 CAI_NetworkEditTools::CAI_NetworkEditTools(CAI_NetworkManager *pNetworkManager)
 {
 	// ----------------------------------------------------------------------------
-	// If in wc_edit mode 
+	// If in wc_edit mode
 	// ----------------------------------------------------------------------------
 	if (engine->IsInEditMode())
 	{
@@ -1998,7 +1998,7 @@ CAI_NetworkEditTools::CAI_NetworkEditTools(CAI_NetworkManager *pNetworkManager)
 	m_debugNetOverlays		= 0;
 
 	// ----------------------------------------------------------------------------
-	// Allocate table of WC Id's. If not in edit mode Deleted after initialization 
+	// Allocate table of WC Id's. If not in edit mode Deleted after initialization
 	// ----------------------------------------------------------------------------
 	m_pNodeIndexTable	= new int[MAX_NODES];
 	for ( int i = 0; i < MAX_NODES; i++ )
@@ -2008,7 +2008,7 @@ CAI_NetworkEditTools::CAI_NetworkEditTools(CAI_NetworkManager *pNetworkManager)
 	m_pNetwork = pNetworkManager->GetNetwork(); // @tbd
 	m_pManager = pNetworkManager;
 
-	
+
 }
 
 //-----------------------------------------------------------------------------
@@ -2038,13 +2038,13 @@ void CAI_NetworkBuilder::FloodFillZone( CAI_Node **ppNodes, CAI_Node *pNode, int
 {
 	pNode->SetZone( zone );
 
-	for (int link = 0; link < pNode->NumLinks(); link++) 
+	for (int link = 0; link < pNode->NumLinks(); link++)
 	{
 		CAI_Link *pLink = pNode->GetLinkByIndex(link);
 		CAI_Node *pLinkedNode = ( pLink->m_iDestID == pNode->GetId()) ? ppNodes[pLink->m_iSrcID] : ppNodes[pLink->m_iDestID];
 		if ( pLinkedNode->GetZone() == AI_NODE_ZONE_UNKNOWN )
 			FloodFillZone( ppNodes, pLinkedNode, zone );
-			
+
 		Assert( pLinkedNode->GetZone() == pNode->GetZone() && pNode->GetZone() == zone );
 	}
 }
@@ -2059,25 +2059,25 @@ void CAI_NetworkBuilder::InitZones( CAI_Network *pNetwork )
 
 	if ( !nNodes )
 		return;
-		
+
 	int i;
-	
+
 	for (i = 0; i < nNodes; i++)
-	{	
+	{
 		ppNodes[i]->SetZone( AI_NODE_ZONE_UNKNOWN );
 	}
 
 	// Mark solo nodes
 	for (i = 0; i < nNodes; i++)
-	{	
+	{
 		if ( ppNodes[i]->NumLinks() == 0 )
 			ppNodes[i]->SetZone( AI_NODE_ZONE_SOLO );
 	}
-	
+
 	int curZone = AI_NODE_FIRST_ZONE;
 
 	for (i = 0; i < nNodes; i++)
-	{	
+	{
 		if ( ppNodes[i]->GetZone() == AI_NODE_ZONE_UNKNOWN )
 		{
 			FloodFillZone( (CAI_Node **)ppNodes, ppNodes[i], curZone );
@@ -2087,7 +2087,7 @@ void CAI_NetworkBuilder::InitZones( CAI_Network *pNetwork )
 
 #ifdef DEBUG
 	for (i = 0; i < nNodes; i++)
-	{	
+	{
 		Assert( ppNodes[i]->GetZone() != AI_NODE_ZONE_UNKNOWN );
 	}
 #endif
@@ -2108,7 +2108,7 @@ void CAI_NetworkBuilder::Rebuild( CAI_Network *pNetwork )
 		return;
 
 	BeginBuild();
-	
+
 	// ------------------------------------------------------------
 	//  First mark all nodes around vecPos as having to be rebuilt
 	// ------------------------------------------------------------
@@ -2193,7 +2193,7 @@ void CAI_NetworkBuilder::Rebuild( CAI_Network *pNetwork )
 		}
 	}
 	for (i = 0; i < nNodes; i++)
-	{	
+	{
 		if (ppNodes[i]->NeedsRebuild())
 		{
 			InitLinks( pNetwork, ppNodes[i] );
@@ -2243,10 +2243,10 @@ void CAI_NetworkBuilder::Build( CAI_Network *pNetwork )
 
 	CFastTimer masterTimer;
 	CFastTimer timer;
-	
+
 	DevMsg( "Building AI node graph...\n");
 	masterTimer.Start();
-	
+
 	// ---------------------------
 	// Initialize node positions
 	// ---------------------------
@@ -2277,7 +2277,7 @@ void CAI_NetworkBuilder::Build( CAI_Network *pNetwork )
 		m_NeighborsTable[i].ClearAll();
 	}
 	for (i = 0; i < nNodes; i++)
-	{	
+	{
 		InitNeighbors( pNetwork, ppNodes[i] );
 	}
 	timer.End();
@@ -2298,12 +2298,12 @@ void CAI_NetworkBuilder::Build( CAI_Network *pNetwork )
 	DevMsg( "Determining links...\n" );
 	timer.Start();
 	for (i = 0; i < nNodes; i++)
-	{	
+	{
 		// Make sure all the links are clear
 		ppNodes[i]->ClearLinks();
 	}
 	for (i = 0; i < nNodes; i++)
-	{	
+	{
 		InitLinks( pNetwork, ppNodes[i] );
 	}
 	timer.End();
@@ -2330,7 +2330,7 @@ void CAI_NetworkBuilder::Build( CAI_Network *pNetwork )
 
 //------------------------------------------------------------------------------
 // Purpose : Forces testing of a connection between src and dest IDs for all dynamic links
-//			 	
+//
 // Input   :
 // Output  :
 //------------------------------------------------------------------------------
@@ -2395,7 +2395,7 @@ CAI_NetworkBuilder g_AINetworkBuilder;
 // Input  :
 // Output :
 //-----------------------------------------------------------------------------
-void CAI_NetworkBuilder::InitClimbNodePosition(CAI_Network *pNetwork, CAI_Node *pNode) 
+void CAI_NetworkBuilder::InitClimbNodePosition(CAI_Network *pNetwork, CAI_Node *pNode)
 {
 	AI_PROFILE_SCOPE( CAI_Node_InitClimbNodePosition );
 
@@ -2415,8 +2415,8 @@ void CAI_NetworkBuilder::InitClimbNodePosition(CAI_Network *pNetwork, CAI_Node *
 	// ----------------
 	trace_t trace;
 	Vector posOnLadder		= pNode->GetPosition(HULL_SMALL_CENTERED);
-	AI_TraceHull( posOnLadder, posOnLadder + Vector( 0, 0, -37 ), 
-		NAI_Hull::Mins(HULL_SMALL_CENTERED), NAI_Hull::Maxs(HULL_SMALL_CENTERED), 
+	AI_TraceHull( posOnLadder, posOnLadder + Vector( 0, 0, -37 ),
+		NAI_Hull::Mins(HULL_SMALL_CENTERED), NAI_Hull::Maxs(HULL_SMALL_CENTERED),
 		MASK_NPCSOLID_BRUSHONLY, NULL, COLLISION_GROUP_NONE, &trace );
 
 	// --------------------------------------------------------------------
@@ -2455,7 +2455,7 @@ void CAI_NetworkBuilder::InitClimbNodePosition(CAI_Network *pNetwork, CAI_Node *
 		pNode->m_eNodeInfo = checkNodeTypes[i];
 
 		Vector origin = pNode->GetPosition(HULL_SMALL_CENTERED);
-		
+
 		// DevMsg( "testing %f %f %f\n", origin.x, origin.y, origin.z );
 		// ----------------
 		//  Check outward
@@ -2464,7 +2464,7 @@ void CAI_NetworkBuilder::InitClimbNodePosition(CAI_Network *pNetwork, CAI_Node *
 						 origin,
 						 MASK_NPCSOLID_BRUSHONLY,
 						 NULL,
-						 COLLISION_GROUP_NONE, 
+						 COLLISION_GROUP_NONE,
 						 &trace );
 
 		// DevMsg( "to %f %f %f : %d %f", origin.x, origin.y, origin.z, trace.startsolid, trace.fraction );
@@ -2563,7 +2563,7 @@ void CAI_NetworkBuilder::InitGroundNodePosition(CAI_Network *pNetwork, CAI_Node 
 // Input  :
 // Output :
 //-----------------------------------------------------------------------------
-void CAI_NetworkBuilder::InitNodePosition(CAI_Network *pNetwork, CAI_Node *pNode) 
+void CAI_NetworkBuilder::InitNodePosition(CAI_Network *pNetwork, CAI_Node *pNode)
 {
 	AI_PROFILE_SCOPE( CAI_Node_InitNodePosition );
 
@@ -2587,7 +2587,7 @@ void CAI_NetworkBuilder::InitNodePosition(CAI_Network *pNetwork, CAI_Node *pNode
 		{
 			Assert( pNetwork == g_pBigAINet );
 			DevWarning("ERROR: Node %.0f %.0f %.0f, WC ID# %i, is either too low (fell through floor) or too high (>100 units above floor)\n",
-				pNode->GetOrigin().x, pNode->GetOrigin().y, pNode->GetOrigin().z, 
+				pNode->GetOrigin().x, pNode->GetOrigin().y, pNode->GetOrigin().z,
 				g_pAINetworkManager->GetEditOps()->m_pNodeIndexTable[pNode->m_iID]);
 
 			pNode->m_eNodeInfo |= bits_NODE_FALLEN;
@@ -2615,14 +2615,14 @@ void CAI_NetworkBuilder::InitNodePosition(CAI_Network *pNetwork, CAI_Node *pNode
 void CAI_NetworkBuilder::InitVisibility(CAI_Network *pNetwork, CAI_Node *pNode)
 {
 	AI_PROFILE_SCOPE( CAI_Node_InitVisibility );
-	
+
 	// If a deleted node bail
 	if (pNode->m_eNodeType == NODE_DELETED)
 	{
 		return;
 	}
 	// The actual position of some nodes may be inside geometry as they have
-	// hull specific position offsets (e.g. climb nodes).  Get the hull specific 
+	// hull specific position offsets (e.g. climb nodes).  Get the hull specific
 	// position using the smallest hull to make sure were not in geometry
 	Vector srcPos = pNode->GetPosition(HULL_SMALL_CENTERED);
 
@@ -2642,7 +2642,7 @@ void CAI_NetworkBuilder::InitVisibility(CAI_Network *pNetwork, CAI_Node *pNode)
 			m_NeighborsTable[pNode->m_iID].Set(testNode->m_iID);
 			continue;
 		}
-		
+
 		// Remove duplicate nodes unless a climb node as they move
 		if (testNode->GetOrigin() == pNode->GetOrigin() && testNode->GetType() != NODE_CLIMB)
 		{
@@ -2665,21 +2665,21 @@ void CAI_NetworkBuilder::InitVisibility(CAI_Network *pNetwork, CAI_Node *pNode)
 			continue;
 		}
 
-		float flDistToCheckNode = ( testNode->GetOrigin() - pNode->GetOrigin() ).LengthSqr(); 
+		float flDistToCheckNode = ( testNode->GetOrigin() - pNode->GetOrigin() ).LengthSqr();
 
 		if ( testNode->GetType() == NODE_AIR )
 		{
-			if (flDistToCheckNode > MAX_AIR_NODE_LINK_DIST_SQ) 
+			if (flDistToCheckNode > MAX_AIR_NODE_LINK_DIST_SQ)
 				continue;
 		}
 		else
 		{
-			if (flDistToCheckNode > MAX_NODE_LINK_DIST_SQ) 
+			if (flDistToCheckNode > MAX_NODE_LINK_DIST_SQ)
 				continue;
 		}
 
 		// The actual position of some nodes may be inside geometry as they have
-		// hull specific position offsets (e.g. climb nodes).  Get the hull specific 
+		// hull specific position offsets (e.g. climb nodes).  Get the hull specific
 		// position using the smallest hull to make sure were not in geometry
 		Vector destPos = pNetwork->GetNode( testnode )->GetPosition(HULL_SMALL_CENTERED);
 
@@ -2706,7 +2706,7 @@ void CAI_NetworkBuilder::InitVisibility(CAI_Network *pNetwork, CAI_Node *pNode)
 		{
 			AI_TraceLine ( srcPos + Vector( 0, 0, 70 ),destPos + Vector( 0, 0, 70 ),MASK_NPCWORLDSTATIC,NULL,COLLISION_GROUP_NONE, &tr );
 			if (!tr.startsolid && tr.fraction == 1.0)
-			{	
+			{
 				isVisible = true;
 			}
 		}
@@ -2718,7 +2718,7 @@ void CAI_NetworkBuilder::InitVisibility(CAI_Network *pNetwork, CAI_Node *pNode)
 		{
 			AI_TraceLine ( srcPos + Vector( 0, 0, 70 ),destPos,MASK_NPCWORLDSTATIC,NULL,COLLISION_GROUP_NONE, &tr );
 			if (!tr.startsolid && tr.fraction == 1.0)
-			{	
+			{
 				isVisible = true;
 			}
 		}
@@ -2730,7 +2730,7 @@ void CAI_NetworkBuilder::InitVisibility(CAI_Network *pNetwork, CAI_Node *pNode)
 		{
 			AI_TraceLine ( srcPos,destPos + Vector( 0, 0, 70 ),MASK_NPCWORLDSTATIC,NULL,COLLISION_GROUP_NONE, &tr );
 			if (!tr.startsolid && tr.fraction == 1.0)
-			{	
+			{
 				isVisible = true;
 			}
 		}
@@ -2756,9 +2756,9 @@ void CAI_NetworkBuilder::InitVisibility(CAI_Network *pNetwork, CAI_Node *pNode)
 							 NULL,
 							 &tr );
 
-			
+
 			// there is a solid_bsp ent in the way of these two nodes, so we must record several things about in order to keep
-			// track of it in the pathfinding code, as well as through save and restore of the node graph. ANY data that is manipulated 
+			// track of it in the pathfinding code, as well as through save and restore of the node graph. ANY data that is manipulated
 			// as part of the process of adding a LINKENT to a connection here must also be done in CGraph::SetGraphPointers, where reloaded
 			// graphs are prepared for use.
 			if ( tr.u.ent == pTraceEnt && !FClassnameIs( tr.u.ent, "worldspawn" ) )
@@ -2802,7 +2802,7 @@ void CAI_NetworkBuilder::InitVisibility(CAI_Network *pNetwork, CAI_Node *pNode)
 void CAI_NetworkBuilder::InitNeighbors(CAI_Network *pNetwork, CAI_Node *pNode)
 {
 	m_NeighborsTable[pNode->m_iID].ClearAll();
-	
+
 	// Begin by establishing viewability to limit the number of nodes tested
 	InitVisibility( pNetwork, pNode );
 
@@ -2825,7 +2825,7 @@ void CAI_NetworkBuilder::InitNeighbors(CAI_Network *pNetwork, CAI_Node *pNode)
 		}
 
 		// Only check if already on the neightbor list
-		if (!m_NeighborsTable[pNode->m_iID].IsBitSet(checknode)) 
+		if (!m_NeighborsTable[pNode->m_iID].IsBitSet(checknode))
 		{
 			continue;
 		}
@@ -2841,7 +2841,7 @@ void CAI_NetworkBuilder::InitNeighbors(CAI_Network *pNetwork, CAI_Node *pNode)
 			}
 
 			// Only check if already on the neightbor list
-			if (!m_NeighborsTable[pNode->m_iID].IsBitSet(testnode)) 
+			if (!m_NeighborsTable[pNode->m_iID].IsBitSet(testnode))
 			{
 				continue;
 			}
@@ -2875,7 +2875,7 @@ void CAI_NetworkBuilder::InitNeighbors(CAI_Network *pNetwork, CAI_Node *pNode)
 			{
 				continue;
 			}
-			
+
 			// @HACKHACK (toml 02-25-04): Ignore redundancy if both nodes are air nodes with
 			// hint type "strider node". Really, really should do this in a clean manner
 			bool nodeIsStrider = ( pNode->GetHint() && pNode->GetHint()->HintType() == HINT_STRIDER_NODE );
@@ -2886,15 +2886,15 @@ void CAI_NetworkBuilder::InitNeighbors(CAI_Network *pNetwork, CAI_Node *pNode)
 				continue;
 			}
 
-			Vector	vec2DirToCheckNode = pCheckNode->GetOrigin() - pNode->GetOrigin(); 
+			Vector	vec2DirToCheckNode = pCheckNode->GetOrigin() - pNode->GetOrigin();
 			float	flDistToCheckNode  = VectorNormalize( vec2DirToCheckNode );
 
-			Vector	vec2DirToTestNode = ( pTestNode->GetOrigin() - pNode->GetOrigin() ); 
+			Vector	vec2DirToTestNode = ( pTestNode->GetOrigin() - pNode->GetOrigin() );
 			float	flDistToTestNode  = VectorNormalize( vec2DirToTestNode );
 
 			float	tolerance = 0.92388;	// 45 degrees
 
-			if ( DotProduct ( vec2DirToCheckNode, vec2DirToTestNode ) >= tolerance ) 
+			if ( DotProduct ( vec2DirToCheckNode, vec2DirToTestNode ) >= tolerance )
 			{
 				if ( flDistToTestNode < flDistToCheckNode )
 				{
@@ -2909,7 +2909,7 @@ void CAI_NetworkBuilder::InitNeighbors(CAI_Network *pNetwork, CAI_Node *pNode)
 			}
 		}
 	}
-	
+
 	AI_PROFILE_SCOPE_END();
 
 	m_DidSetNeighborsTable.Set(pNode->m_iID);
@@ -2939,7 +2939,7 @@ static bool IsInLineForClimb( const Vector &srcPos, const Vector &srcFacing, con
 	// If they aren't in line along the facing...
 	if ( CalcDistanceToLine2D( destPos.AsVector2D(), srcPos.AsVector2D(), srcPos.AsVector2D() + srcFacing.AsVector2D() ) > 0.01 )
 		return false;
-		
+
 	// Check that the angle between them is either staight up, or on at angle of ladder-stairs
 	Vector vecDelta = srcPos - destPos;
 
@@ -2964,9 +2964,9 @@ int CAI_NetworkBuilder::ComputeConnection( CAI_Node *pSrcNode, CAI_Node *pDestNo
 	int destId = pDestNode->m_iID;
 	int result = 0;
 	trace_t tr;
-	
+
 	// Set the size of the test hull
-	if ( m_pTestHull->GetHullType() != hull ) 
+	if ( m_pTestHull->GetHullType() != hull )
 	{
 		m_pTestHull->SetHullType( hull );
 		m_pTestHull->SetHullSizeNormal( true );
@@ -2981,25 +2981,25 @@ int CAI_NetworkBuilder::ComputeConnection( CAI_Node *pSrcNode, CAI_Node *pDestNo
 	// ==============================================================
 	// FIRST CHECK IF HULL CAN EVEN FIT AT THESE NODES
 	// ==============================================================
-	// @Note (toml 02-10-03): this should be optimized, caching the results of CanFitAtNode() 
+	// @Note (toml 02-10-03): this should be optimized, caching the results of CanFitAtNode()
 	if ( !( pSrcNode->m_eNodeInfo & ( HullToBit( hull ) << NODE_ENT_FLAGS_SHIFT ) ) &&
 		 !m_pTestHull->GetNavigator()->CanFitAtNode(srcId,MASK_NPCWORLDSTATIC) )
 	{
 		DebugConnectMsg( srcId, destId, "      Cannot fit at node %d\n", srcId );
 		return 0;
 	}
-	
+
 	if (  !( pDestNode->m_eNodeInfo & ( HullToBit( hull ) << NODE_ENT_FLAGS_SHIFT ) ) &&
 		 !m_pTestHull->GetNavigator()->CanFitAtNode(destId,MASK_NPCWORLDSTATIC) )
 	{
 		DebugConnectMsg( srcId, destId, "      Cannot fit at node %d\n", destId );
 		return 0;
 	}
-	
+
 	// ==============================================================
 	// AIR NODES (FLYING)
 	// ==============================================================
-	if (pSrcNode->m_eNodeType == NODE_AIR || pDestNode->GetType() == NODE_AIR) 
+	if (pSrcNode->m_eNodeType == NODE_AIR || pDestNode->GetType() == NODE_AIR)
 	{
 		AI_PROFILE_SCOPE( CAI_Node_InitLinks_Air );
 
@@ -3025,12 +3025,12 @@ int CAI_NetworkBuilder::ComputeConnection( CAI_Node *pSrcNode, CAI_Node *pDestNo
 
 		Vector srcPos	 = pSrcNode->GetPosition(hull);
 		Vector destPos	 = pDestNode->GetPosition(hull);
-		
+
 		// If a code genereted climb dismount node the two origins will be the same
 		if (pSrcNode->GetOrigin() == pDestNode->GetOrigin())
 		{
-			AI_TraceHull( srcPos, destPos, 
-							NAI_Hull::Mins(hull),NAI_Hull::Maxs(hull), 
+			AI_TraceHull( srcPos, destPos,
+							NAI_Hull::Mins(hull),NAI_Hull::Maxs(hull),
 							MASK_NPCWORLDSTATIC, m_pTestHull, COLLISION_GROUP_NONE, &tr );
 			if (!tr.startsolid && tr.fraction == 1.0)
 			{
@@ -3057,11 +3057,11 @@ int CAI_NetworkBuilder::ComputeConnection( CAI_Node *pSrcNode, CAI_Node *pDestNo
 	}
 	// ====================================================
 	// > TWO LAND NODES
-	// =====================================================	
+	// =====================================================
 	else if ((pSrcNode->m_eNodeType == NODE_GROUND) || (pDestNode->GetType() == NODE_GROUND))
 	{
 		// BUG: this could use GroundMoveLimit, except there's no version of world but not brushes (doors open, etc).
-		
+
 		// ====================================================
 		// > WALKING : walk the space between the nodes
 		// =====================================================
@@ -3103,7 +3103,7 @@ int CAI_NetworkBuilder::ComputeConnection( CAI_Node *pSrcNode, CAI_Node *pDestNo
 			result |= bits_CAP_MOVE_GROUND;
 			DebugConnectMsg( srcId, destId, "      Nodes connect for ground movement\n" );
 		}
-	
+
 		AI_PROFILE_SCOPE_END();
 
 		// =============================================================================
@@ -3121,7 +3121,7 @@ int CAI_NetworkBuilder::ComputeConnection( CAI_Node *pSrcNode, CAI_Node *pDestNo
 			bool canDestJump = m_pTestHull->IsJumpLegal(srcPos, destPos, destPos);
 			bool canSrcJump  = m_pTestHull->IsJumpLegal(destPos, srcPos, srcPos);
 
-			if (canDestJump || canSrcJump) 
+			if (canDestJump || canSrcJump)
 			{
 				CAI_MoveProbe *pMoveProbe = m_pTestHull->GetMoveProbe();
 
@@ -3139,7 +3139,7 @@ int CAI_NetworkBuilder::ComputeConnection( CAI_Node *pSrcNode, CAI_Node *pDestNo
 				{
 					fJumpLegal = true;
 				}
-				
+
 				// Add to our list of accepable hulls
 				if (fJumpLegal)
 				{
@@ -3166,7 +3166,7 @@ void CAI_NetworkBuilder::InitLinks(CAI_Network *pNetwork, CAI_Node *pNode)
 	m_pTestHull->GetNavigator()->SetNetwork( pNetwork );
 
 	// -----------------------------------------------------
-	// Initialize links to every node 
+	// Initialize links to every node
 	// -----------------------------------------------------
 	for (int i = 0; i < pNetwork->NumNodes(); i++ )
   	{
@@ -3174,7 +3174,7 @@ void CAI_NetworkBuilder::InitLinks(CAI_Network *pNetwork, CAI_Node *pNode)
 		//  Check for redundant link building
 		// -------------------------------------------------
 		DebugConnectMsg( pNode->m_iID, i, "Testing connection between %d and %d:\n", pNode->m_iID, i );
-		
+
 		if (pNode->HasLink(i))
 		{
 			// A link has been already created when the other node was processed...
@@ -3186,7 +3186,7 @@ void CAI_NetworkBuilder::InitLinks(CAI_Network *pNetwork, CAI_Node *pNode)
 		// If link has been already created in other node just share it
 		// ---------------------------------------------------------------------
 		CAI_Node *pDestNode = pNetwork->GetNode( i );
-		
+
 		CAI_Link *pOldLink = pDestNode->HasLink(pNode->m_iID);
 		if (pOldLink)
 		{
@@ -3196,7 +3196,7 @@ void CAI_NetworkBuilder::InitLinks(CAI_Network *pNetwork, CAI_Node *pNode)
 		}
 
 		// Only check if the node is a neighbor
-		if ( m_NeighborsTable[pNode->m_iID].IsBitSet(pDestNode->m_iID) ) 
+		if ( m_NeighborsTable[pNode->m_iID].IsBitSet(pDestNode->m_iID) )
 		{
 			int acceptedMotions[NUM_HULLS];
 
@@ -3212,7 +3212,7 @@ void CAI_NetworkBuilder::InitLinks(CAI_Network *pNetwork, CAI_Node *pNode)
 				for (int hull = 0 ; hull < NUM_HULLS; hull++ )
 				{
 					DebugConnectMsg( pNode->m_iID, i, "   Testing for hull %s\n", NAI_Hull::Name( (Hull_t)hull  ) );
-					
+
 					acceptedMotions[hull] = ComputeConnection( pNode, pDestNode, (Hull_t)hull );
 					if ( acceptedMotions[hull] != 0 )
 						bAllFailed = false;
@@ -3222,7 +3222,7 @@ void CAI_NetworkBuilder::InitLinks(CAI_Network *pNetwork, CAI_Node *pNode)
 				DebugConnectMsg( pNode->m_iID, i, "   No connection: one or both are fallen nodes\n" );
 
 			// If there were any passible hulls create link
-			if (!bAllFailed) 
+			if (!bAllFailed)
 			{
 				CAI_Link *pLink = pNetwork->CreateLink( pNode->m_iID, pDestNode->m_iID);
 				if ( pLink )
@@ -3234,7 +3234,7 @@ void CAI_NetworkBuilder::InitLinks(CAI_Network *pNetwork, CAI_Node *pNode)
 					DebugConnectMsg( pNode->m_iID, i, "   Added link\n" );
 				}
 			}
-			else 
+			else
 			{
 				m_NeighborsTable[pNode->m_iID].Clear(pDestNode->m_iID);
 				DebugConnectMsg(pNode->m_iID, i, "   NO LINK\n" );

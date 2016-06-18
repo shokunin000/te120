@@ -1650,6 +1650,8 @@ void CHLClient::LevelInitPreEntity( char const* pMapName )
 		engine->ClientCmd( "phys_timescale 1" );
 
 	// Reset all achievements and stats (for development only)
+//#define RESETSTATS
+
 #ifdef RESETSTATS
 	DevMsg("Reset all stats!\n");
 	steamapicontext->SteamUserStats()->ResetAllStats( true );

@@ -24,7 +24,7 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
-ConVar hud_showemptyweaponslots( "hud_showemptyweaponslots", "1", FCVAR_ARCHIVE, "Shows slots for missing weapons when recieving weapons out of order" );
+ConVar hud_showemptyweaponslots( "hud_showemptyweaponslots", "0", FCVAR_ARCHIVE, "Shows slots for missing weapons when recieving weapons out of order" ); //TE120
 
 #define SELECTION_TIMEOUT_THRESHOLD		0.5f	// Seconds
 #define SELECTION_FADEOUT_TIME			0.75f
@@ -603,15 +603,11 @@ void CHudWeaponSelection::Paint()
 			// Modifiers for the four directions. Used to change the x and y offsets
 			// of each box based on which bucket we're drawing. Bucket directions are
 			// 0 = UP, 1 = RIGHT, 2 = DOWN, 3 = LEFT
-			/*
-			int xModifiers[] = { 0, 1, 0, -1, -1, 1 };
-			int yModifiers[] = { -1, 0, 1, 0, 1, 1 };
-			*/
 			int xModifiers[] = { 0, 1, 0, -1, 0, 0 };
- 			int yModifiers[] = { -1, 0, 1, 0, 0, 0 };
+			int yModifiers[] = { -1, 0, 1, 0, 0, 0 };
 
- 			Assert( ARRAYSIZE( xModifiers ) >= MAX_WEAPON_SLOTS );
- 			Assert( ARRAYSIZE( yModifiers ) >= MAX_WEAPON_SLOTS );
+			Assert( ARRAYSIZE( xModifiers ) >= MAX_WEAPON_SLOTS );
+			Assert( ARRAYSIZE( yModifiers ) >= MAX_WEAPON_SLOTS );
 
 			// Draw the four buckets
 			for ( int i = 0; i < MAX_WEAPON_SLOTS; ++i )
