@@ -25,7 +25,7 @@
 
 const float DEFAULT_SOUND_RADIUS = 36.0f;
 // Keep an array of all looping sounds so they can be faded in/out
-// OPTIMIZE: Get a handle/pointer to the engine's sound channel instead 
+// OPTIMIZE: Get a handle/pointer to the engine's sound channel instead
 //			of searching each frame!
 struct loopingsound_t
 {
@@ -104,7 +104,7 @@ public:
 		TouchSoundFiles();
 	}
 
-	virtual void LevelInitPostEntity() 
+	virtual void LevelInitPostEntity()
 	{
 		if ( !m_pSoundMixerVar )
 		{
@@ -158,22 +158,22 @@ public:
 		Msg( "----------------------------------\n\n" );
 	}
 
-	
+
 	// local functions
 	void UpdateAudioParams( audioparams_t &audio );
 	void GetAudioParams( audioparams_t &out ) const { out = m_params; }
-	int GetCurrentSoundscape() 
-	{ 
+	int GetCurrentSoundscape()
+	{
 		if ( m_forcedSoundscapeIndex >= 0 )
 			return m_forcedSoundscapeIndex;
-		return m_params.soundscapeIndex; 
+		return m_params.soundscapeIndex;
 	}
 	void DevReportSoundscapeName( int index );
 	void UpdateLoopingSounds( float frametime );
 	int AddLoopingAmbient( const char *pSoundName, float volume, int pitch );
 	void UpdateLoopingSound( loopingsound_t &loopSound );
 	void StopLoopingSound( loopingsound_t &loopSound );
-	int AddLoopingSound( const char *pSoundName, bool isAmbient, float volume, 
+	int AddLoopingSound( const char *pSoundName, bool isAmbient, float volume,
 		soundlevel_t soundLevel, int pitch, const Vector &position );
 	int AddRandomSound( const randomsound_t &sound );
 	void PlayRandomSound( randomsound_t &sound );
@@ -185,7 +185,7 @@ public:
 	int FindSoundscapeByName( const char *pSoundscapeName );
 	const char *SoundscapeNameByIndex( int index );
 	KeyValues *SoundscapeByIndex( int index );
-	
+
 	// main-level soundscape processing, called on new soundscape
 	void StartNewSoundscape( KeyValues *pSoundscape );
 	void StartSubSoundscape( KeyValues *pSoundscape, subsoundscapeparams_t &params );
@@ -197,7 +197,7 @@ public:
 	// "dsp_player"
 	void ProcessDSPPlayer( KeyValues *pDSPPlayer );
 	// "playlooping"
-	void ProcessPlayLooping( KeyValues *pPlayLooping, const subsoundscapeparams_t &params );	
+	void ProcessPlayLooping( KeyValues *pPlayLooping, const subsoundscapeparams_t &params );
 	// "playrandom"
 	void ProcessPlayRandom( KeyValues *pPlayRandom, const subsoundscapeparams_t &params );
 	// "playsoundscape"
@@ -223,7 +223,7 @@ private:
 	void		TouchSoundFile( char const *wavefile );
 
 	void		TouchSoundFiles();
-	
+
 	int							m_nRestoreFrame;
 
 	CUtlVector< KeyValues * >	m_SoundscapeScripts;	// The whole script file in memory
@@ -326,7 +326,7 @@ bool C_SoundscapeSystem::Init()
 				continue;
 			}
 
-			Warning( "C_SoundscapeSystem::Init:  Manifest '%s' with bogus file type '%s', expecting 'file'\n", 
+			Warning( "C_SoundscapeSystem::Init:  Manifest '%s' with bogus file type '%s', expecting 'file'\n",
 				SOUNDSCAPE_MANIFEST_FILE, sub->GetName() );
 		}
 
@@ -384,7 +384,7 @@ void C_SoundscapeSystem::Shutdown()
 		// sound is done, remove from list.
 		StopLoopingSound( sound );
 	}
-	
+
 	// These are only necessary so we can use shutdown/init calls
 	// to flush soundscape data
 	m_loopingSounds.RemoveAll();
@@ -432,7 +432,7 @@ static int SoundscapeCompletion( const char *partial, char commands[ COMMAND_COM
 		substring = (char *)partial + strlen( cmdname ) + 1;
 		substringLen = strlen(substring);
 	}
-	
+
 	int i = 0;
 	const char *pSoundscapeName = g_SoundscapeSystem.SoundscapeNameByIndex( i );
 	while ( pSoundscapeName && current < COMMAND_COMPLETION_MAXITEMS )
@@ -527,7 +527,7 @@ void C_SoundscapeSystem::UpdateLoopingSounds( float frametime )
 	}
 }
 
-void C_SoundscapeSystem::Update( float frametime ) 
+void C_SoundscapeSystem::Update( float frametime )
 {
 	if ( m_forcedSoundscapeIndex >= 0 )
 	{
@@ -537,7 +537,7 @@ void C_SoundscapeSystem::Update( float frametime )
 		{
 			Vector origin, forward, right;
 			pPlayer->EyePositionAndVectors( &origin, &forward, &right, NULL );
-			
+
 			// put the sound origins at the corners of a box around the player
 			m_params.localSound.Set( 0, origin + m_forcedSoundscapeRadius * (forward-right) );
 			m_params.localSound.Set( 1, origin + m_forcedSoundscapeRadius * (forward+right) );
@@ -567,8 +567,7 @@ void C_SoundscapeSystem::UpdateAudioParams( audioparams_t &audio )
 	else
 	{
 		// bad index (and the soundscape file actually existed...)
-		if ( audio.ent.Get() != 0 &&
-			 audio.soundscapeIndex != -1 )
+		if ( audio.ent.Get() != 0 && audio.soundscapeIndex != -1 )
 		{
 			DevMsg(1, "Error: Bad soundscape!\n");
 		}
@@ -691,8 +690,8 @@ void C_SoundscapeSystem::ProcessDSP( KeyValues *pDSP )
 }
 
 //-----------------------------------------------------------------------------
-// Purpose: 
-// Input  : *pDSPPlayer - 
+// Purpose:
+// Input  : *pDSPPlayer -
 //-----------------------------------------------------------------------------
 void C_SoundscapeSystem::ProcessDSPPlayer( KeyValues *pDSPPlayer )
 {
@@ -1024,7 +1023,7 @@ void C_SoundscapeSystem::ProcessPlayRandom( KeyValues *pPlayRandom, const subsou
 void C_SoundscapeSystem::ProcessPlaySoundscape( KeyValues *pPlaySoundscape, subsoundscapeparams_t &paramsIn )
 {
 	subsoundscapeparams_t subParams = paramsIn;
-	
+
 	// sub-soundscapes NEVER set the DSP effects
 	subParams.allowDSP = false;
 	subParams.recurseLevel++;
@@ -1110,12 +1109,12 @@ int C_SoundscapeSystem::AddLoopingSound( const char *pSoundName, bool isAmbient,
 		loopingsound_t &sound = m_loopingSounds[soundSlot];
 
 		// NOTE: Will always restart/crossfade positional sounds
-		if ( sound.id != m_loopingSoundId && 
-			sound.pitch == pitch && 
+		if ( sound.id != m_loopingSoundId &&
+			sound.pitch == pitch &&
 			!Q_strcasecmp( pSoundName, sound.pWaveName ) )
 		{
 			// Ambient sounds can reuse the slots.
-			if ( isAmbient == true && 
+			if ( isAmbient == true &&
 				sound.isAmbient == true )
 			{
 				// reuse this sound
@@ -1136,14 +1135,14 @@ int C_SoundscapeSystem::AddLoopingSound( const char *pSoundName, bool isAmbient,
 					// If it's trying to fade out one positional sound and fade in another, then it gets screwy
 					// because it'll be sending alternating commands to the sound engine, referencing the same sound
 					// (SOUND_FROM_WORLD, CHAN_STATIC, pSoundName). One of the alternating commands will be as
-					// it fades the sound out, and one will be fading the sound in. 
+					// it fades the sound out, and one will be fading the sound in.
 					// Because this will occasionally cause the sound to vanish entirely, we stop the old sound immediately.
 					StopLoopingSound(sound);
 					pSoundSlot = &sound;
 
 					// make a note to update the sound immediately. Otherwise, if its volume happens to be
 					// the same as the old sound's volume, it will never update at all.
-					bForceSoundUpdate = true; 
+					bForceSoundUpdate = true;
 					break;
 				}
 			}
@@ -1187,7 +1186,7 @@ int C_SoundscapeSystem::AddLoopingSound( const char *pSoundName, bool isAmbient,
 	sound.isAmbient = isAmbient;
 	sound.position = position;
 	sound.soundlevel = soundlevel;
-	
+
 	if (bForceSoundUpdate)
 	{
 		UpdateLoopingSound(sound);
@@ -1238,7 +1237,7 @@ int C_SoundscapeSystem::AddRandomSound( const randomsound_t &sound )
 {
 	int index = m_randomSounds.AddToTail( sound );
 	m_randomSounds[index].nextPlayTime = gpGlobals->curtime + 0.5 * RandomInterval( sound.time );
-	
+
 	return index;
 }
 
@@ -1256,9 +1255,9 @@ void C_SoundscapeSystem::PlayRandomSound( randomsound_t &sound )
 	}
 	if ( !pWaves )
 		return;
-	
+
 	const char *pWaveName = pWaves->GetString();
-	
+
 	if ( !pWaveName )
 		return;
 
