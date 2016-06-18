@@ -2220,6 +2220,9 @@ static ConVar mat_postprocess_x( "mat_postprocess_x", "4" );
 static ConVar mat_postprocess_y( "mat_postprocess_y", "1" );
 
 //TE120--
+// Convars for controlling TE120 post processing
+tatic ConVar te120_combinedlensflare("te120_combinedlensflare", "1", FCVAR_ARCHIVE );
+
 float g_DesiredDrunkValue = -1.0f;
 float g_ActualDrunkValue = 0.0f;
 float g_NextDrunkUpdateTime = 0.0f;
@@ -2713,7 +2716,7 @@ void DoEnginePostProcessing( int x, int y, int w, int h, bool bFlashlightIsOn, b
 		}
 	}
 
-	if (shaderEdit)
+	if (shaderEdit && te120_combinedlensflare.GetBool())
 	{
 		ShaderEditVarToken ivar_tmp = SHADEREDIT_MVAR_TOKEN_INVALID;
 		IMaterialVar *pMutableVar = shaderEdit->GetPPEMaterialVarFast( ivar_tmp, "ppe_combined_lens", "combinedlens", "$MUTABLE_01" );
@@ -2778,7 +2781,6 @@ void GravityBallFadeConcCallback( const CEffectData &data )
 	g_DesiredDrunkValue = data.m_flScale;
 	g_NextDrunkUpdateTime = gpGlobals->curtime + 0.05f;
 }
-
 DECLARE_CLIENT_EFFECT( "CE_GravityBallFadeConcOn", GravityBallFadeConcCallback );
 
 void DisableDirtyLens( const CEffectData &data )
@@ -2786,7 +2788,6 @@ void DisableDirtyLens( const CEffectData &data )
 	g_DesiredDirtyValue = data.m_flScale;
 	g_NextDirtyUpdateTime = gpGlobals->curtime + 0.05f;
 }
-
 DECLARE_CLIENT_EFFECT( "CE_DisableDirtyLens", DisableDirtyLens );
 
 void DisableDirtyLensFade( const CEffectData &data )
@@ -2795,7 +2796,6 @@ void DisableDirtyLensFade( const CEffectData &data )
 	g_ReturnToDefault = true;
 	g_NextDirtyUpdateTime = gpGlobals->curtime + 0.05f;
 }
-
 DECLARE_CLIENT_EFFECT( "CE_DisableDirtyLensFade", DisableDirtyLensFade );
 //TE120--
 

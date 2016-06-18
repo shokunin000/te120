@@ -86,21 +86,24 @@ void CEnvFade::InputFade( inputdata_t &inputdata )
 	{
 		fadeFlags |= FFADE_OUT;
 //TE120--
-		if ( m_spawnflags & SF_FADE_DONTDIRTY )
- 		{
- 			// Hack: If SF_FADE_DONTDIRTY flag is set, disable but
- 			// fade back to on.
- 			CEffectData	data;
- 			data.m_flScale = 0;
- 			DispatchEffect( "CE_DisableDirtyLensFade", data );
- 		}
- 		else
- 		{
- 			// Otherwise turn off and stay off
- 			CEffectData	data;
- 			data.m_flScale = 0;
- 			DispatchEffect( "CE_DisableDirtyLens", data );
- 		}
+		if ( te120_combinedlensflare.GetBool() )
+		{
+			if ( m_spawnflags & SF_FADE_DONTDIRTY )
+			{
+				// Hack: If SF_FADE_DONTDIRTY flag is set, disable but
+				// fade back to on.
+				CEffectData	data;
+				data.m_flScale = 0;
+				DispatchEffect( "CE_DisableDirtyLensFade", data );
+			}
+			else
+			{
+				// Otherwise turn off and stay off
+				CEffectData	data;
+				data.m_flScale = 0;
+				DispatchEffect( "CE_DisableDirtyLens", data );
+			}
+		}
 //TE120--
 	}
 
