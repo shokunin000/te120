@@ -48,8 +48,8 @@ static ConVar r_flashlightvisualizetrace( "r_flashlightvisualizetrace", "0", FCV
 static ConVar r_flashlightambient( "r_flashlightambient", "0.0", FCVAR_CHEAT );
 static ConVar r_flashlightshadowatten( "r_flashlightshadowatten", "0.35", FCVAR_CHEAT );
 static ConVar r_flashlightladderdist( "r_flashlightladderdist", "40.0", FCVAR_CHEAT );
-static ConVar mat_slopescaledepthbias_shadowmap( "mat_slopescaledepthbias_shadowmap", "3", FCVAR_CHEAT );//TE120
-static ConVar mat_depthbias_shadowmap( "mat_depthbias_shadowmap", "0.00001", FCVAR_CHEAT );//TE120
+static ConVar mat_slopescaledepthbias_shadowmap( "mat_slopescaledepthbias_shadowmap", "5", FCVAR_CHEAT );
+static ConVar mat_depthbias_shadowmap( "mat_depthbias_shadowmap", "0.0001", FCVAR_CHEAT );
 
 ClientShadowHandle_t g_hFlashlightHandle = CLIENTSHADOW_INVALID_HANDLE;
 

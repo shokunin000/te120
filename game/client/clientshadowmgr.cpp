@@ -92,15 +92,14 @@ static ConVar r_flashlightmodels( "r_flashlightmodels", "1" );
 static ConVar r_shadowrendertotexture( "r_shadowrendertotexture", "0" );
 static ConVar r_flashlight_version2( "r_flashlight_version2", "0", FCVAR_CHEAT | FCVAR_DEVELOPMENTONLY );
 
+ConVar r_flashlightdepthtexture( "r_flashlightdepthtexture", "1" );
+
 void WorldLightCastShadowCallback(IConVar *pVar, const char *pszOldValue, float flOldValue);
-// Disabling by default, too costly in chapter 2, 3, & 4.
 static ConVar r_worldlight_castshadows( "r_worldlight_castshadows", "0", FCVAR_CHEAT, "Allow world lights to cast shadows", true, 0, true, 1, WorldLightCastShadowCallback );
 static ConVar r_worldlight_lerptime( "r_worldlight_lerptime", "0.5", FCVAR_CHEAT );
 static ConVar r_worldlight_debug( "r_worldlight_debug", "0", FCVAR_CHEAT );
 static ConVar r_worldlight_shortenfactor( "r_worldlight_shortenfactor", "2" , FCVAR_CHEAT, "Makes shadows cast from local lights shorter" );
 static ConVar r_worldlight_mincastintensity( "r_worldlight_mincastintensity", "0.3", FCVAR_CHEAT, "Minimum brightness of a light to be classed as shadow casting", true, 0, false, 0 );
-
-ConVar r_flashlightdepthtexture( "r_flashlightdepthtexture", "1" );
 
 #if defined( _X360 )
 ConVar r_flashlightdepthres( "r_flashlightdepthres", "512" );
@@ -961,6 +960,8 @@ private:
 
 	// Sets the view's active flashlight render state
 	void	SetViewFlashlightState( int nActiveFlashlightCount, ClientShadowHandle_t* pActiveFlashlights );
+
+public:
 	void	UpdateDirtyShadow( ClientShadowHandle_t handle );
 	void	UpdateShadowDirectionFromLocalLightSource( ClientShadowHandle_t shadowHandle );
 
@@ -1193,7 +1194,6 @@ CClientShadowMgr::CClientShadowMgr() :
 {
 	m_nDepthTextureResolution = r_flashlightdepthres.GetInt();
 	m_bThreaded = false;
-
 
 	m_bShadowFromWorldLights = r_worldlight_castshadows.GetBool();
 }
@@ -2684,7 +2684,6 @@ void CClientShadowMgr::BuildFlashlight( ClientShadowHandle_t handle )
 	// Don't project the flashlight if the frustum AABB is not in our view
 	Vector mins, maxs;
 	CalculateAABBFromProjectionMatrix(shadow.m_WorldToShadow, &mins, &maxs);
-
 	if(engine->CullBox(mins, maxs))
 		return;
 
@@ -4238,6 +4237,9 @@ bool CClientShadowMgr::IsFlashlightTarget( ClientShadowHandle_t shadowHandle, IC
 	return false;
 }
 
+//-----------------------------------------------------------------------------
+// Dynamic shadows
+//-----------------------------------------------------------------------------
 const Vector &CClientShadowMgr::GetShadowDirection( ClientShadowHandle_t shadowHandle ) const
 {
 	VPROF_BUDGET( "CVisibleShadowList::GetShadowDirection", VPROF_BUDGETGROUP_SHADOW_RENDERING );
@@ -4433,7 +4435,6 @@ void CClientShadowMgr::SetShadowFromWorldLightsEnabled( bool bEnabled )
 	m_bShadowFromWorldLights = bEnabled;
 	UpdateAllShadows();
 }
-
 
 //-----------------------------------------------------------------------------
 // A material proxy that resets the base texture to use the rendered shadow

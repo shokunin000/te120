@@ -67,6 +67,7 @@ SEditModelRender::SEditModelRender( char const *name ) : CAutoGameSystemPerFrame
 	m_iNumPoseParams = 0;
 	DestroyModel();
 }
+
 SEditModelRender::~SEditModelRender()
 {
 	DestroyModel();
@@ -76,9 +77,11 @@ bool SEditModelRender::Init()
 {
 	return true;
 }
+
 void SEditModelRender::Shutdown()
 {
 }
+
 void SEditModelRender::Update( float frametime )
 {
 	if ( !IsModelReady() )
@@ -88,21 +91,26 @@ void SEditModelRender::Update( float frametime )
 	if ( pModelInstance->GetCycle() >= 1.0f )
 		pModelInstance->SetCycle( pModelInstance->GetCycle() - 1.0f );
 }
+
 void SEditModelRender::LevelInitPostEntity()
 {
 	ResetModel();
 }
+
 void SEditModelRender::LevelShutdownPostEntity()
 {
 	ResetModel();
 }
+
 void SEditModelRender::ResetModel()
 {
 	if ( !IsModelReady() )
 		return;
+
 	pModelInstance->m_flAnimTime = gpGlobals->curtime;
 	pModelInstance->m_flOldAnimTime = gpGlobals->curtime;
 }
+
 bool SEditModelRender::IsModelReady()
 {
 	if ( !pModelInstance )
@@ -115,6 +123,7 @@ bool SEditModelRender::IsModelReady()
 		const model_t *pMdl = modelinfo ? modelinfo->FindOrLoadModel( m_szModelPath ) : NULL;
 		if ( pMdl )
 			pModelInstance->SetModelPointer( pMdl );
+
 		bValid = !!pMdl;
 	}
 
@@ -123,6 +132,7 @@ bool SEditModelRender::IsModelReady()
 
 	return bValid;
 }
+
 bool SEditModelRender::LoadModel( const char *localPath )
 {
 	DestroyModel();
@@ -162,6 +172,7 @@ bool SEditModelRender::LoadModel( const char *localPath )
 	pModelInstance = pEnt;
 	return true;
 }
+
 void SEditModelRender::DestroyModel()
 {
 	if ( pModelInstance )
@@ -171,6 +182,7 @@ void SEditModelRender::DestroyModel()
 	m_szModelPath[0] = '\0';
 	m_iNumPoseParams = 0;
 }
+
 void SEditModelRender::GetModelCenter( float *pFl3_ViewOffset )
 {
 	Q_memset( pFl3_ViewOffset, 0, sizeof(float) * 3 );
@@ -187,6 +199,7 @@ void SEditModelRender::GetModelCenter( float *pFl3_ViewOffset )
 		}
 	}
 }
+
 void SEditModelRender::DestroyCharPtrList( char ***szList )
 {
 	Assert( szList );
@@ -202,6 +215,7 @@ int SequenceSort( mstudioseqdesc_t *const *seq1, mstudioseqdesc_t *const *seq2 )
 {
 	return Q_stricmp( ( *seq1 )->pszLabel(), ( *seq2 )->pszLabel() );
 }
+
 int SEditModelRender::QuerySequences( char ***list )
 {
 	if ( !IsModelReady() )
@@ -258,6 +272,7 @@ int SEditModelRender::QuerySequences( char ***list )
 	hSeqs.Purge();
 	return numSequences;
 }
+
 void SEditModelRender::SetSequence( const char *name )
 {
 	if ( !IsModelReady() )
@@ -266,6 +281,7 @@ void SEditModelRender::SetSequence( const char *name )
 	MDLCACHE_CRITICAL_SECTION();
 	pModelInstance->ResetSequence( pModelInstance->LookupSequence( name ) );
 }
+
 void SEditModelRender::ExecRender()
 {
 	if ( !IsModelReady() )
@@ -285,6 +301,7 @@ void SEditModelRender::ExecRender()
 #endif
 		);
 }
+
 void SEditModelRender::DoPostProc( int x, int y, int w, int h )
 {
 #ifndef SOURCE_2006
@@ -292,6 +309,7 @@ void SEditModelRender::DoPostProc( int x, int y, int w, int h )
 		DoEnginePostProcessing( x, y, w, h, false, false );
 #endif
 }
+
 int SEditModelRender::MaterialPicker( char ***szMat )
 {
 	int mx, my;
@@ -378,7 +396,7 @@ int SEditModelRender::MaterialPicker( char ***szMat )
 				for ( int p = 0; p < numPaths; p++ )
 				{
 					char tmpPath[MAX_PATH];
-					Q_snprintf( tmpPath, MAX_PATH, "%s%s", pSHdr->pCdtexture( p ), matName );
+					Q_snprintf( tmpPath, MAX_PATH, "%s%s\0", pSHdr->pCdtexture( p ), matName );
 					Q_FixSlashes( tmpPath );
 					IMaterial *pTempMat = materials->FindMaterial( tmpPath, TEXTURE_GROUP_MODEL );
 					if ( !IsErrorMaterial( pTempMat ) )

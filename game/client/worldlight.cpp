@@ -112,7 +112,7 @@ void CWorldLights::Clear()
 {
 	m_nWorldLights = 0;
 
-	if(m_pWorldLights)
+	if ( m_pWorldLights )
 	{
 		delete [] m_pWorldLights;
 		m_pWorldLights = NULL;
@@ -297,7 +297,7 @@ bool CWorldLights::GetBrightestLightSource(const Vector &vecPosition, Vector &ve
 	}
 
 	delete[] pvs;
-	
+
 	//DevMsg("CWorldLights: result %d\n", !vecLightBrightness.IsZero());
 	return !vecLightBrightness.IsZero();
 }

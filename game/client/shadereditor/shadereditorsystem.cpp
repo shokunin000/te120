@@ -39,7 +39,6 @@
 #define Editor_MainViewForward MainViewForward()
 #endif
 
-
 ShaderEditorHandler __g_ShaderEditorSystem( "ShEditUpdate" );
 ShaderEditorHandler *g_ShaderEditorSystem = &__g_ShaderEditorSystem;
 
@@ -100,18 +99,18 @@ bool ShaderEditorHandler::Init()
 
 		if ( !shaderEdit )
 		{
-			Warning( "Unable to pull IVShaderEditor interface.\n" );
+			Warning( "[SSE]: Unable to pull IVShaderEditor interface!\n" );
 		}
 		else if ( !shaderEdit->Init( factories.appSystemFactory, gpGlobals, sEditMRender,
 				bCreateEditor, bShowPrimDebug, iEnableSkymask ) )
 		{
-			Warning( "Cannot initialize IVShaderEditor.\n" );
+			Warning( "[SSE]: Cannot initialize IVShaderEditor!\n" );
 			shaderEdit = NULL;
 		}
 	}
 	else
 	{
-		Warning( "Cannot load shadereditor" DLL_EXT_STRING "from %s!\n", modulePath );
+		Warning( "[SSE]: Cannot load shadereditor" DLL_EXT_STRING "from %s!\n", modulePath );
 	}
 
 	m_bReady = shaderEdit != NULL;
@@ -131,14 +130,14 @@ bool ShaderEditorHandler::Init()
 CON_COMMAND( sedit_debug_toggle_ppe, "" )
 {
 	if ( !g_ShaderEditorSystem->IsReady() )
-		return Warning( "lib not ready.\n" );
+		return Warning( "[SSE]: Lib not ready!\n" );
 
 	if ( args.ArgC() < 2 )
 		return;
 
 	const int idx = shaderEdit->GetPPEIndex( args[1] );
 	if ( idx < 0 )
-		return Warning( "can't find ppe named: %s\n", args[1] );
+		return Warning( "[SSE]: Can't find ppe named: %s!\n", args[1] );
 
 	shaderEdit->SetPPEEnabled( idx, !shaderEdit->IsPPEEnabled( idx ) );
 }
@@ -540,9 +539,15 @@ protected:
 		{
 			switch( pOpaqueList[i].m_nModelType )
 			{
-			case RENDERABLE_MODEL_BRUSH:		brushModels.AddToTail( &pOpaqueList[i] ); break;
-			case RENDERABLE_MODEL_STATIC_PROP:	staticProps.AddToTail( &pOpaqueList[i] ); break;
-			default:							otherRenderables.AddToTail( &pOpaqueList[i] ); break;
+			case RENDERABLE_MODEL_BRUSH:
+				brushModels.AddToTail( &pOpaqueList[i] );
+				break;
+			case RENDERABLE_MODEL_STATIC_PROP:
+				staticProps.AddToTail( &pOpaqueList[i] );
+				break;
+			default:
+				otherRenderables.AddToTail( &pOpaqueList[i] );
+				break;
 			}
 		}
 
@@ -771,7 +776,7 @@ protected:
 				pRenderContext->PushCustomClipPlane( pRenderClipPlane );
 #if DEBUG
 			else
-				AssertMsg( 0, "can't link DrawClippedDepthBox externally so you either have to cope with even more redundancy or move all this crap to viewrender" );
+				AssertMsg( 0, "[SSE]: Can't link DrawClippedDepthBox externally so you either have to cope with even more redundancy or move all this crap to viewrender!" );
 #endif
 			//	DrawClippedDepthBox( pEnt, pRenderClipPlane );
 			Assert( view->GetCurrentlyDrawingEntity() == NULL );
@@ -851,7 +856,7 @@ protected:
 				pRenderContext->PushCustomClipPlane( pRenderClipPlane );
 #if DEBUG
 			else
-				AssertMsg( 0, "can't link DrawClippedDepthBox externally so you either have to cope with even more redundancy or move all this crap to viewrender" );
+				AssertMsg( 0, "[SSE]: Can't link DrawClippedDepthBox externally so you either have to cope with even more redundancy or move all this crap to viewrender!" );
 #endif
 			//	DrawClippedDepthBox( pEnt, pRenderClipPlane );
 			Assert( view->GetCurrentlyDrawingEntity() == NULL );

@@ -1,5 +1,8 @@
 #ifndef SHEDITMRENDER_H
 #define SHEDITMRENDER_H
+#ifdef _WIN32
+#pragma once
+#endif
 
 #include "cbase.h"
 #include "shadereditor/isedit_modelrender.h"

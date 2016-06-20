@@ -178,6 +178,7 @@ bool CEnvProjectedTexture::KeyValue( const char *szKeyName, const char *szValue 
 	{
 		return BaseClass::KeyValue( szKeyName, szValue );
 	}
+
 	return true;
 }
 
@@ -270,20 +271,22 @@ void CEnvProjectedTexture::InitialThink( void )
 	if ( m_hTargetEntity == NULL )
 		return;
 
-	if ( m_bFlicker )
-	{
-		m_LinearFloatLightColorCopy = m_LinearFloatLightColor;
-		SetThink( &CEnvProjectedTexture::FlickerThink );
-		SetNextThink( gpGlobals->curtime + 0.05f );
-	}
-
-
 	Vector vecToTarget = (m_hTargetEntity->GetAbsOrigin() - GetAbsOrigin());
 	QAngle vecAngles;
 	VectorAngles( vecToTarget, vecAngles );
 	SetAbsAngles( vecAngles );
 
-	SetNextThink( gpGlobals->curtime + 0.1 );
+	if ( m_bFlicker )
+	{
+		DevMsg("CEnvProjectedTexture::InitialThink: m_bFlicker\n");
+		m_LinearFloatLightColorCopy = m_LinearFloatLightColor;
+		SetThink( &CEnvProjectedTexture::FlickerThink );
+		SetNextThink( gpGlobals->curtime + 0.05f );
+	}
+	else
+	{
+		SetNextThink( gpGlobals->curtime + 0.1 );
+	}
 }
 
 void CEnvProjectedTexture::FlickerThink( void )

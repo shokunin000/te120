@@ -3401,21 +3401,6 @@ void C_BaseAnimating::ProcessMuzzleFlashEvent()
 			dl->die = gpGlobals->curtime + 0.05f;
 			dl->radius = random->RandomFloat( 245.0f, 256.0f );
 			dl->decay = 512.0f;
-
-//TE120--
-			// Create an "Entity" Light that will illumninate entities
-  		dlight_t *el = effects->CL_AllocElight( index );
-  		if ( !el )
-  			return;
-
-			el->origin = vAttachment;
-			el->color.r = 252;
-			el->color.g = 238;
-			el->color.b = 128;
-			el->die = gpGlobals->curtime + 0.05f;
-			el->radius = random->RandomFloat( 245.0f, 256.0f );
-			el->decay = 512.0f;
-//TE120--
 		}
 	}
 }
