@@ -8,15 +8,6 @@
 #include "convar.h"
 #include "steam/steam_api.h"
 
-void OpenURL_f()
-{
-	if ( steamapicontext && steamapicontext->SteamFriends() )
-		steamapicontext->SteamFriends()->ActivateGameOverlayToWebPage("https://www.youcaring.com/TE120andCarebox");
-	else
-		DevMsg("Missing Steam API context, failed to execute: te120_opendonationpage\n");
-}
-ConCommand te120_opendonationpage( "te120_opendonationpage", OpenURL_f, "Open TE120 donation page in Steam Overlay.", 0 );
-
 void OpenAchievements_f()
 {
 	if ( steamapicontext && steamapicontext->SteamFriends() )
