@@ -2718,17 +2718,18 @@ void DoEnginePostProcessing( int x, int y, int w, int h, bool bFlashlightIsOn, b
 			}
 		}
 
-		// Toggle the effect via cvar
-		if ( !te120_combinedlensflare.GetBool() )
-			return;
-
 		static const int iCombinedLensIndex = shaderEdit->GetPPEIndex( "ppe_combined_lens" );
 		if ( iCombinedLensIndex < 0 )
  			return;
 
 		DEFINE_SHADEREDITOR_MATERIALVAR( "ppe_combined_lens", "combinedlens", "$MUTABLE_01", pVar_CombinedLens_Params );
 
-		g_ActualDirtyValue = pVar_CombinedLens_Params->GetFloatValue();
+		// Toggle the lensflare / dirt effect via cvar
+		if ( !te120_combinedlensflare.GetBool() )
+			g_ActualDirtyValue = 0.0f;
+		else
+			g_ActualDirtyValue = pVar_CombinedLens_Params->GetFloatValue();
+
 		//DevMsg("g_ActualDirtyValue = %f\n", g_ActualDirtyValue );
 
 		if ( g_ActualDirtyValue != g_DesiredDirtyValue )
