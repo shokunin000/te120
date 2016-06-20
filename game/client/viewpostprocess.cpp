@@ -2718,66 +2718,67 @@ void DoEnginePostProcessing( int x, int y, int w, int h, bool bFlashlightIsOn, b
 			}
 		}
 
-		// Toggle the effect via cvar
-		if ( !te120_combinedlensflare.GetBool() )
-			return;
+		ShaderEditVarToken ivar_tmp = SHADEREDIT_MVAR_TOKEN_INVALID;
+		IMaterialVar *pMutableVar = shaderEdit->GetPPEMaterialVarFast( ivar_tmp, "ppe_combined_lens", "combinedlens", "$MUTABLE_01" );
 
-		static const int iCombinedLensIndex = shaderEdit->GetPPEIndex( "ppe_combined_lens" );
-		if ( iCombinedLensIndex < 0 )
- 			return;
-
-		DEFINE_SHADEREDITOR_MATERIALVAR( "ppe_combined_lens", "combinedlens", "$MUTABLE_01", pVar_CombinedLens_Params );
-
-		g_ActualDirtyValue = pVar_CombinedLens_Params->GetFloatValue();
-		//DevMsg("g_ActualDirtyValue = %f\n", g_ActualDirtyValue );
-
-		if ( g_ActualDirtyValue != g_DesiredDirtyValue )
+		if (pMutableVar)
 		{
-			// If the map is just starting make sure this is reset back to 1
-			if ( g_DesiredDirtyValue == -1 )
+			// Toggle the effect via cvar
+			if ( !te120_combinedlensflare.GetBool() )
 			{
-				g_NextDirtyUpdateTime = gpGlobals->curtime + 0.05f;
-				g_ActualDirtyValue = 1;
-				g_DesiredDirtyValue = 1;
+				pMutableVar->SetFloatValue( 0.0f );
+				return;
 			}
 
-			if ( gpGlobals->curtime >= g_NextDirtyUpdateTime )
+			g_ActualDirtyValue = pMutableVar->GetFloatValue();
+			//DevMsg("g_ActualDirtyValue = %f\n", g_ActualDirtyValue );
+
+			if ( g_ActualDirtyValue != g_DesiredDirtyValue )
 			{
-				if ( g_DesiredDirtyValue < g_ActualDirtyValue )
+				// If the map is just starting make sure this is reset back to 1
+				if ( g_DesiredDirtyValue == -1 )
 				{
-					g_ActualDirtyValue -= 0.2;
+					g_NextDirtyUpdateTime = gpGlobals->curtime + 0.05f;
+					g_ActualDirtyValue = 1;
+					g_DesiredDirtyValue = 1;
+				}
 
-					if ( g_ActualDirtyValue <= 0.0 )
+				if ( gpGlobals->curtime >= g_NextDirtyUpdateTime )
+				{
+					if ( g_DesiredDirtyValue < g_ActualDirtyValue )
 					{
-						g_ActualDirtyValue = 0.0;
+						g_ActualDirtyValue -= 0.2;
 
-						if (g_ReturnToDefault)
+						if ( g_ActualDirtyValue <= 0.0 )
 						{
-							g_DesiredDirtyValue = 1.0;
-							g_ReturnToDefault = false;
-							g_NextDirtyUpdateTime = gpGlobals->curtime + 2.0f;
+							g_ActualDirtyValue = 0.0;
+
+							if (g_ReturnToDefault)
+							{
+								g_DesiredDirtyValue = 1.0;
+								g_ReturnToDefault = false;
+								g_NextDirtyUpdateTime = gpGlobals->curtime + 2.0f;
+							}
+							else
+								g_NextDirtyUpdateTime = gpGlobals->curtime + 0.05f;
 						}
 						else
 							g_NextDirtyUpdateTime = gpGlobals->curtime + 0.05f;
 					}
 					else
+					{
+						g_ActualDirtyValue += 0.015;
+
+						if ( g_ActualDirtyValue >= 1.0 )
+							g_ActualDirtyValue = 1.0;
+
 						g_NextDirtyUpdateTime = gpGlobals->curtime + 0.05f;
+					}
 				}
-				else
-				{
-					g_ActualDirtyValue += 0.015;
 
-					if ( g_ActualDirtyValue >= 1.0 )
-						g_ActualDirtyValue = 1.0;
-
-					g_NextDirtyUpdateTime = gpGlobals->curtime + 0.05f;
-				}
+				pMutableVar->SetFloatValue( g_ActualDirtyValue );
 			}
-
-			pVar_CombinedLens_Params->SetFloatValue( g_ActualDirtyValue );
 		}
-
-		shaderEdit->DrawPPEOnDemand( iCombinedLensIndex, x, y, w, h );
 	}
 //TE120--
 }
