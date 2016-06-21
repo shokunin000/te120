@@ -1145,8 +1145,8 @@ void CSave::WriteFunction( datamap_t *pRootMap, const char *pname, inputfunc_t *
 	const char *functionName = UTIL_FunctionToName( pRootMap, *data );
 	if ( !functionName )
 	{
-		Warning( "Invalid function pointer in entity!\n" );
-		Assert(0);
+		// Warning( "Invalid function pointer in entity!\n" );
+		// Assert(0);
 		functionName = "BADFUNCTIONPOINTER";
 	}
 
