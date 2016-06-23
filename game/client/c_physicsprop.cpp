@@ -22,7 +22,9 @@
 
 IMPLEMENT_CLIENTCLASS_DT(C_PhysicsProp, DT_PhysicsProp, CPhysicsProp)
 	RecvPropBool( RECVINFO( m_bAwake ) ),
+#ifdef GLOWS_ENABLE
 	RecvPropBool( RECVINFO( m_bEnableGlow ) ),//TE120
+#endif // GLOWS_ENABLE
 END_RECV_TABLE()
 
 ConVar r_PhysPropStaticLighting( "r_PhysPropStaticLighting", "1" );
@@ -39,8 +41,9 @@ C_PhysicsProp::C_PhysicsProp( void )
 	// default true so static lighting will get recomputed when we go to sleep
 	m_bAwakeLastTime = true;
 //TE120--
+#ifdef GLOWS_ENABLE
 	m_bClientGlow = false;
-	m_pEntGlowEffect = ( CEntGlowEffect* )g_pScreenSpaceEffects->GetScreenSpaceEffect( "ge_entglow" );
+#endif // GLOWS_ENABLE
 //TE120--
 }
 
@@ -50,7 +53,6 @@ C_PhysicsProp::C_PhysicsProp( void )
 C_PhysicsProp::~C_PhysicsProp( void )
 {
 }
-
 
 // @MULTICORE (toml 9/18/2006): this visualization will need to be implemented elsewhere
 ConVar r_visualizeproplightcaching( "r_visualizeproplightcaching", "0" );
@@ -97,21 +99,25 @@ bool C_PhysicsProp::OnInternalDrawModel( ClientModelRenderInfo_t *pInfo )
 	m_bAwakeLastTime = m_bAwake;
 
 //TE120--
+#ifdef GLOWS_ENABLE
 	if ( m_bClientGlow != m_bEnableGlow )
 	{
 		if ( m_bEnableGlow )
 		{
-			// Register us with the effect
-			m_pEntGlowEffect->RegisterEnt( this, Color(255, 255, 255, 100) ); //255, 70, 0 for hud color
+			// Register glow effect
+			m_GlowObjectHandle = g_GlowObjectManager.RegisterGlowObject( this, Vector( 255.0f, 255.0f, 255.0f ), 0.5f, true, true, 0 );
+			DevMsg( "Register GlowObject: %s\n", this->GetClassname() );
 		}
 		else
 		{
-			// Stop glowing
-			m_pEntGlowEffect->DeregisterEnt( this );
+			// Unregister glow effect
+			g_GlowObjectManager.UnregisterGlowObject(m_GlowObjectHandle);
+			DevMsg( "Unregister GlowObject: %s\n", this->GetClassname() );
 		}
 
 		m_bClientGlow = m_bEnableGlow;
 	}
+#endif // GLOWS_ENABLE
 //TE120--
 
 	return true;

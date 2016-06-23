@@ -64,10 +64,20 @@ extern ConVar replay_rendersetting_renderglow;
 #include "c_tf_player.h"
 #include "econ_item_description.h"
 #endif
-#include "c_entgloweffect.h"//TE120
+#ifdef GLOWS_ENABLE
+#include "clienteffectprecachesystem.h"
+#endif // GLOWS_ENABLE
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
+
+#ifdef GLOWS_ENABLE
+// Precache glow effect
+CLIENTEFFECT_REGISTER_BEGIN( PrecachePostProcessingEffectsGlow )
+CLIENTEFFECT_MATERIAL( "dev/glow_color" )
+CLIENTEFFECT_MATERIAL( "dev/halo_add_to_screen" )
+CLIENTEFFECT_REGISTER_END_CONDITIONAL( engine->GetDXSupportLevel() >= 90 )
+#endif // GLOWS_ENABLE
 
 #define ACHIEVEMENT_ANNOUNCEMENT_MIN_TIME 10
 
@@ -769,6 +779,10 @@ bool ClientModeShared::DoPostScreenSpaceEffects( const CViewSetup *pSetup )
 			return false;
 	}
 #endif
+#ifdef GLOWS_ENABLE
+	// Enable glow effect
+	g_GlowObjectManager.RenderGlowEffects( pSetup, 0 );
+#endif // GLOWS_ENABLE
 	return true;
 }
 
@@ -831,9 +845,6 @@ void ClientModeShared::LevelInit( const char *newmap )
 	// Reset any player explosion/shock effects
 	CLocalPlayerFilter filter;
 	enginesound->SetPlayerDSP( filter, 0, true );
-
-	// Enable glow
-	g_pScreenSpaceEffects->EnableScreenSpaceEffect( "ge_entglow" );//TE120
 }
 
 //-----------------------------------------------------------------------------
@@ -857,11 +868,7 @@ void ClientModeShared::LevelShutdown( void )
 	// Reset any player explosion/shock effects
 	CLocalPlayerFilter filter;
 	enginesound->SetPlayerDSP( filter, 0, true );
-
-	// Disable glow
-	g_pScreenSpaceEffects->DisableScreenSpaceEffect( "ge_entglow" );//TE120
 }
-
 
 void ClientModeShared::Enable()
 {
@@ -889,7 +896,6 @@ void ClientModeShared::Enable()
 	Layout();
 }
 
-
 void ClientModeShared::Disable()
 {
 	vgui::VPANEL pRoot = VGui_GetClientDLLRootPanel();;
@@ -902,7 +908,6 @@ void ClientModeShared::Disable()
 
 	m_pViewport->SetVisible( false );
 }
-
 
 void ClientModeShared::Layout()
 {
@@ -1399,7 +1404,6 @@ void ClientModeShared::DisplayReplayReminder()
 	}
 #endif
 }
-
 
 //-----------------------------------------------------------------------------
 // In-game VGUI context
