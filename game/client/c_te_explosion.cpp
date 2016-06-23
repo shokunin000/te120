@@ -70,7 +70,7 @@ CRagdollExplosionEnumerator::~CRagdollExplosionEnumerator()
 //TE120--
 		if ( m_bDirectPush == true )
 		{
-			//DevMsg("DirectPush: Entity %s\n", pEnt->GetClassname() );
+			DevMsg("DirectPush: Entity %s\n", pEnt->GetClassname() );
 			C_ClientRagdoll *pModel = dynamic_cast< C_ClientRagdoll * >( pEnt );
 			if (pModel)
 			{

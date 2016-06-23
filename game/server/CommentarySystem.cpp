@@ -1245,7 +1245,7 @@ void CPointCommentaryNode::UpdateViewThink( void )
 
 		// Blend to the target position over time.
  		float flCurTime = (gpGlobals->curtime - m_flStartTime);
- 		float flBlendPerc = clamp( flCurTime / 2.0, 0, 1 );//TE120
+ 		float flBlendPerc = clamp( flCurTime / 2.0f, 0.0f, 1.0f );//TE120
 
 		// Figure out the current view position
 		Vector vecCurEye;

@@ -9,8 +9,7 @@
 #else
 #include "interface.h"
 #include "shadereditor/shadereditorsystem.h"
-#endif // NOT SHADER_EDITOR_DLL
-
+#endif // SHADER_EDITOR_DLL
 
 class ISEditModelRender
 {
@@ -29,12 +28,11 @@ public:
 	virtual void DestroyCharPtrList( char ***szList ) = 0;
 };
 
-
 #ifdef SHADER_EDITOR_DLL
 extern ISEditModelRender *sEditMRender;
 #else
 class SEditModelRender;
 extern SEditModelRender *sEditMRender;
-#endif
+#endif // SHADER_EDITOR_DLL
 
-#endif
+#endif // IV_SHADEREDITOR_MRENDER

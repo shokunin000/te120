@@ -37,7 +37,7 @@
 #else
 #define Editor_MainViewOrigin MainViewOrigin()
 #define Editor_MainViewForward MainViewForward()
-#endif
+#endif // SWARM_DLL
 
 ShaderEditorHandler __g_ShaderEditorSystem( "ShEditUpdate" );
 ShaderEditorHandler *g_ShaderEditorSystem = &__g_ShaderEditorSystem;
@@ -71,7 +71,7 @@ bool ShaderEditorHandler::Init()
 #else
 	ConVarRef devEnabled( "developer", true );
 	bool bShowPrimDebug = devEnabled.GetInt() != 0;
-#endif
+#endif // SOURCE_2006
 
 	bool bCreateEditor = ( CommandLine() != NULL ) && ( CommandLine()->FindParm( "-shaderedit" ) != 0 );
 	SEDIT_SKYMASK_MODE iEnableSkymask = SKYMASK_OFF;
@@ -79,7 +79,7 @@ bool ShaderEditorHandler::Init()
 #ifdef SHADEREDITOR_FORCE_ENABLED
 	bCreateEditor = true;
 	iEnableSkymask = SKYMASK_QUARTER;
-#endif
+#endif // SHADEREDITOR_FORCE_ENABLED
 
 	char modulePath[MAX_PATH*4];
 #ifdef SWARM_DLL
@@ -90,7 +90,8 @@ bool ShaderEditorHandler::Init()
 	Q_snprintf( modulePath, sizeof( modulePath ), "%s/bin/shadereditor_2013" DLL_EXT_STRING, engine->GetGameDirectory() );
 #else
 	Q_snprintf( modulePath, sizeof( modulePath ), "%s/bin/shadereditor_2007" DLL_EXT_STRING, engine->GetGameDirectory() );
-#endif
+#endif // SWARM_DLL
+	Q_FixSlashes(modulePath);
 	shaderEditorModule = Sys_LoadModule( modulePath );
 	if ( shaderEditorModule )
 	{
@@ -174,30 +175,34 @@ void ShaderEditorHandler::InitialPreRender()
 		m_Lock.Unlock();
 	}
 }
+
 void ShaderEditorHandler::PostRender()
 {
 }
+
 #ifdef SOURCE_2006
 void ShaderEditorHandler::CustomViewRender( int *viewId, const VisibleFogVolumeInfo_t &fogVolumeInfo )
 #else
 void ShaderEditorHandler::CustomViewRender( int *viewId, const VisibleFogVolumeInfo_t &fogVolumeInfo, const WaterRenderInfo_t &waterRenderInfo )
-#endif
+#endif // SOURCE_2006
 {
 	m_piCurrentViewId = viewId;
 	m_tFogVolumeInfo = fogVolumeInfo;
 
 #ifndef SOURCE_2006
 	m_tWaterRenderInfo = waterRenderInfo;
-#endif
+#endif // SOURCE_2006
 
 	if ( IsReady() )
 		shaderEdit->OnSceneRender();
 }
+
 void ShaderEditorHandler::UpdateSkymask( bool bCombineMode, int x, int y, int w, int h )
 {
 	if ( IsReady() )
 		shaderEdit->OnUpdateSkymask( bCombineMode, x, y, w, h );
 }
+
 void ShaderEditorHandler::CustomPostRender()
 {
 	if ( IsReady() )
@@ -334,39 +339,39 @@ protected:
 
 	CBaseVCallbackView( CViewRender *pMainView ) : CRendering3dView( pMainView )
 	{
-	};
+	}
 
-	virtual bool	AdjustView( float waterHeight ){ return false; };
+	virtual bool	AdjustView( float waterHeight ){ return false; }
 
 	virtual void CallbackInitRenderList( int viewId )
 	{
 		BuildRenderableRenderLists( viewId );
-	};
+	}
 
 	virtual bool ShouldDrawParticles()
 	{
 		return true;
-	};
+	}
 
 	virtual bool ShouldDrawRopes()
 	{
 		return true;
-	};
+	}
 
 	virtual bool ShouldDrawWorld()
 	{
 		return true;
-	};
+	}
 
 	virtual bool ShouldDrawTranslucents()
 	{
 		return true;
-	};
+	}
 
 	virtual bool ShouldDrawTranslucentWorld()
 	{
 		return true;
-	};
+	}
 
 	void DrawSetup( float waterHeight, int nSetupFlags, float waterZAdjust, int iForceViewLeaf = -1 )
 	{
@@ -386,7 +391,7 @@ protected:
 		render->EndUpdateLightmaps();
 
 		g_ShaderEditorSystem->GetViewIdForModify() = savedViewID;
-	};
+	}
 
 	void DrawExecute( float waterHeight, view_id_t viewID, float waterZAdjust )
 	{
@@ -451,7 +456,7 @@ protected:
 		m_DrawFlags = iDrawFlagsBackup;
 
 		g_ShaderEditorSystem->GetViewIdForModify() = savedViewID;
-	};
+	}
 
 	virtual void	PushView( float waterHeight )
 	{
@@ -498,13 +503,13 @@ protected:
 		{
 			pRenderContext->SetHeightClipZ( waterHeight );
 		}
-	};
+	}
 
 	virtual void	PopView()
 	{
 		CMatRenderContextPtr pRenderContext( materials );
 		pRenderContext->SetHeightClipMode( MATERIAL_HEIGHTCLIPMODE_DISABLE );
-	};
+	}
 
 	void DrawOpaqueRenderables_Custom( bool bShadowDepth )
 	{
@@ -525,7 +530,6 @@ protected:
 			g_pParticleSystemMgr->ResetRenderCache();
 
 #ifdef SWARM_DLL
-
 		extern ConVar cl_modelfastpath;
 		extern ConVar r_drawothermodels;
 
@@ -539,15 +543,9 @@ protected:
 		{
 			switch( pOpaqueList[i].m_nModelType )
 			{
-			case RENDERABLE_MODEL_BRUSH:
-				brushModels.AddToTail( &pOpaqueList[i] );
-				break;
-			case RENDERABLE_MODEL_STATIC_PROP:
-				staticProps.AddToTail( &pOpaqueList[i] );
-				break;
-			default:
-				otherRenderables.AddToTail( &pOpaqueList[i] );
-				break;
+			case RENDERABLE_MODEL_BRUSH:		brushModels.AddToTail( &pOpaqueList[i] ); break;
+			case RENDERABLE_MODEL_STATIC_PROP:	staticProps.AddToTail( &pOpaqueList[i] ); break;
+			default:							otherRenderables.AddToTail( &pOpaqueList[i] ); break;
 			}
 		}
 
@@ -650,10 +648,10 @@ protected:
 		// Draw NPCs now
 		//
 		DrawOpaqueRenderables_NPCs( arrRenderEntsNpcsFirst.Count(), arrRenderEntsNpcsFirst.Base(), bShadowDepth );
+
 #else
 
 		bool const bDrawopaquestaticpropslast = false; //r_drawopaquestaticpropslast.GetBool();
-
 
 		//
 		// First do the brush models
@@ -664,7 +662,6 @@ protected:
 			pEntitiesEnd = pEntitiesBegin + m_pRenderablesList->m_RenderGroupCounts[RENDER_GROUP_OPAQUE_BRUSH];
 			DrawOpaqueRenderables_DrawBrushModels( pEntitiesBegin, pEntitiesEnd, bShadowDepth );
 		}
-
 
 		//
 		// Sort everything that's not a static prop
@@ -743,7 +740,8 @@ protected:
 		// Draw NPCs now
 		//
 		DrawOpaqueRenderables_Range( arrRenderEntsNpcsFirst.Base(), arrRenderEntsNpcsFirst.Base() + numNpcs, bShadowDepth );
-#endif
+#endif // SWARM_DLL
+
 		//
 		// Ropes and particles
 		//
@@ -751,17 +749,19 @@ protected:
 			RopeManager()->DrawRenderCache( bShadowDepth );
 		if ( bParticles )
 			g_pParticleSystemMgr->DrawRenderCache( bShadowDepth );
-	};
+	}
 
 #ifdef SWARM_DLL
 	void	DrawOpaqueRenderables_ModelRenderables( int nCount, ModelRenderSystemData_t* pModelRenderables, bool bShadowDepth )
 	{
 		g_pModelRenderSystem->DrawModels( pModelRenderables, nCount, bShadowDepth ? MODEL_RENDER_MODE_SHADOW_DEPTH : MODEL_RENDER_MODE_NORMAL );
 	}
+
 	void DrawOpaqueRenderables_NPCs( int nCount, CClientRenderablesList::CEntry **ppEntities, bool bShadowDepth )
 	{
 		DrawOpaqueRenderables_Range( nCount, ppEntities, bShadowDepth );
 	}
+
 	void DrawRenderable( IClientRenderable *pEnt, int flags, const RenderableInstance_t &instance )
 	{
 		extern ConVar r_entityclips;
@@ -777,7 +777,8 @@ protected:
 #if DEBUG
 			else
 				AssertMsg( 0, "[SSE]: Can't link DrawClippedDepthBox externally so you either have to cope with even more redundancy or move all this crap to viewrender!" );
-#endif
+#endif // DEBUG
+
 			//	DrawClippedDepthBox( pEnt, pRenderClipPlane );
 			Assert( view->GetCurrentlyDrawingEntity() == NULL );
 			view->SetCurrentlyDrawingEntity( pEnt->GetIClientUnknown()->GetBaseEntity() );
@@ -800,7 +801,8 @@ protected:
 			//BlurTest( pEnt, flags, false, instance );
 			view->SetCurrentlyDrawingEntity( NULL );
 		}
-	};
+	}
+
 	void DrawOpaqueRenderable( IClientRenderable *pEnt, bool bTwoPass, bool bShadowDepth )
 	{
 		ASSERT_LOCAL_PLAYER_RESOLVABLE();
@@ -825,7 +827,7 @@ protected:
 		RenderableInstance_t instance;
 		instance.m_nAlpha = 255;
 		DrawRenderable( pEnt, flags, instance );
-	};
+	}
 #else
 	void DrawOpaqueRenderable( IClientRenderable *pEnt, bool bTwoPass, bool bShadowDepth )
 	{
@@ -846,19 +848,19 @@ protected:
 		}
 
 		float *pRenderClipPlane = NULL;
-		if( true ) //r_entityclips.GetBool() )
+		if( true ) // r_entityclips.GetBool() )
 			pRenderClipPlane = pEnt->GetRenderClipPlane();
 
 		if( pRenderClipPlane )
 		{
 			CMatRenderContextPtr pRenderContext( materials );
-			if( !materials->UsingFastClipping() ) //do NOT change the fast clip plane mid-scene, depth problems result. Regular user clip planes are fine though
+			if( !materials->UsingFastClipping() ) // Don't change the fast clip plane mid-scene, result in depth problems. Regular user clip planes are fine though
 				pRenderContext->PushCustomClipPlane( pRenderClipPlane );
 #if DEBUG
 			else
 				AssertMsg( 0, "[SSE]: Can't link DrawClippedDepthBox externally so you either have to cope with even more redundancy or move all this crap to viewrender!" );
-#endif
-			//	DrawClippedDepthBox( pEnt, pRenderClipPlane );
+#endif // DEBUG
+			// DrawClippedDepthBox( pEnt, pRenderClipPlane );
 			Assert( view->GetCurrentlyDrawingEntity() == NULL );
 			view->SetCurrentlyDrawingEntity( pEnt->GetIClientUnknown()->GetBaseEntity() );
 			pEnt->DrawModel( flags );
@@ -873,7 +875,7 @@ protected:
 			pEnt->DrawModel( flags );
 			view->SetCurrentlyDrawingEntity( NULL );
 		}
-	};
+	}
 #endif
 
 #ifdef SWARM_DLL
@@ -881,14 +883,14 @@ protected:
 	{
 		for( int i = 0; i < nCount; ++i )
 			DrawOpaqueRenderable( ppEntities[i]->m_pRenderable, false, bShadowDepth );
-	};
+	}
 #else
 	void DrawOpaqueRenderables_DrawBrushModels( CClientRenderablesList::CEntry *pEntitiesBegin, CClientRenderablesList::CEntry *pEntitiesEnd, bool bShadowDepth )
 	{
 		for( CClientRenderablesList::CEntry *itEntity = pEntitiesBegin; itEntity < pEntitiesEnd; ++ itEntity )
 			DrawOpaqueRenderable( itEntity->m_pRenderable, false, bShadowDepth );
-	};
-#endif
+	}
+#endif // SWARM_DLL
 
 #ifdef SWARM_DLL
 	void DrawOpaqueRenderables_DrawStaticProps( int nCount, CClientRenderablesList::CEntry **ppEntities, bool bShadowDepth )
@@ -917,7 +919,7 @@ protected:
 			pInstances[ numScheduled ] = itEntity->m_InstanceData;
 			pStatics[ numScheduled ++ ] = itEntity->m_pRenderable;
 			if ( -- numAvailable > 0 )
-				continue; // place a hint for compiler to predict more common case in the loop
+				continue; // Place a hint for compiler to predict more common case in the loop
 
 			staticpropmgr->DrawStaticProps( pStatics, pInstances, numScheduled, bShadowDepth, vcollide_wireframe.GetBool() );
 			numScheduled = 0;
@@ -951,7 +953,7 @@ protected:
 
 			pStatics[ numScheduled ++ ] = itEntity->m_pRenderable;
 			if ( -- numAvailable > 0 )
-				continue; // place a hint for compiler to predict more common case in the loop
+				continue; // Place a hint for compiler to predict more common case in the loop
 
 			staticpropmgr->DrawStaticProps( pStatics, numScheduled, bShadowDepth, vcollide_wireframe.GetBool() );
 			numScheduled = 0;
@@ -960,8 +962,8 @@ protected:
 
 		if ( numScheduled )
 			staticpropmgr->DrawStaticProps( pStatics, numScheduled, bShadowDepth, vcollide_wireframe.GetBool() );
-	};
-#endif
+	}
+#endif // SWARM_DLL
 
 #ifdef SWARM_DLL
 	void DrawOpaqueRenderables_Range( int nCount, CClientRenderablesList::CEntry **ppEntities, bool bShadowDepth )
@@ -972,17 +974,16 @@ protected:
 			if ( itEntity->m_pRenderable )
 				DrawOpaqueRenderable( itEntity->m_pRenderable, ( itEntity->m_TwoPass != 0 ), bShadowDepth );
 		}
-	};
+	}
 #else
 	void DrawOpaqueRenderables_Range( CClientRenderablesList::CEntry *pEntitiesBegin, CClientRenderablesList::CEntry *pEntitiesEnd, bool bShadowDepth )
 	{
 		for( CClientRenderablesList::CEntry *itEntity = pEntitiesBegin; itEntity < pEntitiesEnd; ++ itEntity )
 			if ( itEntity->m_pRenderable )
 				DrawOpaqueRenderable( itEntity->m_pRenderable, ( itEntity->m_TwoPass != 0 ), bShadowDepth );
-	};
-#endif
+	}
+#endif // SWARM_DLL
 };
-
 
 class CSimpleVCallbackView : public CBaseVCallbackView
 {
@@ -1053,7 +1054,7 @@ public:
 				bool bViewIntersectsWater = DoesViewPlaneIntersectWater( fogInfo.m_flWaterHeight, fogInfo.m_nVisibleFogVolume );
 				if( bViewIntersectsWater )
 				{
-					// have to draw both sides if we can see both.
+					// Have to draw both sides if we can see both.
 					m_DrawFlags |= DF_RENDER_UNDERWATER | DF_RENDER_ABOVEWATER;
 				}
 				else if ( fogInfo.m_bEyeInFogVolume )
@@ -1082,7 +1083,7 @@ public:
 
 		m_pCustomVisibility = NULL;
 		m_fogInfo = fogInfo;
-	};
+	}
 
 	void Draw()
 	{
@@ -1135,7 +1136,7 @@ public:
 		pRenderContext->ClearColor4ub( 0, 0, 0, 255 );
 
 		m_pMainView->DisableFog();
-	};
+	}
 
 	virtual void CallbackInitRenderList( int viewId )
 	{
@@ -1150,7 +1151,7 @@ public:
 		{
 #ifndef SWARM_DLL
 			const bool bStaticProp = i == 0 || i == 2 || i == 4 || i == 6;
-#endif
+#endif // SWARM_DLL
 
 			for ( int e = 0; e < m_pRenderablesList->m_RenderGroupCounts[i]; e++ )
 			{
@@ -1161,7 +1162,7 @@ public:
 
 #ifdef SWARM_DLL
 				const bool bStaticProp = pEntry->m_nModelType == RENDERABLE_MODEL_STATIC_PROP;
-#endif
+#endif // SWARM_DLL
 
 				bool bRemove = false;
 				if ( bStaticProp )
@@ -1183,7 +1184,7 @@ public:
 					else if ( pEntity->ComputeTranslucencyType() != RENDERABLE_IS_OPAQUE )
 #else
 					else if ( pEntry->m_pRenderable->IsTransparent() )
-#endif
+#endif // SWARM_DLL
 						bRemove = !settings.bDrawTranslucents;
 					else
 						bRemove = !settings.bDrawMisc;
@@ -1194,7 +1195,7 @@ public:
 					pEntry->m_pRenderable = NULL;
 #ifndef SWARM_DLL
 					pEntry->m_RenderHandle = NULL;
-#endif
+#endif // SWARM_DLL
 				}
 			}
 
@@ -1206,7 +1207,7 @@ public:
 				if ( !pEntry || !pEntry->m_pRenderable
 #ifndef SWARM_DLL
 					|| !pEntry->m_RenderHandle
-#endif
+#endif // SWARM_DLL
 					)
 				{
 					for ( int e2 = e + 1; e2 < m_pRenderablesList->m_RenderGroupCounts[i]; e2++ )
@@ -1215,7 +1216,7 @@ public:
 						if ( pEntry2 && pEntry2->m_pRenderable
 #ifndef SWARM_DLL
 							&& pEntry2->m_RenderHandle
-#endif
+#endif // SWARM_DLL
 							)
 						{
 							CClientRenderablesList::CEntry tmp = *pEntry;
@@ -1229,39 +1230,39 @@ public:
 				if ( pEntry && pEntry->m_pRenderable
 #ifndef SWARM_DLL
 					&& pEntry->m_RenderHandle
-#endif
+#endif // SWARM_DLL
 					)
 					eLast = e;
 			}
 
 			m_pRenderablesList->m_RenderGroupCounts[i] = eLast + 1;
 		}
-	};
+	}
 
 	virtual bool ShouldDrawParticles()
 	{
 		return settings.bDrawParticles;
-	};
+	}
 
 	virtual bool ShouldDrawRopes()
 	{
 		return settings.bDrawRopes;
-	};
+	}
 
 	virtual bool ShouldDrawWorld()
 	{
 		return settings.bDrawWorld;
-	};
+	}
 
 	virtual bool ShouldDrawTranslucents()
 	{
 		return settings.bDrawTranslucents;
-	};
+	}
 
 	virtual bool ShouldDrawTranslucentWorld()
 	{
 		return settings.bDrawWorld && settings.bDrawTranslucents;
-	};
+	}
 
 private:
 	VisibleFogVolumeInfo_t m_fogInfo;
@@ -1282,17 +1283,19 @@ bool UpdateRefractIfNeededByList( CViewModelRenderablesList::RenderGroups_t &lis
 			return true;
 		}
 	}
+
 	return false;
 }
+
 void DrawRenderablesInList( CViewModelRenderablesList::RenderGroups_t &renderGroups, int flags = 0 )
 {
 	CViewRender *pCView = assert_cast< CViewRender* >( view );
 	Assert( pCView->GetCurrentlyDrawingEntity() == NULL );
 
 	ASSERT_LOCAL_PLAYER_RESOLVABLE();
-#if defined( DBGFLAG_ASSERT )
+#ifdef DBGFLAG_ASSERT
 	int nSlot = GET_ACTIVE_SPLITSCREEN_SLOT();
-#endif
+#endif // DBGFLAG_ASSERT
 	Assert( pCView->GetCurrentlyDrawingEntity() == NULL );
 	int nCount = renderGroups.Count();
 	for( int i=0; i < nCount; ++i )
@@ -1331,6 +1334,7 @@ static inline bool UpdateRefractIfNeededByList( CUtlVector< IClientRenderable * 
 
 	return false;
 }
+
 static inline void DrawRenderablesInList( CUtlVector< IClientRenderable * > &list, int flags = 0 )
 {
 	CViewRender *pCView = assert_cast< CViewRender* >( view );
@@ -1354,8 +1358,7 @@ static inline void DrawRenderablesInList( CUtlVector< IClientRenderable * > &lis
 	}
 	pCView->SetCurrentlyDrawingEntity( NULL );
 }
-#endif
-
+#endif // SWARM_DLL
 
 int &ShaderEditorHandler::GetViewIdForModify()
 {
@@ -1363,10 +1366,12 @@ int &ShaderEditorHandler::GetViewIdForModify()
 
 	return *m_piCurrentViewId;
 }
+
 const VisibleFogVolumeInfo_t &ShaderEditorHandler::GetFogVolumeInfo()
 {
 	return m_tFogVolumeInfo;
 }
+
 const WaterRenderInfo_t &ShaderEditorHandler::GetWaterRenderInfo()
 {
 	return m_tWaterRenderInfo;
@@ -1471,7 +1476,7 @@ pFnVrCallback_Declare( VrCallback_ViewModel )
 	viewModelSetup.m_flAspectRatio = engine->GetScreenAspectRatio( view.width, view.height );
 #else
 	viewModelSetup.m_flAspectRatio = engine->GetScreenAspectRatio();
-#endif
+#endif // SWARM_DLL
 	viewModelSetup.width = pTex ? pTex->GetActualWidth() : bbx;
 	viewModelSetup.height = pTex ? pTex->GetActualHeight() : bby;
 
@@ -1489,7 +1494,7 @@ pFnVrCallback_Declare( VrCallback_ViewModel )
 	float depthmin = 0.0f;
 	float depthmax = 1.0f;
 
-	// HACK HACK:  Munge the depth range to prevent view model from poking into walls, etc.
+	// HACK: Munge the depth range to prevent view model from poking into walls, etc.
 	// Force clipped down range
 	if( bUseDepthHack )
 		pRenderContext->DepthRange( 0.0f, 0.1f );
@@ -1503,7 +1508,7 @@ pFnVrCallback_Declare( VrCallback_ViewModel )
 	CUtlVector< IClientRenderable * > opaqueViewModelList( 32 );
 	CUtlVector< IClientRenderable * > translucentViewModelList( 32 );
 	ClientLeafSystem()->CollateViewModelRenderables( opaqueViewModelList, translucentViewModelList );
-#endif
+#endif // SWARM_DLL
 
 	const bool bUpdateRefractForOpaque = UpdateRefractIfNeededByList( opaqueViewModelList );
 	DrawRenderablesInList( opaqueViewModelList );
@@ -1526,7 +1531,6 @@ pFnVrCallback_Declare( VrCallback_ViewModel )
 	if ( bFogOverride )
 		pCView->DisableFog();
 }
-
 
 void ShaderEditorHandler::RegisterViewRenderCallbacks()
 {
@@ -1552,6 +1556,7 @@ void ShaderEditorHandler::RegisterViewRenderCallbacks()
 		"Fog override",
 		"Fog force enabled",
 	};
+
 	const bool boolDefaults_generalVrc[] = {
 		true,
 		true,
@@ -1571,6 +1576,7 @@ void ShaderEditorHandler::RegisterViewRenderCallbacks()
 		false,
 		true,
 	};
+
 	const char *intNames_generalVrc[] = {
 		"Clear color R (0-255)",
 		"Clear color G (0-255)",
@@ -1592,7 +1598,6 @@ void ShaderEditorHandler::RegisterViewRenderCallbacks()
 		1,
 	};
 
-
 	const char *boolNames_vmVrc[] = {
 		"Hide default viewmodel",
 		"Clear color",
@@ -1602,6 +1607,7 @@ void ShaderEditorHandler::RegisterViewRenderCallbacks()
 		"Fog override",
 		"Fog force enabled",
 	};
+
 	const bool boolDefaults_vmVrc[] = {
 		false,
 		true,
@@ -1629,4 +1635,4 @@ void ShaderEditorHandler::RegisterViewRenderCallbacks()
 	shaderEdit->LockViewRenderCallbacks();
 }
 
-#endif
+#endif // SOURCE_2006

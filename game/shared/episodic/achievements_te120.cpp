@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose: handles all TE120 achievements
+// Purpose: Handles all TE120 achievements
 //
 //=============================================================================
 #include "cbase.h"

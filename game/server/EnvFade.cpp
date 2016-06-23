@@ -85,7 +85,6 @@ void CEnvFade::InputFade( inputdata_t &inputdata )
 	else
 	{
 		fadeFlags |= FFADE_OUT;
-
 //TE120--
 	if ( m_spawnflags & SF_FADE_DONTDIRTY )
 	{

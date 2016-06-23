@@ -12,7 +12,6 @@
 #include "view_shared.h"
 #include "viewrender.h"
 
-
 class ShaderEditorHandler : public CAutoGameSystemPerFrame
 {
 public:
@@ -30,7 +29,7 @@ public:
 	void CustomViewRender( int *viewId, const VisibleFogVolumeInfo_t &fogVolumeInfo );
 #else
 	void CustomViewRender( int *viewId, const VisibleFogVolumeInfo_t &fogVolumeInfo, const WaterRenderInfo_t &waterRenderInfo );
-#endif
+#endif // SOURCE_2006
 	void CustomPostRender();
 	void UpdateSkymask( bool bCombineMode, int x, int y, int w, int h );
 
@@ -53,10 +52,9 @@ private:
 	VisibleFogVolumeInfo_t m_tFogVolumeInfo;
 #ifndef SOURCE_2006
 	WaterRenderInfo_t m_tWaterRenderInfo;
-#endif
+#endif // SOURCE_2006
 };
 
 extern ShaderEditorHandler *g_ShaderEditorSystem;
 
-
-#endif
+#endif // SHEDITSYSTEM_H

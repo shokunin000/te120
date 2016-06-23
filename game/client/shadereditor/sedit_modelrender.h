@@ -15,7 +15,7 @@ public:
 	SEditModelRender( char const *name );
 	~SEditModelRender();
 
-// autogamesystem
+	// autogamesystem
 	virtual bool Init();
 	virtual void Shutdown();
 	virtual void Update( float frametime );
@@ -23,7 +23,7 @@ public:
 	virtual void LevelInitPostEntity();
 	virtual void LevelShutdownPostEntity();
 
-// interface
+	// interface
 	virtual bool LoadModel( const char *localPath );
 	virtual void DestroyModel();
 	virtual void GetModelCenter( float *pFl3_ViewOffset );
@@ -39,7 +39,6 @@ public:
 	virtual void DestroyCharPtrList( char ***szList );
 
 private:
-
 	bool IsModelReady();
 	void ResetModel();
 
@@ -48,4 +47,4 @@ private:
 	int m_iNumPoseParams;
 };
 
-#endif
+#endif // SHEDITMRENDER_H

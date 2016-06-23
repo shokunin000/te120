@@ -25,7 +25,7 @@
 #else
 #include "interface.h"
 #include "shadereditor/shadereditorsystem.h"
-#endif // NOT SHADER_EDITOR_DLL
+#endif // SHADER_EDITOR_DLL
 
 class IMaterial;
 class IMaterialVar;
@@ -45,7 +45,8 @@ public:
 	CViewSetup_SEdit_Shared()
 	{
 		Q_memset( this, 0, sizeof( CViewSetup_SEdit_Shared ) );
-	};
+	}
+
 	CViewSetup_SEdit_Shared( const CViewSetup &o )
 	{
 		x = o.x;
@@ -61,7 +62,8 @@ public:
 		zNearViewmodel = o.zNearViewmodel;
 		zFarViewmodel = o.zFarViewmodel;
 		m_flAspectRatio = o.m_flAspectRatio;
-	};
+	}
+
 	int			x,y,width,height;
 	float		fov,fovViewmodel;
 	Vector		origin;
@@ -140,8 +142,8 @@ class ShaderEditorInterface;
 extern ShaderEditorInterface *shaderEdit;
 #else
 extern IVShaderEditor *shaderEdit;
-#endif // NOT SHADER_EDITOR_DLL
+#endif // SHADER_EDITOR_DLL
 
-#endif // NOT PROCSHADER_DLL
+#endif // PROCSHADER_DLL
 
-#endif // NOT IV_SHADEREDITOR
+#endif // IV_SHADEREDITOR

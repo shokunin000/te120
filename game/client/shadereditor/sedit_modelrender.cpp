@@ -106,7 +106,6 @@ void SEditModelRender::ResetModel()
 {
 	if ( !IsModelReady() )
 		return;
-
 	pModelInstance->m_flAnimTime = gpGlobals->curtime;
 	pModelInstance->m_flOldAnimTime = gpGlobals->curtime;
 }
@@ -123,7 +122,6 @@ bool SEditModelRender::IsModelReady()
 		const model_t *pMdl = modelinfo ? modelinfo->FindOrLoadModel( m_szModelPath ) : NULL;
 		if ( pMdl )
 			pModelInstance->SetModelPointer( pMdl );
-
 		bValid = !!pMdl;
 	}
 
@@ -170,6 +168,7 @@ bool SEditModelRender::LoadModel( const char *localPath )
 	m_iNumPoseParams = pHdr ? pHdr->GetNumPoseParameters() : 0;
 
 	pModelInstance = pEnt;
+
 	return true;
 }
 
@@ -270,6 +269,7 @@ int SEditModelRender::QuerySequences( char ***list )
 
 	hNameList.Purge();
 	hSeqs.Purge();
+
 	return numSequences;
 }
 
@@ -396,7 +396,7 @@ int SEditModelRender::MaterialPicker( char ***szMat )
 				for ( int p = 0; p < numPaths; p++ )
 				{
 					char tmpPath[MAX_PATH];
-					Q_snprintf( tmpPath, MAX_PATH, "%s%s\0", pSHdr->pCdtexture( p ), matName );
+					Q_snprintf( tmpPath, MAX_PATH, "%s%s", pSHdr->pCdtexture( p ), matName );
 					Q_FixSlashes( tmpPath );
 					IMaterial *pTempMat = materials->FindMaterial( tmpPath, TEXTURE_GROUP_MODEL );
 					if ( !IsErrorMaterial( pTempMat ) )

@@ -410,7 +410,7 @@ float CalculatePhysicsImpactDamage( int index, gamevcollisionevent_t *pEvent, co
 
 		if ( damage > 0 )
 		{
-//			Msg("Spin : %.1f, Damage %.0f\n", FastSqrt(angularMom), damage );
+			DevMsg("Spin : %.1f, Damage %.0f\n", FastSqrt(angularMom), damage );
 			damageType |= DMG_SLASH;
 		}
 	}
