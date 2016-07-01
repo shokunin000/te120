@@ -4433,8 +4433,6 @@ int CAI_BaseNPC::SelectAlertSchedule()
 		return SCHED_ALERT_REACT_TO_COMBAT_SOUND;
 	}
 
-//TE120--
-/*
 	if ( HasCondition ( COND_HEAR_DANGER ) ||
 			  HasCondition ( COND_HEAR_PLAYER ) ||
 			  HasCondition ( COND_HEAR_WORLD  ) ||
@@ -4443,20 +4441,6 @@ int CAI_BaseNPC::SelectAlertSchedule()
 	{
 		return SCHED_ALERT_FACE_BESTSOUND;
 	}
-*/
-	// Enhanche ai perception behavior:
-	// as soon as NPC hears sounds that meet
-	// conditions they will investigate it
-	if ( HasCondition ( COND_HEAR_DANGER ) ||
-			  HasCondition ( COND_HEAR_PLAYER ) ||
-			  HasCondition ( COND_HEAR_WORLD  ) ||
-			  HasCondition ( COND_HEAR_BULLET_IMPACT ) ||
-			  HasCondition ( COND_HEAR_COMBAT ) )
-	{
-
-		return SCHED_INVESTIGATE_SOUND;
-	}
-//TE120--
 
 	if ( gpGlobals->curtime - GetEnemies()->LastTimeSeen( AI_UNKNOWN_ENEMY ) < TIME_CARE_ABOUT_DAMAGE )
 		return SCHED_ALERT_FACE;
