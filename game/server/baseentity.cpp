@@ -4937,10 +4937,10 @@ int CBaseEntity::PrecacheModel( const char *name, bool bPreload )
 	// Warn on out of order precache
 	if ( !CBaseEntity::IsPrecacheAllowed() )
 	{
-		if ( !engine->IsModelPrecached( name ) )
+		if ( !engine->IsModelPrecached( name ) && g_pDeveloper->GetInt() )
 		{
 			// Assert( !"CBaseEntity::PrecacheModel:  too late" );
-			// Warning( "Late precache of %s\n", name );
+			Warning( "Late precache of %s\n", name );
 		}
 	}
 #if defined( WATCHACCESS )
