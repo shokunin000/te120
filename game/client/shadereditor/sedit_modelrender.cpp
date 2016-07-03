@@ -16,7 +16,7 @@
 
 #ifndef SOURCE_2006
 #include "viewpostprocess.h"
-#endif
+#endif // SOURCE_2006
 
 #include "view.h"
 #include "input.h"
@@ -27,10 +27,8 @@
 #include "tier0/memdbgon.h"
 
 #ifdef SOURCE_2006
-void ScreenToWorld( int mousex, int mousey, float fov,
-					const Vector& vecRenderOrigin,
-					const QAngle& vecRenderAngles,
-					Vector& vecPickingRay )
+void ScreenToWorld( int mousex, int mousey, float fov, const Vector& vecRenderOrigin,
+	const QAngle& vecRenderAngles, Vector& vecPickingRay )
 {
 	float dx, dy;
 	float c_x, c_y;
@@ -53,10 +51,8 @@ void ScreenToWorld( int mousex, int mousey, float fov,
 }
 #else
 extern void ScreenToWorld( int mousex, int mousey, float fov,
-					const Vector& vecRenderOrigin,
-					const QAngle& vecRenderAngles,
-					Vector& vecPickingRay );
-#endif
+	const Vector& vecRenderOrigin, const QAngle& vecRenderAngles, Vector& vecPickingRay );
+#endif // SOURCE_2006
 
 SEditModelRender __g_ShaderEditorMReder( "ShEditMRender" );
 SEditModelRender *sEditMRender = &__g_ShaderEditorMReder;
@@ -67,6 +63,7 @@ SEditModelRender::SEditModelRender( char const *name ) : CAutoGameSystemPerFrame
 	m_iNumPoseParams = 0;
 	DestroyModel();
 }
+
 SEditModelRender::~SEditModelRender()
 {
 	DestroyModel();
@@ -76,9 +73,11 @@ bool SEditModelRender::Init()
 {
 	return true;
 }
+
 void SEditModelRender::Shutdown()
 {
 }
+
 void SEditModelRender::Update( float frametime )
 {
 	if ( !IsModelReady() )
@@ -88,21 +87,26 @@ void SEditModelRender::Update( float frametime )
 	if ( pModelInstance->GetCycle() >= 1.0f )
 		pModelInstance->SetCycle( pModelInstance->GetCycle() - 1.0f );
 }
+
 void SEditModelRender::LevelInitPostEntity()
 {
 	ResetModel();
 }
+
 void SEditModelRender::LevelShutdownPostEntity()
 {
 	ResetModel();
 }
+
 void SEditModelRender::ResetModel()
 {
 	if ( !IsModelReady() )
 		return;
+		
 	pModelInstance->m_flAnimTime = gpGlobals->curtime;
 	pModelInstance->m_flOldAnimTime = gpGlobals->curtime;
 }
+
 bool SEditModelRender::IsModelReady()
 {
 	if ( !pModelInstance )
@@ -123,6 +127,7 @@ bool SEditModelRender::IsModelReady()
 
 	return bValid;
 }
+
 bool SEditModelRender::LoadModel( const char *localPath )
 {
 	DestroyModel();
@@ -139,7 +144,7 @@ bool SEditModelRender::LoadModel( const char *localPath )
 		false
 #else
 		RENDER_GROUP_OPAQUE_ENTITY
-#endif
+#endif // SWARM_DLL
 		);
 	MDLCACHE_CRITICAL_SECTION();
 	pEnt->SetModelPointer( mdl );
@@ -160,8 +165,10 @@ bool SEditModelRender::LoadModel( const char *localPath )
 	m_iNumPoseParams = pHdr ? pHdr->GetNumPoseParameters() : 0;
 
 	pModelInstance = pEnt;
+
 	return true;
 }
+
 void SEditModelRender::DestroyModel()
 {
 	if ( pModelInstance )
@@ -171,6 +178,7 @@ void SEditModelRender::DestroyModel()
 	m_szModelPath[0] = '\0';
 	m_iNumPoseParams = 0;
 }
+
 void SEditModelRender::GetModelCenter( float *pFl3_ViewOffset )
 {
 	Q_memset( pFl3_ViewOffset, 0, sizeof(float) * 3 );
@@ -187,6 +195,7 @@ void SEditModelRender::GetModelCenter( float *pFl3_ViewOffset )
 		}
 	}
 }
+
 void SEditModelRender::DestroyCharPtrList( char ***szList )
 {
 	Assert( szList );
@@ -202,6 +211,7 @@ int SequenceSort( mstudioseqdesc_t *const *seq1, mstudioseqdesc_t *const *seq2 )
 {
 	return Q_stricmp( ( *seq1 )->pszLabel(), ( *seq2 )->pszLabel() );
 }
+
 int SEditModelRender::QuerySequences( char ***list )
 {
 	if ( !IsModelReady() )
@@ -256,8 +266,10 @@ int SEditModelRender::QuerySequences( char ***list )
 
 	hNameList.Purge();
 	hSeqs.Purge();
+
 	return numSequences;
 }
+
 void SEditModelRender::SetSequence( const char *name )
 {
 	if ( !IsModelReady() )
@@ -266,6 +278,7 @@ void SEditModelRender::SetSequence( const char *name )
 	MDLCACHE_CRITICAL_SECTION();
 	pModelInstance->ResetSequence( pModelInstance->LookupSequence( name ) );
 }
+
 void SEditModelRender::ExecRender()
 {
 	if ( !IsModelReady() )
@@ -278,20 +291,22 @@ void SEditModelRender::ExecRender()
 #if SWARM_DLL
 	RenderableInstance_t instance;
 	instance.m_nAlpha = 255;
-#endif
+#endif // SWARM_DLL
 	pModelInstance->DrawModel( STUDIO_RENDER
 #if SWARM_DLL
 		, instance
-#endif
+#endif // SWARM_DLL
 		);
 }
+
 void SEditModelRender::DoPostProc( int x, int y, int w, int h )
 {
 #ifndef SOURCE_2006
 	if ( view && view->GetPlayerViewSetup()->m_bDoBloomAndToneMapping )
 		DoEnginePostProcessing( x, y, w, h, false, false );
-#endif
+#endif // SOURCE_2006
 }
+
 int SEditModelRender::MaterialPicker( char ***szMat )
 {
 	int mx, my;
@@ -299,17 +314,17 @@ int SEditModelRender::MaterialPicker( char ***szMat )
 	vgui::input()->GetCursorPos( mx, my );
 #else
 	vgui::input()->GetCursorPosition( mx, my );
-#endif
+#endif // SOURCE_2006
 
 	Vector ray;
 	const CViewSetup *pViewSetup = view->GetPlayerViewSetup();
 	float ratio =engine->GetScreenAspectRatio(
 #if SWARM_DLL
 		pViewSetup->width, pViewSetup->height
-#endif
+#endif // SWARM_DLL
 		);
 
-	ratio = ( 1.0f / ratio ) * (4.0f/3.0f);
+	ratio = ( 1.0f / ratio ) * (4.0f / 3.0f);
 	float flFov = ScaleFOVByWidthRatio( pViewSetup->fov, ratio );
 	ScreenToWorld( mx, my, flFov, pViewSetup->origin, pViewSetup->angles, ray );
 

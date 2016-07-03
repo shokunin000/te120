@@ -1,5 +1,8 @@
-#ifndef SHEDITMRENDER_H
-#define SHEDITMRENDER_H
+#ifndef SEDIT_MODELRENDER_H
+#define SEDIT_MODELRENDER_H
+#ifdef _WIN32
+#pragma once
+#endif // _WIN32
 
 #include "cbase.h"
 #include "shadereditor/isedit_modelrender.h"
@@ -12,7 +15,7 @@ public:
 	SEditModelRender( char const *name );
 	~SEditModelRender();
 
-// autogamesystem
+	// autogamesystem
 	virtual bool Init();
 	virtual void Shutdown();
 	virtual void Update( float frametime );
@@ -20,7 +23,7 @@ public:
 	virtual void LevelInitPostEntity();
 	virtual void LevelShutdownPostEntity();
 
-// interface
+	// interface
 	virtual bool LoadModel( const char *localPath );
 	virtual void DestroyModel();
 	virtual void GetModelCenter( float *pFl3_ViewOffset );
@@ -36,7 +39,6 @@ public:
 	virtual void DestroyCharPtrList( char ***szList );
 
 private:
-
 	bool IsModelReady();
 	void ResetModel();
 
@@ -45,4 +47,4 @@ private:
 	int m_iNumPoseParams;
 };
 
-#endif
+#endif // SEDIT_MODELRENDER

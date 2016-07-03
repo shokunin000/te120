@@ -1,6 +1,5 @@
-#ifndef IV_SHADEREDITOR
-#define IV_SHADEREDITOR
-
+#ifndef IVSHADEREDITOR_H
+#define IVSHADEREDITOR_H
 #ifdef _WIN32
 #pragma once
 #endif // _WIN32
@@ -9,24 +8,24 @@
 #define pFnClCallback_Declare( x ) void x( float *pfl4 )
 
 #define pFnVrCallback( x ) void(* x )( bool * const pbOptions, int * const piOptions,\
-										float * const pflOptions, char ** const pszOptions )
+	float * const pflOptions, char ** const pszOptions )
+
 #define pFnVrCallback_Declare( x ) void x( bool * const pbOptions, int * const piOptions,\
-										float * const pflOptions, char ** const pszOptions )
+	float * const pflOptions, char ** const pszOptions )
 
 #define DEFINE_SHADEREDITOR_MATERIALVAR( effectName, nodeName, materialVarName, localVarName ) \
 	static ShaderEditVarToken token_ ## localVarName = SHADEREDIT_MVAR_TOKEN_INVALID; \
 	IMaterialVar *localVarName = shaderEdit->GetPPEMaterialVarFast( \
-		token_ ## localVarName, effectName, nodeName, materialVarName )
+	token_ ## localVarName, effectName, nodeName, materialVarName )
 
 #ifndef PROCSHADER_DLL
-
 #ifdef SHADER_EDITOR_DLL
 #include "../public/tier1/interface.h"
 #include "view_shared.h"
 #else
 #include "interface.h"
 #include "shadereditor/shadereditorsystem.h"
-#endif // NOT SHADER_EDITOR_DLL
+#endif // SHADER_EDITOR_DLL
 
 class IMaterial;
 class IMaterialVar;
@@ -46,7 +45,8 @@ public:
 	CViewSetup_SEdit_Shared()
 	{
 		Q_memset( this, 0, sizeof( CViewSetup_SEdit_Shared ) );
-	};
+	}
+
 	CViewSetup_SEdit_Shared( const CViewSetup &o )
 	{
 		x = o.x;
@@ -62,13 +62,14 @@ public:
 		zNearViewmodel = o.zNearViewmodel;
 		zFarViewmodel = o.zFarViewmodel;
 		m_flAspectRatio = o.m_flAspectRatio;
-	};
-	int			x,y,width,height;
-	float		fov,fovViewmodel;
-	Vector		origin;
-	QAngle		angles;
-	float		zNear,zFar,zNearViewmodel,zFarViewmodel;
-	float		m_flAspectRatio;
+	}
+
+	int x, y, width, height;
+	float fov, fovViewmodel;
+	Vector origin;
+	QAngle angles;
+	float	zNear, zFar, zNearViewmodel, zFarViewmodel;
+	float	m_flAspectRatio;
 };
 
 
@@ -76,8 +77,8 @@ class IVShaderEditor : public IBaseInterface
 {
 public:
 	virtual bool Init( CreateInterfaceFn appSystemFactory, CGlobalVarsBase *pGlobals,
-					void *pSEditMRender,
-					bool bCreateEditor, bool bEnablePrimaryDebug, int iSkymaskMode ) = 0;
+		void *pSEditMRender,
+		bool bCreateEditor, bool bEnablePrimaryDebug, int iSkymaskMode ) = 0;
 	virtual void Shutdown() = 0;
 	virtual void PrecacheData() = 0;
 
@@ -113,16 +114,16 @@ public:
 
 	// post processing effect manipulation (precached effects accessible)
 	// the index becomes invalid when editing the precache list
-	virtual int			GetPPEIndex( const char *pszName ) = 0; // returns -1 when not found, case insensitive
-	virtual bool		IsPPEEnabled( const int &index ) = 0;
-	virtual void		SetPPEEnabled( const int &index, const bool &bEnabled ) = 0;
+	virtual int	GetPPEIndex( const char *pszName ) = 0; // returns -1 when not found, case insensitive
+	virtual bool IsPPEEnabled( const int &index ) = 0;
+	virtual void SetPPEEnabled( const int &index, const bool &bEnabled ) = 0;
 	virtual IMaterial	*GetPPEMaterial( const int &index, const char *pszNodeName ) = 0;
 
 	// Draws a PPE graph right now or adds it to the render queue (r_queued_post_processing!)
 	// Does not push a new RT but uses the current one
 	// If you have 'during scene' nodes, make sure to call it twice in the appropriate places
-	virtual void		DrawPPEOnDemand( const int &index, const bool bInScene = false ) = 0;
-	virtual void		DrawPPEOnDemand( const int &index, int x, int y, int w, int h, const bool bInScene = false ) = 0;
+	virtual void DrawPPEOnDemand( const int &index, const bool bInScene = false ) = 0;
+	virtual void DrawPPEOnDemand( const int &index, int x, int y, int w, int h, const bool bInScene = false ) = 0;
 
 	// access a materialvar based on an incrementing token
 	// you don't need to cache the returned value, it's okay to call this each frame
@@ -141,8 +142,8 @@ class ShaderEditorInterface;
 extern ShaderEditorInterface *shaderEdit;
 #else
 extern IVShaderEditor *shaderEdit;
-#endif // NOT SHADER_EDITOR_DLL
+#endif // SHADER_EDITOR_DLL
 
-#endif // NOT PROCSHADER_DLL
+#endif // PROCSHADER_DLL
 
-#endif // NOT IV_SHADEREDITOR
+#endif // IVSHADEREDITOR_H

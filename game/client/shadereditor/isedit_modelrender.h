@@ -1,6 +1,5 @@
-#ifndef IV_SHADEREDITOR_MRENDER
-#define IV_SHADEREDITOR_MRENDER
-
+#ifndef ISEDIT_MODELRENDER_H
+#define ISEDIT_MODELRENDER_H
 #ifdef _WIN32
 #pragma once
 #endif // _WIN32
@@ -10,8 +9,7 @@
 #else
 #include "interface.h"
 #include "shadereditor/shadereditorsystem.h"
-#endif // NOT SHADER_EDITOR_DLL
-
+#endif // SHADER_EDITOR_DLL
 
 class ISEditModelRender
 {
@@ -30,12 +28,10 @@ public:
 	virtual void DestroyCharPtrList( char ***szList ) = 0;
 };
 
-
 #ifdef SHADER_EDITOR_DLL
 extern ISEditModelRender *sEditMRender;
 #else
 class SEditModelRender;
 extern SEditModelRender *sEditMRender;
-#endif
-
-#endif
+#endif // SHADER_EDITOR_DLL
+#endif // ISEDIT_MODELRENDER_H
