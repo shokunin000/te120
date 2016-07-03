@@ -56,7 +56,7 @@ ASSERT_INVARIANT( sizeof(EHandlePlaceholder_t) == sizeof(EHANDLE) );
 
 //-----------------------------------------------------------------------------
 
-static int gSizes[FIELD_TYPECOUNT] = 
+static int gSizes[FIELD_TYPECOUNT] =
 {
 	FIELD_SIZE( FIELD_VOID ),
 	FIELD_SIZE( FIELD_FLOAT ),
@@ -70,7 +70,7 @@ static int gSizes[FIELD_TYPECOUNT] =
 	FIELD_SIZE( FIELD_COLOR32 ),
 	FIELD_SIZE( FIELD_EMBEDDED ),
 	FIELD_SIZE( FIELD_CUSTOM ),
-	
+
 	FIELD_SIZE( FIELD_CLASSPTR ),
 	FIELD_SIZE( FIELD_EHANDLE ),
 	FIELD_SIZE( FIELD_EDICT ),
@@ -301,7 +301,7 @@ void CSave::Log( const char *pName, fieldtype_t fieldType, void *value, int coun
 				string_t *pValue = ( string_t* )( value );
 				Q_snprintf( szTempBuf, sizeof( szTempBuf ), "%s", ( char* )STRING( *pValue ) );
 				Q_strncat( szBuf, szTempBuf, sizeof( szTempBuf ), COPY_ALL_CHARACTERS );
-				break;					
+				break;
 			}
 		case FIELD_VECTOR:
 			{
@@ -368,15 +368,15 @@ bool CSave::IsAsync()
 //-------------------------------------
 
 int CSave::GetWritePos() const
-{ 
-	return m_pData->GetCurPos(); 
+{
+	return m_pData->GetCurPos();
 }
 
 //-------------------------------------
 
 void CSave::SetWritePos(int pos)
 {
-	m_pData->Seek(pos); 
+	m_pData->Seek(pos);
 }
 
 //-------------------------------------
@@ -648,7 +648,7 @@ bool CSave::ShouldSaveField( const void *pData, typedescription_t *pField )
 			{
 				typedescription_t *pTestField = pField->td->dataDesc;
 				typedescription_t *pLimit	  = pField->td->dataDesc + pField->td->dataNumFields;
-			
+
 				for ( ; pTestField < pLimit; ++pTestField )
 				{
 					if ( ShouldSaveField( pTestData + pTestField->fieldOffset[ TD_OFFSET_NORMAL ], pTestField ) )
@@ -708,7 +708,7 @@ bool CSave::ShouldSaveField( const void *pData, typedescription_t *pField )
 }
 
 //-------------------------------------
-// Purpose:	Writes all the fields that are client neutral. In the event of 
+// Purpose:	Writes all the fields that are client neutral. In the event of
 //			a librarization of save/restore, these would reside in the library
 //
 
@@ -719,11 +719,11 @@ bool CSave::WriteBasicField( const char *pname, void *pData, datamap_t *pRootMap
 		case FIELD_FLOAT:
 			WriteFloat( pField->fieldName, (float *)pData, pField->fieldSize );
 			break;
-			
+
 		case FIELD_STRING:
 			WriteString( pField->fieldName, (string_t *)pData, pField->fieldSize );
 			break;
-			
+
 		case FIELD_VECTOR:
 			WriteVector( pField->fieldName, (Vector *)pData, pField->fieldSize );
 			break;
@@ -749,7 +749,7 @@ bool CSave::WriteBasicField( const char *pname, void *pData, datamap_t *pRootMap
 			break;
 
 		case FIELD_COLOR32:
-			WriteData( pField->fieldName, 4*pField->fieldSize, (char *)pData );	
+			WriteData( pField->fieldName, 4*pField->fieldSize, (char *)pData );
 			break;
 
 		case FIELD_EMBEDDED:
@@ -783,7 +783,7 @@ bool CSave::WriteBasicField( const char *pname, void *pData, datamap_t *pRootMap
 				pField
 			};
 			pField->pSaveRestoreOps->Save( fieldInfo, this );
-			
+
 			EndBlock();
 			break;
 		}
@@ -828,7 +828,7 @@ int CSave::WriteFields( const char *pname, const void *pBaseData, datamap_t *pRo
 	__dcbt( 128, pBaseData );
 	__dcbt( 256, pBaseData );
 	__dcbt( 512, pBaseData );
-	void *pDest = m_pData->AccessCurPos();	
+	void *pDest = m_pData->AccessCurPos();
 	__dcbt( 0, pDest );
 	__dcbt( 128, pDest );
 	__dcbt( 256, pDest );
@@ -839,7 +839,7 @@ int CSave::WriteFields( const char *pname, const void *pBaseData, datamap_t *pRo
 	{
 		pTest = &pFields[ i ];
 		void *pOutputData = ( (char *)pBaseData + pTest->fieldOffset[ TD_OFFSET_NORMAL ] );
-			
+
 		if ( !ShouldSaveField( pOutputData, pTest ) )
 			continue;
 
@@ -874,7 +874,7 @@ int CSave::DoWriteAll( const void *pLeafObject, datamap_t *pLeafMap, datamap_t *
 
 	return WriteFields( pCurMap->dataClassName, pLeafObject, pLeafMap, pCurMap->dataDesc, pCurMap->dataNumFields );
 }
-	
+
 //-------------------------------------
 
 void CSave::StartBlock( const char *pszBlockName )
@@ -897,16 +897,16 @@ void CSave::EndBlock()
 	int endPos = GetWritePos();
 	int startPos = m_BlockStartStack[ m_BlockStartStack.Count() - 1 ];
 	short sizeBlock = endPos - startPos;
-	
+
 	m_BlockStartStack.Remove( m_BlockStartStack.Count() - 1 );
-	
+
 	// Move to the the location where the size of the block was written & rewrite the size
 	SetWritePos( startPos - sizeof(SaveRestoreRecordHeader_t) );
 	BufferData( (const char *)&sizeBlock, sizeof(short) );
-	
+
 	SetWritePos( endPos );
 }
-	
+
 //-------------------------------------
 
 void CSave::BufferString( char *pdata, int len )
@@ -1016,7 +1016,7 @@ void CSave::WriteTime( const char *pname, const float *data, int count )
 			tmp = data[i];
 		}
 		else
-		{			
+		{
 			tmp = data[i] - m_pGameInfo->GetBaseTime();
 			if ( fabsf( tmp ) < 0.001 ) // never allow a time to become zero due to rebasing
 				tmp = 0.001;
@@ -1046,7 +1046,7 @@ void CSave::WriteTime( const float *data, int count )
 			tmp = data[i];
 		}
 		else
-		{			
+		{
 			tmp = data[i] - m_pGameInfo->GetBaseTime();
 			if ( fabsf( tmp ) < 0.001 ) // never allow a time to become zero due to rebasing
 				tmp = 0.001;
@@ -1145,7 +1145,9 @@ void CSave::WriteFunction( datamap_t *pRootMap, const char *pname, inputfunc_t *
 	const char *functionName = UTIL_FunctionToName( pRootMap, *data );
 	if ( !functionName )
 	{
-		// Warning( "Invalid function pointer in entity!\n" );
+		extern ConVar developer;
+		if ( developer.GetInt() )
+			Warning( "Invalid function pointer in entity!\n" );
 		// Assert(0);
 		functionName = "BADFUNCTIONPOINTER";
 	}
@@ -1232,7 +1234,7 @@ void CSave::WriteEHandle( const EHANDLE *pEHandle, int count )
 }
 
 //-------------------------------------
-// Purpose:	Writes all the fields that are not client neutral. In the event of 
+// Purpose:	Writes all the fields that are not client neutral. In the event of
 //			a librarization of save/restore, these would not reside in the library
 
 bool CSave::WriteGameField( const char *pname, void *pData, datamap_t *pRootMap, typedescription_t *pField )
@@ -1242,19 +1244,19 @@ bool CSave::WriteGameField( const char *pname, void *pData, datamap_t *pRootMap,
 		case FIELD_CLASSPTR:
 			WriteEntityPtr( pField->fieldName, (CBaseEntity **)pData, pField->fieldSize );
 			break;
-	
+
 		case FIELD_EDICT:
 			WriteEdictPtr( pField->fieldName, (edict_t **)pData, pField->fieldSize );
 			break;
-	
+
 		case FIELD_EHANDLE:
 			WriteEHandle( pField->fieldName, (EHANDLE *)pData, pField->fieldSize );
 			break;
-		
+
 		case FIELD_POSITION_VECTOR:
 			WritePositionVector( pField->fieldName, (Vector *)pData, pField->fieldSize );
 			break;
-			
+
 		case FIELD_TIME:
 			WriteTime( pField->fieldName, (float *)pData, pField->fieldSize );
 			break;
@@ -1262,7 +1264,7 @@ bool CSave::WriteGameField( const char *pname, void *pData, datamap_t *pRootMap,
 		case FIELD_TICK:
 			WriteTick( pField->fieldName, (int *)pData, pField->fieldSize );
 			break;
-			
+
 		case FIELD_MODELINDEX:
 			{
 				int nModelIndex = *(int*)pData;
@@ -1298,7 +1300,7 @@ bool CSave::WriteGameField( const char *pname, void *pData, datamap_t *pRootMap,
 		case FIELD_FUNCTION:
 			WriteFunction( pRootMap, pField->fieldName, (inputfunc_t **)(char *)pData, pField->fieldSize );
 			break;
-			
+
 		case FIELD_VMATRIX:
 			WriteVMatrix( pField->fieldName, (VMatrix *)pData, pField->fieldSize );
 			break;
@@ -1341,15 +1343,15 @@ CRestore::CRestore( CSaveRestoreData *pdata )
 //-------------------------------------
 
 int CRestore::GetReadPos() const
-{ 
-	return m_pData->GetCurPos(); 
+{
+	return m_pData->GetCurPos();
 }
 
 //-------------------------------------
 
-void CRestore::SetReadPos( int pos ) 
-{ 
-	m_pData->Seek(pos); 
+void CRestore::SetReadPos( int pos )
+{
+	m_pData->Seek(pos);
 }
 
 //-------------------------------------
@@ -1361,7 +1363,7 @@ const char *CRestore::StringFromHeaderSymbol( int symbol )
 }
 
 //-------------------------------------
-// Purpose:	Reads all the fields that are client neutral. In the event of 
+// Purpose:	Reads all the fields that are client neutral. In the event of
 //			a librarization of save/restore, these would reside in the library
 
 void CRestore::ReadBasicField( const SaveRestoreRecordHeader_t &header, void *pDest, datamap_t *pRootMap, typedescription_t *pField )
@@ -1384,7 +1386,7 @@ void CRestore::ReadBasicField( const SaveRestoreRecordHeader_t &header, void *pD
 			ReadVector( (Vector *)pDest, pField->fieldSize, header.size );
 			break;
 		}
-		
+
 		case FIELD_QUATERNION:
 		{
 			ReadQuaternion( (Quaternion *)pDest, pField->fieldSize, header.size );
@@ -1446,7 +1448,7 @@ void CRestore::ReadBasicField( const SaveRestoreRecordHeader_t &header, void *pD
 				Warning( "Attempted to restore FIELD_EMBEDDEDBYREF %s but there is no destination memory\n", pField->fieldName );
 			}
 			break;
-			
+
 		}
 		case FIELD_CUSTOM:
 		{
@@ -1459,14 +1461,14 @@ void CRestore::ReadBasicField( const SaveRestoreRecordHeader_t &header, void *pD
 				((char *)pDest) - pField->fieldOffset[ TD_OFFSET_NORMAL ],
 				pField
 			};
-			
+
 			pField->pSaveRestoreOps->Restore( fieldInfo, this );
-			
+
 			Assert( posNextField >= GetReadPos() );
 			SetReadPos( posNextField );
 			break;
 		}
-		
+
 		default:
 			Warning( "Bad field type\n" );
 			Assert(0);
@@ -1504,15 +1506,15 @@ typedescription_t *CRestore::FindField( const char *pszFieldName, typedescriptio
 	if ( pszFieldName )
 	{
 		typedescription_t *pTest;
-		
+
 		for ( int i = 0; i < fieldCount; i++ )
 		{
 			pTest = &pFields[fieldNumber];
-			
+
 			++fieldNumber;
 			if ( fieldNumber == fieldCount )
 				fieldNumber = 0;
-			
+
 			if ( stricmp( pTest->fieldName, pszFieldName ) == 0 )
 				return pTest;
 		}
@@ -1579,7 +1581,7 @@ void CRestore::EmptyFields( void *pBaseData, typedescription_t *pFields, int fie
 			break;
 
 		default:
-			// NOTE: If you hit this assertion, you've got a bug where you're using 
+			// NOTE: If you hit this assertion, you've got a bug where you're using
 			// the wrong field type for your field
 			if ( pField->fieldSizeInBytes != pField->fieldSize * gSizes[pField->fieldType] )
 			{
@@ -1597,7 +1599,7 @@ void CRestore::EmptyFields( void *pBaseData, typedescription_t *pFields, int fie
 void CRestore::StartBlock( SaveRestoreRecordHeader_t *pHeader )
 {
 	ReadHeader( pHeader );
-	m_BlockEndStack.AddToTail( GetReadPos() + pHeader->size );	
+	m_BlockEndStack.AddToTail( GetReadPos() + pHeader->size );
 }
 
 //-------------------------------------
@@ -1625,7 +1627,7 @@ void CRestore::EndBlock()
 	m_BlockEndStack.Remove( m_BlockEndStack.Count() - 1 );
 	SetReadPos( endPos );
 }
-	
+
 //-------------------------------------
 
 int CRestore::ReadFields( const char *pname, void *pBaseData, datamap_t *pRootMap, typedescription_t *pFields, int fieldCount )
@@ -1649,7 +1651,7 @@ int CRestore::ReadFields( const char *pname, void *pBaseData, datamap_t *pRootMa
 
 	// Clear out base data
 	EmptyFields( pBaseData, pFields, fieldCount );
-	
+
 	// Skip over the struct name
 	int i;
 	int nFieldsSaved = ReadInt();						// Read field count
@@ -1670,7 +1672,7 @@ int CRestore::ReadFields( const char *pname, void *pBaseData, datamap_t *pRootMa
 			BufferSkipBytes( header.size );			// Advance to next field
 		}
 	}
-	
+
 	return 1;
 }
 
@@ -1809,13 +1811,13 @@ void CRestore::ReadString( char *pDest, int nSizeDest, int nBytesAvailable )
 
 	Q_strncpy(pDest, pString, nSizeDest );
 }
-	
+
 //-------------------------------------
 
 int CRestore::ReadString( string_t *pValue, int nElems, int nBytesAvailable )
 {
 	AssertMsg( nBytesAvailable > 0, "CRestore::ReadString() implementation does not currently support unspecified bytes available");
-	
+
 	int i;
 	char *pString = BufferPointer();
 	char *pLimit = pString + nBytesAvailable;
@@ -1825,14 +1827,14 @@ int CRestore::ReadString( string_t *pValue, int nElems, int nBytesAvailable )
 			pValue[i] = NULL_STRING;
 		else
 			pValue[i] = AllocPooledString( (char *)pString );
-		
+
 		while (*pString)
 			pString++;
 		pString++;
 	}
 
 	BufferSkipBytes( nBytesAvailable );
-	
+
 	return i;
 }
 
@@ -1933,19 +1935,19 @@ int CRestore::ReadEntityPtr( CBaseEntity **ppEntity, int count, int nBytesAvaila
 {
 	AssertMsg( count <= MAX_ENTITYARRAY, "Array of entities or ehandles exceeds limit supported by save/restore" );
 	int entityArray[MAX_ENTITYARRAY];
-	
+
 	int nRead = ReadInt( entityArray, count, nBytesAvailable );
-	
+
 	for ( int i = 0; i < nRead; i++ ) // nRead is never greater than count
 	{
 		ppEntity[i] = EntityFromIndex( entityArray[i] );
 	}
-	
+
 	if ( nRead < count)
 	{
 		memset( &ppEntity[nRead], 0, ( count - nRead ) * sizeof(ppEntity[0]) );
 	}
-	
+
 	return nRead;
 }
 
@@ -1956,20 +1958,20 @@ int CRestore::ReadEdictPtr( edict_t **ppEdict, int count, int nBytesAvailable )
 	AssertMsg( count <= MAX_ENTITYARRAY, "Array of entities or ehandles exceeds limit supported by save/restore" );
 	int entityArray[MAX_ENTITYARRAY];
 	CBaseEntity	*pEntity;
-	
+
 	int nRead = ReadInt( entityArray, count, nBytesAvailable );
-	
+
 	for ( int i = 0; i < nRead; i++ ) // nRead is never greater than count
 	{
 		pEntity = EntityFromIndex( entityArray[i] );
 		ppEdict[i] = (pEntity) ? pEntity->edict() : NULL;
 	}
-	
+
 	if ( nRead < count)
 	{
 		memset( &ppEdict[nRead], 0, ( count - nRead ) * sizeof(ppEdict[0]) );
 	}
-	
+
 	return nRead;
 #else
 	return 0;
@@ -1983,24 +1985,24 @@ int CRestore::ReadEHandle( EHANDLE *pEHandle, int count, int nBytesAvailable )
 {
 	AssertMsg( count <= MAX_ENTITYARRAY, "Array of entities or ehandles exceeds limit supported by save/restore" );
 	int entityArray[MAX_ENTITYARRAY];
-	
+
 	int nRead = ReadInt( entityArray, count, nBytesAvailable );
-	
+
 	for ( int i = 0; i < nRead; i++ ) // nRead is never greater than count
 	{
 		pEHandle[i] = EntityFromIndex( entityArray[i] );
 	}
-	
+
 	if ( nRead < count)
 	{
 		memset( &pEHandle[nRead], 0xFF, ( count - nRead ) * sizeof(pEHandle[0]) );
 	}
-	
+
 	return nRead;
 }
-	
+
 //-------------------------------------
-// Purpose:	Reads all the fields that are not client neutral. In the event of 
+// Purpose:	Reads all the fields that are not client neutral. In the event of
 //			a librarization of save/restore, these would NOT reside in the library
 
 void CRestore::ReadGameField( const SaveRestoreRecordHeader_t &header, void *pDest, datamap_t *pRootMap, typedescription_t *pField )
@@ -2024,13 +2026,13 @@ void CRestore::ReadGameField( const SaveRestoreRecordHeader_t &header, void *pDe
 			ReadTick( (int *)pDest, pField->fieldSize, header.size );
 			break;
 		}
-		
+
 		case FIELD_FUNCTION:
 		{
 			ReadFunction( pRootMap, (inputfunc_t **)pDest, pField->fieldSize, header.size );
 			break;
 		}
-		
+
 		case FIELD_MODELINDEX:
 		{
 			int *pModelIndex = (int*)pDest;
@@ -2047,7 +2049,7 @@ void CRestore::ReadGameField( const SaveRestoreRecordHeader_t &header, void *pDe
 
 				pModelIndex[i] = modelinfo->GetModelIndex( STRING( pModelName[i] ) );
 
-#if !defined( CLIENT_DLL )	
+#if !defined( CLIENT_DLL )
 				if ( m_precache )
 				{
 					CBaseEntity::PrecacheModel( STRING( pModelName[i] ) );
@@ -2073,7 +2075,7 @@ void CRestore::ReadGameField( const SaveRestoreRecordHeader_t &header, void *pDe
 
 				pMaterialIndex[i] = GetMaterialIndex( STRING( pMaterialName[i] ) );
 
-#if !defined( CLIENT_DLL )	
+#if !defined( CLIENT_DLL )
 				if ( m_precache )
 				{
 					PrecacheMaterial( STRING( pMaterialName[i] ) );
@@ -2082,7 +2084,7 @@ void CRestore::ReadGameField( const SaveRestoreRecordHeader_t &header, void *pDe
 			}
 			break;
 		}
-		
+
 		case FIELD_MODELNAME:
 		case FIELD_SOUNDNAME:
 		{
@@ -2105,7 +2107,7 @@ void CRestore::ReadGameField( const SaveRestoreRecordHeader_t &header, void *pDe
 				{
 					if ( pStringDest[i] != NULL_STRING )
 					{
-#if !defined( CLIENT_DLL )	
+#if !defined( CLIENT_DLL )
 						if ( pField->fieldType == FIELD_MODELNAME )
 						{
 							CBaseEntity::PrecacheModel( STRING( pStringDest[i] ) );
@@ -2120,11 +2122,11 @@ void CRestore::ReadGameField( const SaveRestoreRecordHeader_t &header, void *pDe
 			}
 			break;
 		}
-		
+
 		case FIELD_CLASSPTR:
 			ReadEntityPtr( (CBaseEntity **)pDest, pField->fieldSize, header.size );
 			break;
-			
+
 		case FIELD_EDICT:
 #if !defined( CLIENT_DLL )
 			ReadEdictPtr( (edict_t **)pDest, pField->fieldSize, header.size );
@@ -2166,7 +2168,7 @@ int CRestore::ReadTime( float *pValue, int count, int nBytesAvailable )
 {
 	float baseTime = m_pGameInfo->GetBaseTime();
 	int nRead = ReadFloat( pValue, count, nBytesAvailable );
-	
+
 	for ( int i = nRead - 1; i >= 0; i-- )
 	{
 		if ( pValue[i] == ZERO_TIME )
@@ -2174,7 +2176,7 @@ int CRestore::ReadTime( float *pValue, int count, int nBytesAvailable )
 		else if ( pValue[i] != INVALID_TIME && pValue[i] != FLT_MAX )
 			pValue[i] += baseTime;
 	}
-	
+
 	return nRead;
 }
 
@@ -2187,7 +2189,7 @@ int CRestore::ReadTick( int *pValue, int count, int nBytesAvailable )
 	//  think times to get synchronized to each other... sigh.  ywb...
 	int baseTick = TIME_TO_TICKS( m_pGameInfo->GetBaseTime() + 0.1f );
 	int nRead = ReadInt( pValue, count, nBytesAvailable );
-	
+
 	for ( int i = nRead - 1; i >= 0; i-- )
 	{
 		if ( pValue[ i ] != TICK_NEVER_THINK_ENCODE )
@@ -2201,7 +2203,7 @@ int CRestore::ReadTick( int *pValue, int count, int nBytesAvailable )
 			pValue[ i ] = TICK_NEVER_THINK;
 		}
 	}
-	
+
 	return nRead;
 }
 
@@ -2218,13 +2220,13 @@ int CRestore::ReadPositionVector( Vector *pValue, int count, int nBytesAvailable
 {
 	Vector basePosition = m_pGameInfo->GetLandmark();
 	int nRead = ReadVector( pValue, count, nBytesAvailable );
-	
+
 	for ( int i = nRead - 1; i >= 0; i-- )
 	{
 		if ( pValue[i] != vec3_invalid )
 			pValue[i] += basePosition;
 	}
-	
+
 	return nRead;
 }
 
@@ -2233,12 +2235,12 @@ int CRestore::ReadPositionVector( Vector *pValue, int count, int nBytesAvailable
 int CRestore::ReadFunction( datamap_t *pMap, inputfunc_t **pValue, int count, int nBytesAvailable )
 {
 	AssertMsg( nBytesAvailable > 0, "CRestore::ReadFunction() implementation does not currently support unspecified bytes available");
-	
+
 	char *pszFunctionName = BufferPointer();
 	BufferSkipBytes( nBytesAvailable );
-	
+
 	AssertMsg( count == 1, "Arrays of functions not presently supported" );
-	
+
 	if ( *pszFunctionName == 0 )
 		*pValue = NULL;
 	else
@@ -2246,7 +2248,7 @@ int CRestore::ReadFunction( datamap_t *pMap, inputfunc_t **pValue, int count, in
 
 	return 0;
 }
-	
+
 //-----------------------------------------------------------------------------
 //
 // Entity data saving routines
@@ -2357,12 +2359,12 @@ public:
 
 private:
 	friend int CreateEntityTransitionList( CSaveRestoreData *pSaveData, int levelMask );
-	bool SaveInitEntities( CSaveRestoreData *pSaveData );	
+	bool SaveInitEntities( CSaveRestoreData *pSaveData );
 	bool DoRestoreEntity( CBaseEntity *pEntity, IRestore *pRestore );
 	Vector ModelSpaceLandmark( int modelIndex );
 	int RestoreEntity( CBaseEntity *pEntity, IRestore *pRestore, entitytable_t *pEntInfo );
 
-#if !defined( CLIENT_DLL )	
+#if !defined( CLIENT_DLL )
 	// Find the matching global entity.  Spit out an error if the designer made entities of
 	// different classes with the same global name
 	CBaseEntity *FindGlobalEntity( string_t classname, string_t globalname );
@@ -2439,7 +2441,7 @@ void CEntitySaveRestoreBlockHandler::PreSave( CSaveRestoreData *pSaveData )
 		{
 			pEnt = ClientEntityList().GetBaseEntityFromHandle( iter );
 
-			if ( pEnt && pEnt->ObjectCaps() & FCAP_SAVE_NON_NETWORKABLE ) 
+			if ( pEnt && pEnt->ObjectCaps() & FCAP_SAVE_NON_NETWORKABLE )
 			{
 				pEnt->OnSave();
 			}
@@ -2456,7 +2458,7 @@ void CEntitySaveRestoreBlockHandler::PreSave( CSaveRestoreData *pSaveData )
 void CEntitySaveRestoreBlockHandler::Save( ISave *pSave )
 {
 	CGameSaveRestoreInfo *pSaveData = pSave->GetGameSaveRestoreInfo();
-	
+
 	// write entity list that was previously built by SaveInitEntities()
 	for ( int i = 0; i < pSaveData->NumEntities(); i++ )
 	{
@@ -2469,9 +2471,9 @@ void CEntitySaveRestoreBlockHandler::Save( ISave *pSave )
 		{
 			MDLCACHE_CRITICAL_SECTION();
 #if !defined( CLIENT_DLL )
-			AssertMsg( !pEnt->edict() || ( pEnt->m_iClassname != NULL_STRING && 
-										   (STRING(pEnt->m_iClassname)[0] != 0) && 
-										   FStrEq( STRING(pEnt->m_iClassname), pEnt->GetClassname()) ), 
+			AssertMsg( !pEnt->edict() || ( pEnt->m_iClassname != NULL_STRING &&
+										   (STRING(pEnt->m_iClassname)[0] != 0) &&
+										   FStrEq( STRING(pEnt->m_iClassname), pEnt->GetClassname()) ),
 					   "Saving entity with invalid classname" );
 #endif
 
@@ -2505,11 +2507,11 @@ void CEntitySaveRestoreBlockHandler::WriteSaveHeaders( ISave *pSave )
 
 	int nEntities = pSaveData->NumEntities();
 	pSave->WriteInt( &nEntities );
-	
+
 	for ( int i = 0; i < pSaveData->NumEntities(); i++ )
 		pSave->WriteFields( "ETABLE", pSaveData->GetEntityInfo( i ), NULL, entitytable_t::m_DataMap.dataDesc, entitytable_t::m_DataMap.dataNumFields );
 }
-	
+
 //---------------------------------
 
 void CEntitySaveRestoreBlockHandler::PostSave()
@@ -2539,7 +2541,7 @@ void CEntitySaveRestoreBlockHandler::ReadRestoreHeaders( IRestore *pRestore )
 	}
 
 	pSaveData->InitEntityTable( pEntityTable, nEntities );
-	
+
 	for ( int i = 0; i < pSaveData->NumEntities(); i++ )
 		pRestore->ReadFields( "ETABLE", pSaveData->GetEntityInfo( i ), NULL, entitytable_t::m_DataMap.dataDesc, entitytable_t::m_DataMap.dataNumFields );
 
@@ -2555,7 +2557,7 @@ void CEntitySaveRestoreBlockHandler::Restore( IRestore *pRestore, bool createPla
 	CBaseEntity *pent;
 
 	CGameSaveRestoreInfo *pSaveData = pRestore->GetGameSaveRestoreInfo();
-	
+
 	bool restoredWorld = false;
 
 	// Create entity list
@@ -2575,7 +2577,7 @@ void CEntitySaveRestoreBlockHandler::Restore( IRestore *pRestore, bool createPla
 				{
 					pEntInfo->hEnt = NULL;
 					pEntInfo->restoreentityindex = -1;
-					UTIL_RemoveImmediate( pent );	
+					UTIL_RemoveImmediate( pent );
 				}
 				else
 				{
@@ -2661,7 +2663,7 @@ void CEntitySaveRestoreBlockHandler::Restore( IRestore *pRestore, bool createPla
 	CBaseEntity *pent;
 
 	CGameSaveRestoreInfo *pSaveData = pRestore->GetGameSaveRestoreInfo();
-	
+
 	// Create entity list
 	int i;
 	bool restoredWorld = false;
@@ -2708,7 +2710,7 @@ void CEntitySaveRestoreBlockHandler::Restore( IRestore *pRestore, bool createPla
 			{
 				pent = CreateEntityByName( STRING(pEntInfo->classname) );
 				pent->InitializeAsClientEntity( NULL, RENDER_GROUP_OPAQUE_ENTITY );
-				
+
 				pRestore->SetReadPos( pEntInfo->location );
 
 				if ( pent )
@@ -2810,7 +2812,7 @@ bool CEntitySaveRestoreBlockHandler::SaveInitEntities( CSaveRestoreData *pSaveDa
 	{
 		pEnt = ClientEntityList().GetBaseEntityFromHandle( iter );
 
-		if ( pEnt && pEnt->ObjectCaps() & FCAP_SAVE_NON_NETWORKABLE  ) 
+		if ( pEnt && pEnt->ObjectCaps() & FCAP_SAVE_NON_NETWORKABLE  )
 		{
 			SaveEntityOnTable( pEnt, pSaveData, i );
 		}
@@ -2840,7 +2842,7 @@ CBaseEntity *CEntitySaveRestoreBlockHandler::FindGlobalEntity( string_t classnam
 		if ( FStrEq( STRING(pReturn->m_iGlobalname), STRING(globalname)) )
 			break;
 	}
-		
+
 	if ( pReturn )
 	{
 		if ( !FClassnameIs( pReturn, STRING(classname) ) )
@@ -2862,7 +2864,7 @@ bool CEntitySaveRestoreBlockHandler::DoRestoreEntity( CBaseEntity *pEntity, IRes
 	MDLCACHE_CRITICAL_SECTION();
 
 	EHANDLE hEntity;
-	
+
 	hEntity = pEntity;
 
 	pRestore->GetGameSaveRestoreInfo()->SetCurrentEntityContext( pEntity );
@@ -2904,8 +2906,8 @@ int CEntitySaveRestoreBlockHandler::RestoreEntity( CBaseEntity *pEntity, IRestor
 	if ( !DoRestoreEntity( pEntity, pRestore ) )
 		return 0;
 
-#if !defined( CLIENT_DLL )		
-	if ( pEntity->m_iGlobalname != NULL_STRING ) 
+#if !defined( CLIENT_DLL )
+	if ( pEntity->m_iGlobalname != NULL_STRING )
 	{
 		int globalIndex = GlobalEntity_GetIndex( pEntity->m_iGlobalname );
 		if ( globalIndex >= 0 )
@@ -2934,7 +2936,7 @@ int CEntitySaveRestoreBlockHandler::RestoreEntity( CBaseEntity *pEntity, IRestor
 //---------------------------------
 
 #if !defined( CLIENT_DLL )
-	
+
 int CEntitySaveRestoreBlockHandler::RestoreGlobalEntity( CBaseEntity *pEntity, CSaveRestoreData *pSaveData, entitytable_t *pEntInfo )
 {
 	Vector oldOffset;
@@ -2943,13 +2945,13 @@ int CEntitySaveRestoreBlockHandler::RestoreGlobalEntity( CBaseEntity *pEntity, C
 
 	oldOffset.Init();
 	CRestore restoreHelper( pSaveData );
-	
+
 	string_t globalName = pEntInfo->globalname, className = pEntInfo->classname;
 
 	// -------------------
 
 	int globalIndex = GlobalEntity_GetIndex( globalName );
-	
+
 	// Don't overlay any instance of the global that isn't the latest
 	// pSaveData->szCurrentMapName is the level this entity is coming from
 	// pGlobal->levelName is the last level the global entity was active in.
@@ -2985,7 +2987,7 @@ int CEntitySaveRestoreBlockHandler::RestoreGlobalEntity( CBaseEntity *pEntity, C
 		DevMsg( "Warning: No match for global entity %s found in destination level\n", STRING(globalName) );
 		return 0;
 	}
-	
+
 	if ( !DoRestoreEntity( pEntity, &restoreHelper ) )
 	{
 		pEntity = NULL;
@@ -3032,7 +3034,7 @@ CSaveRestoreData *SaveInit( int size )
 
 	pSaveData = MakeSaveRestoreData( pSaveMemory );
 	pSaveData->Init( (char *)(pSaveData + 1), size );	// skip the save structure
-	
+
 	const int nTokens = 0xfff; // Assume a maximum of 4K-1 symbol table entries(each of some length)
 	pSaveMemory = engine->SaveAllocMemory( nTokens, sizeof( char * ) );
 	if ( !pSaveMemory )
@@ -3044,14 +3046,14 @@ CSaveRestoreData *SaveInit( int size )
 	pSaveData->InitSymbolTable( (char **)pSaveMemory, nTokens );
 
 	//---------------------------------
-	
+
 	pSaveData->levelInfo.time = gpGlobals->curtime;	// Use DLL time
 	pSaveData->levelInfo.vecLandmarkOffset = vec3_origin;
 	pSaveData->levelInfo.fUseLandmark = false;
 	pSaveData->levelInfo.connectionCount = 0;
-		
+
 	//---------------------------------
-	
+
 	gpGlobals->pSaveData = pSaveData;
 
 	return pSaveData;
@@ -3107,7 +3109,7 @@ public:
 			m_Handlers[i]->PreSave( pData );
 		}
 	}
-	
+
 	void Save( ISave *pSave )
 	{
 		int base = pSave->GetWritePos();
@@ -3118,7 +3120,7 @@ public:
 		}
 		m_SizeBodies = pSave->GetWritePos() - base;
 	}
-	
+
 	void WriteSaveHeaders( ISave *pSave )
 	{
 		int base = pSave->GetWritePos();
@@ -3128,14 +3130,14 @@ public:
 		//
 		int dummyInt = -1;
 		CUtlVector<SaveRestoreBlockHeader_t> dummyArr;
-		
+
 		dummyArr.SetCount( m_BlockHeaders.Count() );
 		memset( &dummyArr[0], 0xff, dummyArr.Count() * sizeof(SaveRestoreBlockHeader_t) );
-		
+
 		pSave->WriteInt( &dummyInt ); // size all headers
 		pSave->WriteInt( &dummyInt ); // size all bodies
 		SaveUtlVector( pSave, &dummyArr, FIELD_EMBEDDED );
-		
+
 		//
 		// Write the data
 		//
@@ -3146,20 +3148,20 @@ public:
 		}
 
 		m_SizeHeaders = pSave->GetWritePos() - base;
-		
+
 		//
 		// Write the actual header
 		//
 		int savedPos = pSave->GetWritePos();
 		pSave->SetWritePos(base);
-		
+
 		pSave->WriteInt( &m_SizeHeaders );
 		pSave->WriteInt( &m_SizeBodies );
 		SaveUtlVector( pSave, &m_BlockHeaders, FIELD_EMBEDDED );
-		
+
 		pSave->SetWritePos(savedPos);
 	}
-	
+
 	void PostSave()
 	{
 		for ( int i = 0; i < m_Handlers.Count(); i++ )
@@ -3168,7 +3170,7 @@ public:
 		}
 		m_BlockHeaders.Purge();
 	}
-	
+
 	//---------------------------------
 
 	void PreRestore()
@@ -3182,11 +3184,11 @@ public:
 	void ReadRestoreHeaders( IRestore *pRestore )
 	{
 		int base = pRestore->GetReadPos();
-		
+
 		pRestore->ReadInt( &m_SizeHeaders );
 		pRestore->ReadInt( &m_SizeBodies );
 		RestoreUtlVector( pRestore, &m_BlockHeaders, FIELD_EMBEDDED );
-		
+
 		for ( int i = 0; i < m_Handlers.Count(); i++ )
 		{
 			int location = GetBlockHeaderLoc( m_Handlers[i]->GetBlockName() );
@@ -3196,7 +3198,7 @@ public:
 				m_Handlers[i]->ReadRestoreHeaders( pRestore );
 			}
 		}
-		
+
 		pRestore->SetReadPos( base + m_SizeHeaders );
 	}
 
@@ -3213,7 +3215,7 @@ public:
 	void Restore( IRestore *pRestore, bool fCreatePlayers )
 	{
 		int base = pRestore->GetReadPos();
-		
+
 		for ( int i = 0; i < m_Handlers.Count(); i++ )
 		{
 			CallBlockHandlerRestore( m_Handlers[i], base, pRestore, fCreatePlayers );
@@ -3258,7 +3260,7 @@ private:
 		}
 		return -1;
 	}
-	
+
 	int GetBlockHeaderLoc( const char *pszName )
 	{
 		for ( int i = 0; i < m_BlockHeaders.Count(); i++ )
@@ -3271,7 +3273,7 @@ private:
 
 	char 								   m_Name[MAX_BLOCK_NAME_LEN + 1];
 	CUtlVector<ISaveRestoreBlockHandler *> m_Handlers;
-	
+
 	int									   m_SizeHeaders;
 	int									   m_SizeBodies;
 	CUtlVector<SaveRestoreBlockHeader_t>   m_BlockHeaders;
@@ -3280,9 +3282,9 @@ private:
 //-------------------------------------
 
 BEGIN_SIMPLE_DATADESC( SaveRestoreBlockHeader_t )
-	DEFINE_ARRAY(szName,	FIELD_CHARACTER, MAX_BLOCK_NAME_LEN + 1), 
-	DEFINE_FIELD(locHeader,	FIELD_INTEGER), 
-	DEFINE_FIELD(locBody,	FIELD_INTEGER), 
+	DEFINE_ARRAY(szName,	FIELD_CHARACTER, MAX_BLOCK_NAME_LEN + 1),
+	DEFINE_FIELD(locHeader,	FIELD_INTEGER),
+	DEFINE_FIELD(locBody,	FIELD_INTEGER),
 END_DATADESC()
 
 //-------------------------------------
@@ -3319,7 +3321,7 @@ void CreateEntitiesInTransitionList( CSaveRestoreData *pSaveData, int levelMask 
 
 		// spawn players
 		pent = NULL;
-		if ( (pEntInfo->edictindex > 0) && (pEntInfo->edictindex <= gpGlobals->maxClients) )	
+		if ( (pEntInfo->edictindex > 0) && (pEntInfo->edictindex <= gpGlobals->maxClients) )
 		{
 			edict_t *ed = INDEXENT( pEntInfo->edictindex );
 
@@ -3352,7 +3354,7 @@ int CreateEntityTransitionList( CSaveRestoreData *pSaveData, int levelMask )
 
 	// Create entity list
 	CreateEntitiesInTransitionList( pSaveData, levelMask );
-	
+
 	// Now spawn entities
 	CUtlVector<int> checkList;
 
@@ -3364,7 +3366,7 @@ int CreateEntityTransitionList( CSaveRestoreData *pSaveData, int levelMask )
 		pent = pEntInfo->hEnt;
 //		pSaveData->currentIndex = i;
 		pSaveData->Seek( pEntInfo->location );
-		
+
 		// clear this out - it must be set on a per-entity basis
 		pSaveData->modelSpaceOffset.Init();
 
@@ -3373,7 +3375,7 @@ int CreateEntityTransitionList( CSaveRestoreData *pSaveData, int levelMask )
 			if ( pEntInfo->flags & FENTTABLE_GLOBAL )
 			{
 				DevMsg( 2, "Merging changes for global: %s\n", STRING(pEntInfo->classname) );
-			
+
 				// -------------------------------------------------------------------------
 				// Pass the "global" flag to the DLL to indicate this entity should only override
 				// a matching entity, not be spawned
@@ -3389,7 +3391,7 @@ int CreateEntityTransitionList( CSaveRestoreData *pSaveData, int levelMask )
 				}
 				// -------------------------------------------------------------------------
 			}
-			else 
+			else
 			{
 				DevMsg( 2, "Transferring %s (%d)\n", STRING(pEntInfo->classname), pent->edict() ? ENTINDEX(pent->edict()) : -1 );
 				CRestore restoreHelper( pSaveData );
