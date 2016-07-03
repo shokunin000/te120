@@ -257,7 +257,7 @@ void CEnvProjectedTexture::Spawn( void )
 void CEnvProjectedTexture::Activate( void )
 {
 	SetThink( &CEnvProjectedTexture::InitialThink );
-	SetNextThink( gpGlobals->curtime + 0.1f );
+	SetNextThink( gpGlobals->curtime + 0.1 );
 
 	BaseClass::Activate();
 }
@@ -270,31 +270,31 @@ void CEnvProjectedTexture::InitialThink( void )
 	if ( m_hTargetEntity == NULL )
 		return;
 
-	if ( m_bFlicker )
-	{
-		m_LinearFloatLightColorCopy = m_LinearFloatLightColor;
-		SetThink( &CEnvProjectedTexture::FlickerThink );
-		SetNextThink( gpGlobals->curtime + 0.05f );
-	}
-
-
 	Vector vecToTarget = (m_hTargetEntity->GetAbsOrigin() - GetAbsOrigin());
 	QAngle vecAngles;
 	VectorAngles( vecToTarget, vecAngles );
 	SetAbsAngles( vecAngles );
 
-	SetNextThink( gpGlobals->curtime + 0.1 );
+	if ( m_bFlicker )
+	{
+		DevMsg("CEnvProjectedTexture: m_bFlicker..\n");
+		m_LinearFloatLightColorCopy = m_LinearFloatLightColor;
+		SetThink( &CEnvProjectedTexture::FlickerThink );
+		SetNextThink( gpGlobals->curtime + 0.05 );
+	}
+	else
+		SetNextThink( gpGlobals->curtime + 0.1 );
 }
 
 void CEnvProjectedTexture::FlickerThink( void )
 {
-	float flNoise = 0.75 + ( 0.25 * ( cosf( gpGlobals->curtime * 7.0f ) * sinf( gpGlobals->curtime * 25.0f ) ) );
-	m_LinearFloatLightColor = m_LinearFloatLightColorCopy * flNoise  ;
+	float flNoise = 0.75 + ( 0.25 * ( cosf( gpGlobals->curtime * 7.0 ) * sinf( gpGlobals->curtime * 25.0 ) ) );
+	m_LinearFloatLightColor = m_LinearFloatLightColorCopy * flNoise;
 
 	if ( m_bFlicker )
 	{
 		SetThink( &CEnvProjectedTexture::FlickerThink );
-		SetNextThink( gpGlobals->curtime + 0.05f );
+		SetNextThink( gpGlobals->curtime + 0.05 );
 	}
 }
 //TE120--
