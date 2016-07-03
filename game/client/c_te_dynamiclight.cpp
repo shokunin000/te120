@@ -97,22 +97,6 @@ void TE_DynamicLight( IRecipientFilter& filter, float delay,
 	dl->die		= gpGlobals->curtime + time;
 	dl->decay	= decay;
 
-//TE120--
-	// Create an "Entity" Light that will illumninate entities
-  dlight_t *el = effects->CL_AllocElight( nLightIndex );
-  if ( !el )
-  	return;
-
-	el->origin = *org;
-	el->radius = radius;
-	el->color.r	= r;
-	el->color.g	= g;
-	el->color.b	= b;
-	el->color.exponent = exponent;
-	el->die	= gpGlobals->curtime + time;
-	el->decay	= decay;
-//TE120--
-
 	if ( ToolsEnabled() && clienttools->IsInRecordingMode() )
 	{
 		Color clr( r, g, b, 255 );
