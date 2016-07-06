@@ -277,7 +277,7 @@ void CEnvProjectedTexture::InitialThink( void )
 
 	if ( m_bFlicker )
 	{
-		DevMsg("CEnvProjectedTexture: m_bFlicker..\n");
+		DevMsg("CEnvProjectedTexture::InitialThink: m_bFlicker..\n");
 		m_LinearFloatLightColorCopy = m_LinearFloatLightColor;
 		SetThink( &CEnvProjectedTexture::FlickerThink );
 		SetNextThink( gpGlobals->curtime + 0.05 );
