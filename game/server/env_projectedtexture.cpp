@@ -172,12 +172,21 @@ bool CEnvProjectedTexture::KeyValue( const char *szKeyName, const char *szValue 
 	}
 	else if ( FStrEq(szKeyName, "texturename" ) )
 	{
-		Q_strcpy( m_SpotlightTextureName.GetForModify(), szValue );
+		if( !szValue || Q_strlen(szValue) < 1 )
+ 		{
+			// If we have no texture defined use a default texture
+ 			Q_strcpy( m_SpotlightTextureName.GetForModify(), "effects/flashlight001" );
+ 		}
+ 		else
+ 		{
+ 			Q_strcpy( m_SpotlightTextureName.GetForModify(), szValue );
+ 		}
 	}
 	else
 	{
 		return BaseClass::KeyValue( szKeyName, szValue );
 	}
+
 	return true;
 }
 

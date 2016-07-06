@@ -101,6 +101,8 @@ static ConVar r_worldlight_shortenfactor( "r_worldlight_shortenfactor", "2" , FC
 static ConVar r_worldlight_mincastintensity( "r_worldlight_mincastintensity", "0.3", FCVAR_CHEAT, "Minimum brightness of a light to be classed as shadow casting", true, 0, false, 0 );
 
 ConVar r_flashlightdepthtexture( "r_flashlightdepthtexture", "1" );
+ConVar r_max_shadowtextures( "r_max_shadowtextures", "8" );
+
 
 #if defined( _X360 )
 ConVar r_flashlightdepthres( "r_flashlightdepthres", "512" );
@@ -1194,7 +1196,7 @@ CClientShadowMgr::CClientShadowMgr() :
 	m_nDepthTextureResolution = r_flashlightdepthres.GetInt();
 	m_bThreaded = false;
 
-	
+
 	m_bShadowFromWorldLights = r_worldlight_castshadows.GetBool();
 }
 
@@ -1314,7 +1316,7 @@ bool CClientShadowMgr::Init()
 
 	SetShadowBlobbyCutoffArea( 0.005 );
 
-	m_nMaxDepthTextureShadows = 8;
+	m_nMaxDepthTextureShadows = (r_max_shadowtextures.GetInt() > 0) ? r_max_shadowtextures.GetInt() : 1;
 
 	bool bLowEnd = ( g_pMaterialSystemHardwareConfig->GetDXSupportLevel() < 80 );
 
@@ -1359,11 +1361,15 @@ void CClientShadowMgr::InitDepthTextureShadows()
 {
 	VPROF_BUDGET( "CClientShadowMgr::InitDepthTextureShadows", VPROF_BUDGETGROUP_SHADOW_DEPTH_TEXTURING );
 
-	// SAUL: start benchmark timer
+	extern ConVar developer;
+	// Start benchmark timer
 	CFastTimer timer;
-	timer.Start();
+  if ( developer.GetInt() )
+	{
+		timer.Start();
+	}
 
-	// SAUL: set m_nDepthTextureResolution to the depth resolution we want
+	// Set m_nDepthTextureResolution to the depth resolution we want
 	m_nDepthTextureResolution = r_flashlightdepthres.GetInt();
 
 	if( !m_bDepthTextureActive )
@@ -1382,7 +1388,7 @@ void CClientShadowMgr::InitDepthTextureShadows()
 		m_DummyColorTexture.InitRenderTargetTexture( r_flashlightdepthres.GetInt(), r_flashlightdepthres.GetInt(), RT_SIZE_OFFSCREEN, IMAGE_FORMAT_BGR565, MATERIAL_RT_DEPTH_SHARED, false, "_rt_ShadowDummy" );
 		m_DummyColorTexture.InitRenderTargetSurface( r_flashlightdepthres.GetInt(), r_flashlightdepthres.GetInt(), IMAGE_FORMAT_BGR565, true );
 #else
-		// SAUL: we want to create a render target of specific size, so use RT_SIZE_NO_CHANGE
+		// We want to create a render target of specific size, so use RT_SIZE_NO_CHANGE
 		m_DummyColorTexture.InitRenderTarget( m_nDepthTextureResolution, m_nDepthTextureResolution, RT_SIZE_NO_CHANGE, nullFormat, MATERIAL_RT_DEPTH_NONE, false, "_rt_ShadowDummy" );
 #endif
 
@@ -1398,23 +1404,25 @@ void CClientShadowMgr::InitDepthTextureShadows()
 			Q_snprintf( strRTName, ARRAYSIZE( strRTName ), "_rt_ShadowDepthTexture_%d", i );
 
 #if defined( _X360 )
-			// create a render target to use as a resolve target to get the shared depth buffer
+			// Create a render target to use as a resolve target to get the shared depth buffer
 			// surface is effectively never used
 			depthTex.InitRenderTargetTexture( m_nDepthTextureResolution, m_nDepthTextureResolution, RT_SIZE_OFFSCREEN, dstFormat, MATERIAL_RT_DEPTH_NONE, false, strRTName );
 			depthTex.InitRenderTargetSurface( 1, 1, dstFormat, false );
 #else
-			// SAUL: we want to create a *DEPTH TEXTURE* of specific size, so use RT_SIZE_NO_CHANGE and MATERIAL_RT_DEPTH_ONLY
+			// We want to create a *DEPTH TEXTURE* of specific size, so use RT_SIZE_NO_CHANGE and MATERIAL_RT_DEPTH_ONLY
 			depthTex.InitRenderTarget( m_nDepthTextureResolution, m_nDepthTextureResolution, RT_SIZE_NO_CHANGE, dstFormat, MATERIAL_RT_DEPTH_ONLY, false, strRTName );
 #endif
 
+			/*
 			if ( i == 0 )
 			{
 				// Shadow may be resized during allocation (due to resolution constraints etc)
 				m_nDepthTextureResolution = depthTex->GetActualWidth();
 				r_flashlightdepthres.SetValue( m_nDepthTextureResolution );
 			}
+			*/
 
-			// SAUL: ensure the depth texture size wasn't changed
+			// Ensure the depth texture size wasn't changed
 			Assert(depthTex->GetActualWidth() == m_nDepthTextureResolution);
 
 			m_DepthTextureCache.AddToTail( depthTex );
@@ -1424,8 +1432,11 @@ void CClientShadowMgr::InitDepthTextureShadows()
 		materials->EndRenderTargetAllocation();
 	}
 
-	timer.End();
-	DevMsg("InitDepthTextureShadows took %.2f msec\n", timer.GetDuration().GetMillisecondsF());
+	if ( developer.GetInt() )
+	{
+		timer.End();
+		DevMsg("InitDepthTextureShadows took %.2f msec!\n", timer.GetDuration().GetMillisecondsF());
+	}
 }
 
 void CClientShadowMgr::ShutdownDepthTextureShadows()

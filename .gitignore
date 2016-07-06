@@ -71,3 +71,8 @@ config.cfg
 
 # Shader files
 *.tmp
+
+# ToGL specific include dirs
+public/SDL2
+public/X11
+public/GL
