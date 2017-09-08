@@ -1,4 +1,4 @@
-# Transmissions: Element 120
+# [Transmissions: Element 120](http://store.steampowered.com/app/365300/Transmissions_Element_120/)
 
 ## Build instructions (Windows):
 - run build.bat
