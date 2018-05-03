@@ -7,6 +7,8 @@
 #ifndef _SSE_H
 #define _SSE_H
 
+#include <pmmintrin.h>
+
 float _SSE_Sqrt(float x);
 float _SSE_RSqrtAccurate(float a);
 float _SSE_RSqrtFast(float x);
